@@ -44,4 +44,4 @@ class Node(
     }
 }
 
-private fun Double.step() = if (this > 0) 1.0 else 0.0
+fun Double.step() = if (this > 0) 1.0 else 0.0
