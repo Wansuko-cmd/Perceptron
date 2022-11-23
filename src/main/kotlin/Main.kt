@@ -1,9 +1,9 @@
 import dataset.datasets
 import layer.Layer
-import layer.step
+import layer.maxIndex
 
 fun main() {
-    val model = (1..1000).fold(
+    val model = (1..100).fold(
         Layer.create(input = 4, center = 50, output = 3, rate = 0.01),
     ) { model, index ->
         println("epoc: $index")
@@ -27,6 +27,6 @@ fun main() {
                 data.sepalLength,
                 data.sepalWidth,
             ),
-        ).map { it.sum().step().toInt() }[data.label] == 1
+        ).map { it.sum() }.maxIndex() == data.label
     }.let { println(it.toDouble() / datasets.size.toDouble()) }
 }

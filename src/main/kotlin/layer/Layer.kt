@@ -2,8 +2,11 @@ package layer
 
 import kotlin.random.Random
 
+const val SEED = 160
+val random = Random(SEED)
+
 class Layer(
-    private val output: List<Node>,
+    val output: List<Node>,
     private val rate: Double,
 ) {
     fun forward(value: List<Double>) = output.map { it.input(value) }
@@ -13,7 +16,12 @@ class Layer(
             .map { it to it.input(value) }
             .mapIndexed { index, (node, out) ->
                 val error = error(if (index == label) 1.0 else 0.0, out.sum().step())
-                Node(node.before?.zip(out)?.map { (no, o) -> no.first to no.second + rate * error * o })
+                Node(
+                    node
+                        .before
+                        ?.zip(out)
+                        ?.map { (no, o) -> (no.first to no.second + rate * error * o) }
+                )
             }
             .let { Layer(it, rate) }
 
@@ -32,16 +40,37 @@ class Layer(
 class Node(
     val before: List<Pair<Node, Double>>?
 ) {
-    fun input(value: List<Double>): List<Double> =
-        (before?.map { it.first.input(value).sum().step() * it.second } ?: value)
+    override fun toString(): String = before
+        ?.mapIndexed { index, (_, weight) -> index to weight }
+        ?.joinToString(prefix = "\n    ", postfix = "\n") { "[Node${it.first} weight: ${it.second}]" } ?: ""
+
+    fun input(value: List<Double>): List<Double> {
+        if (before?.map { it.first.before }?.all { it == null } == true) {
+            return before.zip(value) { (_, weight), input -> input * weight }
+        }
+
+        return before?.map { (node, weight) ->
+            node.input(value).sum().step() * weight
+        } ?: value
+    }
+
 
     companion object {
         fun create(node: List<Node>): Node = Node(
-            before = node.map { it to Random.nextDouble(from = -1.0, until = 1.0) }
+            before = node.map { it to random.nextDouble(from = -1.0, until = 1.0) }
         )
 
         fun create() = Node(null)
     }
 }
 
-fun Double.step() = if (this > 0) 1.0 else 0.0
+fun Double.step() = if (this > 0.0) 1.0 else 0.0
+
+fun <T : Comparable<T>> List<T>.maxIndex(): Int =
+    this.foldIndexed(null) { index: Int, acc: Pair<Int, T>?, element: T ->
+        when {
+            acc == null -> index to element
+            acc.second > element -> acc
+            else -> index to element
+        }
+    }?.first ?: throw Exception()
