@@ -6,8 +6,8 @@ const val SEED = 160
 val random = Random(SEED)
 
 class Layer(
-    val output: List<Node>,
-    private val rate: Double,
+    private val output: List<Node>,
+    private val rate: Double
 ) {
     fun forward(value: List<Double>) = output.map { it.input(value) }
 
@@ -44,16 +44,18 @@ class Node(
         ?.mapIndexed { index, (_, weight) -> index to weight }
         ?.joinToString(prefix = "\n    ", postfix = "\n") { "[Node${it.first} weight: ${it.second}]" } ?: ""
 
-    fun input(value: List<Double>): List<Double> {
-        if (before?.map { it.first.before }?.all { it == null } == true) {
-            return before.zip(value) { (_, weight), input -> input * weight }
-        }
+    fun input(value: List<Double>): List<Double> = when {
+        // 到達し得ないコード
+        before == null -> throw Exception("Node::input, 到達しないはずのコード")
 
-        return before?.map { (node, weight) ->
-            node.input(value).sum().step() * weight
-        } ?: value
+        // 入力層の次の層だとしたら入力に重みを掛けたものを返す
+        before.map { it.first.before }.all { it == null } ->
+            before.zip(value) { (_, weight), input -> input * weight }
+
+        // それ以外の層は前の層の出力を計算して重みを掛けたものを返す
+        else ->
+            before.map { (node, weight) -> node.input(value).sum().step() * weight }
     }
-
 
     companion object {
         fun create(node: List<Node>): Node = Node(
