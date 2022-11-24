@@ -4,7 +4,7 @@ import layer.maxIndex
 
 fun main() {
     val (train, test) = datasets.shuffled().chunked(120)
-    val model = (1..100).fold(
+    val model = (1..1000).fold(
         Layer.create(input = 4, center = 50, output = 3, rate = 0.01),
     ) { model, index ->
         println("epoc: $index")
