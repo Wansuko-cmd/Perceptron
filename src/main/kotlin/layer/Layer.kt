@@ -9,7 +9,7 @@ class Layer(
     private val output: List<Node>,
     private val rate: Double
 ) {
-    fun forward(value: List<Double>) = output.map { it.input(value) }
+    fun forward(value: List<Double>): Int = output.map { it.getY(value) }.maxIndex()
 
     fun train(value: List<Double>, label: Int): Layer =
         output
@@ -38,7 +38,8 @@ class Layer(
 }
 
 class Node(
-    val before: List<Pair<Node, Double>>?
+    val before: List<Pair<Node, Double>>?,
+    val f: (Double) -> Double = { it.step() },
 ) {
     override fun toString(): String = before
         ?.mapIndexed { index, (_, weight) -> index to weight }
@@ -54,7 +55,39 @@ class Node(
 
         // それ以外の層は前の層の出力を計算して重みを掛けたものを返す
         else ->
-            before.map { (node, weight) -> node.input(value).sum().step() * weight }
+            before
+                .map { (node, weight) -> node.getY(value) * weight }
+                .map { f(it) }
+    }
+
+    fun getY(value: List<Double>): Double = when {
+        before == null -> throw Exception()
+        before.map { it.first.before }.all { it == null } -> {
+            val v = before.zip(value) { (_, weight), input -> input * weight }.sum()
+            val y = f(v)
+            y
+        }
+        else -> {
+            val v = before.sumOf { (node, weight) -> node.getY(value) * weight }
+            val y = f(v)
+            y
+        }
+    }
+
+    fun g(value: List<Double>) {
+        when {
+            before == null -> throw Exception()
+            before.map { it.first.before }.all { it == null } -> {
+                val v = before.zip(value) { (_, weight), input -> input * weight }.sum()
+                val y = f(v)
+                y
+            }
+            else -> {
+                val v = before.sumOf { (node, weight) -> node.getY(value) * weight }
+                val y = f(v)
+                y
+            }
+        }
     }
 
     companion object {
@@ -67,6 +100,8 @@ class Node(
 }
 
 fun Double.step() = if (this > 0.0) 1.0 else 0.0
+
+fun Double.relu() = if (this > 0.0) this else 0.0
 
 fun <T : Comparable<T>> List<T>.maxIndex(): Int =
     this.foldIndexed(null) { index: Int, acc: Pair<Int, T>?, element: T ->

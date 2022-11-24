@@ -1,6 +1,5 @@
 import dataset.datasets
 import layer.Layer
-import layer.maxIndex
 
 fun main() {
     val (train, test) = datasets.shuffled().chunked(120)
@@ -28,6 +27,6 @@ fun main() {
                 data.sepalLength,
                 data.sepalWidth,
             ),
-        ).map { it.sum() }.maxIndex() == data.label
+        ) == data.label
     }.let { println(it.toDouble() / test.size.toDouble()) }
 }
