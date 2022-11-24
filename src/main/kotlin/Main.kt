@@ -3,11 +3,12 @@ import layer.Layer
 import layer.maxIndex
 
 fun main() {
+    val (train, test) = datasets.shuffled().chunked(120)
     val model = (1..100).fold(
         Layer.create(input = 4, center = 50, output = 3, rate = 0.01),
     ) { model, index ->
         println("epoc: $index")
-        datasets.fold(model) { acc, element ->
+        train.fold(model) { acc, element ->
             acc.train(
                 value = listOf(
                     element.petalLength,
@@ -19,7 +20,7 @@ fun main() {
             )
         }
     }
-    datasets.count { data ->
+    test.count { data ->
         model.forward(
             value = listOf(
                 data.petalLength,
@@ -28,5 +29,5 @@ fun main() {
                 data.sepalWidth,
             ),
         ).map { it.sum() }.maxIndex() == data.label
-    }.let { println(it.toDouble() / datasets.size.toDouble()) }
+    }.let { println(it.toDouble() / test.size.toDouble()) }
 }
