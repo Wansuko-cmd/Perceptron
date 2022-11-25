@@ -9,9 +9,6 @@ import toTrainNodesTree
 import java.util.UUID
 import kotlin.random.Random
 
-const val SEED = 2
-var random = Random(SEED)
-
 class Layer(
     private val output: List<Node>,
     private val rate: Double,
@@ -81,13 +78,17 @@ class Layer(
     companion object {
         fun create(
             input: Int,
-            center: Int,
+            center: List<Int>,
             output: Int,
             rate: Double,
             random: Random,
         ): Layer {
             val inputNode = List(input) { Node.input(::relu, it) }
-            val centerNode = List(center) { Node.create(inputNode, f = ::relu, random = random) }
+            val centerNode = center.fold(inputNode) { acc, i ->
+                List(i) {
+                    Node.create(acc, f = ::relu, random = random)
+                }
+            }
             val outputNode = List(output) { index ->
                 Node.create(centerNode, id = index.toString(), f = ::sigmoid, random = random)
             }
