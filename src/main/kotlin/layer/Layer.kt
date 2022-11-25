@@ -1,75 +1,87 @@
 package layer
 
-import N
+import TrainNode
+import relu
+import sigmoid
+import toNodesTree
+import toTrainNodesTree
 import java.util.UUID
-import kotlin.math.exp
-import kotlin.math.pow
 import kotlin.random.Random
 
-const val SEED = 160
+const val SEED = 2
 var random = Random(SEED)
 
 class Layer(
     private val output: List<Node>,
-    private val rate: Double
+    private val rate: Double,
 ) {
-    fun forward(value: List<Double>): Int = output.map { it.getY(value) }.maxIndex()
+    fun forward(input: List<Double>) = output
+        .map { it.getVY(input).second }
+        .maxIndex()
 
-    private fun error(label: Double, output: Double) = 0.5 * (label - output).pow(2.0)
+    /**
+     * 学習を行った後のLayerを返す関数
+     * * 引数
+     * input: 入力データ
+     * label: 正解ラベル
+     * * 返り値
+     * 引数の値を元に学習を行なった後のLayer
+     * * 解説
+     * Nodesは順伝播を計算するのに長けたツリー状になっている
+     * しかし、逆伝播を計算することはできない
+     * そこで、一度ツリーをリスト状にした上で逆ツリー状にする
+     * その形で逆伝播の計算を行う
+     * 逆伝播の計算を行い重みの更新を行なった後はもう一度ツリーを逆にし、Layerにする
+     */
+    fun train(input: List<Double>, label: Int): Layer =
+        output
+            .fromNodeTreeToList()
+            .slideWeightToLeft()
+            .toTrainNodesTree(input, label, rate)
+            .map { it.copy(second = (it.second as TrainNode.NormalN).fixWeight()) }
+            .fromTrainTreeToList()
+            .slideWeightToRight()
+            .toNodesTree()
+            .let { nodes -> Layer(nodes.map { it.first }, rate) }
 
-    fun fd(input: List<Double>, label: Int) = output
-        .flatMap { node -> node.toList().map { it + (node to Double.NEGATIVE_INFINITY) } }
-        .map { node -> listOf(Double.NEGATIVE_INFINITY to node.first().first) + node.windowed(2) { (left, right) -> left.second to right.first } }
-        .toBe(input, label)
-        .map { it.copy(second = it.second.fixWeight()) }
-        .flatMap { node -> node.second.toList().map { listOf(Double.NEGATIVE_INFINITY to node.second) + it } }
-        .map { node -> node.windowed(2) { (left, right) -> left.second to right.first } + (node.last().second to Double.NEGATIVE_INFINITY) }
-        .toG()
-        .let { Layer(it.map { it.first }, rate) }
+    /**
+     * ツリー状になっているニューラルネットワークをリスト化
+     * ノードの数より重みの数の方が少ないため、数合わせのためにNEGATIVE_INFINITYを用いる（使うことはないため無視で良い）
+     */
+    private fun List<Node>.fromNodeTreeToList() =
+        this.flatMap { node -> node.toList().map { it + (node to Double.NEGATIVE_INFINITY) } }
 
-    fun List<List<Pair<N, Double>>>.toG(): List<Pair<Node, Double>> = when {
-        this.all { it.size == 1 } -> this.map {
-            val (_, weight) = it.first()
-            Node.create { it.relu() } to weight
+    /**
+     * Nodeでは[Node, Double]の形で保管しているが、逆伝播を行うときは[Double, Node]の方が望ましい
+     */
+    private fun List<List<Pair<Node, Double>>>.slideWeightToLeft(): List<List<Pair<Double, Node>>> =
+        this.map { node ->
+            listOf(Double.NEGATIVE_INFINITY to node.first().first) +
+                node.windowed(2) { (left, right) -> left.second to right.first }
         }
-        else ->
-            this
-                .groupBy { it.last().first.id }
-                .mapKeys { it.value.last().last() }
-                .mapValues { (_, value) -> value.map { it.dropLast(1) }.toG() }
-                .map {
-                    Node(it.value) to it.key.second
-                }
-    }
 
-    fun List<List<Pair<Double, Node>>>.toBe(input: List<Double>, label: Int): List<Pair<Double, N>> = when {
-        this.all { it.size == 1 } -> this.map {
-            val (weight, node) = it.first()
-            val (v, y) = node.getVY(input)
-            val error = if (node.id == label.toString()) error(1.0, y) else error(0.0, y)
-            weight to N.OutputN(v = v, y = y, t = error, node.id)
+    /**
+     * 学習用の木構造を元のNode Treeに戻すためにまずリスト化する
+     */
+    private fun List<Pair<Double, TrainNode>>.fromTrainTreeToList(): List<List<Pair<Double, TrainNode>>> =
+        this.flatMap { node ->
+            node.second.toList().map { listOf(Double.NEGATIVE_INFINITY to node.second) + it }
         }
-        else ->
-            this
-                .groupBy { it.first().second.id }
-                .mapKeys { it.value.first().first() }
-                .mapValues { (_, value) -> value.map { it.drop(1) }.toBe(input, label) }
-                .map {
-                    val (v, y) = it.key.second.getVY(input)
-                    it.key.first to N.NormalN(
-                        v = v,
-                        y = y,
-                        nodes = it.value,
-                        it.key.second.id,
-                    )
-                }
-    }
+
+    /**
+     * Nodeでの[Node, Double]の形に戻す
+     */
+    private fun List<List<Pair<Double, TrainNode>>>.slideWeightToRight(): List<List<Pair<TrainNode, Double>>> =
+        this.map { node ->
+            node.windowed(2) { (left, right) -> left.second to right.first } +
+                (node.last().second to Double.NEGATIVE_INFINITY)
+        }
 
     companion object {
         fun create(input: Int, center: Int, output: Int, rate: Double): Layer {
-            val inputNode = List(input) { Node.create { it.relu() } }
-            val centerNode = List(center) { Node.create(inputNode) { it.relu() } }
-            val outputNode = List(output) { index -> Node.create(centerNode, id = index.toString()) { it.sigmoid() } }
+            val inputNode = List(input) { Node.input(::relu, it) }
+            val centerNode = List(center) { Node.create(inputNode, f = ::relu) }
+            val outputNode = List(output) { index -> Node.create(centerNode, id = index.toString(), f = ::sigmoid) }
             return Layer(outputNode, rate)
         }
     }
@@ -77,33 +89,25 @@ class Layer(
 
 class Node(
     val before: List<Pair<Node, Double>>?,
-    val f: (Double) -> Double = { it.step() },
-    val id: String = UUID.randomUUID().toString()
+    val activationFunction: (Double) -> Double,
+    val id: String = UUID.randomUUID().toString(),
 ) {
 
+    override fun toString() = before.toString()
+
+    /**
+     * ノードに入ってきた信号及び出力信号を取得する
+     */
     fun getVY(value: List<Double>): Pair<Double, Double> = when {
-        before == null -> 0.0 to 0.0
+        before == null -> 0.0 to value[id.toInt() - 33]
         before.map { it.first.before }.all { it == null } -> {
-            0.0 to value.sum()
+            val v = before.zip(value) { (_, weight), input -> input * weight }.sum()
+            v to activationFunction(v)
         }
         else -> {
             before
-                .sumOf { (node, weight) -> node.getY(value) * weight }
-                .let { it to f(it) }
-        }
-    }
-
-    fun getY(value: List<Double>): Double = when {
-        before == null -> throw Exception()
-        before.map { it.first.before }.all { it == null } -> {
-            val v = before.zip(value) { (_, weight), input -> input * weight }.sum()
-            val y = f(v)
-            y
-        }
-        else -> {
-            val v = before.sumOf { (node, weight) -> node.getY(value) * weight }
-            val y = f(v)
-            y
+                .sumOf { (node, weight) -> node.getVY(value).second * weight }
+                .let { it to activationFunction(it) }
         }
     }
 
@@ -119,19 +123,19 @@ class Node(
             f: (Double) -> Double,
         ): Node = Node(
             before = node.map { it to random.nextDouble(from = -1.0, until = 1.0) },
-            f = f,
+            activationFunction = f,
             id = id,
         )
 
-        fun create(f: (Double) -> Double) = Node(null, f = f)
+        fun create(f: (Double) -> Double, id: String) = Node(null, activationFunction = f, id)
+
+        fun input(f: (Double) -> Double, index: Int) = Node(
+            null,
+            activationFunction = f,
+            id = "${index + 33}",
+        )
     }
 }
-
-fun Double.step() = if (this > 0.0) 1.0 else 0.0
-
-fun Double.relu() = if (this > 0.0) this else 0.0
-
-fun Double.sigmoid() = 1 / (1 + exp(-this))
 
 fun <T : Comparable<T>> List<T>.maxIndex(): Int =
     this.foldIndexed(null) { index: Int, acc: Pair<Int, T>?, element: T ->
