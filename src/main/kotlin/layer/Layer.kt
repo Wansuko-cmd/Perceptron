@@ -1,5 +1,6 @@
 package layer
 
+import Memoizer
 import TrainNode
 import relu
 import sigmoid
@@ -78,10 +79,18 @@ class Layer(
         }
 
     companion object {
-        fun create(input: Int, center: Int, output: Int, rate: Double): Layer {
+        fun create(
+            input: Int,
+            center: Int,
+            output: Int,
+            rate: Double,
+            random: Random,
+        ): Layer {
             val inputNode = List(input) { Node.input(::relu, it) }
-            val centerNode = List(center) { Node.create(inputNode, f = ::relu) }
-            val outputNode = List(output) { index -> Node.create(centerNode, id = index.toString(), f = ::sigmoid) }
+            val centerNode = List(center) { Node.create(inputNode, f = ::relu, random = random) }
+            val outputNode = List(output) { index ->
+                Node.create(centerNode, id = index.toString(), f = ::sigmoid, random = random)
+            }
             return Layer(outputNode, rate)
         }
     }
@@ -92,24 +101,28 @@ class Node(
     val activationFunction: (Double) -> Double,
     val id: String = UUID.randomUUID().toString(),
 ) {
-
     override fun toString() = before.toString()
+
+    private val memoizer = Memoizer<List<Double>, Pair<Double, Double>>()
 
     /**
      * ノードに入ってきた信号及び出力信号を取得する
      */
-    fun getVY(value: List<Double>): Pair<Double, Double> = when {
-        before == null -> 0.0 to value[id.toInt() - 33]
-        before.map { it.first.before }.all { it == null } -> {
-            val v = before.zip(value) { (_, weight), input -> input * weight }.sum()
-            v to activationFunction(v)
+    fun getVY(input: List<Double>): Pair<Double, Double> =
+        memoizer(input) {
+            when {
+                before == null -> 0.0 to input[id.toInt() - 33]
+                before.map { it.first.before }.all { it == null } -> {
+                    val v = before.zip(input) { (_, weight), input -> input * weight }.sum()
+                    v to activationFunction(v)
+                }
+                else -> {
+                    before
+                        .sumOf { (node, weight) -> node.getVY(input).second * weight }
+                        .let { it to activationFunction(it) }
+                }
+            }
         }
-        else -> {
-            before
-                .sumOf { (node, weight) -> node.getVY(value).second * weight }
-                .let { it to activationFunction(it) }
-        }
-    }
 
     fun toList(): List<List<Pair<Node, Double>>> =
         before?.flatMap { (node, weight) ->
@@ -121,6 +134,7 @@ class Node(
             node: List<Node>,
             id: String = UUID.randomUUID().toString(),
             f: (Double) -> Double,
+            random: Random,
         ): Node = Node(
             before = node.map { it to random.nextDouble(from = -1.0, until = 1.0) },
             activationFunction = f,

@@ -1,22 +1,29 @@
 import dataset.IrisDataset
 import dataset.datasets
 import kotlin.random.Random
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import layer.Layer
-import layer.random
 
-fun main() {
+fun main(): Unit = runBlocking {
     val (train, test) = datasets.shuffled().chunked(120)
-    random = Random(2)
-    createModel(train, test)
-//    (1..10).maxBy {
-//        random = Random(it)
-//        createModel(train, test)
-//    }.also { println(it) }
+
+    createModel(train, test, 12)
+//    (10..30)
+//        .map { async { createModel(train, test, it) to it } }
+//        .maxBy { it.await().first }
+//        .also { println(it.await().second) }
 }
 
-fun createModel(train: List<IrisDataset>, test: List<IrisDataset>): Int {
-    val model = (1..10).fold(
-        Layer.create(input = 4, center = 50, output = 3, rate = 0.01),
+suspend fun createModel(
+    train: List<IrisDataset>,
+    test: List<IrisDataset>,
+    seed: Int,
+): Int = withContext(Dispatchers.Default){
+
+    val model = (1..50).fold(
+        Layer.create(input = 4, center = 50, output = 3, rate = 0.01, random = Random(seed)),
     ) { model, index ->
         println("epoc: $index")
         train.fold(model) { acc, element ->
@@ -31,7 +38,7 @@ fun createModel(train: List<IrisDataset>, test: List<IrisDataset>): Int {
             )
         }
     }
-    return test.count { data ->
+    return@withContext test.count { data ->
         model.forward(
             input = listOf(
                 data.petalLength,
