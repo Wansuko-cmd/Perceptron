@@ -1,5 +1,6 @@
 package dataset.mnist
 
+import org.jetbrains.bio.viktor.F64Array
 import java.io.DataInputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -7,6 +8,7 @@ import java.util.zip.GZIPInputStream
 
 data class MnistDataset(
     val pixels: List<Double>,
+    val pix: F64Array,
     val label: Int,
     val imageSize: Int,
 ) {
@@ -43,7 +45,11 @@ data class MnistDataset(
                         .map { it.toDouble() - (PIXEL_DEPTH / 2.0) }
                         .map { it / PIXEL_DEPTH }
                 }
-            return labels.zip(images) { label, image -> MnistDataset(image, label, imageWidth) }
+            return labels.zip(images) { label, image ->
+                val img = F64Array(imageWidth, imageHeight, 1)
+                image.chunked(imageWidth).forEachIndexed { ri, re -> re.forEachIndexed { ci, ce -> img[ri, ci, 0] = ce }}
+                MnistDataset(image, img, label, imageWidth)
+            }
         }
     }
 }

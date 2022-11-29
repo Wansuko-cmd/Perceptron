@@ -1,17 +1,22 @@
 @file:Suppress("DuplicatedCode")
 
+import common.conv
 import common.relu
 import common.sigmoid
+import dataset.iris.datasets
 import dataset.mnist.MnistDataset
 import kotlinx.coroutines.runBlocking
 import network.DevNetwork
 import network.InputConfig
 import network.LayerConfig
 import network.LayerType
+import org.jetbrains.bio.viktor.F64Array
+import org.jetbrains.bio.viktor._I
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 fun main(): Unit = runBlocking {
-//    val network = DevNetwork.create<Nothing>(
+//    val network = DevNetwork.create(
 //        InputConfig(4),
 //        listOf(
 //            LayerConfig(50, ::relu, LayerType.MatMul),
@@ -25,24 +30,14 @@ fun main(): Unit = runBlocking {
 //        println("epoc: $epoc")
 //        train.forEach { data ->
 //            network.train(
-//                input = listOf(
-//                    data.petalLength,
-//                    data.petalWidth,
-//                    data.sepalWidth,
-//                    data.sepalLength,
-//                ),
+//                input = F64Array.of(data.petalLength, data.petalWidth, data.sepalLength, data.sepalWidth),
 //                label = data.label
 //            )
 //        }
 //    }
 //    test.count { data ->
 //        network.expect(
-//            input = listOf(
-//                data.petalLength,
-//                data.petalWidth,
-//                data.sepalWidth,
-//                data.sepalLength,
-//            ),
+//            input = F64Array.of(data.petalLength, data.petalWidth, data.sepalLength, data.sepalWidth),
 //        ) == data.label
 //    }.let { println(it.toDouble() / test.size) }
     val (train, test) = MnistDataset.read().chunked(2000)
@@ -51,7 +46,7 @@ fun main(): Unit = runBlocking {
         listOf(
             LayerConfig(size = 32, activationFunction = ::relu, type = LayerType.Conv),
             LayerConfig(size = 64, activationFunction = ::relu, type = LayerType.Conv),
-            LayerConfig(size = 30, activationFunction = ::relu, type = LayerType.MatMul),
+            LayerConfig(size = 32, activationFunction = ::relu, type = LayerType.MatMul),
             LayerConfig(size = 10, activationFunction = ::sigmoid, type = LayerType.MatMul),
         ),
         random = Random(1652),
@@ -59,16 +54,18 @@ fun main(): Unit = runBlocking {
     )
     (1..5).forEach { epoc ->
         println("epoc: $epoc")
-        train.shuffled().take(1000).forEach { data ->
-            network.trains(
-                input = listOf(data.pixels.chunked(train.first().imageSize)),
-                label = data.label,
-            )
-        }
+        measureTimeMillis {
+            train.shuffled().take(100).forEach { data ->
+                network.train(
+                    input = data.pix,
+                    label = data.label,
+                )
+            }
+        }.let { println(it) }
     }
     test.count { data ->
-        network.expects(
-            input = listOf(data.pixels.chunked(train.first().imageSize)),
+        network.expect(
+            input = data.pix,
         ) == data.label
     }.let { println(it.toDouble() / test.size) }
 }
