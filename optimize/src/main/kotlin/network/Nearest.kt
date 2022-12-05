@@ -1,6 +1,7 @@
 package network
 
 import dataset.iris.IrisDataset
+import dataset.janken.JankenDataset
 import dataset.wine.WineDataset
 import kotlin.math.pow
 
@@ -40,4 +41,14 @@ class WineNearest(private val pattern: List<WineDataset>) {
         wines,
         proline,
     )
+}
+
+class JankenNearest(private val pattern: List<JankenDataset>) {
+    fun expect(input: JankenDataset): Int =
+        pattern.minBy { it.calcDistance(input) }.label
+
+    private fun JankenDataset.calcDistance(other: JankenDataset): Double =
+        this.data
+            .zip(other.data)
+            .sumOf { (left, right) -> left - right }
 }

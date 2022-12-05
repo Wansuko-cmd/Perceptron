@@ -1,56 +1,98 @@
 @file:Suppress("DuplicatedCode")
 
+import common.createModel
 import common.relu
 import common.sigmoid
-import dataset.mnist.MnistDataset
+import dataset.iris.datasets
+import dataset.janken.JankenDataset
 import dataset.wine.WineDataset
-import dataset.wine.wineDatasets
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import network.DevNetwork
 import network.InputConfig
 import network.LayerConfig
 import network.LayerType
 import kotlin.random.Random
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import network.JankenNearest
 
 fun main(): Unit = runBlocking {
-    val (train, test) = wineDatasets.map { it.centering() }.shuffled().chunked(120)
-    createWineModel(train, test, 10000, 19)
-//    val (train, test) = MnistDataset.read().chunked(20000)
-//    val network = DevNetwork.create(
-//        InputConfig(1),
-//        listOf(
-//            LayerConfig(32, ::relu, LayerType.Conv),
-//            LayerConfig(64, ::relu, LayerType.Conv),
-//            LayerConfig(30, ::relu, LayerType.MatMul),
-//            LayerConfig(10, ::sigmoid, LayerType.MatMul),
-//        ),
-//        Random(1652),
-//        0.01,
-//    )
-//    (1..3).forEach { epoc ->
-//        println("epoc: $epoc")
-//        train.forEach { data ->
-//            network.trains(
-//                input = listOf(data.pixels.chunked(train.first().imageSize)),
-//                label = data.label,
-//            )
-//        }
+    val jankenDatasets = JankenDataset.load()
+    (0..100)
+        .map {
+            val (train, test) = jankenDatasets.shuffled().chunked(80)
+            val nearest = JankenNearest(train)
+            test.count { data -> nearest.expect(input = data) == data.label } to test.size
+        }
+        .fold(0.0 to 0.0) { acc, (score, size) -> acc.first + score to acc.second + size}
+        .also { println(it.first / it.second) }
+//    println(jankenDatasets.first().data.size)
+//    (1..100).map {
+//        val (train, test) = jankenDatasets.shuffled().chunked(80)
+//        async { createJankenModel(train = train, test = test, epoc = 3000, seed = 42) to test.size }
 //    }
-//    test.count { data ->
-//        network.expects(
-//            input = listOf(data.pixels.chunked(train.first().imageSize)),
-//        ) == data.label
-//    }.let { println(it.toDouble() / test.size) }
+//        .awaitAll()
+//        .fold(0 to 0) { acc, (correct, size) -> acc.first + correct to acc.second + size }
+//        .let { it.first.toDouble() / it.second.toDouble() }
+//        .also { println(it) }
+//    (0..100)
+//        .map { async { createJankenModel(train, test, 100, it) to it } }
+//        .awaitAll()
+//        .asSequence()
+//        .sortedByDescending { (score, _) -> score }
+//        .take(10)
+//        .onEach { (score, seed) -> println("seed: $seed, score, $score") }
+//        .toList()
+//        .map { (_, seed) ->
+//            (1..100).map {
+//                val (train2, test2) = jankenDatasets.shuffled().chunked(80)
+//                async { createJankenModel(train = train2, test = test2, epoc = 1000, seed = seed) to test.size }
+//            }
+//                .awaitAll()
+//                .fold(0 to 0) { acc, (correct, size) -> acc.first + correct to acc.second + size }
+//                .let { it.first.toDouble() / it.second.toDouble() to seed}
+//        }
+//        .sortedByDescending { (score, _) -> score }
+//        .onEach { (score, seed) -> println("seed: $seed, score, $score") }
 }
 
-suspend fun createWineModel(
+suspend fun createJankenModel(
+    train: List<JankenDataset>,
+    test: List<JankenDataset>,
+    epoc: Int,
+    seed: Int? = null,
+) = withContext(Dispatchers.Default) {
+    val network = DevNetwork.create(
+        InputConfig(train.first().data.size),
+        listOf(
+            LayerConfig(50, ::relu, LayerType.MatMul),
+            LayerConfig(3, ::sigmoid, LayerType.MatMul),
+        ),
+        seed?.let { Random(seed) } ?: Random,
+        0.01,
+    )
+    (1..epoc).forEach { _ ->
+//        println("epoc: $epoc")
+        train.forEach { data ->
+            network.train(
+                input = data.data,
+                label = data.label,
+            )
+        }
+    }
+    test.count { data ->
+        network.expect(input = data.data) == data.label
+    }
+}
+
+fun createWineModel(
     train: List<WineDataset>,
     test: List<WineDataset>,
     epoc: Int,
     seed: Int? = null,
-): Int = withContext(Dispatchers.Default) {
+): Int {
     val network = DevNetwork.create(
         InputConfig(13),
         listOf(
@@ -83,7 +125,7 @@ suspend fun createWineModel(
             )
         }
     }
-    test.count { data ->
+    return test.count { data ->
         network.expect(
             input = listOf(
                 data.alcohol,
