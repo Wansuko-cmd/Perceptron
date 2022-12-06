@@ -3,6 +3,7 @@ package network
 import dataset.iris.IrisDataset
 import dataset.janken.JankenDataset
 import dataset.wine.WineDataset
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 class Nearest(private val pattern: List<IrisDataset>) {
@@ -50,5 +51,5 @@ class JankenNearest(private val pattern: List<JankenDataset>) {
     private fun JankenDataset.calcDistance(other: JankenDataset): Double =
         this.data
             .zip(other.data)
-            .sumOf { (left, right) -> left - right }
+            .sumOf { (left, right) -> (left - right).absoluteValue }
 }
