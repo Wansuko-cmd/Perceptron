@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_wsr_cl_JCLBLast
+ * Method:    init
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wsr_cl_JCLBLast_init
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_wsr_cl_JCLBLast
  * Method:    sdot
  * Signature: (I[FI[FI)F
  */
