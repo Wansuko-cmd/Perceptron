@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(io-type-blas C CXX)
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64|armv7|armv8)")
+    set(ARM TRUE)
+else()
+    set(ARM FALSE)
+endif()
+
 ###########################
 # CPUの設定
 ###########################
@@ -40,8 +46,7 @@ if (MSVC)
             /Ot                # 速度優先
             /arch:AVX2         # AVX2命令セットを有効化
     )
-    set(OPENBLAS_TARGET "-DTARGET=HASWELL")
-elseif (APPLE)
+elseif (ARM)
     target_compile_options(CPU PRIVATE
             -O3                # 高度な最適化
             -ffast-math        # 高速浮動小数点演算
@@ -49,7 +54,6 @@ elseif (APPLE)
             -funroll-loops     # ループ展開
             -fomit-frame-pointer # フレームポインタ省略
     )
-    set(OPENBLAS_TARGET "-DTARGET=ARMV8")
 else()
     target_compile_options(CPU PRIVATE
             -O3                # 高度な最適化
@@ -59,7 +63,6 @@ else()
             -fomit-frame-pointer # フレームポインタ省略
             -mavx2            # AVX2命令セットを有効化
     )
-    set(OPENBLAS_TARGET "-DTARGET=HASWELL")
 endif()
 
 
@@ -80,6 +83,12 @@ include(ExternalProject)
 set(OPENBLAS_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openblas)
 set(OPENBLAS_INSTALL_DIR ${OPENBLAS_PREFIX}/install)
 set(OPENBLAS_INCLUDE_DIR ${OPENBLAS_INSTALL_DIR}/include/openblas)
+if(ARM)
+    set(OPENBLAS_TARGET "-DTARGET=ARMV8")
+else()
+    set(OPENBLAS_TARGET "-DTARGET=HASWELL")
+endif()
+
 
 ExternalProject_Add(
         OpenBLAS
