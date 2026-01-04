@@ -19,6 +19,10 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         return result
     }
 
+    override fun toString(): String {
+        return super.toString() + toFloatArray().toList()
+    }
+
     override fun get(i: Int): Float = floatBuffer.get(i)
 
     override fun set(i: Int, value: Float) {
