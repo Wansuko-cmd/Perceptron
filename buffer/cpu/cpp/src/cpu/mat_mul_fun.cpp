@@ -1,6 +1,11 @@
 #include <mat_mul_fun.h>
 
+#ifdef __APPLE__
+#include <Accelerate/Accelerate.h>
+#include <vecLib/cblas_new.h>
+#else
 #include <cblas.h>
+#endif
 
 void inner(float* x, float* y, size_t size, int b, float* result) {
     int n = size / b;
@@ -13,13 +18,13 @@ void inner(float* x, float* y, size_t size, int b, float* result) {
 }
 
 void mat_mul_d1_to_d2(
-    const float* x,
-    const float* y, bool trans_y,
-    int n, int k,
-    float* result
+        const float* x,
+        const float* y, bool trans_y,
+        int n, int k,
+        float* result
 ) {
-    CBLAS_TRANSPOSE trans_a = CblasNoTrans;
-    CBLAS_TRANSPOSE trans_b = trans_y ? CblasTrans : CblasNoTrans;
+    auto trans_a = CblasNoTrans;
+    auto trans_b = trans_y ? CblasTrans : CblasNoTrans;
 
     int m = 1;
 
@@ -28,25 +33,25 @@ void mat_mul_d1_to_d2(
     int ldc = n;
 
     cblas_sgemm(
-        CblasRowMajor,
-        trans_a, trans_b,
-        m, n, k,
-        1,
-        x, lda,
-        y, ldb,
-        0,
-        result, ldc
+            CblasRowMajor,
+            trans_a, trans_b,
+            m, n, k,
+            1,
+            x, lda,
+            y, ldb,
+            0,
+            result, ldc
     );
 }
 
 void mat_mul_d2_to_d1(
-    const float* x, bool trans_x,
-    const float* y,
-    int m, int k,
-    float* result
+        const float* x, bool trans_x,
+        const float* y,
+        int m, int k,
+        float* result
 ) {
-    CBLAS_TRANSPOSE trans_a = trans_x ? CblasTrans : CblasNoTrans;
-    CBLAS_TRANSPOSE trans_b = CblasNoTrans;
+    auto trans_a = trans_x ? CblasTrans : CblasNoTrans;
+    auto trans_b = CblasNoTrans;
 
     int n = 1;
 
@@ -55,30 +60,30 @@ void mat_mul_d2_to_d1(
     int ldc = 1;
 
     cblas_sgemm(
-        CblasRowMajor,
-        trans_a, trans_b,
-        m, n, k,
-        1,
-        x, lda,
-        y, ldb,
-        0,
-        result, ldc
+            CblasRowMajor,
+            trans_a, trans_b,
+            m, n, k,
+            1,
+            x, lda,
+            y, ldb,
+            0,
+            result, ldc
     );
 }
 
 void mat_mul_d2_to_d2(
-    float* x, bool trans_x,
-    float* y, bool trans_y,
-    int m, int n, int k,
-    int b,
-    float* result
+        float* x, bool trans_x,
+        float* y, bool trans_y,
+        int m, int n, int k,
+        int b,
+        float* result
 ) {
     int stride_a = m * k;
     int stride_b = k * n;
     int stride_c = m * n;
 
-    CBLAS_TRANSPOSE trans_a = trans_x ? CblasTrans : CblasNoTrans;
-    CBLAS_TRANSPOSE trans_b = trans_y ? CblasTrans : CblasNoTrans;
+    auto trans_a = trans_x ? CblasTrans : CblasNoTrans;
+    auto trans_b = trans_y ? CblasTrans : CblasNoTrans;
 
     int lda = trans_x ? m : k;
     int ldb = trans_y ? k : n;
@@ -90,14 +95,14 @@ void mat_mul_d2_to_d2(
         float* c_ptr = result + (i * stride_c);
 
         cblas_sgemm(
-            CblasRowMajor,
-            trans_a, trans_b,
-            m, n, k,
-            1,
-            a_ptr, lda,
-            b_ptr, ldb,
-            0,
-            c_ptr, ldc
+                CblasRowMajor,
+                trans_a, trans_b,
+                m, n, k,
+                1,
+                a_ptr, lda,
+                b_ptr, ldb,
+                0,
+                c_ptr, ldc
         );
     }
 }
