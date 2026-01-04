@@ -2,34 +2,25 @@ name: 'TinyStoriesモデルの出力を確認'
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: '実行環境'
+        required: true
+        default: 'ubuntu-latest'
+        type: choice
+        options:
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
   push:
     branches:
       - main
 
 jobs:
   test:
-    runs-on: ${{ matrix.os.image }}
-    name: Build (${{ matrix.os.name }}/${{ matrix.os.arch }})/${{ matrix.index }}
-    strategy:
-      fail-fast: false
-      matrix:
-        index: [ 0, 1, 2, 3, 4 ]
-        os:
-          # macOS
-          - image: macos-latest
-            name: macos
-            arch: Arm64
-          # Linux
-          - image: ubuntu-latest
-            name: linux
-            arch: X64
-          - image: ubuntu-24.04-arm
-            name: linux
-            arch: Arm64
-          # Windows
-          - image: windows-latest
-            name: windows
-            arch: X64
+    runs-on: ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'ubuntu-latest' }}
+    name: Build on ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'ubuntu-latest' }}
     steps:
       - name: リポジトリにチェックアウト
         uses: actions/checkout@v4
