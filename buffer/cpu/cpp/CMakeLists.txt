@@ -76,57 +76,65 @@ include_directories(${JNI_INCLUDE_DIRS})
 
 
 ###########################
-# OpenBLAS
+# BLAS
 ###########################
-include(ExternalProject)
-
-set(OPENBLAS_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openblas)
-set(OPENBLAS_INSTALL_DIR ${OPENBLAS_PREFIX}/install)
-set(OPENBLAS_INCLUDE_DIR ${OPENBLAS_INSTALL_DIR}/include/openblas)
-if(ARM)
-    set(OPENBLAS_TARGET "-DTARGET=ARMV8")
+if(APPLE)
+    find_library(ACCELERATE_FRAMEWORK Accelerate)
+    if(NOT ACCELERATE_FRAMEWORK)
+        message(FATAL_ERROR "Accelerate not found")
+    endif()
+    target_link_libraries(CPU PRIVATE ${ACCELERATE_FRAMEWORK})
+    target_compile_definitions(CPU PRIVATE ACCELERATE_NEW_LAPACK)
 else()
-    set(OPENBLAS_TARGET "-DTARGET=HASWELL")
+    include(ExternalProject)
+
+    set(OPENBLAS_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openblas)
+    set(OPENBLAS_INSTALL_DIR ${OPENBLAS_PREFIX}/install)
+    set(OPENBLAS_INCLUDE_DIR ${OPENBLAS_INSTALL_DIR}/include/openblas)
+    if(ARM)
+        set(OPENBLAS_TARGET "-DTARGET=ARMV8")
+    else()
+        set(OPENBLAS_TARGET "-DTARGET=HASWELL")
+    endif()
+
+
+    ExternalProject_Add(
+            OpenBLAS
+            PREFIX ${OPENBLAS_PREFIX}
+            GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git
+            GIT_TAG v0.3.27
+            GIT_SHALLOW TRUE
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
+            -DCMAKE_BUILD_TYPE=Release
+            -DBUILD_SHARED_LIBS=OFF
+            -DBUILD_TESTING=OFF
+            -DBUILD_WITHOUT_LAPACK=OFF
+            -DC_LAPACK=ON
+            -DUSE_THREAD=ON
+            ${OPENBLAS_TARGET}
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+            ${OPENBLAS_CMAKE_ARGS}
+            BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release
+            INSTALL_COMMAND ${CMAKE_COMMAND} --install . --config Release
+            LOG_DOWNLOAD ON
+            LOG_CONFIGURE ON
+            LOG_BUILD ON
+    )
+
+    if(WIN32)
+        set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/openblas.lib)
+    else()
+        set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/libopenblas.a)
+    endif()
+
+    add_dependencies(CPU OpenBLAS)
+    target_include_directories(CPU PRIVATE
+            ${OPENBLAS_INCLUDE_DIR}
+            ${OPENBLAS_INSTALL_DIR}/include
+    )
+    target_link_libraries(CPU PRIVATE ${OPENBLAS_LIB})
 endif()
-
-
-ExternalProject_Add(
-        OpenBLAS
-        PREFIX ${OPENBLAS_PREFIX}
-        GIT_REPOSITORY https://github.com/xianyi/OpenBLAS.git
-        GIT_TAG v0.3.27
-        GIT_SHALLOW TRUE
-        CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
-        -DCMAKE_BUILD_TYPE=Release
-        -DBUILD_SHARED_LIBS=OFF
-        -DBUILD_TESTING=OFF
-        -DBUILD_WITHOUT_LAPACK=OFF
-        -DC_LAPACK=ON
-        -DUSE_THREAD=ON
-        ${OPENBLAS_TARGET}
-        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-        ${OPENBLAS_CMAKE_ARGS}
-        BUILD_COMMAND ${CMAKE_COMMAND} --build . --config Release
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install . --config Release
-        LOG_DOWNLOAD ON
-        LOG_CONFIGURE ON
-        LOG_BUILD ON
-)
-
-if(WIN32)
-    set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/openblas.lib)
-else()
-    set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/libopenblas.a)
-endif()
-
-add_dependencies(CPU OpenBLAS)
-target_include_directories(CPU PRIVATE
-        ${OPENBLAS_INCLUDE_DIR}
-        ${OPENBLAS_INSTALL_DIR}/include
-)
-target_link_libraries(CPU PRIVATE ${OPENBLAS_LIB})
-
 
 
 ###########################
