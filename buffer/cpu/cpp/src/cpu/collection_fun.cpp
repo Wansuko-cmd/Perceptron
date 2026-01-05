@@ -142,59 +142,132 @@ float average_d1(const float* x, size_t size) {
 }
 
 void average_d2(const float* x, int xi, int xj, int axis, float* result) {
-    reduce_d2<Operation::Sum>(x, xi, xj, axis, result);
-    int size;
     int n;
     if (axis == 0) {
-        size = xj;
         n = xi;
     } else {
-        size = xi;
         n = xj;
     }
-    for (int i = 0; i < size; i++) {
-        result[i] /= n;
+    if (axis == 0) {
+        for (int j = 0; j < xj; j++) {
+            float acc = x[j];
+            for (size_t i = 1; i < xi; i++) {
+                acc += x[i * xj + j];
+            }
+            result[j] = acc / n;
+        }
+    } else if (axis == 1) {
+        for (int i = 0; i < xi; i++) {
+            float acc = x[i * xj];
+            for (int j = 1; j < xj; j++) {
+                acc += x[i * xj + j];
+            }
+            result[i] = acc / n;
+        }
     }
 }
 
 void average_d3(const float* x, int xi, int xj, int xk, int axis, float* result) {
-    reduce_d3<Operation::Sum>(x, xi, xj, xk, axis, result);
-    int size;
     int n;
     if (axis == 0) {
-        size = xj * xk;
         n = xi;
     } else if (axis == 1) {
-        size = xi * xk;
         n = xj;
     } else {
-        size = xi * xj;
         n = xk;
     }
-    for (int i = 0; i < size; i++) {
-        result[i] /= n;
+    if (axis == 0) {
+        for (int j = 0; j < xj; j++) {
+            for (int k = 0; k < xk; k++) {
+                float acc = x[j * xk + k];
+                for (int i = 1; i < xi; i++) {
+                    acc += x[(i * xj + j) * xk + k];
+                }
+                result[j * xk + k] = acc / n;
+            }
+        }
+    } else if (axis == 1) {
+        for (int i = 0; i < xi; i++) {
+            for (int k = 0; k < xk; k++) {
+                float acc = x[i * xj * xk + k];
+                for (int j = 1; j < xj; j++) {
+                    acc += x[(i * xj + j) * xk + k];
+                }
+                result[i * xk + k] = acc / n;
+            }
+        }
+    } else if (axis == 2) {
+        for (int i = 0; i < xi; i++) {
+            for (int j = 0; j < xj; j++) {
+                float acc = x[(i * xj + j) * xk];
+                for (int k = 1; k < xk; k++) {
+                    acc += x[(i * xj + j) * xk + k];
+                }
+                result[i * xj + j] = acc / n;
+            }
+        }
     }
 }
 
 void average_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float* result) {
-    reduce_d4<Operation::Sum>(x, xi, xj, xk, xl, axis, result);
-    int size;
     int n;
     if (axis == 0) {
-        size = xj * xk * xl;
         n = xi;
     } else if (axis == 1) {
-        size = xi * xk * xl;
         n = xj;
     } else if (axis == 2) {
-        size = xi * xj * xl;
         n = xk;
     } else {
-        size = xi * xj * xk;
         n = xl;
     }
-    for (int i = 0; i < size; i++) {
-        result[i] /= n;
+    if (axis == 0) {
+        for (int j = 0; j < xj; j++) {
+            for (int k = 0; k < xk; k++) {
+                for (int l = 0; l < xl; l++) {
+                    float acc = x[(j * xk + k) * xl + l];
+                    for (int i = 1; i < xi; i++) {
+                        acc += x[((i * xj + j) * xk + k) * xl + l];
+                    }
+                    result[(j * xk + k) * xl + l] = acc / n;
+                }
+            }
+        }
+    } else if (axis == 1) {
+        for (int i = 0; i < xi; i++) {
+            for (int k = 0; k < xk; k++) {
+                for (int l = 0; l < xl; l++) {
+                    float acc = x[(i * xj * xk + k) * xl + l];
+                    for (int j = 1; j < xj; j++) {
+                        acc += x[((i * xj + j) * xk + k) * xl + l];
+                    }
+                    result[(i * xk + k) * xl + l] = acc / n;
+                }
+            }
+        }
+    } else if (axis == 2) {
+        for (int i = 0; i < xi; i++) {
+            for (int j = 0; j < xj; j++) {
+                for (int l = 0; l < xl; l++) {
+                    float acc = x[(i * xj + j) * xk * xl + l];
+                    for (int k = 1; k < xk; k++) {
+                        acc += x[((i * xj + j) * xk + k) * xl + l];
+                    }
+                    result[(i * xj + j) * xl + l] = acc / n;
+                }
+            }
+        }
+    } else if (axis == 3) {
+        for (int i = 0; i < xi; i++) {
+            for (int j = 0; j < xj; j++) {
+                for (int k = 0; k < xk; k++) {
+                    float acc = x[((i * xj + j) * xk + k) * xl];
+                    for (int l = 1; l < xl; l++) {
+                        acc += x[((i * xj + j) * xk + k) * xl + l];
+                    }
+                    result[(i * xj + j) * xk + k] = acc / n;
+                }
+            }
+        }
     }
 }
 
