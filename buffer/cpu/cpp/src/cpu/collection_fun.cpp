@@ -1,4 +1,5 @@
 #include <collection_fun.h>
+#include <cstring>
 
 #define PERFORM_OPERATION(acc, x) \
     if constexpr (Op == Operation::Max) { \
@@ -142,21 +143,19 @@ float average_d1(const float* x, size_t size) {
 }
 
 void average_d2(const float* x, int xi, int xj, int axis, float* result) {
-    int n;
     if (axis == 0) {
-        n = xi;
-    } else {
-        n = xj;
-    }
-    if (axis == 0) {
-        for (int j = 0; j < xj; j++) {
-            float acc = x[j];
-            for (size_t i = 1; i < xi; i++) {
-                acc += x[i * xj + j];
+        memset(result, 0, xj * sizeof(float));
+        for (int i = 0; i < xi; i++) {
+            const float* element = x + i * xj;
+            for (int j = 0; j < xj; j++) {
+                result[j] += element[j];
             }
-            result[j] = acc / n;
+        }
+        for (int j = 0; j < xj; j++) {
+            result[j] /= xi;
         }
     } else if (axis == 1) {
+        int n = xj;
         for (int i = 0; i < xi; i++) {
             float acc = x[i * xj];
             for (int j = 1; j < xj; j++) {
