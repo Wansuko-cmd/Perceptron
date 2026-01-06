@@ -1,17 +1,5 @@
 #include <collection_fun.h>
-
-#define PERFORM_OPERATION(acc, x) \
-    if constexpr (Op == Operation::Max) { \
-        if (acc < x) { \
-            acc = x; \
-        } \
-    } else if constexpr (Op == Operation::Min) { \
-        if (acc > x) { \
-            acc = x; \
-        } \
-    } else if constexpr (Op == Operation::Sum) { \
-        acc += x; \
-    }
+#include <algorithm>
 
 enum class Operation {
     Max,
@@ -20,10 +8,21 @@ enum class Operation {
 };
 
 template<Operation Op>
+inline void perform_operation(float& acc, float x) {
+    if constexpr (Op == Operation::Max) {
+        acc = std::max(acc, x);
+    } else if constexpr (Op == Operation::Min) {
+        acc = std::min(acc, x);
+    } else if constexpr (Op == Operation::Sum) {
+        acc += x;
+    }
+}
+
+template<Operation Op>
 inline float reduce_d1(const float* x, size_t size) {
     float acc = x[0];
     for (size_t i = 1; i < size; i++) {
-        PERFORM_OPERATION(acc, x[i])
+        perform_operation<Op>(acc, x[i]);
     }
     return acc;
 }
@@ -34,7 +33,7 @@ inline void reduce_d2(const float* x, int xi, int xj, int axis, float* result) {
         for (int j = 0; j < xj; j++) {
             float acc = x[j];
             for (size_t i = 1; i < xi; i++) {
-                PERFORM_OPERATION(acc, x[i * xj + j])
+                perform_operation<Op>(acc, x[i * xj + j]);
             }
             result[j] = acc;
         }
@@ -42,7 +41,7 @@ inline void reduce_d2(const float* x, int xi, int xj, int axis, float* result) {
         for (int i = 0; i < xi; i++) {
             float acc = x[i * xj];
             for (int j = 1; j < xj; j++) {
-                PERFORM_OPERATION(acc, x[i * xj + j])
+                perform_operation<Op>(acc, x[i * xj + j]);
             }
             result[i] = acc;
         }
@@ -56,7 +55,7 @@ inline void reduce_d3(const float* x, int xi, int xj, int xk, int axis, float* r
             for (int k = 0; k < xk; k++) {
                 float acc = x[j * xk + k];
                 for (int i = 1; i < xi; i++) {
-                    PERFORM_OPERATION(acc, x[(i * xj + j) * xk + k])
+                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
                 }
                 result[j * xk + k] = acc;
             }
@@ -66,7 +65,7 @@ inline void reduce_d3(const float* x, int xi, int xj, int xk, int axis, float* r
             for (int k = 0; k < xk; k++) {
                 float acc = x[i * xj * xk + k];
                 for (int j = 1; j < xj; j++) {
-                    PERFORM_OPERATION(acc, x[(i * xj + j) * xk + k])
+                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
                 }
                 result[i * xk + k] = acc;
             }
@@ -76,7 +75,7 @@ inline void reduce_d3(const float* x, int xi, int xj, int xk, int axis, float* r
             for (int j = 0; j < xj; j++) {
                 float acc = x[(i * xj + j) * xk];
                 for (int k = 1; k < xk; k++) {
-                    PERFORM_OPERATION(acc, x[(i * xj + j) * xk + k])
+                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
                 }
                 result[i * xj + j] = acc;
             }
@@ -92,7 +91,7 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
                 for (int l = 0; l < xl; l++) {
                     float acc = x[(j * xk + k) * xl + l];
                     for (int i = 1; i < xi; i++) {
-                        PERFORM_OPERATION(acc, x[((i * xj + j) * xk + k) * xl + l])
+                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
                     }
                     result[(j * xk + k) * xl + l] = acc;
                 }
@@ -104,7 +103,7 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
                 for (int l = 0; l < xl; l++) {
                     float acc = x[(i * xj * xk + k) * xl + l];
                     for (int j = 1; j < xj; j++) {
-                        PERFORM_OPERATION(acc, x[((i * xj + j) * xk + k) * xl + l])
+                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
                     }
                     result[(i * xk + k) * xl + l] = acc;
                 }
@@ -116,7 +115,7 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
                 for (int l = 0; l < xl; l++) {
                     float acc = x[(i * xj + j) * xk * xl + l];
                     for (int k = 1; k < xk; k++) {
-                        PERFORM_OPERATION(acc, x[((i * xj + j) * xk + k) * xl + l])
+                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
                     }
                     result[(i * xj + j) * xl + l] = acc;
                 }
@@ -128,7 +127,7 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
                 for (int k = 0; k < xk; k++) {
                     float acc = x[((i * xj + j) * xk + k) * xl];
                     for (int l = 1; l < xl; l++) {
-                        PERFORM_OPERATION(acc, x[((i * xj + j) * xk + k) * xl + l])
+                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
                     }
                     result[(i * xj + j) * xk + k] = acc;
                 }
