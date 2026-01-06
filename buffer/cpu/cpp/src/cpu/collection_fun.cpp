@@ -1,4 +1,5 @@
 #include <collection_fun.h>
+#include <cfloat>
 #include <algorithm>
 
 enum class Operation {
@@ -6,6 +7,17 @@ enum class Operation {
     Min,
     Sum
 };
+
+template<Operation Op>
+inline void initialize(float* result, int size) {
+    if constexpr (Op == Operation::Max) {
+        std::fill(result, result + size, -FLT_MAX);
+    } else if constexpr (Op == Operation::Min) {
+        std::fill(result, result + size, FLT_MAX);
+    } else if constexpr (Op == Operation::Sum) {
+        std::fill(result, result + size, 0.0f);
+    }
+}
 
 template<Operation Op>
 inline void perform_operation(float& acc, float x) {
@@ -30,20 +42,20 @@ inline float reduce_d1(const float* x, size_t size) {
 template<Operation Op>
 inline void reduce_d2(const float* x, int xi, int xj, int axis, float* result) {
     if (axis == 0) {
-        for (int j = 0; j < xj; j++) {
-            float acc = x[j];
-            for (size_t i = 1; i < xi; i++) {
-                perform_operation<Op>(acc, x[i * xj + j]);
+        initialize<Op>(result, xj);
+        for (int i = 0; i < xi; i++) {
+            const float* x_view = x + i * xj;
+            for (int j = 0; j < xj; j++) {
+                perform_operation<Op>(result[j], x_view[j]);
             }
-            result[j] = acc;
         }
     } else if (axis == 1) {
+        initialize<Op>(result, xi);
         for (int i = 0; i < xi; i++) {
-            float acc = x[i * xj];
-            for (int j = 1; j < xj; j++) {
-                perform_operation<Op>(acc, x[i * xj + j]);
+            const float* x_view = x + i * xj;
+            for (int j = 0; j < xj; j++) {
+                perform_operation<Op>(result[i], x_view[j]);
             }
-            result[i] = acc;
         }
     }
 }
@@ -51,33 +63,36 @@ inline void reduce_d2(const float* x, int xi, int xj, int axis, float* result) {
 template<Operation Op>
 inline void reduce_d3(const float* x, int xi, int xj, int xk, int axis, float* result) {
     if (axis == 0) {
-        for (int j = 0; j < xj; j++) {
-            for (int k = 0; k < xk; k++) {
-                float acc = x[j * xk + k];
-                for (int i = 1; i < xi; i++) {
-                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
+        initialize<Op>(result, xj * xk);
+        for (int i = 0; i < xi; i++) {
+            for (int j = 0; j < xj; j++) {
+                float* result_view = result + j * xk;
+                const float* x_view = x + (i * xj + j) * xk;
+                for (int k = 0; k < xk; k++) {
+                    perform_operation<Op>(result_view[k], x_view[k]);
                 }
-                result[j * xk + k] = acc;
             }
         }
     } else if (axis == 1) {
+        initialize<Op>(result, xi * xk);
         for (int i = 0; i < xi; i++) {
-            for (int k = 0; k < xk; k++) {
-                float acc = x[i * xj * xk + k];
-                for (int j = 1; j < xj; j++) {
-                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
+            for (int j = 0; j < xj; j++) {
+                float* result_view = result + i * xk;
+                const float* x_view = x + (i * xj + j) * xk;
+                for (int k = 0; k < xk; k++) {
+                    perform_operation<Op>(result_view[k], x_view[k]);
                 }
-                result[i * xk + k] = acc;
             }
         }
     } else if (axis == 2) {
+        initialize<Op>(result, xi * xj);
         for (int i = 0; i < xi; i++) {
             for (int j = 0; j < xj; j++) {
-                float acc = x[(i * xj + j) * xk];
-                for (int k = 1; k < xk; k++) {
-                    perform_operation<Op>(acc, x[(i * xj + j) * xk + k]);
+                float* result_view = result + i * xj + j;
+                const float* x_view = x + (i * xj + j) * xk;
+                for (int k = 0; k < xk; k++) {
+                    perform_operation<Op>(*result_view, x_view[k]);
                 }
-                result[i * xj + j] = acc;
             }
         }
     }
@@ -86,50 +101,54 @@ inline void reduce_d3(const float* x, int xi, int xj, int xk, int axis, float* r
 template<Operation Op>
 inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float* result) {
     if (axis == 0) {
-        for (int j = 0; j < xj; j++) {
-            for (int k = 0; k < xk; k++) {
-                for (int l = 0; l < xl; l++) {
-                    float acc = x[(j * xk + k) * xl + l];
-                    for (int i = 1; i < xi; i++) {
-                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
+        initialize<Op>(result, xj * xk * xl);
+        for (int i = 0; i < xi; i++) {
+            for (int j = 0; j < xj; j++) {
+                for (int k = 0; k < xk; k++) {
+                    float* result_view = result + (j * xk + k) * xl;
+                    const float* x_view = x + ((i * xj + j) * xk + k) * xl;
+                    for (int l = 0; l < xl; l++) {
+                        perform_operation<Op>(result_view[l], x_view[l]);
                     }
-                    result[(j * xk + k) * xl + l] = acc;
                 }
             }
         }
     } else if (axis == 1) {
+        initialize<Op>(result, xi * xk * xl);
         for (int i = 0; i < xi; i++) {
-            for (int k = 0; k < xk; k++) {
-                for (int l = 0; l < xl; l++) {
-                    float acc = x[(i * xj * xk + k) * xl + l];
-                    for (int j = 1; j < xj; j++) {
-                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
+            for (int j = 0; j < xj; j++) {
+                for (int k = 0; k < xk; k++) {
+                    float* result_view = result + (i * xk + k) * xl;
+                    const float* x_view = x + ((i * xj + j) * xk + k) * xl;
+                    for (int l = 0; l < xl; l++) {
+                        perform_operation<Op>(result_view[l], x_view[l]);
                     }
-                    result[(i * xk + k) * xl + l] = acc;
                 }
             }
         }
     } else if (axis == 2) {
+        initialize<Op>(result, xi * xj * xl);
         for (int i = 0; i < xi; i++) {
             for (int j = 0; j < xj; j++) {
-                for (int l = 0; l < xl; l++) {
-                    float acc = x[(i * xj + j) * xk * xl + l];
-                    for (int k = 1; k < xk; k++) {
-                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
+                for (int k = 0; k < xk; k++) {
+                    float* result_view = result + (i * xj + j) * xl;
+                    const float* x_view = x + ((i * xj + j) * xk + k) * xl;
+                    for (int l = 0; l < xl; l++) {
+                        perform_operation<Op>(result_view[l], x_view[l]);
                     }
-                    result[(i * xj + j) * xl + l] = acc;
                 }
             }
         }
     } else if (axis == 3) {
+        initialize<Op>(result, xi * xj * xk);
         for (int i = 0; i < xi; i++) {
             for (int j = 0; j < xj; j++) {
                 for (int k = 0; k < xk; k++) {
-                    float acc = x[((i * xj + j) * xk + k) * xl];
-                    for (int l = 1; l < xl; l++) {
-                        perform_operation<Op>(acc, x[((i * xj + j) * xk + k) * xl + l]);
+                    float* result_view = result + (i * xj + j) * xk + k;
+                    const float* x_view = x + ((i * xj + j) * xk + k) * xl;
+                    for (int l = 0; l < xl; l++) {
+                        perform_operation<Op>(*result_view, x_view[l]);
                     }
-                    result[(i * xj + j) * xk + k] = acc;
                 }
             }
         }
