@@ -42,20 +42,20 @@ inline float reduce_d1(const float* x, size_t size) {
 template<Operation Op>
 inline void reduce_d2(const float* x, int xi, int xj, int axis, float* result) {
     if (axis == 0) {
-        for (int j = 0; j < xj; j++) {
-            float acc = x[j];
-            for (size_t i = 1; i < xi; i++) {
-                perform_operation<Op>(acc, x[i * xj + j]);
+        initialize<Op>(result, xj);
+        for (int i = 0; i < xi; i++) {
+            const float* x_view = x + i * xj;
+            for (int j = 0; j < xj; j++) {
+                perform_operation<Op>(result[j], x_view[j]);
             }
-            result[j] = acc;
         }
     } else if (axis == 1) {
+        initialize<Op>(result, xi);
         for (int i = 0; i < xi; i++) {
-            float acc = x[i * xj];
-            for (int j = 1; j < xj; j++) {
-                perform_operation<Op>(acc, x[i * xj + j]);
+            const float* x_view = x + i * xj;
+            for (int j = 0; j < xj; j++) {
+                perform_operation<Op>(result[i], x_view[j]);
             }
-            result[i] = acc;
         }
     }
 }
