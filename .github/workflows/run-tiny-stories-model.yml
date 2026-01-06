@@ -67,11 +67,11 @@ jobs:
         if: runner.os != 'macOS'
         shell: bash
         run: |
-          ./gradlew sample:test --tests "stories.TinyStoriesTest" --info --no-build-cache
+          ./gradlew sample:test --tests "stories.TinyStoriesTest" --info
 
       - name: TinyStoriesテストを実行（macOS）
         if: runner.os == 'macOS'
         shell: bash
         run: |
           export OpenMP_ROOT=$(brew --prefix)/opt/libomp
-          ./gradlew sample:test --tests "stories.TinyStoriesTest" --info --no-build-cache
+          ./gradlew sample:test --tests "stories.TinyStoriesTest" --info
