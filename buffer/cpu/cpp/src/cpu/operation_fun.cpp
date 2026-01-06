@@ -1,22 +1,24 @@
 #include <operation_fun.h>
 
-#define PERFORM_OPERATION(result, x, y) \
-    if constexpr (Op == Operation::Plus) { \
-        result = x + y; \
-    } else if constexpr (Op == Operation::Minus) { \
-        result = x - y; \
-    } else if constexpr (Op == Operation::Times) { \
-        result = x * y; \
-    } else if constexpr (Op == Operation::Div) { \
-        result = x / y; \
-    }
-
 enum class Operation {
     Plus,
     Minus,
     Times,
     Div
 };
+
+template<Operation Op>
+inline void perform_operation(float& result, float x, float y) {
+    if constexpr (Op == Operation::Plus) {
+        result = x + y;
+    } else if constexpr (Op == Operation::Minus) {
+        result = x - y;
+    } else if constexpr (Op == Operation::Times) {
+        result = x * y;
+    } else if constexpr(Op == Operation::Div) {
+        result = x / y;
+    }
+}
 
 template<Operation Op>
 inline void zip_with_d0_to_d1(
@@ -26,7 +28,7 @@ inline void zip_with_d0_to_d1(
     float* result
 ) {
     for (size_t i = 0; i < y_size; i++) {
-        PERFORM_OPERATION(result[i], x, y[i]);
+        perform_operation<Op>(result[i], x, y[i]);
     }
 }
 
@@ -38,7 +40,7 @@ inline void zip_with_d1_to_d0(
     float* result
 ) {
     for (size_t i = 0; i < x_size; i++) {
-        PERFORM_OPERATION(result[i], x[i], y);
+        perform_operation<Op>(result[i], x[i], y);
     }
 }
 
@@ -50,7 +52,7 @@ inline void zip_with_d1_to_d1(
     float* result
 ) {
     for (size_t i = 0; i < size; i++) {
-        PERFORM_OPERATION(result[i], x[i], y[i]);
+        perform_operation<Op>(result[i], x[i], y[i]);
     }
 }
 
@@ -67,7 +69,7 @@ inline void zip_with_d1_to_d2(
             int y_i = i * yj;
             for (int j = 0; j < yj; j++) {
                 int index = y_i + j;
-                PERFORM_OPERATION(result[index], x_value, y[index]);
+                perform_operation<Op>(result[index], x_value, y[index]);
             }
         }
     } else if (axis == 1) {
@@ -75,7 +77,7 @@ inline void zip_with_d1_to_d2(
             int y_i = i * yj;
             for (int j = 0; j < yj; j++) {
                 int index = y_i + j;
-                PERFORM_OPERATION(result[index], x[j], y[index]);
+                perform_operation<Op>(result[index], x[j], y[index]);
             }
         }
     }
@@ -95,7 +97,7 @@ inline void zip_with_d1_to_d3(
                 int y_i = (i * yj + j) * yk;
                 for (int k = 0; k < yk; k++) {
                     int index = y_i + k;
-                    PERFORM_OPERATION(result[index], x_value, y[index]);
+                    perform_operation<Op>(result[index], x_value, y[index]);
                 }
             }
         }
@@ -106,7 +108,7 @@ inline void zip_with_d1_to_d3(
                 int y_i = (i * yj + j) * yk;
                 for (int k = 0; k < yk; k++) {
                     int index = y_i + k;
-                    PERFORM_OPERATION(result[index], x_value, y[index]);
+                    perform_operation<Op>(result[index], x_value, y[index]);
                 }
             }
         }
@@ -116,7 +118,7 @@ inline void zip_with_d1_to_d3(
                 int y_i = (i * yj + j) * yk;
                 for (int k = 0; k < yk; k++) {
                     int index = y_i + k;
-                    PERFORM_OPERATION(result[index], x[k], y[index]);
+                    perform_operation<Op>(result[index], x[k], y[index]);
                 }
             }
         }
@@ -136,7 +138,7 @@ inline void zip_with_d2_to_d1(
             int x_i = i * xj;
             for (int j = 0; j < xj; j++) {
                 int index = x_i + j;
-                PERFORM_OPERATION(result[index], x[index], y_value);
+                perform_operation<Op>(result[index], x[index], y_value);
             }
         }
     } else if (axis == 1) {
@@ -144,7 +146,7 @@ inline void zip_with_d2_to_d1(
             int x_i = i * xj;
             for (int j = 0; j < xj; j++) {
                 int index = x_i + j;
-                PERFORM_OPERATION(result[index], x[index], y[j]);
+                perform_operation<Op>(result[index], x[index], y[j]);
             }
         }
     }
@@ -164,7 +166,7 @@ inline void zip_with_d2_to_d3(
                 int y_i = (i * yj + j) * yk;
                 for (int k = 0; k < yk; k++) {
                     int y_index = y_i + k;
-                    PERFORM_OPERATION(result[y_index], x_value, y[y_index]);
+                    perform_operation<Op>(result[y_index], x_value, y[y_index]);
                 }
             }
         }
@@ -176,7 +178,7 @@ inline void zip_with_d2_to_d3(
                 for (int k = 0; k < yk; k++) {
                     int x_index = x_i + k;
                     int y_index = y_i + k;
-                    PERFORM_OPERATION(result[y_index], x[x_index], y[y_index]);
+                    perform_operation<Op>(result[y_index], x[x_index], y[y_index]);
                 }
             }
         }
@@ -188,7 +190,7 @@ inline void zip_with_d2_to_d3(
                 for (int k = 0; k < yk; k++) {
                     int x_index = x_i + k;
                     int y_index = y_i + k;
-                    PERFORM_OPERATION(result[y_index], x[x_index], y[y_index]);
+                    perform_operation<Op>(result[y_index], x[x_index], y[y_index]);
                 }
             }
         }
@@ -209,7 +211,7 @@ inline void zip_with_d3_to_d1(
                 int x_i = (i * xj + j) * xk;
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
-                    PERFORM_OPERATION(result[index], x[index], y_value);
+                    perform_operation<Op>(result[index], x[index], y_value);
                 }
             }
         }
@@ -220,7 +222,7 @@ inline void zip_with_d3_to_d1(
                 int x_i = (i * xj + j) * xk;
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
-                    PERFORM_OPERATION(result[index], x[index], y_value);
+                    perform_operation<Op>(result[index], x[index], y_value);
                 }
             }
         }
@@ -230,7 +232,7 @@ inline void zip_with_d3_to_d1(
                 int x_i = (i * xj + j) * xk;
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
-                    PERFORM_OPERATION(result[index], x[index], y[k]);
+                    perform_operation<Op>(result[index], x[index], y[k]);
                 }
             }
         }
@@ -251,7 +253,7 @@ inline void zip_with_d3_to_d2(
                 float y_value = y[i * yj + j];
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
-                    PERFORM_OPERATION(result[index], x[index], y_value);
+                    perform_operation<Op>(result[index], x[index], y_value);
                 }
             }
         }
@@ -262,7 +264,7 @@ inline void zip_with_d3_to_d2(
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
                     int y_index = i * yj + k;
-                    PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                    perform_operation<Op>(result[index], x[index], y[y_index]);
                 }
             }
         }
@@ -273,7 +275,7 @@ inline void zip_with_d3_to_d2(
                 for (int k = 0; k < xk; k++) {
                     int index = x_i + k;
                     int y_index = j * yj + k;
-                    PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                    perform_operation<Op>(result[index], x[index], y[y_index]);
                 }
             }
         }
@@ -295,7 +297,7 @@ inline void zip_with_d3_to_d4(
                     int y_i = ((i * yj + j) * yk + k) * yl;
                     for (int l = 0; l < yl; l++) {
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[y_index], x_value, y[y_index]);
+                        perform_operation<Op>(result[y_index], x_value, y[y_index]);
                     }
                 }
             }
@@ -308,7 +310,7 @@ inline void zip_with_d3_to_d4(
                     for (int l = 0; l < yl; l++) {
                         int x_index = (i * xj + j) * xk + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[y_index], x[x_index], y[y_index]);
+                        perform_operation<Op>(result[y_index], x[x_index], y[y_index]);
                     }
                 }
             }
@@ -321,7 +323,7 @@ inline void zip_with_d3_to_d4(
                     for (int l = 0; l < yl; l++) {
                         int x_index = (i * xj + k) * xk + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[y_index], x[x_index], y[y_index]);
+                        perform_operation<Op>(result[y_index], x[x_index], y[y_index]);
                     }
                 }
             }
@@ -334,7 +336,7 @@ inline void zip_with_d3_to_d4(
                     for (int l = 0; l < yl; l++) {
                         int x_index = (j * xj + k) * xk + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[y_index], x[x_index], y[y_index]);
+                        perform_operation<Op>(result[y_index], x[x_index], y[y_index]);
                     }
                 }
             }
@@ -357,7 +359,7 @@ inline void zip_with_d4_to_d1(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -370,7 +372,7 @@ inline void zip_with_d4_to_d1(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -383,7 +385,7 @@ inline void zip_with_d4_to_d1(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -395,7 +397,7 @@ inline void zip_with_d4_to_d1(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y[l]);
+                        perform_operation<Op>(result[index], x[index], y[l]);
                     }
                 }
             }
@@ -418,7 +420,7 @@ inline void zip_with_d4_to_d2(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -431,7 +433,7 @@ inline void zip_with_d4_to_d2(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -444,7 +446,7 @@ inline void zip_with_d4_to_d2(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = i * yj + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
@@ -457,7 +459,7 @@ inline void zip_with_d4_to_d2(
                     int x_i = ((i * xj + j) * xk + k) * xl;
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -470,7 +472,7 @@ inline void zip_with_d4_to_d2(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = j * yj + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
@@ -483,7 +485,7 @@ inline void zip_with_d4_to_d2(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = k * yj + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
@@ -506,7 +508,7 @@ inline void zip_with_d4_to_d3(
                     float y_value = y[(i * yj + j) * yk + k];
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y_value);
+                        perform_operation<Op>(result[index], x[index], y_value);
                     }
                 }
             }
@@ -520,7 +522,7 @@ inline void zip_with_d4_to_d3(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
@@ -534,7 +536,7 @@ inline void zip_with_d4_to_d3(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
@@ -548,7 +550,7 @@ inline void zip_with_d4_to_d3(
                     for (int l = 0; l < xl; l++) {
                         int index = x_i + l;
                         int y_index = y_i + l;
-                        PERFORM_OPERATION(result[index], x[index], y[y_index]);
+                        perform_operation<Op>(result[index], x[index], y[y_index]);
                     }
                 }
             }
