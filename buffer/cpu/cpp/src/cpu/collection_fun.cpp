@@ -1,4 +1,5 @@
 #include <collection_fun.h>
+#include <cfloat>
 #include <algorithm>
 
 enum class Operation {
@@ -6,6 +7,17 @@ enum class Operation {
     Min,
     Sum
 };
+
+template<Operation Op>
+inline void initialize(float* result, int size) {
+    if constexpr (Op == Operation::Max) {
+        std::fill(result, result + size, -FLT_MAX);
+    } else if constexpr (Op == Operation::Min) {
+        std::fill(result, result + size, FLT_MAX);
+    } else if constexpr (Op == Operation::Sum) {
+        std::fill(result, result + size, 0.0f);
+    }
+}
 
 template<Operation Op>
 inline void perform_operation(float& acc, float x) {
