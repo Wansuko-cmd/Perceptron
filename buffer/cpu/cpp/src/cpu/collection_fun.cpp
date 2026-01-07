@@ -155,6 +155,70 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
     }
 }
 
+float average_d1(const float* x, size_t size) {
+    return reduce_d1<Operation::Sum>(x, size) / size;
+}
+
+void average_d2(const float* x, int xi, int xj, int axis, float* result) {
+    reduce_d2<Operation::Sum>(x, xi, xj, axis, result);
+    if (axis == 0) {
+        float inv = 1.0f / xi;
+        for (int n = 0; n < xj; n++) {
+            result[n] *= inv;
+        }
+    } else {
+        float inv = 1.0f / xj;
+        for (int n = 0; n < xi; n++) {
+            result[n] *= inv;
+        }
+    }
+}
+
+void average_d3(const float* x, int xi, int xj, int xk, int axis, float* result) {
+    reduce_d3<Operation::Sum>(x, xi, xj, xk, axis, result);
+    if (axis == 0) {
+        float inv = 1.0f / xi;
+        for (int n = 0; n < xj * xk; n++) {
+            result[n] *= inv;
+        }
+    } else if (axis == 1) {
+        float inv = 1.0f / xj;
+        for (int n = 0; n < xi * xk; n++) {
+            result[n] *= inv;
+        }
+    } else {
+        float inv = 1.0f / xk;
+        for (int n = 0; n < xi * xj; n++) {
+            result[n] *= inv;
+        }
+    }
+}
+
+void average_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float* result) {
+    reduce_d4<Operation::Sum>(x, xi, xj, xk, xl, axis, result);
+    if (axis == 0) {
+        float inv = 1.0f / xi;
+        for (int n = 0; n < xj * xk * xl; n++) {
+            result[n] *= inv;
+        }
+    } else if (axis == 1) {
+        float inv = 1.0f / xj;
+        for (int n = 0; n < xi * xk * xl; n++) {
+            result[n] *= inv;
+        }
+    } else if (axis == 2) {
+        float inv = 1.0f / xk;
+        for (int n = 0; n < xi * xj * xl; n++) {
+            result[n] *= inv;
+        }
+    } else {
+        float inv = 1.0f / xl;
+        for (int n = 0; n < xi * xj * xk; n++) {
+            result[n] *= inv;
+        }
+    }
+}
+
 float max_d1(const float* x, size_t size) {
     return reduce_d1<Operation::Max>(x, size);
 }
