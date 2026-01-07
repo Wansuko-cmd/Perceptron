@@ -18,13 +18,12 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.core.reshape.broadcast.broadcastToD2
 import com.wsr.initializer.WeightInitializer
 import com.wsr.optimizer.Optimizer
 import com.wsr.process.Context
 import com.wsr.process.compute.Compute
-import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
+import kotlin.math.sqrt
 
 @Serializable
 class AttentionD2 internal constructor(
@@ -58,7 +57,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled + mask + context.generatePaddingMask()
+        val masked = scaled.plus(other = context.generatePaddingMask(), axis = 2) + mask
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = Batch(input.size) { batchIndex ->
@@ -91,7 +90,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled + mask + context.generatePaddingMask()
+        val masked = scaled.plus(other = context.generatePaddingMask(), axis = 2) + mask
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = Batch(input.size) { batchIndex ->
@@ -159,8 +158,8 @@ class AttentionD2 internal constructor(
         return dxq + dxk + dxv
     }
 
-    private fun Context.generatePaddingMask(): Batch<IOType.D2> = if (maskValue == null) {
-        Batch(input.size) { IOType.d2(outputX, outputX) { _, _ -> 0f } }
+    private fun Context.generatePaddingMask(): Batch<IOType.D1> = if (maskValue == null) {
+        Batch(input.size) { IOType.d1(outputX) { _ -> 0f } }
     } else {
         @Suppress("UNCHECKED_CAST")
         val input = input as Batch<IOType.D1>
@@ -168,7 +167,6 @@ class AttentionD2 internal constructor(
             val input = input[index]
             IOType
                 .d1(outputX) { if (input[it] == maskValue.toFloat()) -1e9f else 0f }
-                .broadcastToD2(axis = 1, outputX)
         }
     }
 }
