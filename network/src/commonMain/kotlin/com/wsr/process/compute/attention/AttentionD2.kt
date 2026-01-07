@@ -22,8 +22,8 @@ import com.wsr.initializer.WeightInitializer
 import com.wsr.optimizer.Optimizer
 import com.wsr.process.Context
 import com.wsr.process.compute.Compute
-import kotlinx.serialization.Serializable
 import kotlin.math.sqrt
+import kotlinx.serialization.Serializable
 
 @Serializable
 class AttentionD2 internal constructor(
@@ -31,6 +31,7 @@ class AttentionD2 internal constructor(
     override val outputY: Int,
     private val numOfHeads: Int,
     private val dim: Int,
+    private val isCausal: Boolean = false,
     private val maskValue: Int? = null,
     private var weightQ: IOType.D2,
     private var weightK: IOType.D2,
@@ -41,7 +42,7 @@ class AttentionD2 internal constructor(
     private var weightO: IOType.D2,
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
-    private val mask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
+    private val causalMask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
@@ -57,7 +58,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled.plus(other = context.generatePaddingMask(), axis = 2) + mask
+        val masked = scaled.plusMasks(context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = Batch(input.size) { batchIndex ->
@@ -90,7 +91,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled.plus(other = context.generatePaddingMask(), axis = 2) + mask
+        val masked = scaled.plusMasks(context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = Batch(input.size) { batchIndex ->
@@ -158,22 +159,29 @@ class AttentionD2 internal constructor(
         return dxq + dxk + dxv
     }
 
-    private fun Context.generatePaddingMask(): Batch<IOType.D1> = if (maskValue == null) {
-        Batch(input.size) { IOType.d1(outputX) { _ -> 0f } }
-    } else {
-        @Suppress("UNCHECKED_CAST")
-        val input = input as Batch<IOType.D1>
-        Batch(input.size) { index ->
-            val input = input[index]
-            IOType
-                .d1(outputX) { if (input[it] == maskValue.toFloat()) -1e9f else 0f }
+    private fun Batch<IOType.D3>.plusMasks(context: Context): Batch<IOType.D3> {
+        var result = this
+        if (isCausal) {
+            result += causalMask
         }
+        if (maskValue != null) {
+            @Suppress("UNCHECKED_CAST")
+            val input = context.input as Batch<IOType.D1>
+            val mask = Batch(input.size) { index ->
+                val input = input[index]
+                IOType
+                    .d1(outputX) { if (input[it] == maskValue.toFloat()) -1e9f else 0f }
+            }
+            result = result.plus(other = mask, axis = 2)
+        }
+        return result
     }
 }
 
 fun <T> NetworkBuilder.D2<T>.attention(
     numOfHeads: Int,
     dim: Int = inputY / numOfHeads,
+    isCausal: Boolean = false,
     maskValue: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
@@ -183,6 +191,7 @@ fun <T> NetworkBuilder.D2<T>.attention(
         outputY = inputY,
         numOfHeads = numOfHeads,
         dim = dim,
+        isCausal = isCausal,
         maskValue = maskValue,
         weightQ = initializer.d2(
             input = listOf(inputY),
