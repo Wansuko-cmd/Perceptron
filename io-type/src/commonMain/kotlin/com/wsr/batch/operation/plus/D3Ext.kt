@@ -30,6 +30,23 @@ fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3> {
     return Batch(size = size, shape = shape, value = result)
 }
 
+@JvmName("batchD3sPlusD1WithAxis")
+fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3> {
+    val result = Backend.plus(
+        x = value,
+        xi = size,
+        xj = shape[0],
+        xk = shape[1],
+        xl = shape[2],
+        y = other.value,
+        yi = other.size,
+        yj = other.shape[0],
+        axis1 = 0,
+        axis2 = axis + 1,
+    )
+    return Batch(size = size, shape = shape, value = result)
+}
+
 @JvmName("batchD3sPlusD2")
 operator fun Batch<IOType.D3>.plus(other: IOType.D2): Batch<IOType.D3> = plus(other = other, axis1 = 1, axis2 = 2)
 
