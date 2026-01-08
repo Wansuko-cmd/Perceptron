@@ -1,16 +1,25 @@
 package com.wsr
 
-import com.wsr.base.DataBuffer
 import com.wsr.base.IBackend
+import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.DataBufferGenerator
+import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
 import kotlin.random.Random
 
 object Backend : IBackend {
     private var instance: IBackend = cpu
 
+    init {
+        DataBufferGenerator.set(instance.generator)
+    }
+
     fun set(backend: IBackend) {
         instance = backend
+        DataBufferGenerator.set(backend.generator)
     }
+
+    override val generator: IDataBufferGenerator get() = instance.generator
 
     override fun plus(x: Float, y: DataBuffer): DataBuffer = instance.plus(x, y)
 
@@ -453,12 +462,8 @@ object Backend : IBackend {
         axisK: Int,
         axisL: Int,
     ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
-
-    override fun create(size: Int): DataBuffer = instance.create(size)
-
-    override fun create(value: FloatArray): DataBuffer = instance.create(value)
 }
 
-fun DataBuffer.Companion.create(size: Int) = Backend.create(size)
+fun DataBuffer.Companion.create(size: Int) = DataBufferGenerator.create(size)
 
-fun DataBuffer.Companion.create(value: FloatArray) = Backend.create(value)
+fun DataBuffer.Companion.create(value: FloatArray) = DataBufferGenerator.create(value)

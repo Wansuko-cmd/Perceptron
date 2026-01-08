@@ -1,28 +1,6 @@
-package com.wsr.base
+package com.wsr.base.data
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-@Serializable(with = DataBufferSerializable::class)
-interface DataBuffer {
-    val size: Int
-
-    val indices: IntRange get() = 0 until size
-
-    fun toFloatArray(): FloatArray
-
-    operator fun get(i: Int): Float
-    operator fun set(i: Int, value: Float)
-
-    fun slice(indices: IntRange): DataBuffer
-
-    fun copyInto(destination: DataBuffer, destinationOffset: Int = 0)
-
-    companion object
-}
 
 @Serializable
 data class Default(private val value: FloatArray) : DataBuffer {
@@ -65,16 +43,12 @@ data class Default(private val value: FloatArray) : DataBuffer {
         result = 31 * result + indices.hashCode()
         return result
     }
-}
 
-object DataBufferSerializable : KSerializer<DataBuffer> {
-    override val descriptor: SerialDescriptor = Default.serializer().descriptor
-    override fun serialize(encoder: Encoder, value: DataBuffer) {
-        encoder.encodeSerializableValue(
-            serializer = Default.serializer(),
-            value = Default(value.toFloatArray()),
-        )
+    companion object {
+        val generator = object : IDataBufferGenerator {
+            override fun create(size: Int): DataBuffer = Default(size)
+
+            override fun create(value: FloatArray): DataBuffer = Default(value)
+        }
     }
-
-    override fun deserialize(decoder: Decoder): DataBuffer = decoder.decodeSerializableValue(Default.serializer())
 }
