@@ -80,9 +80,9 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         }
 
         val generator = object : IDataBufferGenerator {
-            override fun create(size: Int): DataBuffer = create(size)
+            override fun create(size: Int): DataBuffer = CPUBuffer.create(size)
 
-            override fun create(value: FloatArray): DataBuffer = create(value)
+            override fun create(value: FloatArray): DataBuffer = CPUBuffer.create(value)
         }
     }
 }
