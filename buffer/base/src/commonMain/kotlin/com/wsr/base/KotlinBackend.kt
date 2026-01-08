@@ -1,6 +1,7 @@
 package com.wsr.base
 
 import kotlin.math.pow
+import kotlin.random.Random
 
 object KotlinBackend : IBackend {
     // 0次元
@@ -751,6 +752,49 @@ object KotlinBackend : IBackend {
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, xk = xk, xl = xl, axis = axis) { acc, i -> acc + i }
+
+    override fun maxIndex(x: DataBuffer): Int {
+        var index = 0
+        var max = x[0]
+        for (i in 1 until x.size) {
+            if (max < x[i]) {
+                index = i
+                max = x[i]
+            }
+        }
+        return index
+    }
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): Int {
+        val total = Array(x.size) { x[it] to it }
+            .apply { sortWith(compareByDescending { (value, _) -> value }) }
+        return total.sliceArray(0 until k).randomIndex(random)
+    }
+
+    override fun topP(x: DataBuffer, p: Float, random: Random): Int {
+        val total = Array(x.size) { x[it] to it }
+            .apply { sortWith(compareByDescending { (value, _) -> value }) }
+        var sum = 0.0f
+        for (i in 0 until total.size) {
+            sum += total[i].first
+            if (sum > p) {
+                return total.sliceArray(0..i).randomIndex(random)
+            }
+        }
+        return 0
+    }
+
+    private fun Array<Pair<Float, Int>>.randomIndex(random: Random): Int {
+        val sum = sumOf { (value, _) -> value.toDouble() }
+        if (sum == 0.0) return random(random).second
+
+        var p = random.nextDouble(from = 0.0, until = sum)
+        for ((value, index) in this) {
+            p -= value
+            if (p <= 0) return index
+        }
+        return last().second
+    }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = create(x.size)
