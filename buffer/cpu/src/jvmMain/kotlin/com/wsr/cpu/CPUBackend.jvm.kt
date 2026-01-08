@@ -1,8 +1,8 @@
 package com.wsr.cpu
 
-import com.wsr.base.data.DataBuffer
 import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
+import com.wsr.base.data.DataBuffer
 import com.wsr.base.loadNativeLibrary
 
 private const val LIB_PATH = "cpu"
@@ -1195,8 +1195,4 @@ class CPUBackend : IBackend by KotlinBackend {
         transpose.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
         return result
     }
-
-    override fun create(size: Int): DataBuffer = CPUBuffer.create(size)
-
-    override fun create(value: FloatArray): DataBuffer = CPUBuffer.create(value)
 }

@@ -455,12 +455,8 @@ object Backend : IBackend {
         axisK: Int,
         axisL: Int,
     ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
-
-    override fun create(size: Int): DataBuffer = instance.create(size)
-
-    override fun create(value: FloatArray): DataBuffer = instance.create(value)
 }
 
-fun DataBuffer.Companion.create(size: Int) = Backend.create(size)
+fun DataBuffer.Companion.create(size: Int) = DataBufferGenerator.create(size)
 
-fun DataBuffer.Companion.create(value: FloatArray) = Backend.create(value)
+fun DataBuffer.Companion.create(value: FloatArray) = DataBufferGenerator.create(value)

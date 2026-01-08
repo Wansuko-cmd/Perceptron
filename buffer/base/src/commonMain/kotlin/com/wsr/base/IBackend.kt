@@ -397,7 +397,4 @@ interface IBackend {
         axisK: Int,
         axisL: Int,
     ): DataBuffer
-
-    fun create(size: Int): DataBuffer
-    fun create(value: FloatArray): DataBuffer
 }
