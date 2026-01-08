@@ -1,4 +1,4 @@
-package com.wsr.base
+package com.wsr.base.data
 
 interface IDataBufferGenerator {
     fun create(size: Int): DataBuffer

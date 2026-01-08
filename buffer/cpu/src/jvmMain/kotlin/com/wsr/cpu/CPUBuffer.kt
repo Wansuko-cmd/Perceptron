@@ -1,6 +1,6 @@
 package com.wsr.cpu
 
-import com.wsr.base.DataBuffer
+import com.wsr.base.data.DataBuffer
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
