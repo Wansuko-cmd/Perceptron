@@ -5,6 +5,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
+import kotlin.random.Random
 
 object Backend : IBackend {
     private var instance: IBackend = cpu
@@ -438,6 +439,12 @@ object Backend : IBackend {
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer =
         instance.sum(x, xi, xj, xk, xl, axis)
+
+    override fun maxIndex(x: DataBuffer): Int = instance.maxIndex(x)
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): Int = instance.topK(x, k, random)
+
+    override fun topP(x: DataBuffer, p: Float, random: Random): Int = instance.topP(x, p, random)
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer = instance.transpose(x, xi, xj)
 
