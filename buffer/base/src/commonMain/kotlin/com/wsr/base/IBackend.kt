@@ -1,5 +1,7 @@
 package com.wsr.base
 
+import kotlin.random.Random
+
 interface IBackend {
     // 0次元
     fun plus(x: Float, y: DataBuffer): DataBuffer
@@ -378,6 +380,12 @@ interface IBackend {
     fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
     fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
     fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
+
+    fun maxIndex(x: DataBuffer): Int
+
+    fun topK(x: DataBuffer, k: Int, random: Random): Int
+
+    fun topP(x: DataBuffer, p: Float, random: Random): Int
 
     fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer
     fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer
