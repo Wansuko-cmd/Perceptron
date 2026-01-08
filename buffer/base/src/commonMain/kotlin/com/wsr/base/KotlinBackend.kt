@@ -768,7 +768,7 @@ object KotlinBackend : IBackend {
     override fun topK(x: DataBuffer, k: Int, random: Random): Int {
         val total = Array(x.size) { x[it] to it }
             .apply { sortWith(compareByDescending { (value, _) -> value }) }
-        return total.sliceArray(0 until k).randomIndex(random)
+        return total.sliceArray(0 until minOf(k, x.size)).randomIndex(random)
     }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): Int {
@@ -781,7 +781,7 @@ object KotlinBackend : IBackend {
                 return total.sliceArray(0..i).randomIndex(random)
             }
         }
-        return 0
+        return total.randomIndex(random)
     }
 
     private fun Array<Pair<Float, Int>>.randomIndex(random: Random): Int {
