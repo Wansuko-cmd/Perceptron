@@ -1,29 +1,6 @@
-package com.wsr.base
+package com.wsr.base.data
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.FloatArraySerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-
-@Serializable(with = DataBufferSerializable::class)
-interface DataBuffer {
-    val size: Int
-
-    val indices: IntRange get() = 0 until size
-
-    fun toFloatArray(): FloatArray
-
-    operator fun get(i: Int): Float
-    operator fun set(i: Int, value: Float)
-
-    fun slice(indices: IntRange): DataBuffer
-
-    fun copyInto(destination: DataBuffer, destinationOffset: Int = 0)
-
-    companion object
-}
 
 @Serializable
 data class Default(private val value: FloatArray) : DataBuffer {
@@ -73,20 +50,5 @@ data class Default(private val value: FloatArray) : DataBuffer {
 
             override fun create(value: FloatArray): DataBuffer = Default(value)
         }
-    }
-}
-
-object DataBufferSerializable : KSerializer<DataBuffer> {
-    override val descriptor: SerialDescriptor = FloatArraySerializer().descriptor
-    override fun serialize(encoder: Encoder, value: DataBuffer) {
-        encoder.encodeSerializableValue(
-            serializer = FloatArraySerializer(),
-            value = value.toFloatArray(),
-        )
-    }
-
-    override fun deserialize(decoder: Decoder): DataBuffer {
-        val value = decoder.decodeSerializableValue(FloatArraySerializer())
-        return DataBufferGenerator.create(value)
     }
 }

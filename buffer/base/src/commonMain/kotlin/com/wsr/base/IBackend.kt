@@ -1,5 +1,7 @@
 package com.wsr.base
 
+import com.wsr.base.data.DataBuffer
+
 interface IBackend {
     // 0次元
     fun plus(x: Float, y: DataBuffer): DataBuffer

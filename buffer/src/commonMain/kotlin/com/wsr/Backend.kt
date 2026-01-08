@@ -1,6 +1,6 @@
 package com.wsr
 
-import com.wsr.base.DataBuffer
+import com.wsr.base.data.DataBuffer
 import com.wsr.base.IBackend
 import com.wsr.cpu.cpu
 

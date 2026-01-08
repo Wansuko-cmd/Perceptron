@@ -1,5 +1,7 @@
 package com.wsr.base
 
+import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.Default
 import kotlin.math.pow
 
 object KotlinBackend : IBackend {
