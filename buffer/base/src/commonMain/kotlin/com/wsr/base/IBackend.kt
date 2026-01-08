@@ -1,8 +1,11 @@
 package com.wsr.base
 
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.IDataBufferGenerator
 
 interface IBackend {
+    val generator: IDataBufferGenerator
+
     // 0次元
     fun plus(x: Float, y: DataBuffer): DataBuffer
 
