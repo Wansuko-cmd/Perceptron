@@ -2,6 +2,8 @@ package com.wsr
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.IBackend
+import com.wsr.base.data.DataBufferGenerator
+import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
 
 object Backend : IBackend {
@@ -9,7 +11,10 @@ object Backend : IBackend {
 
     fun set(backend: IBackend) {
         instance = backend
+        DataBufferGenerator.set(backend.generator)
     }
+
+    override val generator: IDataBufferGenerator get() = instance.generator
 
     override fun plus(x: Float, y: DataBuffer): DataBuffer = instance.plus(x, y)
 

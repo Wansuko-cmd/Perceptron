@@ -2,9 +2,12 @@ package com.wsr.base
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.Default
+import com.wsr.base.data.IDataBufferGenerator
 import kotlin.math.pow
 
 object KotlinBackend : IBackend {
+    override val generator: IDataBufferGenerator = Default.generator
+
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer = y.map { x + it }
 
