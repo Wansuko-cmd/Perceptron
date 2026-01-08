@@ -2,6 +2,7 @@ package com.wsr.base
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.FloatArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -65,16 +66,27 @@ data class Default(private val value: FloatArray) : DataBuffer {
         result = 31 * result + indices.hashCode()
         return result
     }
+
+    companion object {
+        val generator = object : IDataBufferGenerator {
+            override fun create(size: Int): DataBuffer = Default(size)
+
+            override fun create(value: FloatArray): DataBuffer = Default(value)
+        }
+    }
 }
 
 object DataBufferSerializable : KSerializer<DataBuffer> {
-    override val descriptor: SerialDescriptor = Default.serializer().descriptor
+    override val descriptor: SerialDescriptor = FloatArraySerializer().descriptor
     override fun serialize(encoder: Encoder, value: DataBuffer) {
         encoder.encodeSerializableValue(
-            serializer = Default.serializer(),
-            value = Default(value.toFloatArray()),
+            serializer = FloatArraySerializer(),
+            value = value.toFloatArray(),
         )
     }
 
-    override fun deserialize(decoder: Decoder): DataBuffer = decoder.decodeSerializableValue(Default.serializer())
+    override fun deserialize(decoder: Decoder): DataBuffer {
+        val value = decoder.decodeSerializableValue(FloatArraySerializer())
+        return DataBufferGenerator.create(value)
+    }
 }
