@@ -1,7 +1,7 @@
 package com.wsr.converter.word
 
 import com.wsr.NetworkBuilder
-import com.wsr.base.DataBuffer
+import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
 import com.wsr.batch.toBatch
 import com.wsr.batch.toList
