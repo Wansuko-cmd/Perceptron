@@ -1,8 +1,12 @@
 package com.wsr.base
 
+import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.IDataBufferGenerator
 import kotlin.random.Random
 
 interface IBackend {
+    val generator: IDataBufferGenerator
+
     // 0次元
     fun plus(x: Float, y: DataBuffer): DataBuffer
 
@@ -400,7 +404,4 @@ interface IBackend {
         axisK: Int,
         axisL: Int,
     ): DataBuffer
-
-    fun create(size: Int): DataBuffer
-    fun create(value: FloatArray): DataBuffer
 }

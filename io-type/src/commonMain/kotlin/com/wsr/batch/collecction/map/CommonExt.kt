@@ -1,6 +1,6 @@
 package com.wsr.batch.collecction.map
 
-import com.wsr.base.DataBuffer
+import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
 import com.wsr.create

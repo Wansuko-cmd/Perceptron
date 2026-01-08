@@ -1,6 +1,6 @@
 package com.wsr.core
 
-import com.wsr.base.DataBuffer
+import com.wsr.base.data.DataBuffer
 import com.wsr.create
 import kotlinx.serialization.Serializable
 

@@ -1,9 +1,15 @@
 package com.wsr.base
 
+import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.DataBufferGenerator
+import com.wsr.base.data.Default
+import com.wsr.base.data.IDataBufferGenerator
 import kotlin.math.pow
 import kotlin.random.Random
 
 object KotlinBackend : IBackend {
+    override val generator: IDataBufferGenerator = Default.generator
+
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer = y.map { x + it }
 
@@ -597,7 +603,7 @@ object KotlinBackend : IBackend {
     ) { a, b -> a / b }
 
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
-        val result = create(b)
+        val result = DataBufferGenerator.create(b)
         val stride = x.size / b
         repeat(b) { b ->
             var acc = 0f
@@ -611,7 +617,7 @@ object KotlinBackend : IBackend {
     }
 
     override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer {
-        val result = create(n)
+        val result = DataBufferGenerator.create(n)
         for (j in 0 until n) {
             var sum = 0f
             for (p in 0 until k) {
@@ -624,7 +630,7 @@ object KotlinBackend : IBackend {
     }
 
     override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer {
-        val result = create(m)
+        val result = DataBufferGenerator.create(m)
         for (i in 0 until m) {
             var sum = 0f
             for (p in 0 until k) {
@@ -646,7 +652,7 @@ object KotlinBackend : IBackend {
         k: Int,
         b: Int,
     ): DataBuffer {
-        val result = create(b * m * n)
+        val result = DataBufferGenerator.create(b * m * n)
         val strideX = m * k
         val strideY = k * n
         val stride = m * n
@@ -797,7 +803,7 @@ object KotlinBackend : IBackend {
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
-        val result = create(x.size)
+        val result = DataBufferGenerator.create(x.size)
         for (i in 0 until xi) {
             for (j in 0 until xj) {
                 result[j * xi + i] = x[i * xj + j]
@@ -809,7 +815,7 @@ object KotlinBackend : IBackend {
     override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
         val oldShape = listOf(xi, xj, xk)
         val newShape = listOf(oldShape[axisI], oldShape[axisJ], oldShape[axisK])
-        val result = create(x.size)
+        val result = DataBufferGenerator.create(x.size)
         for (ni in 0 until newShape[0]) {
             val nii = ni * newShape[1]
             for (nj in 0 until newShape[1]) {
@@ -844,7 +850,7 @@ object KotlinBackend : IBackend {
     ): DataBuffer {
         val oldShape = listOf(xi, xj, xk, xl)
         val newShape = listOf(oldShape[axisI], oldShape[axisJ], oldShape[axisK], oldShape[axisL])
-        val result = create(x.size)
+        val result = DataBufferGenerator.create(x.size)
         for (ni in 0 until newShape[0]) {
             val nii = ni * newShape[1]
             for (nj in 0 until newShape[1]) {
@@ -869,8 +875,4 @@ object KotlinBackend : IBackend {
         }
         return result
     }
-
-    override fun create(size: Int): DataBuffer = Default(FloatArray(size))
-
-    override fun create(value: FloatArray): DataBuffer = Default(value)
 }
