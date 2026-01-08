@@ -1,6 +1,7 @@
 package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.IDataBufferGenerator
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -76,6 +77,12 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
                 .order(ByteOrder.nativeOrder())
                 .apply { asFloatBuffer().put(value) }
             return CPUBuffer(buffer)
+        }
+
+        val generator = object : IDataBufferGenerator {
+            override fun create(size: Int): DataBuffer = create(size)
+
+            override fun create(value: FloatArray): DataBuffer = create(value)
         }
     }
 }

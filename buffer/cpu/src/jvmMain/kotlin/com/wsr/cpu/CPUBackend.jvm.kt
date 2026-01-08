@@ -20,6 +20,8 @@ class CPUBackend : IBackend by KotlinBackend {
     private val operation = JOperation()
     private val transpose = JTranspose()
 
+    override val generator = CPUBuffer.generator
+
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUBuffer.create(y.size)

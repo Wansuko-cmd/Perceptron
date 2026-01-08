@@ -9,6 +9,10 @@ import com.wsr.cpu.cpu
 object Backend : IBackend {
     private var instance: IBackend = cpu
 
+    init {
+        DataBufferGenerator.set(instance.generator)
+    }
+
     fun set(backend: IBackend) {
         instance = backend
         DataBufferGenerator.set(backend.generator)
