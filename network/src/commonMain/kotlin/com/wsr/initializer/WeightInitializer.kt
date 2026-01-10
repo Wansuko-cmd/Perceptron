@@ -2,6 +2,11 @@ package com.wsr.initializer
 
 import com.wsr.core.IOType
 
+/**
+ * @param input 層の入力の形状
+ * @param output 層の出力の形状
+ * @param [size | x,y,z | i,j,k,z] 重みの数
+ */
 interface WeightInitializer {
     fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1
     fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2
