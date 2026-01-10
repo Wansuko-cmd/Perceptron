@@ -94,6 +94,9 @@ inline fun IOType.Companion.d1(shape: List<Int>, init: (Int) -> Float = { 0f }) 
 
 fun IOType.Companion.d1(value: List<Float>) = IOType.d1(value = value.toFloatArray())
 
+@JvmName("d1WithElements")
+fun IOType.Companion.d1(vararg elements: Float) = IOType.d1(value = elements)
+
 fun IOType.Companion.d1(value: FloatArray) = IOType.D1(value = DataBuffer.create(value))
 
 inline fun IOType.Companion.d2(i: Int, j: Int, init: (Int, Int) -> Float = { _, _ -> 0f }): IOType.D2 {
@@ -116,6 +119,18 @@ fun IOType.Companion.d2(shape: List<Int>, value: List<Float>) = IOType.d2(
     value = value.toFloatArray(),
     shape = shape,
 )
+
+@JvmName("d2WithElements")
+fun IOType.Companion.d2(vararg elements: IOType.D1): IOType.D2 {
+    val size = elements.size
+    val shape = elements.first().shape
+    val step = shape.reduce { acc, i -> acc * i }
+    val value = DataBuffer.create(size * step)
+    elements.forEachIndexed { index, item ->
+        item.value.copyInto(value, index * step)
+    }
+    return IOType.D2(shape = listOf(size, shape[0]), value = value)
+}
 
 fun IOType.Companion.d2(shape: List<Int>, value: FloatArray) =
     IOType.D2(shape = shape, value = DataBuffer.create(value))
@@ -143,6 +158,18 @@ fun IOType.Companion.d3(shape: List<Int>, value: List<Float>) = IOType.d3(
     value = value.toFloatArray(),
     shape = shape,
 )
+
+@JvmName("d3WithElements")
+fun IOType.Companion.d3(vararg elements: IOType.D2): IOType.D3 {
+    val size = elements.size
+    val shape = elements.first().shape
+    val step = shape.reduce { acc, i -> acc * i }
+    val value = DataBuffer.create(size * step)
+    elements.forEachIndexed { index, item ->
+        item.value.copyInto(value, index * step)
+    }
+    return IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value)
+}
 
 fun IOType.Companion.d3(shape: List<Int>, value: FloatArray) =
     IOType.D3(shape = shape, value = DataBuffer.create(value))
@@ -181,6 +208,18 @@ fun IOType.Companion.d4(shape: List<Int>, value: List<Float>) = IOType.d4(
     value = value.toFloatArray(),
     shape = shape,
 )
+
+@JvmName("d4WithElements")
+fun IOType.Companion.d4(vararg elements: IOType.D3): IOType.D4 {
+    val size = elements.size
+    val shape = elements.first().shape
+    val step = shape.reduce { acc, i -> acc * i }
+    val value = DataBuffer.create(size * step)
+    elements.forEachIndexed { index, item ->
+        item.value.copyInto(value, index * step)
+    }
+    return IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
+}
 
 fun IOType.Companion.d4(shape: List<Int>, value: FloatArray) =
     IOType.D4(shape = shape, value = DataBuffer.create(value))
