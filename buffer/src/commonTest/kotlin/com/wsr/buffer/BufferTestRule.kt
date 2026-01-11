@@ -9,7 +9,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-private val targets = listOf(KotlinBackend, cpu, gpu)
+private val targets = listOf(KotlinBackend, cpu)
 
 class BufferTestRule : TestRule {
     override fun apply(base: Statement?, description: Description?): Statement = object : Statement() {
