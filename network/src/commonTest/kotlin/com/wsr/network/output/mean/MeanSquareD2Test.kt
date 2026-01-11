@@ -10,9 +10,9 @@ import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
 import com.wsr.output.mean.MeanSquareD2
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class MeanSquareD2Test {
     @get:Rule

@@ -23,8 +23,8 @@ class BiasAxisD3(
         else -> 0
     }
     private val sumAxis2 = when (axis) {
-        0, 1 -> 2
-        else -> 1
+        0, 1 -> 1
+        else -> 0
     }
 
     override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =

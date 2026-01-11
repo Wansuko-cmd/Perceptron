@@ -29,12 +29,13 @@ class ScaleD3 internal constructor(
         val output = input * weight
         val delta = calcDelta(output)
 
+        val dx = delta * weight
         weight = optimizer.adapt(
             weight = weight,
             dw = input * delta,
         )
 
-        return delta * weight
+        return dx
     }
 }
 

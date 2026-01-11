@@ -23,8 +23,8 @@ class ScaleAxisD3 internal constructor(
         else -> 0
     }
     private val sumAxis2 = when (axis) {
-        0, 1 -> 2
-        else -> 1
+        0, 1 -> 1
+        else -> 0
     }
     override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
         input.times(other = weight, axis = axis)
@@ -37,11 +37,12 @@ class ScaleAxisD3 internal constructor(
         val output = input.times(other = weight, axis = axis)
         val delta = calcDelta(output)
 
+        val dx = delta.times(other = weight, axis = axis)
         weight = optimizer.adapt(
             weight = weight,
             dw = (input * delta).sum(axis = sumAxis1).sum(axis = sumAxis2),
         )
 
-        return delta.times(other = weight, axis = axis)
+        return dx
     }
 }
