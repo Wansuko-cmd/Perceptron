@@ -1,11 +1,11 @@
 package com.wsr.network.process.compute.affine
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.operation.matmul.matMul
 import com.wsr.batch.reshape.convert.toD2
 import com.wsr.core.IOType
 import com.wsr.core.operation.matmul.matMul
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

@@ -2,7 +2,7 @@
 
 package stories
 
-import com.wsr.Network
+import com.wsr.network.Network
 import dataset.storeis.MAX_LENGTH
 import dataset.storeis.createTinyStoriesModel
 import dataset.storeis.tokenize

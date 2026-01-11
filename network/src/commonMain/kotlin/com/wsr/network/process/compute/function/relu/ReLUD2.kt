@@ -1,12 +1,12 @@
 package com.wsr.network.process.compute.function.relu
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.map.mapValue
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.get
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
 import kotlinx.serialization.Serializable

@@ -1,6 +1,5 @@
 package com.wsr.network.process.compute.attention
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.get
@@ -18,6 +17,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

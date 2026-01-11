@@ -1,6 +1,5 @@
 package com.wsr.network.process.reshape.gad
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.toBatch
 import com.wsr.batch.toList
@@ -10,6 +9,7 @@ import com.wsr.core.d3
 import com.wsr.core.get
 import com.wsr.core.operation.div.div
 import com.wsr.core.reshape.transpose.transpose
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable

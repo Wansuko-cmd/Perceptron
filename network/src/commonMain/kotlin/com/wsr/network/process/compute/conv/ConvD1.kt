@@ -1,6 +1,5 @@
 package com.wsr.network.process.compute.conv
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.get
 import com.wsr.batch.reshape.convert.toBatch
@@ -15,6 +14,7 @@ import com.wsr.core.operation.matmul.matMul
 import com.wsr.core.reshape.reshape.reshapeToD2
 import com.wsr.core.reshape.reshape.reshapeToD3
 import com.wsr.core.reshape.transpose.transpose
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

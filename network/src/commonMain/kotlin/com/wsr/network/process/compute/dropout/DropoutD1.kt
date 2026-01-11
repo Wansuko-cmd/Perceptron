@@ -1,10 +1,10 @@
 package com.wsr.network.process.compute.dropout
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.nextFloat
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute

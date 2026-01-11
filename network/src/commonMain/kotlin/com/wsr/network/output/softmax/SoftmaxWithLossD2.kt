@@ -1,6 +1,5 @@
 package com.wsr.network.output.softmax
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.map.map
 import com.wsr.batch.collecction.sum.sum
@@ -10,13 +9,14 @@ import com.wsr.batch.math.softmax
 import com.wsr.batch.operation.div.div
 import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.times.times
-import com.wsr.network.converter.Converter
 import com.wsr.core.IOType
 import com.wsr.core.collection.sum.sum
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.core.reshape.broadcast.broadcastToD2
+import com.wsr.network.NetworkBuilder
+import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output
 import com.wsr.network.output.TResult
 import kotlinx.serialization.Serializable
