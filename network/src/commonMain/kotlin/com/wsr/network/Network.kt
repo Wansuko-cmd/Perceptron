@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.wsr.network
 
 import com.wsr.batch.Batch
@@ -19,21 +21,13 @@ class Network<I, O> internal constructor(
     val layers: List<Process>,
     val output: Output,
 ) {
-    private val trainLambda: (TrainLambda) -> TrainLambda = run {
-        val initial: (TrainLambda) -> TrainLambda = { it }
-        layers.foldRight(initial) { layer: Process, acc: (TrainLambda) -> TrainLambda ->
-            { final: TrainLambda ->
-                { input: Batch<IOType>, context: Context ->
-                    layer._train(input, context) { i -> acc(final)(i, context) }
-                }
-            }
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
+    /**
+     * 推論用の関数
+     * @param モデルへの入力
+     * @return モデルの出力
+     */
     fun expect(input: I): O = expect(input = listOf(input))[0]
 
-    @Suppress("UNCHECKED_CAST")
     fun expect(input: List<I>): List<O> {
         val input = inputConverter._encode(input)
         val context = Context(input = input)
@@ -43,6 +37,40 @@ class Network<I, O> internal constructor(
         return outputConverter._decode(output) as List<O>
     }
 
+    /**
+     * loss計算用の関数（逆伝播なし）
+     * @param モデルへの入力
+     * @return 損失関数の値
+     */
+    fun loss(input: I, label: O) = loss(input = listOf(input), label = listOf(label))
+
+    fun loss(input: I, label: (O) -> O) = loss(input = listOf(input)) { listOf(label(it[0])) }
+
+    fun loss(input: List<I>, label: List<O>): Float = _loss(input) {
+        outputConverter._encode(label)
+    }
+
+    fun loss(input: List<I>, label: (List<O>) -> List<O>): Float = _loss(input) {
+        val output = outputConverter._decode(it) as List<O>
+        val label = label(output)
+        outputConverter._encode(label)
+    }
+
+    @Suppress("FunctionName")
+    private inline fun _loss(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
+        val input = inputConverter._encode(input)
+        val context = Context(input = input)
+        val output = layers
+            .fold(input) { acc, process -> process._expect(acc, context) }
+            .let { output._train(it, { label(it) }) }
+        return output.loss
+    }
+
+    /**
+     * 訓練用の関数
+     * @param モデルへの入力
+     * @return 損失関数の値
+     */
     fun train(input: I, label: O) = train(input = listOf(input), label = listOf(label))
 
     fun train(input: I, label: (O) -> O) = train(input = listOf(input)) { listOf(label(it[0])) }
@@ -52,7 +80,6 @@ class Network<I, O> internal constructor(
     }
 
     fun train(input: List<I>, label: (List<O>) -> List<O>): Float = _train(input) {
-        @Suppress("UNCHECKED_CAST")
         val output = outputConverter._decode(it) as List<O>
         val label = label(output)
         outputConverter._encode(label)
@@ -70,6 +97,17 @@ class Network<I, O> internal constructor(
         val context = Context(input = input)
         trainLambda(output).invoke(input, context)
         return loss
+    }
+
+    private val trainLambda: (TrainLambda) -> TrainLambda = run {
+        val initial: (TrainLambda) -> TrainLambda = { it }
+        layers.foldRight(initial) { layer: Process, acc: (TrainLambda) -> TrainLambda ->
+            { final: TrainLambda ->
+                { input: Batch<IOType>, context: Context ->
+                    layer._train(input, context) { i -> acc(final)(i, context) }
+                }
+            }
+        }
     }
 
     fun toJson(): String = NetworkSerializer.encodeToString(this)
