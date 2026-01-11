@@ -21,7 +21,8 @@ class GPUBackend : IBackend by KotlinBackend {
     }
 
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
-        val result = FloatArray(x.size)
+        val result = FloatArray(b)
+        val stride = x.size / b
         val aAddress = clBlast.transfer(x.toFloatArray(), x.size)
         val bAddress = clBlast.transfer(y.toFloatArray(), y.size)
         val cAddress = clBlast.transfer(result, result.size)
@@ -30,16 +31,16 @@ class GPUBackend : IBackend by KotlinBackend {
             true,
             1,
             1,
-            x.size,
+            stride,
             1f,
             aAddress,
-            x.size,
+            stride,
             bAddress,
-            x.size,
+            stride,
             0f,
             cAddress,
             1,
-            1,
+            b,
         )
         clBlast.read(cAddress, result)
         clBlast.release(aAddress)

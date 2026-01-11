@@ -10,8 +10,8 @@
 void inner(float* x, float* y, size_t size, int b, float* result) {
     int n = size / b;
     for (int i = 0; i < b; ++i) {
-        float* a_ptr = x + (i * b);
-        float* b_ptr = y + (i * b);
+        float* a_ptr = x + (i * n);
+        float* b_ptr = y + (i * n);
 
         result[i] = cblas_sdot(n, a_ptr, 1, b_ptr, 1);
     }
