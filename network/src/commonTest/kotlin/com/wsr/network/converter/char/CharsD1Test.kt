@@ -1,0 +1,39 @@
+@file:Suppress("NonAsciiCharacters")
+
+package com.wsr.network.converter.char
+
+import com.wsr.batch.batchOf
+import com.wsr.core.IOType
+import com.wsr.core.d1
+import com.wsr.network.NetworkTestRule
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import org.junit.Rule
+
+class CharsD1Test {
+    @get:Rule
+    val networkTestRule = NetworkTestRule()
+
+    @Test
+    fun `encode=文字列を文字IDベクトルに変換`() {
+        val target = CharsD1(outputSize = 5)
+        val input = listOf("boo")
+
+        val actual = target.encode(input)
+
+        assertEquals(
+            expected = batchOf(IOType.d1(2f, 15f, 15f, 0f, 0f)),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `decode=文字IDベクトルを文字列に変換`() {
+        val target = CharsD1(outputSize = 5)
+        val input = batchOf(IOType.d1(2f, 15f, 15f))
+
+        val actual = target.decode(input)
+
+        assertEquals(expected = listOf("boo"), actual = actual)
+    }
+}

@@ -1,6 +1,6 @@
 package dataset.signal
 
-import com.wsr.nextFloat
+import com.wsr.network.nextFloat
 import kotlin.math.sign
 import kotlin.math.sin
 import kotlin.random.Random
