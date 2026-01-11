@@ -13,9 +13,9 @@ import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
 import com.wsr.process.Context
 import com.wsr.process.compute.position.PositionEncodeD2
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class PositionEncodeD2Test {
     @get:Rule

@@ -14,9 +14,9 @@ import com.wsr.optimizer.Scheduler
 import com.wsr.optimizer.sgd.Sgd
 import com.wsr.process.Context
 import com.wsr.process.compute.affine.AffineD1
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class AffineD1Test {
     @get:Rule
