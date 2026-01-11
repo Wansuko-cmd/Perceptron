@@ -467,3 +467,6 @@ object Backend : IBackend {
 fun DataBuffer.Companion.create(size: Int) = DataBufferGenerator.create(size)
 
 fun DataBuffer.Companion.create(value: FloatArray) = DataBufferGenerator.create(value)
+
+@JvmName("createWithElements")
+fun DataBuffer.Companion.create(vararg elements: Float) = DataBufferGenerator.create(elements)
