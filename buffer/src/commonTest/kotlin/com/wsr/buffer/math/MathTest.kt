@@ -7,8 +7,8 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.buffer.BufferTestRule
 import com.wsr.buffer.assertEquals
 import com.wsr.create
-import org.junit.Rule
 import kotlin.test.Test
+import org.junit.Rule
 
 class MathTest {
     @get:Rule
