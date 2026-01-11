@@ -1,16 +1,16 @@
 package dataset.iris
 
-import com.wsr.NetworkBuilder
-import com.wsr.converter.linear.inputD1
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.initializer.He
-import com.wsr.optimizer.Scheduler
-import com.wsr.optimizer.sgd.Sgd
-import com.wsr.output.softmax.softmaxWithLoss
-import com.wsr.process.compute.affine.affine
-import com.wsr.process.compute.bias.d1.bias
-import com.wsr.process.compute.function.relu.reLU
+import com.wsr.network.NetworkBuilder
+import com.wsr.network.converter.linear.inputD1
+import com.wsr.network.initializer.He
+import com.wsr.network.optimizer.Scheduler
+import com.wsr.network.optimizer.sgd.Sgd
+import com.wsr.network.output.softmax.softmaxWithLoss
+import com.wsr.network.process.compute.affine.affine
+import com.wsr.network.process.compute.bias.d1.bias
+import com.wsr.network.process.compute.function.relu.reLU
 import maxIndex
 
 fun createIrisModel(epoc: Int) {
