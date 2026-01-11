@@ -1,0 +1,78 @@
+@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+
+package com.wsr.network.process.compute.skip
+
+import com.wsr.batch.Batch
+import com.wsr.batch.batchOf
+import com.wsr.batch.get
+import com.wsr.core.IOType
+import com.wsr.core.d1
+import com.wsr.core.d2
+import com.wsr.core.get
+import com.wsr.network.NetworkTestRule
+import com.wsr.optimizer.Scheduler
+import com.wsr.optimizer.sgd.Sgd
+import com.wsr.process.Context
+import com.wsr.process.compute.affine.AffineD2
+import com.wsr.process.compute.bias.d2.BiasD2
+import com.wsr.process.compute.skip.SkipD2
+import org.junit.Rule
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class SkipD2Test {
+    @get:Rule
+    val networkTestRule = NetworkTestRule()
+
+    val target = SkipD2(
+        layers = listOf(
+            BiasD2(
+                outputX = 2,
+                outputY = 3,
+                optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d2(2, 3),
+                weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
+            ),
+            BiasD2(
+                outputX = 2,
+                outputY = 3,
+                optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d2(2, 3),
+                weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
+            ),
+        ),
+        inputX = 2,
+        inputY = 3,
+        outputX = 2,
+        outputY = 3,
+    )
+    val input
+        get() = batchOf(
+            IOType.d2(
+                IOType.d1(3) { it * 2f },
+                IOType.d1(3) { it * 3f },
+            ),
+            IOType.d2(
+                IOType.d1(3) { it * 4f },
+                IOType.d1(3) { it * 5f },
+            ),
+        )
+
+    @Test
+    fun `expect=スキップ接続を行う`() {
+        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+
+        assertEquals(expected = IOType.d1(0f, 6f, 12f), actual = actual[0][0])
+        assertEquals(expected = IOType.d1(4f, 12f, 20f), actual = actual[0][1])
+        assertEquals(expected = IOType.d1(0f, 10f, 20f), actual = actual[1][0])
+        assertEquals(expected = IOType.d1(4f, 16f, 28f), actual = actual[1][1])
+    }
+
+    @Test
+    fun `train=勾配を伝播`() {
+        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+
+        assertEquals(expected = IOType.d1(0f, 12f, 24f), actual = actual[0][0])
+        assertEquals(expected = IOType.d1(8f, 24f, 40f), actual = actual[0][1])
+        assertEquals(expected = IOType.d1(0f, 20f, 40f), actual = actual[1][0])
+        assertEquals(expected = IOType.d1(8f, 32f, 56f), actual = actual[1][1])
+    }
+}

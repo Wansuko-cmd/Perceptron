@@ -9,12 +9,10 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
-import com.wsr.output.mean.MeanSquareD1
-import com.wsr.output.sigmoid.SigmoidWithLossD1
 import com.wsr.output.softmax.SoftmaxWithLossD1
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class SoftmaxWithLossD1Test {
     @get:Rule

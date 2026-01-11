@@ -29,11 +29,12 @@ class ScaleAxisD2 internal constructor(
         val output = input.times(other = weight, axis = axis)
         val delta = calcDelta(output)
 
+        val dx = delta.times(other = weight, axis = axis)
         weight = optimizer.adapt(
             weight = weight,
             dw = (input * delta).sum(axis = sumAxis),
         )
 
-        return delta.times(other = weight, axis = axis)
+        return dx
     }
 }
