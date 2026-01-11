@@ -3,7 +3,6 @@
 package com.wsr.network.initializer
 
 import com.wsr.core.get
-import com.wsr.initializer.Random
 import com.wsr.network.NetworkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -8,10 +8,9 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkTestRule
-import com.wsr.optimizer.Scheduler
-import com.wsr.optimizer.sgd.Sgd
-import com.wsr.process.Context
-import com.wsr.process.compute.scale.d1.ScaleD1
+import com.wsr.network.optimizer.Scheduler
+import com.wsr.network.optimizer.sgd.Sgd
+import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule

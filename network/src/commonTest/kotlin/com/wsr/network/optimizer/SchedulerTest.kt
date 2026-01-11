@@ -3,7 +3,6 @@
 package com.wsr.network.optimizer
 
 import com.wsr.network.NetworkTestRule
-import com.wsr.optimizer.Scheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule

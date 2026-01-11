@@ -8,8 +8,7 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkTestRule
-import com.wsr.process.Context
-import com.wsr.process.compute.dropout.DropoutD1
+import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule

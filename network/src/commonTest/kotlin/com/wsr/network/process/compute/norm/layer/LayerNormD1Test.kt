@@ -10,8 +10,8 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
-import com.wsr.process.Context
-import com.wsr.process.compute.norm.layer.d1.LayerNormD1
+import com.wsr.network.process.Context
+import com.wsr.network.process.compute.norm.layer.d1.LayerNormD1
 import kotlin.test.Test
 import org.junit.Rule
 

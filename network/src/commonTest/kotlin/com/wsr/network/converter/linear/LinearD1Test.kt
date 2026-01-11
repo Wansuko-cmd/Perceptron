@@ -3,7 +3,6 @@
 package com.wsr.network.converter.linear
 
 import com.wsr.batch.batchOf
-import com.wsr.converter.linear.LinearD1
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkTestRule

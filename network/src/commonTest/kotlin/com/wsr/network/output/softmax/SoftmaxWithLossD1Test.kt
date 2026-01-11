@@ -9,7 +9,6 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
-import com.wsr.output.softmax.SoftmaxWithLossD1
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule

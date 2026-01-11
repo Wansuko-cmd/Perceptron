@@ -13,8 +13,8 @@ import com.wsr.core.d3
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
-import com.wsr.process.Context
-import com.wsr.process.compute.norm.layer.d3.LayerNormAxisD3
+import com.wsr.network.process.Context
+import com.wsr.network.process.compute.norm.layer.d3.LayerNormAxisD3
 import kotlin.test.Test
 import org.junit.Rule
 

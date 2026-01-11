@@ -9,8 +9,7 @@ import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
-import com.wsr.optimizer.Scheduler
-import com.wsr.optimizer.adam.AdamW
+import com.wsr.network.optimizer.Scheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule
