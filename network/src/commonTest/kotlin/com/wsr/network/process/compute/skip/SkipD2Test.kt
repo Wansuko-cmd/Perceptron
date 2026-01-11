@@ -13,12 +13,11 @@ import com.wsr.network.NetworkTestRule
 import com.wsr.optimizer.Scheduler
 import com.wsr.optimizer.sgd.Sgd
 import com.wsr.process.Context
-import com.wsr.process.compute.affine.AffineD2
 import com.wsr.process.compute.bias.d2.BiasD2
 import com.wsr.process.compute.skip.SkipD2
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class SkipD2Test {
     @get:Rule

@@ -12,9 +12,9 @@ import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
 import com.wsr.process.Context
 import com.wsr.process.compute.dropout.DropoutD3
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class DropoutD3Test {
     @get:Rule

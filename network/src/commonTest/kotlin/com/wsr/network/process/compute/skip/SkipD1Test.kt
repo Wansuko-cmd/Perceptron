@@ -13,9 +13,9 @@ import com.wsr.optimizer.sgd.Sgd
 import com.wsr.process.Context
 import com.wsr.process.compute.bias.d1.BiasD1
 import com.wsr.process.compute.skip.SkipD1
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.Rule
 
 class SkipD1Test {
     @get:Rule

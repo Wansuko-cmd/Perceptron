@@ -12,8 +12,8 @@ import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
 import com.wsr.process.Context
 import com.wsr.process.compute.norm.layer.d1.LayerNormD1
-import org.junit.Rule
 import kotlin.test.Test
+import org.junit.Rule
 
 class LayerNormD1Test {
     @get:Rule
