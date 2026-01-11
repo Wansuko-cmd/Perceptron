@@ -931,7 +931,7 @@ class CPUBackend : IBackend by KotlinBackend {
     }
 
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
-        val result = CPUBuffer.create(x.size)
+        val result = CPUBuffer.create(b)
         matMul.inner(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,

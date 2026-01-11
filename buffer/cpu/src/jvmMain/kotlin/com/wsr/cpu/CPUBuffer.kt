@@ -58,6 +58,8 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         }
     }
 
+    override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
+
     override fun hashCode(): Int {
         var result = size
         result = 31 * result + this.toFloatArray().contentHashCode()

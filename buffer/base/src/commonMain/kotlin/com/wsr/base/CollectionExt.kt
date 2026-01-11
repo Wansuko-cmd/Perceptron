@@ -397,7 +397,7 @@ internal inline fun DataBuffer.zipWith(
                             for (k in 0 until yk) {
                                 val oi = ((i * yj + j) * yk + k) * yl
                                 for (l in 0 until yl) {
-                                    val thisIndex = (j * yk * k) * yl + l
+                                    val thisIndex = (j * yk + k) * yl + l
                                     val otherIndex = oi + l
                                     result[otherIndex] = block(this[thisIndex], other[otherIndex])
                                 }
