@@ -10,9 +10,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
-import com.wsr.network.assertEquals
-import com.wsr.process.Context
-import com.wsr.process.compute.dropout.DropoutD2
+import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule

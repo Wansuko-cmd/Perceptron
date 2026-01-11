@@ -2,7 +2,6 @@
 
 package com.wsr.network.initializer
 
-import com.wsr.initializer.Fixed
 import com.wsr.network.NetworkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals

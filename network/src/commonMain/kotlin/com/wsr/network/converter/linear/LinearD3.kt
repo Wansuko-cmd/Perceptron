@@ -1,0 +1,25 @@
+package com.wsr.network.converter.linear
+
+import com.wsr.network.NetworkBuilder
+import com.wsr.batch.Batch
+import com.wsr.batch.toBatch
+import com.wsr.batch.toList
+import com.wsr.network.converter.Converter
+import com.wsr.core.IOType
+import com.wsr.network.initializer.WeightInitializer
+import com.wsr.network.optimizer.Optimizer
+import kotlinx.serialization.Serializable
+
+@Serializable
+class LinearD3(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
+    Converter.D3<IOType.D3>() {
+    override fun encode(input: List<IOType.D3>): Batch<IOType.D3> = input.toBatch()
+    override fun decode(input: Batch<IOType.D3>): List<IOType.D3> = input.toList()
+}
+
+fun NetworkBuilder.Companion.inputD3(x: Int, y: Int, z: Int, optimizer: Optimizer, initializer: WeightInitializer) =
+    inputD3(
+        converter = LinearD3(x, y, z),
+        optimizer = optimizer,
+        initializer = initializer,
+    )

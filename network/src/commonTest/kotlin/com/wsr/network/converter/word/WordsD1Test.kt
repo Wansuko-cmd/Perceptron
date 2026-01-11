@@ -4,7 +4,6 @@ package com.wsr.network.converter.word
 
 import com.wsr.batch.batchOf
 import com.wsr.batch.get
-import com.wsr.converter.word.WordsD1
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkTestRule

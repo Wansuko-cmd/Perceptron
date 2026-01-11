@@ -9,7 +9,6 @@ import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.core.get
 import com.wsr.network.NetworkTestRule
-import com.wsr.optimizer.Optimizer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.junit.Rule
