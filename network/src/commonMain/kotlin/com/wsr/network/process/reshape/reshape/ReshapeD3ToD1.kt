@@ -1,10 +1,10 @@
 package com.wsr.network.process.reshape.reshape
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.reshape.flatten.flatten
 import com.wsr.batch.reshape.reshape.reshapeToD3
 import com.wsr.core.IOType
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable

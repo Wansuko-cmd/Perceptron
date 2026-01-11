@@ -2,7 +2,6 @@
 
 package com.wsr.network.process.compute.skip
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.map.map
 import com.wsr.batch.operation.plus.plus
@@ -12,6 +11,7 @@ import com.wsr.core.d1
 import com.wsr.core.get
 import com.wsr.core.reshape.slice.slice
 import com.wsr.core.set
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.Process
 import com.wsr.network.process.compute.Compute

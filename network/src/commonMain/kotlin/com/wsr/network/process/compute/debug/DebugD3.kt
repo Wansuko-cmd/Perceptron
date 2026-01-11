@@ -1,8 +1,8 @@
 package com.wsr.network.process.compute.debug
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
 import kotlinx.serialization.Serializable

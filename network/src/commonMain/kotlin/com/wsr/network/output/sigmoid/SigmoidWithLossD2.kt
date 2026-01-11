@@ -1,6 +1,5 @@
 package com.wsr.network.output.sigmoid
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.batch.collecction.sum.sum
@@ -9,10 +8,11 @@ import com.wsr.batch.math.sigmoid
 import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.plus.plus
 import com.wsr.batch.operation.times.times
-import com.wsr.network.converter.Converter
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.get
+import com.wsr.network.NetworkBuilder
+import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output
 import com.wsr.network.output.TResult
 import kotlinx.serialization.Serializable

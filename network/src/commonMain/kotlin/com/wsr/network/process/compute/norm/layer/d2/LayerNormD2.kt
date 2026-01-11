@@ -1,6 +1,5 @@
 package com.wsr.network.process.compute.norm.layer.d2
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.average
 import com.wsr.batch.collecction.sum.sum
@@ -11,6 +10,7 @@ import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.plus.plus
 import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
 import kotlinx.serialization.Serializable

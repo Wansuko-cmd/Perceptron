@@ -1,6 +1,5 @@
 package com.wsr.network.process.compute.pool
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.map.map
 import com.wsr.batch.get
@@ -8,6 +7,7 @@ import com.wsr.batch.toBatch
 import com.wsr.core.IOType
 import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
 import kotlinx.serialization.Serializable

@@ -1,6 +1,5 @@
 package com.wsr.network.process.reshape.token
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.get
 import com.wsr.core.IOType
@@ -10,6 +9,7 @@ import com.wsr.core.get
 import com.wsr.core.operation.div.div
 import com.wsr.core.operation.plus.plus
 import com.wsr.core.set
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

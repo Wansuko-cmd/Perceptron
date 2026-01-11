@@ -1,6 +1,5 @@
 package com.wsr.network.process.compute.norm.minmax
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.minmax.max
 import com.wsr.batch.collecction.minmax.min
@@ -13,6 +12,7 @@ import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.Fixed
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer

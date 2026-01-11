@@ -1,9 +1,9 @@
 package com.wsr.network
 
+import com.wsr.core.IOType
 import com.wsr.network.converter.Converter
 import com.wsr.network.converter.linear.LinearD1
 import com.wsr.network.converter.linear.LinearD2
-import com.wsr.core.IOType
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.output.Output

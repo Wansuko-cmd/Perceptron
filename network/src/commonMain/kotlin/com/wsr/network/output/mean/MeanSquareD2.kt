@@ -1,13 +1,13 @@
 package com.wsr.network.output.mean
 
-import com.wsr.network.NetworkBuilder
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.batch.math.pow
 import com.wsr.batch.operation.minus.minus
-import com.wsr.network.converter.Converter
 import com.wsr.core.IOType
 import com.wsr.core.collection.average.average
+import com.wsr.network.NetworkBuilder
+import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output
 import com.wsr.network.output.TResult
 import kotlinx.serialization.Serializable
