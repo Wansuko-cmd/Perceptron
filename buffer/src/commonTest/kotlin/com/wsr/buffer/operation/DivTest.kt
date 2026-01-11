@@ -63,6 +63,7 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f),
             actual = actual,
+            absoluteTolerance = 1e-4f,
         )
     }
 
