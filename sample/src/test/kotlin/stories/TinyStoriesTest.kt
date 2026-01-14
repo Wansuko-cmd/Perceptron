@@ -20,10 +20,10 @@ import com.wsr.network.process.compute.position.positionEmbedding
 import com.wsr.network.process.compute.scale.d2.scale
 import com.wsr.network.process.compute.skip.skip
 import com.wsr.network.process.reshape.token.tokenEmbedding
-import dataset.storeis.createWordList
-import dataset.storeis.generateStories
-import dataset.storeis.toData
-import dataset.storeis.tokenize
+import dataset.stories.createWordList
+import dataset.stories.generateStories
+import dataset.stories.toData
+import dataset.stories.tokenize
 import java.io.File
 import kotlin.random.Random
 import kotlin.random.nextInt

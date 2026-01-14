@@ -1,4 +1,4 @@
-package dataset.storeis
+package dataset.stories
 
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder

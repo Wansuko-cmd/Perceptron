@@ -1,4 +1,4 @@
-package dataset.storeis
+package dataset.stories
 
 import java.io.File
 import java.io.FileNotFoundException
