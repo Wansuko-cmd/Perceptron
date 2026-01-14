@@ -1,9 +1,13 @@
+.kotlin
 .gradle
 local.properties
-build/
 !gradle/wrapper/gradle-wrapper.jar
+build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+### Mac ###
+.DS_Store
 
 ### STS ###
 .apt_generated
