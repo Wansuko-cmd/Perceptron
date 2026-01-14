@@ -84,5 +84,4 @@ class MnistTest {
         }
         .affine(neuron = 10)
         .softmaxWithLoss(converter = { LabelConverter(inputSize) })
-
 }

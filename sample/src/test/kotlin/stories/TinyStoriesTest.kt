@@ -98,7 +98,7 @@ class TinyStoriesTest {
                             予測: ${expected[sampleIndex]}
                             正解ラベル: ${labels[sampleIndex]}
                             ---------------------------
-                        """.trimIndent(),
+                            """.trimIndent(),
                         )
 
                         all += expected.size
