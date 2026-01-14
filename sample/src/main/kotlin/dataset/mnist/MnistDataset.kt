@@ -2,6 +2,7 @@ package dataset.mnist
 
 import java.io.DataInputStream
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
 
@@ -9,7 +10,7 @@ data class MnistDataset(val pixels: List<Float>, val label: Int, val imageSize: 
     companion object {
         private const val BASE_DIR = "src/main/resources"
 
-        fun read(imagePath: String, labelPath: String): List<MnistDataset> {
+        fun read(imagePath: String, labelPath: String): List<MnistDataset> = try {
             val imagePath = Paths.get(BASE_DIR, imagePath)
             val imageStream = DataInputStream(GZIPInputStream(Files.newInputStream(imagePath)))
 
@@ -30,7 +31,10 @@ data class MnistDataset(val pixels: List<Float>, val label: Int, val imageSize: 
                 }
             }
             val labels = List(numObLabels) { labelStream.readUnsignedByte() }
-            return images.zip(labels) { image, label -> MnistDataset(image, label, imageWidth) }
+            images.zip(labels) { image, label -> MnistDataset(image, label, imageWidth) }
+        } catch (e: NoSuchFileException) {
+            println("resource/mnistにMNISTデータセットを入れてください")
+            throw e
         }
     }
 }

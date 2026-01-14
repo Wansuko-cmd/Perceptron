@@ -1,53 +1,81 @@
-## 現状のインターフェイス
+# knist
+
+## 概要
+
+Kotlin製のニューラルネットワークライブラリです
+
+元々はKotlinでMNIST識別をしたくて作ったためknistとしています
+
+## コード例
+
+1. モデルを定義
 
 ```kotlin
-fun main() {
-    // カスタムした層をSerializerに登録
-    NetworkSerializer.apply {
-        register(PixelConverter::class)
-        register(LabelConverter::class)
+val network: Network<List<Float>, Int> = NetworkBuilder
+    .inputPx(
+        x = 28,
+        y = 28,
+        optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
+        initializer = He(seed = seed),
+    )
+    .reshapeToD1()
+    .layerNorm()
+    .affine(neuron = 256).bias().reLU()
+    .affine(neuron = 128).bias().reLU()
+    .affine(neuron = 10)
+    .softmaxWithLoss(converter = { LabelConverter(inputSize) })
+```
+
+2. `train`関数を用いて学習
+
+```kotlin
+repeat(epoch) { epoch ->
+    println("epoch: $epoch")
+    train.chunked(256).forEach { data ->
+        network.train(
+            input = data.map { it.pixels },
+            label = data.map { it.label },
+        )
     }
-
-    // ニューラルネットワークを構築
-    val network = NetworkBuilder
-        .inputPx(x = 28, y = 28, optimizer = AdamW(0.001), initializer = He(seed))
-        .reshapeToD1()
-        .affine(neuron = 512).bias().reLU()
-        .repeat(5) {
-            skip {
-                this
-                    .layerNorm().affine(neuron = 512).bias().reLU()
-                    .layerNorm().affine(neuron = 512).bias().reLU()
-            }
-        }
-        .skip {
-            this
-                .layerNorm().affine(neuron = 512).bias().reLU()
-                .layerNorm().affine(neuron = 128).bias().reLU()
-        }
-        .affine(neuron = 10)
-        .softmaxWithLoss(converter = { LabelConverter(inputSize) })
-
-    // テストデータを用意
-    val random = seed?.let { Random(seed.toLong()) } ?: Random()
-    val dataset = MnistDataset.read().shuffled(random)
-    val (train, test) = dataset.take(50000) to dataset.takeLast(10000).take(100)
-
-    // 学習
-    (1..epoc).forEach { epoc ->
-        println("epoc: $epoc")
-        train.shuffled(random).take(5000).chunked(240).mapIndexed { i, data ->
-            network.train(
-                input = data.map { it.pixels },
-                label = data.map { it.label },
-            )
-            println("train: $i")
-        }
-    }
-
-    // 予測
-    test
-        .count { data -> network.expect(input = data.pixels) == data.label }
-        .let { println(it.toDouble() / test.size.toDouble()) }
 }
 ```
+
+3. `expect`関数を用いて推測
+
+```kotlin
+val expect = network.expect(input = data.pixels)
+```
+
+sampleにてMNIST(3層NN)とTinyStories(Transformer)の例を載せています
+
+- [MNIST](sample/src/main/kotlin/dataset/mnist/MnistUtils.kt)
+- [TinyStories](sample/src/main/kotlin/dataset/stories/TinyStoriesUtils.kt)
+
+## ライブラリ構成
+
+### Network
+
+ニューラルネットワーク関連の処理を定義
+
+- 処理層
+- 変換層
+- 重み初期化処理
+- 最適化処理
+- JSONへのシリアライズ・デシリアライズ
+- etc...
+
+### IOType
+
+行列演算の処理を定義
+
+主に形状管理を行う
+
+### Buffer
+
+1次元配列でのデータ保持、および計算処理を定義
+
+## 試したい場合
+
+[Jitpack](https://jitpack.io/#Wansuko-cmd/knist/)より導入可能です
+
+※ 現在開発中のため、予告なく破壊的変更が加わる可能性が非常に高いです。あらかじめご了承ください
