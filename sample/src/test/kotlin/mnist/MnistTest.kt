@@ -4,6 +4,8 @@ package mnist
 
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder
+import com.wsr.network.NetworkSerializer
+import com.wsr.network.NetworkSerializer.Companion.register
 import com.wsr.network.initializer.He
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.adam.AdamW
@@ -17,6 +19,7 @@ import com.wsr.network.process.compute.skip.skip
 import com.wsr.network.process.reshape.reshape.reshapeToD1
 import dataset.mnist.LabelConverter
 import dataset.mnist.MnistDataset
+import dataset.mnist.PixelConverter
 import dataset.mnist.inputPx
 import kotlin.test.Test
 
@@ -29,6 +32,11 @@ private const val TEST_LABEL_PATH = "mnist/t10k-labels-idx1-ubyte.gz"
 class MnistTest {
     @Test
     fun `Mnistモデルの精度が落ちていないか確認`() {
+        NetworkSerializer.apply {
+            register(PixelConverter::class)
+            register(LabelConverter::class)
+        }
+
         println("ネットワーク構築")
         val network = createNetwork()
 
