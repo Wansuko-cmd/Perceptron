@@ -37,12 +37,12 @@ private const val NUM_OF_STORIES = 1000
 
 private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
-private const val EOS_INDEX = 2
 
 fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String>> {
     println("単語リスト生成開始")
     val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 
+    // ニューラルネットワークを構築
     val network = NetworkBuilder.wordsD1(
         maxLength = MAX_LENGTH,
         words = words,
@@ -70,18 +70,18 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
                         .attention(numOfHeads = NUM_HEADS, maskValue = PAD_INDEX, isCausal = true)
-                        .dropout(0.9f)
+                        .dropout(ratio = 0.9f)
                 }
                 .skip {
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .affine(FFN_DIM).bias(axis = 1).swish()
-                        .affine(EMBEDDING_DIM).bias(axis = 1)
-                        .dropout(0.9f)
+                        .affine(neuron = FFN_DIM).bias(axis = 1).swish()
+                        .affine(neuron = EMBEDDING_DIM).bias(axis = 1)
+                        .dropout(ratio = 0.9f)
                 }
         }
         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-        .affine(words.size)
+        .affine(neuron = words.size)
         .softmaxWithLoss(
             converter = {
                 WordD2(
@@ -109,9 +109,20 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
 
                     val random = Random.nextInt(inputs.indices)
                     println(
-                        "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
+                        """
+                            ---------------------------
+                            train line: $lineIndex
+                            入力例: ${inputs[random]}
+                            ラベル: ${labels[random]}
+                        """.trimIndent(),
                     )
-                    network.train(inputs, labels).also { println("loss: $it") }
+                    val loss = network.train(inputs, labels)
+                    println(
+                        """
+                            loss: $loss
+                            ---------------------------
+                        """.trimIndent(),
+                    )
                 }
         }
 
@@ -146,8 +157,6 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
                     correct += expected.zip(labels).count { (expected, actual) -> expected == actual }
                 }
         }
-
-    println("テストケース数: $all, 正解数: $correct")
 
     return network
 }
