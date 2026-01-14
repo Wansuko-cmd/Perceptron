@@ -1,5 +1,5 @@
 import dataset.mnist.createMnistModel
 
 fun main() {
-    createMnistModel(epoc = 10)
+    createMnistModel(epoch = 10)
 }
