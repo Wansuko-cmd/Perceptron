@@ -151,20 +151,3 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
 
     return network
 }
-
-private fun Sequence<String>.generateStories(): Sequence<String> = sequence {
-    var text = ""
-    this@generateStories.forEach {
-        text += it
-        if (it.contains("<|endoftext|>")) {
-            yield(text)
-            text = ""
-        }
-    }
-}
-
-private fun List<String>.toData(): List<Pair<List<String>, List<String>>> {
-    val input = this.take(MAX_LENGTH)
-    val label = this.take(MAX_LENGTH + 1).drop(1)
-    return listOf(input to label)
-}

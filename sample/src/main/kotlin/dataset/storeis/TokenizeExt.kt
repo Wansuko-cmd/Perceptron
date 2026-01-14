@@ -2,7 +2,6 @@ package dataset.storeis
 
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.sequences.forEach
 
 /**
  * 語彙を構築
@@ -65,3 +64,20 @@ fun tokenize(text: String): List<String> = text
     .trim()
     .split(" ")
     .filter { it.isNotBlank() }
+
+fun Sequence<String>.generateStories(): Sequence<String> = sequence {
+    var text = ""
+    this@generateStories.forEach {
+        text += it
+        if (it.contains("<|endoftext|>")) {
+            yield(text)
+            text = ""
+        }
+    }
+}
+
+fun List<String>.toData(): List<Pair<List<String>, List<String>>> {
+    val input = this.take(MAX_LENGTH)
+    val label = this.take(MAX_LENGTH + 1).drop(1)
+    return listOf(input to label)
+}

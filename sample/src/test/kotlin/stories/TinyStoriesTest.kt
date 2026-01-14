@@ -3,20 +3,164 @@
 package stories
 
 import com.wsr.network.Network
-import dataset.storeis.MAX_LENGTH
-import dataset.storeis.createTinyStoriesModel
+import com.wsr.network.NetworkBuilder
+import com.wsr.network.converter.word.WordD2
+import com.wsr.network.converter.word.wordsD1
+import com.wsr.network.initializer.Xavier
+import com.wsr.network.optimizer.Scheduler
+import com.wsr.network.optimizer.adam.AdamW
+import com.wsr.network.output.softmax.softmaxWithLoss
+import com.wsr.network.process.compute.affine.affine
+import com.wsr.network.process.compute.attention.attention
+import com.wsr.network.process.compute.bias.d2.bias
+import com.wsr.network.process.compute.dropout.dropout
+import com.wsr.network.process.compute.function.relu.swish
+import com.wsr.network.process.compute.norm.layer.d2.layerNorm
+import com.wsr.network.process.compute.position.positionEmbedding
+import com.wsr.network.process.compute.scale.d2.scale
+import com.wsr.network.process.compute.skip.skip
+import com.wsr.network.process.reshape.token.tokenEmbedding
+import dataset.storeis.createWordList
+import dataset.storeis.generateStories
+import dataset.storeis.toData
 import dataset.storeis.tokenize
+import java.io.File
+import kotlin.random.Random
+import kotlin.random.nextInt
 import kotlin.test.Test
 
-private const val SEED = 0
+private const val TRAIN_PATH = "src/main/resources/stories/TinyStories-train.txt"
+private const val VALID_PATH = "src/main/resources/stories/TinyStories-valid.txt"
+
+private const val VOCAB_SIZE = 3000
+private const val EMBEDDING_DIM = 256
+const val MAX_LENGTH = 128
+private const val NUM_LAYERS = 2
+private const val NUM_HEADS = 8
+private const val FFN_DIM = EMBEDDING_DIM * 4
+
+private const val BATCH_SIZE = 64
+private const val NUM_OF_STORIES = 1000
+
+private const val PAD_INDEX = 0
+private const val UNK_INDEX = 1
 
 class TinyStoriesTest {
     @Test
     fun `TinyStoriesモデルの出力を確認`() {
-        val network = createTinyStoriesModel(SEED)
+        println("単語リスト生成開始")
+        val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
+        val network = createModel(words)
+
+        println("学習開始")
+        File(TRAIN_PATH)
+            .useLines { lines ->
+                lines
+                    .generateStories()
+                    .flatMap { tokenize(it).toData() }
+                    // バッチサイズ
+                    .chunked(BATCH_SIZE)
+                    // 学習バッチ数
+                    .take(NUM_OF_STORIES)
+                    .forEachIndexed { lineIndex, trainData ->
+                        val inputs = trainData.map { it.first }
+                        val labels = trainData.map { it.second }
+
+                        val random = Random.nextInt(inputs.indices)
+                        println(
+                            "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
+                        )
+                        network.train(inputs, labels).also { println("loss: $it") }
+                    }
+            }
+
+        // テスト
+        println("テスト開始")
+        var all = 0
+        var correct = 0
+        File(VALID_PATH)
+            .useLines { lines ->
+                lines
+                    .generateStories()
+                    .flatMap { tokenize(it).toData() }
+                    .chunked(100)
+                    .take(100)
+                    .forEach { testData ->
+                        val inputs = testData.map { it.first }
+                        val labels = testData.map { it.second }
+                        val expected = network.expect(inputs)
+
+                        val sampleIndex = inputs.size / 2
+                        println(
+                            """
+                            ---------------------------
+                            入力: ${inputs[sampleIndex]}
+                            予測: ${expected[sampleIndex]}
+                            正解ラベル: ${labels[sampleIndex]}
+                            ---------------------------
+                        """.trimIndent(),
+                        )
+
+                        all += expected.size
+                        correct += expected.zip(labels).count { (expected, actual) -> expected == actual }
+                    }
+            }
+
+        println("テストケース数: $all, 正解数: $correct")
+
         val story = network.createStories(beginning = "One day, a sheep named Bob was very happy.", maxLength = 300)
         println(story)
     }
+
+    private fun createModel(words: List<String>) = NetworkBuilder.wordsD1(
+        maxLength = MAX_LENGTH,
+        words = words,
+        unknownIndex = UNK_INDEX,
+        paddingIndex = PAD_INDEX,
+        optimizer = AdamW(
+            scheduler = Scheduler.CosineAnnealing(
+                minRate = 0.0005f,
+                maxRate = 0.001f,
+                stepSize = NUM_OF_STORIES,
+                warmUp = 200,
+                initialRate = 0f,
+            ),
+        ),
+        initializer = Xavier(seed = 0),
+    )
+        .tokenEmbedding(
+            vocabSize = words.size,
+            tokenSize = EMBEDDING_DIM,
+        )
+        .positionEmbedding()
+        .repeat(NUM_LAYERS) {
+            this
+                .skip {
+                    this
+                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                        .attention(numOfHeads = NUM_HEADS, maskValue = PAD_INDEX, isCausal = true)
+                        .dropout(0.9f)
+                }
+                .skip {
+                    this
+                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                        .affine(FFN_DIM).bias(axis = 1).swish()
+                        .affine(EMBEDDING_DIM).bias(axis = 1)
+                        .dropout(0.9f)
+                }
+        }
+        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+        .affine(words.size)
+        .softmaxWithLoss(
+            converter = {
+                WordD2(
+                    words = words,
+                    length = MAX_LENGTH,
+                    unknownIndex = UNK_INDEX,
+                )
+            },
+            maskValue = PAD_INDEX,
+        )
 
     private fun Network<List<String>, List<String>>.createStories(beginning: String, maxLength: Int): String {
         val text = tokenize(beginning).take(MAX_LENGTH).toMutableList()
