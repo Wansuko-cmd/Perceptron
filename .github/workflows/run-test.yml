@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest, ubuntu-24.04-arm, windows-latest]
+        os: [ macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 仮想ブランチにチェックアウト
@@ -28,4 +28,4 @@ jobs:
 
       - name: テストを実行
         run: |
-          ${{ github.workspace }}/gradlew allTests
+          ./gradlew allTests

@@ -2,8 +2,8 @@ package com.wsr.core
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.create
-import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmName
+import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class IOType {

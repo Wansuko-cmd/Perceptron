@@ -97,6 +97,7 @@ import com.wsr.network.process.reshape.reshape.ReshapeD2ToD1
 import com.wsr.network.process.reshape.reshape.ReshapeD3ToD1
 import com.wsr.network.process.reshape.reshape.ReshapeD3ToD2
 import com.wsr.network.process.reshape.token.TokenEmbeddingD1ToD2
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -114,7 +115,6 @@ import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.serializer
 import okio.BufferedSink
 import okio.BufferedSource
-import kotlin.jvm.JvmName
 
 class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     private val converterSerializer = json.serializersModule.serializer<Converter>()
