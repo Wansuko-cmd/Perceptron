@@ -4,20 +4,16 @@ package com.wsr.buffer.transpose
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class TransposeD3Test {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     val input = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
     @Test
-    fun `transpose_012=3次元転置`() {
+    fun `transpose_012=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 0, axisJ = 1, axisK = 2)
 
         assertEquals(
@@ -35,7 +31,7 @@ class TransposeD3Test {
     }
 
     @Test
-    fun `transpose_021=3次元転置`() {
+    fun `transpose_021=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 0, axisJ = 2, axisK = 1)
 
         assertEquals(
@@ -55,7 +51,7 @@ class TransposeD3Test {
     }
 
     @Test
-    fun `transpose_102=3次元転置`() {
+    fun `transpose_102=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 1, axisJ = 0, axisK = 2)
 
         assertEquals(
@@ -74,7 +70,7 @@ class TransposeD3Test {
     }
 
     @Test
-    fun `transpose_120=3次元転置`() {
+    fun `transpose_120=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 1, axisJ = 2, axisK = 0)
 
         assertEquals(
@@ -99,7 +95,7 @@ class TransposeD3Test {
     }
 
     @Test
-    fun `transpose_201=3次元転置`() {
+    fun `transpose_201=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 2, axisJ = 0, axisK = 1)
 
         assertEquals(
@@ -121,7 +117,7 @@ class TransposeD3Test {
     }
 
     @Test
-    fun `transpose_210=3次元転置`() {
+    fun `transpose_210=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 2, axisJ = 1, axisK = 0)
 
         assertEquals(

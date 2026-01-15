@@ -4,20 +4,16 @@ package com.wsr.buffer.math
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
 import com.wsr.buffer.assertEquals
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import org.junit.Rule
 
 class MathTest {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
 
     @Test
-    fun `exp=指数関数`() {
+    fun `exp=指数関数`() = bufferTestRule {
         val actual = Backend.exp(x = input)
 
         assertEquals(
@@ -39,7 +35,7 @@ class MathTest {
     }
 
     @Test
-    fun `ln=自然対数`() {
+    fun `ln=自然対数`() = bufferTestRule {
         val actual = Backend.ln(x = input, e = 1e-5f)
 
         assertEquals(
@@ -61,7 +57,7 @@ class MathTest {
     }
 
     @Test
-    fun `pow=階乗`() {
+    fun `pow=階乗`() = bufferTestRule {
         val actual = Backend.pow(x = input, n = 3)
 
         assertEquals(
@@ -72,7 +68,7 @@ class MathTest {
     }
 
     @Test
-    fun `sqrt=平方根`() {
+    fun `sqrt=平方根`() = bufferTestRule {
         val actual = Backend.sqrt(x = input, e = 1e-5f)
 
         assertEquals(
