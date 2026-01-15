@@ -3,6 +3,7 @@ package com.wsr.batch.operation.matmul
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 fun IOType.D2.matMul(other: Batch<IOType.D1>, trans: Boolean = false): Batch<IOType.D1> {
     val n = if (trans) shape[1] else shape[0]

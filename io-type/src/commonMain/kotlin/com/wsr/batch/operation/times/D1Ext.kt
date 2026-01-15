@@ -3,6 +3,7 @@ package com.wsr.batch.operation.times
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD1TimesD1s")
 operator fun IOType.D1.times(other: Batch<IOType.D1>): Batch<IOType.D1> {

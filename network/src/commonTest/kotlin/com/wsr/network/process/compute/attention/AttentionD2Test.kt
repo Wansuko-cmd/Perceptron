@@ -9,18 +9,14 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import org.junit.Rule
 
 class AttentionD2Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     private val outputX = 3
     private val outputY = 4
     private val numOfHeads = 2
@@ -58,7 +54,7 @@ class AttentionD2Test {
         )
 
     @Test
-    fun `expect=注目度を計算`() {
+    fun `expect=注目度を計算`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
         assertEquals(
@@ -95,7 +91,7 @@ class AttentionD2Test {
     }
 
     @Test
-    fun `train=逆伝播を行い勾配を返す`() {
+    fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
         assertEquals(
@@ -132,7 +128,7 @@ class AttentionD2Test {
     }
 
     @Test
-    fun `train=重みを更新する`() {
+    fun `train=重みを更新する`() = networkTestRule {
         val target = target
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>

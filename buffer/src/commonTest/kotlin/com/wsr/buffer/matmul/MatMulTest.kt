@@ -4,18 +4,14 @@ package com.wsr.buffer.matmul
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class MatMulTest {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     @Test
-    fun `inner=内積`() {
+    fun `inner=内積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
@@ -25,7 +21,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D2 matMul D3=行列積`() {
+    fun `D2 matMul D3=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
@@ -35,7 +31,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D2 matMul D3T=行列積`() {
+    fun `D2 matMul D3T=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
@@ -45,7 +41,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3 matMul D2=行列積`() {
+    fun `D3 matMul D2=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
@@ -55,7 +51,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3T matMul D2=行列積`() {
+    fun `D3T matMul D2=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
@@ -65,7 +61,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3 matMul D3=行列積`() {
+    fun `D3 matMul D3=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(30) { it * 2f })
         val y = DataBuffer.create(FloatArray(30) { -it + 3f })
 
@@ -97,7 +93,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3 matMul D3T=行列積`() {
+    fun `D3 matMul D3T=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(30) { it * 2f })
         val y = DataBuffer.create(FloatArray(30) { -it + 3f })
 
@@ -129,7 +125,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3T matMul D3=行列積`() {
+    fun `D3T matMul D3=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(30) { it * 2f })
         val y = DataBuffer.create(FloatArray(30) { -it + 3f })
 
@@ -161,7 +157,7 @@ class MatMulTest {
     }
 
     @Test
-    fun `D3T matMul D3T=行列積`() {
+    fun `D3T matMul D3T=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(30) { it * 2f })
         val y = DataBuffer.create(FloatArray(30) { -it + 3f })
 

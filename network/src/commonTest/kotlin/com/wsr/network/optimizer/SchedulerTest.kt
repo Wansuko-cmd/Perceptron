@@ -2,17 +2,13 @@
 
 package com.wsr.network.optimizer
 
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class SchedulerTest {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `Fix=指定値`() {
+    fun `Fix=指定値`() = networkTestRule {
         val target = Scheduler.Fix(rate = 1f)
 
         assertEquals(expected = 1f, actual = target.calcRate(0))
@@ -20,7 +16,7 @@ class SchedulerTest {
     }
 
     @Test
-    fun `Step=指定ステップ数を超えた数だけgammaを掛ける`() {
+    fun `Step=指定ステップ数を超えた数だけgammaを掛ける`() = networkTestRule {
         val target = Scheduler.Step(rate = 1f, gamma = 0.5f, stepCount = 100)
 
         assertEquals(expected = 1f, actual = target.calcRate(0))
@@ -29,7 +25,7 @@ class SchedulerTest {
     }
 
     @Test
-    fun `MultiStep=マイルストーンを超えた数だけgammaを掛ける`() {
+    fun `MultiStep=マイルストーンを超えた数だけgammaを掛ける`() = networkTestRule {
         val target = Scheduler.MultiStep(rate = 1f, gamma = 0.5f, milestones = listOf(50, 100))
 
         assertEquals(expected = 1f, actual = target.calcRate(0))
@@ -38,7 +34,7 @@ class SchedulerTest {
     }
 
     @Test
-    fun `CosineAnnealing=コサイン減衰`() {
+    fun `CosineAnnealing=コサイン減衰`() = networkTestRule {
         val target = Scheduler.CosineAnnealing(minRate = 0.1f, maxRate = 1f, stepSize = 100, warmUp = 10)
 
         assertEquals(expected = 0.1f, actual = target.calcRate(0))

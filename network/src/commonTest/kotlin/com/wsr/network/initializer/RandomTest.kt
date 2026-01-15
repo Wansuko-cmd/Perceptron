@@ -3,17 +3,13 @@
 package com.wsr.network.initializer
 
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class RandomTest {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `d1=ランダムに初期化`() {
+    fun `d1=ランダムに初期化`() = networkTestRule {
         val target = Random(seed = 0)
 
         val actual = target.d1(input = listOf(3), output = listOf(3), size = 3)
@@ -26,7 +22,7 @@ class RandomTest {
     }
 
     @Test
-    fun `d2=ランダムに初期化`() {
+    fun `d2=ランダムに初期化`() = networkTestRule {
         val target = Random(seed = 0)
 
         val actual = target.d2(input = listOf(2, 2), output = listOf(2, 2), x = 2, y = 2)
@@ -38,7 +34,7 @@ class RandomTest {
     }
 
     @Test
-    fun `d3=ランダムに初期化`() {
+    fun `d3=ランダムに初期化`() = networkTestRule {
         val target = Random(seed = 0)
 
         val actual = target.d3(input = listOf(2, 2, 2), output = listOf(2, 2, 2), x = 2, y = 2, z = 2)
@@ -54,7 +50,7 @@ class RandomTest {
     }
 
     @Test
-    fun `d4=ランダムに初期化`() {
+    fun `d4=ランダムに初期化`() = networkTestRule {
         val target = Random(seed = 0)
 
         val actual = target.d4(input = listOf(2, 2, 2, 2), output = listOf(2, 2, 2, 2), i = 2, j = 2, k = 2, l = 2)

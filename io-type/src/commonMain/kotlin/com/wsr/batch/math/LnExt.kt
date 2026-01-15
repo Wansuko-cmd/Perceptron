@@ -3,6 +3,7 @@ package com.wsr.batch.math
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD0sLn")
 fun Batch<IOType.D0>.ln(e: Float = 1e-7f): Batch<IOType.D0> {

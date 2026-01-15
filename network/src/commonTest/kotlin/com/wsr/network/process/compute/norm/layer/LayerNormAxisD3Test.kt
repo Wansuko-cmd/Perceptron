@@ -11,17 +11,13 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.layer.d3.LayerNormAxisD3
 import kotlin.test.Test
-import org.junit.Rule
 
 class LayerNormAxisD3Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target0 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 0, e = 1e-6f)
     val target1 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 1, e = 1e-6f)
     val target2 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 2, e = 1e-6f)
@@ -50,7 +46,7 @@ class LayerNormAxisD3Test {
         )
 
     @Test
-    fun `Axis0_expect=axis0で層正規化`() {
+    fun `Axis0_expect=axis0で層正規化`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -97,7 +93,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis0_train=axis0で正規化および勾配を伝播`() {
+    fun `Axis0_train=axis0で正規化および勾配を伝播`() = networkTestRule {
         val actual = target0._train(
             input = input,
             context = Context(input),
@@ -148,7 +144,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_expect=axis1で層正規化`() {
+    fun `Axis1_expect=axis1で層正規化`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -195,58 +191,58 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_train=axis1で正規化および勾配を伝播`() {
+    fun `Axis1_train=axis1で正規化および勾配を伝播`() = networkTestRule {
         val actual = target1._train(
             input = input,
             context = Context(input),
-            calcDelta = { 1e6f * it as Batch<IOType.D2> },
+            calcDelta = { it },
         ) as Batch<IOType.D3>
 
         assertEquals(
-            expected = IOType.d1(0.0000f, -8.1250f, -0.9375f),
+            expected = IOType.d1(0.0000f, -8.1062e-6f, -9.5367e-7f),
             actual = actual[0][0][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 8.1250f, 0.9375f),
+            expected = IOType.d1(0.0000f, 8.1062e-6f, 9.5367e-7f),
             actual = actual[0][0][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, -296.5000f, 125.0000f),
+            expected = IOType.d1(0.0000f, -2.9659e-4f, 1.2540e-4f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 296.5000f, -125.0000f),
+            expected = IOType.d1(0.0000f, 2.9659e-4f, -1.2540E-4f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
         assertEquals(
-            expected = IOType.d1(-0.0937f, -0.1250f, 8.1250f),
+            expected = IOType.d1(-1.1920e-7f, -1.1920e-7f, 8.1062e-6f),
             actual = actual[1][0][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0937f, 0.1250f, -8.1250f),
+            expected = IOType.d1(1.1920e-7f, 1.1920e-7f, -8.1062e-6f),
             actual = actual[1][0][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
         assertEquals(
-            expected = IOType.d1(0.9375f, 0.1875f, 0.1250f),
+            expected = IOType.d1(9.5367e-7f, 1.7881e-7f, 1.1920e-7f),
             actual = actual[1][1][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
         assertEquals(
-            expected = IOType.d1(-0.9375f, -0.1875f, -0.1250f),
+            expected = IOType.d1(-9.5367e-7f, -1.7881e-7f, -1.1920e-7f),
             actual = actual[1][1][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
     }
 
     @Test
-    fun `Axis2_expect=axis2で層正規化`() {
+    fun `Axis2_expect=axis2で層正規化`() = networkTestRule {
         val actual = target2._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -293,7 +289,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis2_train=axis2で正規化および勾配を伝播`() {
+    fun `Axis2_train=axis2で正規化および勾配を伝播`() = networkTestRule {
         val actual = target2._train(
             input = input,
             context = Context(input),

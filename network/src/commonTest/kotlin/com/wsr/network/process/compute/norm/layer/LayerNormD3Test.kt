@@ -11,17 +11,13 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.layer.d3.LayerNormD3
 import kotlin.test.Test
-import org.junit.Rule
 
 class LayerNormD3Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target get() = LayerNormD3(outputX = 2, outputY = 2, outputZ = 3, e = 1e-6f)
     val input
         get() = batchOf(
@@ -48,7 +44,7 @@ class LayerNormD3Test {
         )
 
     @Test
-    fun `expect=層正規化`() {
+    fun `expect=層正規化`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -95,7 +91,7 @@ class LayerNormD3Test {
     }
 
     @Test
-    fun `train=正規化および勾配を伝播`() {
+    fun `train=正規化および勾配を伝播`() = networkTestRule {
         val actual = target._train(
             input = input,
             context = Context(input),

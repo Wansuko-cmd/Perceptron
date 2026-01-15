@@ -97,6 +97,7 @@ import com.wsr.network.process.reshape.reshape.ReshapeD2ToD1
 import com.wsr.network.process.reshape.reshape.ReshapeD3ToD1
 import com.wsr.network.process.reshape.reshape.ReshapeD3ToD2
 import com.wsr.network.process.reshape.token.TokenEmbeddingD1ToD2
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

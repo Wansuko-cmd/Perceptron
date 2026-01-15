@@ -9,8 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: [ network, io-type, buffer ]
-    runs-on: ubuntu-latest
+        os: [ macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: 仮想ブランチにチェックアウト
         uses: actions/checkout@v4
@@ -22,9 +22,10 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-      - name: ./gradlewに権限を付与
-        run: |
-          chmod 777 ${{ github.workspace }}/gradlew
+      - name: gradlewに権限を付与 (Unix)
+        if: runner.os != 'Windows'
+        run: chmod 777 ${{ github.workspace }}/gradlew
+
       - name: テストを実行
         run: |
-          ${{ github.workspace }}/gradlew ${{ matrix.module }}:allTests --info
+          ./gradlew allTests

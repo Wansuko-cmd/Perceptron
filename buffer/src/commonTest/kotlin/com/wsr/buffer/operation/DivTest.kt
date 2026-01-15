@@ -4,19 +4,15 @@ package com.wsr.buffer.operation
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
 import com.wsr.buffer.assertEquals
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class DivTest {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     @Test
-    fun `スカラー÷1次元`() {
+    fun `スカラー÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
 
         val actual = Backend.div(x = 1f, y = x)
@@ -42,7 +38,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷スカラー`() {
+    fun `1次元÷スカラー`() = bufferTestRule {
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
         val actual = Backend.div(x = y, y = 1f)
@@ -54,7 +50,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷1次元`() {
+    fun `1次元÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -68,7 +64,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷2次元(axis=0)`() {
+    fun `1次元÷2次元_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(3) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -95,7 +91,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷2次元(axis=1)`() {
+    fun `1次元÷2次元_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(4) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -109,7 +105,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷3次元(axis=0)`() {
+    fun `1次元÷3次元_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(2) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -136,7 +132,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷3次元(axis=1)`() {
+    fun `1次元÷3次元_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(2) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -163,7 +159,7 @@ class DivTest {
     }
 
     @Test
-    fun `1次元÷3次元(axis=2)`() {
+    fun `1次元÷3次元_axis=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(3) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -177,7 +173,7 @@ class DivTest {
     }
 
     @Test
-    fun `2次元(axis=0)÷1次元`() {
+    fun `2次元_axis=0÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(3) { it + 1f })
 
@@ -191,7 +187,7 @@ class DivTest {
     }
 
     @Test
-    fun `2次元(axis=1)÷1次元`() {
+    fun `2次元_axis=1÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -205,7 +201,7 @@ class DivTest {
     }
 
     @Test
-    fun `2次元÷3次元(axis1=0, axis2=1)`() {
+    fun `2次元÷3次元_axis1=0_axis2=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -232,7 +228,7 @@ class DivTest {
     }
 
     @Test
-    fun `2次元÷3次元(axis1=0, axis2=2)`() {
+    fun `2次元÷3次元_axis1=0_axis2=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -246,7 +242,7 @@ class DivTest {
     }
 
     @Test
-    fun `2次元÷3次元(axis1=1, axis2=2)`() {
+    fun `2次元÷3次元_axis1=1_axis2=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it + 1f })
         val y = DataBuffer.create(FloatArray(12) { it + 1f })
 
@@ -260,7 +256,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis=0)÷1次元`() {
+    fun `3次元_axis=0÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -273,7 +269,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis=1)÷1次元`() {
+    fun `3次元_axis=1÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -286,7 +282,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis=2)÷1次元`() {
+    fun `3次元_axis=2÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(3) { it + 1f })
 
@@ -299,7 +295,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis1=0, axis2=1)÷2次元`() {
+    fun `3次元_axis1=0_axis2=1÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(6) { it + 1f })
 
@@ -313,7 +309,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis1=0, axis2=2)÷2次元`() {
+    fun `3次元_axis1=0_axis2=2÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(6) { it + 1f })
 
@@ -326,7 +322,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元(axis1=1, axis2=2)÷2次元`() {
+    fun `3次元_axis1=1_axis2=2÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(6) { it + 1f })
 
@@ -339,7 +335,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元÷4次元(axis1=0, axis2=1, axis3=2)`() {
+    fun `3次元÷4次元_axis1=0_axis2=1_axis3=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(16) { it + 1f })
 
@@ -374,7 +370,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元÷4次元(axis1=0, axis2=1, axis3=3)`() {
+    fun `3次元÷4次元_axis1=0_axis2=1_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(16) { it + 1f })
 
@@ -409,7 +405,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元÷4次元(axis1=0, axis2=2, axis3=3)`() {
+    fun `3次元÷4次元_axis1=0_axis2=2_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(16) { it + 1f })
 
@@ -444,7 +440,7 @@ class DivTest {
     }
 
     @Test
-    fun `3次元÷4次元(axis1=1, axis2=2, axis3=3)`() {
+    fun `3次元÷4次元_axis1=1_axis2=2_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it + 1f })
         val y = DataBuffer.create(FloatArray(16) { it + 1f })
 
@@ -479,7 +475,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis=0)÷1次元`() {
+    fun `4次元_axis=0÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -492,7 +488,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis=1)÷1次元`() {
+    fun `4次元_axis=1÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -505,7 +501,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis=2)÷1次元`() {
+    fun `4次元_axis=2÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -518,7 +514,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis=3)÷1次元`() {
+    fun `4次元_axis=3÷1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(2) { it + 1f })
 
@@ -531,7 +527,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1)÷2次元`() {
+    fun `4次元_axis1=0_axis2=1÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -566,7 +562,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=2)÷2次元`() {
+    fun `4次元_axis1=0_axis2=2÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -601,7 +597,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=3)÷2次元`() {
+    fun `4次元_axis1=0_axis2=3÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -619,7 +615,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=2)÷2次元`() {
+    fun `4次元_axis1=1_axis2=2÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -654,7 +650,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=3)÷2次元`() {
+    fun `4次元_axis1=1_axis2=3÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -689,7 +685,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=2, axis2=3)÷2次元`() {
+    fun `4次元_axis1=2_axis2=3÷2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(4) { it + 1f })
 
@@ -707,7 +703,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1, axis2=2)÷3次元`() {
+    fun `4次元_axis1=0_axis2=1_axis2=2÷3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(8) { it + 1f })
 
@@ -742,7 +738,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1, axis2=3)÷3次元`() {
+    fun `4次元_axis1=0_axis2=1_axis2=3÷3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(8) { it + 1f })
 
@@ -777,7 +773,7 @@ class DivTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=2, axis2=3)÷3次元`() {
+    fun `4次元_axis1=1_axis2=2_axis2=3÷3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it + 1f })
         val y = DataBuffer.create(FloatArray(8) { it + 1f })
 

@@ -2,6 +2,7 @@ package com.wsr.core
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.create
+import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -63,9 +64,7 @@ sealed class IOType {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as IOType
+        if (other !is IOType) return false
 
         if (value != other.value) return false
         if (shape != other.shape) return false

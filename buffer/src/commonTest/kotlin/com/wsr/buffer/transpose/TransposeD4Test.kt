@@ -4,20 +4,16 @@ package com.wsr.buffer.transpose
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class TransposeD4Test {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     val input = DataBuffer.create(FloatArray(36) { it.toFloat() })
 
     @Test
-    fun `transpose_0123=4次元転置`() {
+    fun `transpose_0123=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 1, axisK = 2, axisL = 3,
@@ -38,7 +34,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_0132=4次元転置`() {
+    fun `transpose_0132=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 1, axisK = 3, axisL = 2,
@@ -59,7 +55,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_0213=4次元転置`() {
+    fun `transpose_0213=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 2, axisK = 1, axisL = 3,
@@ -78,7 +74,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_0231=4次元転置`() {
+    fun `transpose_0231=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 2, axisK = 3, axisL = 1,
@@ -97,7 +93,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_0312=4次元転置`() {
+    fun `transpose_0312=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 3, axisK = 1, axisL = 2,
@@ -119,7 +115,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_0321=4次元転置`() {
+    fun `transpose_0321=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 0, axisJ = 3, axisK = 2, axisL = 1,
@@ -140,7 +136,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1023=4次元転置`() {
+    fun `transpose_1023=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 0, axisK = 2, axisL = 3,
@@ -162,7 +158,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1032=4次元転置`() {
+    fun `transpose_1032=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 0, axisK = 3, axisL = 2,
@@ -184,7 +180,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1203=4次元転置`() {
+    fun `transpose_1203=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 2, axisK = 0, axisL = 3,
@@ -206,7 +202,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1230=4次元転置`() {
+    fun `transpose_1230=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 2, axisK = 3, axisL = 0,
@@ -228,7 +224,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1302=4次元転置`() {
+    fun `transpose_1302=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 3, axisK = 0, axisL = 2,
@@ -253,7 +249,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_1320=4次元転置`() {
+    fun `transpose_1320=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 1, axisJ = 3, axisK = 2, axisL = 0,
@@ -278,7 +274,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2013=4次元転置`() {
+    fun `transpose_2013=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 0, axisK = 1, axisL = 3,
@@ -297,7 +293,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2031=4次元転置`() {
+    fun `transpose_2031=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 0, axisK = 3, axisL = 1,
@@ -316,7 +312,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2103=4次元転置`() {
+    fun `transpose_2103=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 1, axisK = 0, axisL = 3,
@@ -337,7 +333,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2130=4次元転置`() {
+    fun `transpose_2130=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 1, axisK = 3, axisL = 0,
@@ -358,7 +354,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2301=4次元転置`() {
+    fun `transpose_2301=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 3, axisK = 0, axisL = 1,
@@ -379,7 +375,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_2310=4次元転置`() {
+    fun `transpose_2310=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 2, axisJ = 3, axisK = 1, axisL = 0,
@@ -400,7 +396,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_3012=4次元転置`() {
+    fun `transpose_3012=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 3, axisJ = 0, axisK = 1, axisL = 2,
@@ -422,7 +418,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_3021=4次元転置`() {
+    fun `transpose_3021=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 3, axisJ = 0, axisK = 2, axisL = 1,
@@ -444,7 +440,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_3102=4次元転置`() {
+    fun `transpose_3102=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 3, axisJ = 1, axisK = 0, axisL = 2,
@@ -469,7 +465,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_3120=4次元転置`() {
+    fun `transpose_3120=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 3, axisJ = 1, axisK = 2, axisL = 0,
@@ -494,7 +490,7 @@ class TransposeD4Test {
     }
 
     @Test
-    fun `transpose_3210=4次元転置`() {
+    fun `transpose_3210=4次元転置`() = bufferTestRule {
         val result = Backend.transpose(
             x = input, xi = 2, xj = 3, xk = 2, xl = 3,
             axisI = 3, axisJ = 2, axisK = 1, axisL = 0,

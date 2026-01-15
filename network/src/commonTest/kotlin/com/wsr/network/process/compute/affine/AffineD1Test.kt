@@ -8,19 +8,15 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class AffineD1Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target
         get() = AffineD1(
             outputSize = 4,
@@ -34,7 +30,7 @@ class AffineD1Test {
         )
 
     @Test
-    fun `expect=全結合`() {
+    fun `expect=全結合`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
 
         assertEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0])
@@ -42,7 +38,7 @@ class AffineD1Test {
     }
 
     @Test
-    fun `train=逆伝播を行い勾配を返す`() {
+    fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D1>
 
         assertEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0])
@@ -50,7 +46,7 @@ class AffineD1Test {
     }
 
     @Test
-    fun `train=重みを更新する`() {
+    fun `train=重みを更新する`() = networkTestRule {
         val target = target
 
         target._train(input = input, context = Context(input), calcDelta = { it })

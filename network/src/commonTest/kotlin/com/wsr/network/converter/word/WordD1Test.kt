@@ -6,20 +6,16 @@ import com.wsr.batch.batchOf
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class WordD1Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     private val words = listOf("<PAD>", "<UNK>", "hello", "world")
     private val unknownIndex = 1
 
     @Test
-    fun `encode=単語をone-hotベクトルに変換`() {
+    fun `encode=単語をone-hotベクトルに変換`() = networkTestRule {
         val target = WordD1(words = words, unknownIndex = unknownIndex)
         val input = listOf("hello", "world", "!")
 
@@ -40,7 +36,7 @@ class WordD1Test {
     }
 
     @Test
-    fun `decode=one-hotベクトルを単語に変換`() {
+    fun `decode=one-hotベクトルを単語に変換`() = networkTestRule {
         val target = WordD1(words = words, unknownIndex = unknownIndex)
         val input = batchOf(
             IOType.d1(listOf(0f, 0f, 1f, 0f)),

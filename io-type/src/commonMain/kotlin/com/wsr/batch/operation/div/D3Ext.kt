@@ -3,6 +3,7 @@ package com.wsr.batch.operation.div
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD3sDivFloat")
 operator fun Batch<IOType.D3>.div(other: Float): Batch<IOType.D3> {

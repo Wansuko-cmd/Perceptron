@@ -2,6 +2,7 @@ package com.wsr.batch.reshape.flatten
 
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD2sFlatten")
 fun Batch<IOType.D2>.flatten() = Batch<IOType.D1>(

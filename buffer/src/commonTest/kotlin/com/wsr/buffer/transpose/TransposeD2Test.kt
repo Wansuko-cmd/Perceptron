@@ -4,20 +4,16 @@ package com.wsr.buffer.transpose
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.BufferTestRule
+import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class TransposeD2Test {
-    @get:Rule
-    val bufferTestRule = BufferTestRule()
-
     val input = DataBuffer.create(FloatArray(20) { it.toFloat() })
 
     @Test
-    fun `transpose=2次元転置`() {
+    fun `transpose=2次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 4, xj = 5)
 
         assertEquals(

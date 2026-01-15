@@ -3,6 +3,7 @@ package com.wsr.batch.collecction.minmax
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD1sMin")
 fun Batch<IOType.D1>.min(): Batch<IOType.D0> {

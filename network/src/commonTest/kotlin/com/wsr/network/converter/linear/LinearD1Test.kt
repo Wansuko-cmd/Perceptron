@@ -5,17 +5,13 @@ package com.wsr.network.converter.linear
 import com.wsr.batch.batchOf
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class LinearD1Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `encode=Batchに変換`() {
+    fun `encode=Batchに変換`() = networkTestRule {
         val target = LinearD1(outputSize = 3)
         val input = listOf(IOType.d1(3) { it.toFloat() })
 
@@ -25,7 +21,7 @@ class LinearD1Test {
     }
 
     @Test
-    fun `decode=Listに変換`() {
+    fun `decode=Listに変換`() = networkTestRule {
         val target = LinearD1(outputSize = 3)
         val input = batchOf(IOType.d1(3) { it.toFloat() })
 

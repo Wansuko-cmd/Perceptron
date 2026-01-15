@@ -5,6 +5,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
+import kotlin.jvm.JvmName
 import kotlin.random.Random
 
 object Backend : IBackend {

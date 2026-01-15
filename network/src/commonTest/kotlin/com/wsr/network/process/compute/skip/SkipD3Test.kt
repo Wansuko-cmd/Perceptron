@@ -10,19 +10,15 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.bias.d3.BiasD3
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class SkipD3Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target = SkipD3(
         layers = listOf(
             BiasD3(
@@ -62,7 +58,7 @@ class SkipD3Test {
         )
 
     @Test
-    fun `expect=スキップ接続を行う`() {
+    fun `expect=スキップ接続を行う`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(expected = IOType.d1(0f, 6f), actual = actual[0][0][0])
@@ -72,7 +68,7 @@ class SkipD3Test {
     }
 
     @Test
-    fun `train=勾配を伝播`() {
+    fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
         assertEquals(expected = IOType.d1(0f, 12f), actual = actual[0][0][0])
