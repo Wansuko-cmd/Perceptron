@@ -10,16 +10,12 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class MaxPoolD3Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target get() = MaxPoolD3(poolSize = 2, channel = 2, inputX = 2, inputY = 4)
     val input
         get() = batchOf(
@@ -46,7 +42,7 @@ class MaxPoolD3Test {
         )
 
     @Test
-    fun `expect=指定区間内での最大値を取得`() {
+    fun `expect=指定区間内での最大値を取得`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(expected = IOType.d1(2f, 4f), actual = actual[0][0][0])
@@ -57,7 +53,7 @@ class MaxPoolD3Test {
     }
 
     @Test
-    fun `train=勾配を伝播`() {
+    fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
         assertEquals(expected = IOType.d1(0f, 0f, 0f, 0f), actual = actual[0][0][0])

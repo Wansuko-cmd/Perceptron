@@ -8,16 +8,13 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.get
 import com.wsr.core.set
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class CharD1Test {
-    @get:Rule val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `encode=文字をone-hotベクトルに変換`() {
+    fun `encode=文字をone-hotベクトルに変換`() = networkTestRule {
         val target = CharD1()
         val input = listOf('a', 'b', 'c')
 
@@ -30,7 +27,7 @@ class CharD1Test {
     }
 
     @Test
-    fun `decode=one-hotベクトルを文字に変換`() {
+    fun `decode=one-hotベクトルを文字に変換`() = networkTestRule {
         val target = CharD1()
         val input = batchOf(
             IOType.d1(CharD1.vocabSize).also { it[1] = 1.0f },

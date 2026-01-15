@@ -6,22 +6,18 @@ import com.wsr.batch.batchOf
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class WordsD1Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     private val words = listOf("<PAD>", "<UNK>", "hello", "world")
     private val outputSize = 5
     private val paddingIndex = 0
     private val unknownIndex = 1
 
     @Test
-    fun `encode=単語列を単語IDベクトルに変換`() {
+    fun `encode=単語列を単語IDベクトルに変換`() = networkTestRule {
         val target = WordsD1(
             words = words,
             outputSize = outputSize,
@@ -46,7 +42,7 @@ class WordsD1Test {
     }
 
     @Test
-    fun `decode=単語IDベクトルを単語列に変換`() {
+    fun `decode=単語IDベクトルを単語列に変換`() = networkTestRule {
         val target = WordsD1(
             words = words,
             outputSize = outputSize,

@@ -5,17 +5,13 @@ package com.wsr.network.converter.char
 import com.wsr.batch.batchOf
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class CharsD1Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `encode=文字列を文字IDベクトルに変換`() {
+    fun `encode=文字列を文字IDベクトルに変換`() = networkTestRule {
         val target = CharsD1(outputSize = 5)
         val input = listOf("boo")
 
@@ -28,7 +24,7 @@ class CharsD1Test {
     }
 
     @Test
-    fun `decode=文字IDベクトルを文字列に変換`() {
+    fun `decode=文字IDベクトルを文字列に変換`() = networkTestRule {
         val target = CharsD1(outputSize = 5)
         val input = batchOf(IOType.d1(2f, 15f, 15f))
 

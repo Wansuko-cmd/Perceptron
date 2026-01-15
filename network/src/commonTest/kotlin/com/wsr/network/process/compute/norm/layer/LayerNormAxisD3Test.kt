@@ -11,17 +11,13 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.layer.d3.LayerNormAxisD3
 import kotlin.test.Test
-import org.junit.Rule
 
 class LayerNormAxisD3Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target0 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 0, e = 1e-6f)
     val target1 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 1, e = 1e-6f)
     val target2 get() = LayerNormAxisD3(outputX = 2, outputY = 2, outputZ = 3, axis = 2, e = 1e-6f)
@@ -50,7 +46,7 @@ class LayerNormAxisD3Test {
         )
 
     @Test
-    fun `Axis0_expect=axis0で層正規化`() {
+    fun `Axis0_expect=axis0で層正規化`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -97,7 +93,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis0_train=axis0で正規化および勾配を伝播`() {
+    fun `Axis0_train=axis0で正規化および勾配を伝播`() = networkTestRule {
         val actual = target0._train(
             input = input,
             context = Context(input),
@@ -148,7 +144,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_expect=axis1で層正規化`() {
+    fun `Axis1_expect=axis1で層正規化`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -195,7 +191,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_train=axis1で正規化および勾配を伝播`() {
+    fun `Axis1_train=axis1で正規化および勾配を伝播`() = networkTestRule {
         val actual = target1._train(
             input = input,
             context = Context(input),
@@ -246,7 +242,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis2_expect=axis2で層正規化`() {
+    fun `Axis2_expect=axis2で層正規化`() = networkTestRule {
         val actual = target2._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(
@@ -293,7 +289,7 @@ class LayerNormAxisD3Test {
     }
 
     @Test
-    fun `Axis2_train=axis2で正規化および勾配を伝播`() {
+    fun `Axis2_train=axis2で正規化および勾配を伝播`() = networkTestRule {
         val actual = target2._train(
             input = input,
             context = Context(input),

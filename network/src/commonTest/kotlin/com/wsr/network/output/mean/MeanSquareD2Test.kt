@@ -8,17 +8,13 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class MeanSquareD2Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `expect=そのまま返す`() {
+    fun `expect=そのまま返す`() = networkTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
         val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
@@ -28,7 +24,7 @@ class MeanSquareD2Test {
     }
 
     @Test
-    fun `train=二乗平均誤差`() {
+    fun `train=二乗平均誤差`() = networkTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
         val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = batchOf(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })

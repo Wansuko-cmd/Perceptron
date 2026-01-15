@@ -9,19 +9,15 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class PositionEmbeddingD2Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target
         get() = PositionEmbeddingD2(
             outputX = 2,
@@ -42,7 +38,7 @@ class PositionEmbeddingD2Test {
         )
 
     @Test
-    fun `expect=学習型位置情報埋め込み`() {
+    fun `expect=学習型位置情報埋め込み`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
@@ -53,7 +49,7 @@ class PositionEmbeddingD2Test {
     }
 
     @Test
-    fun `train=勾配を伝播`() {
+    fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
@@ -64,7 +60,7 @@ class PositionEmbeddingD2Test {
     }
 
     @Test
-    fun `train=重みを更新`() {
+    fun `train=重みを更新`() = networkTestRule {
         val target = target
 
         target._train(input = input, context = Context(input), calcDelta = { it })

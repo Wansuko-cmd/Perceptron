@@ -8,17 +8,13 @@ import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class OptimizerTest {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `D1_adapt=勾配をmaxNormで正規化`() {
+    fun `D1_adapt=勾配をmaxNormで正規化`() = networkTestRule {
         val target = object : Optimizer.D1(_maxNorm = 1f) {
             override fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 = dw
         }
@@ -33,7 +29,7 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D2_adapt=勾配をmaxNormで正規化`() {
+    fun `D2_adapt=勾配をmaxNormで正規化`() = networkTestRule {
         val target = object : Optimizer.D2(_maxNorm = 1f) {
             override fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 = dw
         }
@@ -49,7 +45,7 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D3_adapt=勾配をmaxNormで正規化`() {
+    fun `D3_adapt=勾配をmaxNormで正規化`() = networkTestRule {
         val target = object : Optimizer.D3(_maxNorm = 1f) {
             override fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 = dw
         }
@@ -69,7 +65,7 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D4_adapt=勾配をmaxNormで正規化`() {
+    fun `D4_adapt=勾配をmaxNormで正規化`() = networkTestRule {
         val target = object : Optimizer.D4(_maxNorm = 1f) {
             override fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 = dw
         }

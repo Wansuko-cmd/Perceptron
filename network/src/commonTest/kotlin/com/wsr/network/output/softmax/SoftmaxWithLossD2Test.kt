@@ -8,17 +8,13 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
+import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class SoftmaxWithLossD2Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     @Test
-    fun `expect=softmaxを計算`() {
+    fun `expect=softmaxを計算`() = networkTestRule {
         val target = SoftmaxWithLossD2(outputX = 2, outputY = 2, temperature = 1f)
         val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
@@ -31,7 +27,7 @@ class SoftmaxWithLossD2Test {
     }
 
     @Test
-    fun `train=softmaxの逆伝播`() {
+    fun `train=softmaxの逆伝播`() = networkTestRule {
         val target = SoftmaxWithLossD2(outputX = 2, outputY = 2, temperature = 1f)
         val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = batchOf(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })

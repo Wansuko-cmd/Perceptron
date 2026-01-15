@@ -9,19 +9,15 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.NetworkTestRule
 import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.junit.Rule
 
 class ScaleAxisD2Test {
-    @get:Rule
-    val networkTestRule = NetworkTestRule()
-
     val target0
         get() = ScaleAxisD2(
             outputX = 2,
@@ -53,7 +49,7 @@ class ScaleAxisD2Test {
         )
 
     @Test
-    fun `Axis0_expect=axis0で共通のスケール項`() {
+    fun `Axis0_expect=axis0で共通のスケール項`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
@@ -63,7 +59,7 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis0_train=Axis0で共通の勾配を伝播`() {
+    fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkTestRule {
         val actual = target0._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
@@ -73,7 +69,7 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis0_train=重みを更新する`() {
+    fun `Axis0_train=重みを更新する`() = networkTestRule {
         val target = target0
 
         target._train(input = input, context = Context(input), calcDelta = { it })
@@ -86,7 +82,7 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_expect=axis1で共通のスケール項`() {
+    fun `Axis1_expect=axis1で共通のスケール項`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
@@ -96,7 +92,7 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_train=Axis1で共通の勾配を伝播`() {
+    fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkTestRule {
         val actual = target1._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
@@ -106,7 +102,7 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_train=重みを更新する`() {
+    fun `Axis1_train=重みを更新する`() = networkTestRule {
         val target = target1
 
         target._train(input = input, context = Context(input), calcDelta = { it })
