@@ -3,6 +3,7 @@ package com.wsr.batch.operation.plus
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchFloatPlusD0s")
 operator fun Float.plus(other: Batch<IOType.D0>): Batch<IOType.D0> {

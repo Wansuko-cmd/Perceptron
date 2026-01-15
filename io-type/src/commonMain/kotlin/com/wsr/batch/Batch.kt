@@ -4,6 +4,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.core.IOType
 import com.wsr.core.d0
 import com.wsr.create
+import kotlin.jvm.JvmName
 
 class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {
     val step = shape.reduce { acc, i -> acc * i }
@@ -11,9 +12,7 @@ class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: Lis
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Batch<*>
+        if (other !is Batch<*>) return false
 
         if (size != other.size) return false
         if (value != other.value) return false

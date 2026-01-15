@@ -4,6 +4,7 @@ import com.wsr.batch.Batch
 import com.wsr.batch.collecction.map.map
 import com.wsr.core.IOType
 import com.wsr.core.math.softmax
+import kotlin.jvm.JvmName
 
 @JvmName("batchD1sSoftmax")
 fun Batch<IOType.D1>.softmax(): Batch<IOType.D1> = map { it.softmax() }

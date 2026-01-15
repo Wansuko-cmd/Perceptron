@@ -6,6 +6,7 @@ import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.get
 import com.wsr.core.operation.times.times
+import kotlin.jvm.JvmName
 
 @JvmName("batchD3TimesD3s")
 operator fun IOType.D3.times(other: Batch<IOType.D3>): Batch<IOType.D3> {

@@ -195,49 +195,49 @@ class LayerNormAxisD3Test {
         val actual = target1._train(
             input = input,
             context = Context(input),
-            calcDelta = { 1e6f * it as Batch<IOType.D2> },
+            calcDelta = { it },
         ) as Batch<IOType.D3>
 
         assertEquals(
-            expected = IOType.d1(0.0000f, -8.1250f, -0.9375f),
+            expected = IOType.d1(0.0000f, -8.1062e-6f, -9.5367e-7f),
             actual = actual[0][0][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 8.1250f, 0.9375f),
+            expected = IOType.d1(0.0000f, 8.1062e-6f, 9.5367e-7f),
             actual = actual[0][0][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, -296.5000f, 125.0000f),
+            expected = IOType.d1(0.0000f, -2.9659e-4f, 1.2540e-4f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 296.5000f, -125.0000f),
+            expected = IOType.d1(0.0000f, 2.9659e-4f, -1.2540E-4f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
         assertEquals(
-            expected = IOType.d1(-0.0937f, -0.1250f, 8.1250f),
+            expected = IOType.d1(-1.1920e-7f, -1.1920e-7f, 8.1062e-6f),
             actual = actual[1][0][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-6f,
         )
         assertEquals(
-            expected = IOType.d1(0.0937f, 0.1250f, -8.1250f),
+            expected = IOType.d1(1.1920e-7f, 1.1920e-7f, -8.1062e-6f),
             actual = actual[1][0][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
         assertEquals(
-            expected = IOType.d1(0.9375f, 0.1875f, 0.1250f),
+            expected = IOType.d1(9.5367e-7f, 1.7881e-7f, 1.1920e-7f),
             actual = actual[1][1][0],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
         assertEquals(
-            expected = IOType.d1(-0.9375f, -0.1875f, -0.1250f),
+            expected = IOType.d1(-9.5367e-7f, -1.7881e-7f, -1.1920e-7f),
             actual = actual[1][1][1],
-            absoluteTolerance = 1e-4f,
+            absoluteTolerance = 1e-7f,
         )
     }
 

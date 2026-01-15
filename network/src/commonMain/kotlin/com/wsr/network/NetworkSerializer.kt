@@ -114,6 +114,7 @@ import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.serializer
 import okio.BufferedSink
 import okio.BufferedSource
+import kotlin.jvm.JvmName
 
 class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     private val converterSerializer = json.serializersModule.serializer<Converter>()

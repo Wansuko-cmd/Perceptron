@@ -5,6 +5,7 @@ import com.wsr.batch.Batch
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.operation.minus.minus
+import kotlin.jvm.JvmName
 
 @JvmName("batchFloatMinusD0s")
 operator fun Float.minus(other: Batch<IOType.D0>): Batch<IOType.D0> {

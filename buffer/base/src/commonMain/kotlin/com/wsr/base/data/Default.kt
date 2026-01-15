@@ -26,15 +26,12 @@ data class Default(private val value: FloatArray) : DataBuffer {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Default
-
+        if (other !is DataBuffer) return false
         if (size != other.size) return false
-        if (!value.contentEquals(other.value)) return false
-        if (indices != other.indices) return false
-
-        return true
+        return when (other) {
+            is Default -> value.contentEquals(other.value)
+            else -> value.contentEquals(other.toFloatArray())
+        }
     }
 
     override fun hashCode(): Int {

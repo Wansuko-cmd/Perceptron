@@ -5,6 +5,7 @@ import com.wsr.batch.Batch
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.operation.div.div
+import kotlin.jvm.JvmName
 
 @JvmName("batchD2sDivFloat")
 operator fun Batch<IOType.D2>.div(other: Float): Batch<IOType.D2> {

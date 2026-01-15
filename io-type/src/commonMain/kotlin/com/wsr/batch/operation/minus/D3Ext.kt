@@ -3,6 +3,7 @@ package com.wsr.batch.operation.minus
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD3sMinusFloat")
 operator fun Batch<IOType.D3>.minus(other: Float): Batch<IOType.D3> {

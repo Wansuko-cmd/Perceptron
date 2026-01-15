@@ -2,6 +2,7 @@ package com.wsr.batch.reshape.reshape
 
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD1sReshapeToD2")
 fun Batch<IOType.D1>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))

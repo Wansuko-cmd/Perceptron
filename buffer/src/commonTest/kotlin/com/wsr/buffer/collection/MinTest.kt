@@ -20,7 +20,7 @@ class MinTest {
     }
 
     @Test
-    fun `2次元最小値(axis=0)`() = bufferTestRule {
+    fun `2次元最小値_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 4, xj = 6, axis = 0)
@@ -29,7 +29,7 @@ class MinTest {
     }
 
     @Test
-    fun `2次元最小値(axis=1)`() = bufferTestRule {
+    fun `2次元最小値_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 4, xj = 6, axis = 1)
@@ -38,7 +38,7 @@ class MinTest {
     }
 
     @Test
-    fun `3次元最小値(axis=0)`() = bufferTestRule {
+    fun `3次元最小値_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 4, xj = 3, xk = 2, axis = 0)
@@ -47,7 +47,7 @@ class MinTest {
     }
 
     @Test
-    fun `3次元最小値(axis=1)`() = bufferTestRule {
+    fun `3次元最小値_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 4, xj = 3, xk = 2, axis = 1)
@@ -56,7 +56,7 @@ class MinTest {
     }
 
     @Test
-    fun `3次元最小値(axis=2)`() = bufferTestRule {
+    fun `3次元最小値_axis=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 4, xj = 3, xk = 2, axis = 2)
@@ -68,7 +68,7 @@ class MinTest {
     }
 
     @Test
-    fun `4次元最小値(axis=0)`() = bufferTestRule {
+    fun `4次元最小値_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 2, xj = 2, xk = 2, xl = 3, axis = 0)
@@ -80,7 +80,7 @@ class MinTest {
     }
 
     @Test
-    fun `4次元最小値(axis=1)`() = bufferTestRule {
+    fun `4次元最小値_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 2, xj = 2, xk = 2, xl = 3, axis = 1)
@@ -92,7 +92,7 @@ class MinTest {
     }
 
     @Test
-    fun `4次元最小値(axis=2)`() = bufferTestRule {
+    fun `4次元最小値_axis=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 2, xj = 2, xk = 2, xl = 3, axis = 2)
@@ -104,7 +104,7 @@ class MinTest {
     }
 
     @Test
-    fun `4次元最小値(axis=3)`() = bufferTestRule {
+    fun `4次元最小値_axis=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = Backend.min(x = x, xi = 2, xj = 2, xk = 2, xl = 3, axis = 3)

@@ -48,7 +48,7 @@ class MinusTest {
     }
 
     @Test
-    fun `1次元-2次元(axis=0)`() = bufferTestRule {
+    fun `1次元-2次元_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(3) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -61,7 +61,7 @@ class MinusTest {
     }
 
     @Test
-    fun `1次元-2次元(axis=1)`() = bufferTestRule {
+    fun `1次元-2次元_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(4) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -74,7 +74,7 @@ class MinusTest {
     }
 
     @Test
-    fun `1次元-3次元(axis=0)`() = bufferTestRule {
+    fun `1次元-3次元_axis=0`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(2) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -87,7 +87,7 @@ class MinusTest {
     }
 
     @Test
-    fun `1次元-3次元(axis=1)`() = bufferTestRule {
+    fun `1次元-3次元_axis=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(2) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -100,7 +100,7 @@ class MinusTest {
     }
 
     @Test
-    fun `1次元-3次元(axis=2)`() = bufferTestRule {
+    fun `1次元-3次元_axis=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(3) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -113,7 +113,7 @@ class MinusTest {
     }
 
     @Test
-    fun `2次元(axis=0)-1次元`() = bufferTestRule {
+    fun `2次元_axis=0-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(3) { it.toFloat() })
 
@@ -126,7 +126,7 @@ class MinusTest {
     }
 
     @Test
-    fun `2次元(axis=1)-1次元`() = bufferTestRule {
+    fun `2次元_axis=1-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -139,7 +139,7 @@ class MinusTest {
     }
 
     @Test
-    fun `2次元-3次元(axis1=0, axis2=1)`() = bufferTestRule {
+    fun `2次元-3次元_axis1=0_axis2=1`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -152,7 +152,7 @@ class MinusTest {
     }
 
     @Test
-    fun `2次元-3次元(axis1=0, axis2=2)`() = bufferTestRule {
+    fun `2次元-3次元_axis1=0_axis2=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -165,7 +165,7 @@ class MinusTest {
     }
 
     @Test
-    fun `2次元-3次元(axis1=1, axis2=2)`() = bufferTestRule {
+    fun `2次元-3次元_axis1=1_axis2=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(6) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(12) { it.toFloat() })
 
@@ -178,7 +178,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis=0)-1次元`() = bufferTestRule {
+    fun `3次元_axis=0-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -191,7 +191,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis=1)-1次元`() = bufferTestRule {
+    fun `3次元_axis=1-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -204,7 +204,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis=2)-1次元`() = bufferTestRule {
+    fun `3次元_axis=2-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(3) { it.toFloat() })
 
@@ -217,7 +217,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis1=0, axis2=1)-2次元`() = bufferTestRule {
+    fun `3次元_axis1=0_axis2=1-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(6) { it.toFloat() })
 
@@ -230,7 +230,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis1=0, axis2=2)-2次元`() = bufferTestRule {
+    fun `3次元_axis1=0_axis2=2-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(6) { it.toFloat() })
 
@@ -243,7 +243,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元(axis1=1, axis2=2)-2次元`() = bufferTestRule {
+    fun `3次元_axis1=1_axis2=2-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(6) { it.toFloat() })
 
@@ -256,7 +256,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元-4次元(axis1=0, axis2=1, axis3=2)`() = bufferTestRule {
+    fun `3次元-4次元_axis1=0_axis2=1_axis3=2`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
@@ -273,7 +273,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元-4次元(axis1=0, axis2=1, axis3=3)`() = bufferTestRule {
+    fun `3次元-4次元_axis1=0_axis2=1_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
@@ -290,7 +290,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元-4次元(axis1=0, axis2=2, axis3=3)`() = bufferTestRule {
+    fun `3次元-4次元_axis1=0_axis2=2_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
@@ -307,7 +307,7 @@ class MinusTest {
     }
 
     @Test
-    fun `3次元-4次元(axis1=1, axis2=2, axis3=3)`() = bufferTestRule {
+    fun `3次元-4次元_axis1=1_axis2=2_axis3=3`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
@@ -324,7 +324,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis=0)-1次元`() = bufferTestRule {
+    fun `4次元_axis=0-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -337,7 +337,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis=1)-1次元`() = bufferTestRule {
+    fun `4次元_axis=1-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -350,7 +350,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis=2)-1次元`() = bufferTestRule {
+    fun `4次元_axis=2-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -363,7 +363,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis=3)-1次元`() = bufferTestRule {
+    fun `4次元_axis=3-1次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(2) { it.toFloat() })
 
@@ -376,7 +376,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=0_axis2=1-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -393,7 +393,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=2)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=0_axis2=2-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -410,7 +410,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=3)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=0_axis2=3-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -427,7 +427,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=2)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=1_axis2=2-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -444,7 +444,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=3)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=1_axis2=3-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -461,7 +461,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=2, axis2=3)-2次元`() = bufferTestRule {
+    fun `4次元_axis1=2_axis2=3-2次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(4) { it.toFloat() })
 
@@ -478,7 +478,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1, axis2=2)-3次元`() = bufferTestRule {
+    fun `4次元_axis1=0_axis2=1_axis2=2-3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(8) { it.toFloat() })
 
@@ -495,7 +495,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=0, axis2=1, axis2=3)-3次元`() = bufferTestRule {
+    fun `4次元_axis1=0_axis2=1_axis2=3-3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(8) { it.toFloat() })
 
@@ -512,7 +512,7 @@ class MinusTest {
     }
 
     @Test
-    fun `4次元(axis1=1, axis2=2, axis2=3)-3次元`() = bufferTestRule {
+    fun `4次元_axis1=1_axis2=2_axis2=3-3次元`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(16) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(8) { it.toFloat() })
 
