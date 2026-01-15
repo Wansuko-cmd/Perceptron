@@ -15,15 +15,14 @@ import com.wsr.batch.reshape.transpose.transpose
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
-import com.wsr.core.d3
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
-import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
+import kotlin.math.sqrt
 
 @Serializable
 class AttentionD2 internal constructor(
@@ -61,14 +60,9 @@ class AttentionD2 internal constructor(
         val masked = scaled.plusMasks(context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
-        val concat = Batch(input.size) { batchIndex ->
-            val heads = heads[batchIndex]
-            IOType.d2(outputX, numOfHeads * dim) { x, y ->
-                val headIndex = y / dim
-                val dimIndex = y % dim
-                heads[headIndex, x, dimIndex]
-            }
-        }
+        val concat = heads
+            .transpose(axisI = 1, axisJ = 0, axisK = 2)
+            .reshapeToD2(i = outputX, j = numOfHeads * dim)
         return concat.matMul(weightO)
     }
 
@@ -94,14 +88,9 @@ class AttentionD2 internal constructor(
         val masked = scaled.plusMasks(context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
-        val concat = Batch(input.size) { batchIndex ->
-            val heads = heads[batchIndex]
-            IOType.d2(outputX, numOfHeads * dim) { x, y ->
-                val headIndex = y / dim
-                val dimIndex = y % dim
-                heads[headIndex, x, dimIndex]
-            }
-        }
+        val concat = heads
+            .transpose(axisI = 1, axisJ = 0, axisK = 2)
+            .reshapeToD2(i = outputX, j = numOfHeads * dim)
 
         val output = concat.matMul(weightO)
         val delta = calcDelta(output)
@@ -112,13 +101,9 @@ class AttentionD2 internal constructor(
         weightO = optimizerO.adapt(weightO, dwo)
 
         // Concatの逆伝播（各ヘッドへの勾配に分割）
-        val dHeads = Batch(input.size) { batchIndex ->
-            val dConcat = dConcat[batchIndex]
-            IOType.d3(numOfHeads, outputX, dim) { x, y, z ->
-                val index = x * dim + z
-                dConcat[y, index]
-            }
-        }
+        val dHeads = dConcat
+            .reshapeToD3(outputX, numOfHeads, dim)
+            .transpose(1, 0, 2)
 
         // 各ヘッドのScaled-Dot-Attentionの逆伝播
         val dValue = softmax.matMul(dHeads, transA = true)
