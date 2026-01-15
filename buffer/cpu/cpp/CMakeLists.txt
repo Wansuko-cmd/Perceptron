@@ -135,24 +135,3 @@ else()
     )
     target_link_libraries(CPU PRIVATE ${OPENBLAS_LIB})
 endif()
-
-
-###########################
-# OpenMP
-###########################
-find_package(OpenMP)
-
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(CPU PRIVATE ${OpenMP_CXX_LIBRARIES})
-    target_include_directories(CPU PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
-    if (APPLE)
-        target_compile_options(CPU PRIVATE  -Xpreprocessor -fopenmp)
-    elseif (WIN32 AND MSVC)
-         target_compile_options(CPU PRIVATE /openmp:experimental)
-    else()
-        target_compile_options(CPU PRIVATE ${OpenMP_CXX_FLAGS})
-    endif()
-    message(STATUS "OpenMP support enabled")
-else()
-    message(WARNING "OpenMP support disabled")
-endif()
