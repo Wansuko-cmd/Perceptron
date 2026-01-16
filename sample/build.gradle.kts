@@ -7,12 +7,9 @@ plugins {
 dependencies {
     implementation(projects.network)
 
-    implementation(libs.coroutine)
     implementation(libs.serialization)
-
     implementation(libs.okio)
 
-    testImplementation(libs.bundles.test)
     testImplementation(kotlin("test"))
 }
 

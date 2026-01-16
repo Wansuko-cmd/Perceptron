@@ -24,7 +24,6 @@ kotlin {
             dependencies {
                 api(projects.buffer)
 
-                implementation(libs.coroutine)
                 implementation(libs.serialization)
             }
         }
