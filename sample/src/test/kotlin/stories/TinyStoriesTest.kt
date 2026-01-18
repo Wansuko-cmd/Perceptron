@@ -24,13 +24,15 @@ import dataset.stories.createWordList
 import dataset.stories.generateStories
 import dataset.stories.toData
 import dataset.stories.tokenize
-import java.io.File
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
+import okio.FileSystem
+import okio.Path.Companion.toPath
+import okio.buffer
 
-private const val TRAIN_PATH = "src/main/resources/stories/TinyStories-train.txt"
-private const val VALID_PATH = "src/main/resources/stories/TinyStories-valid.txt"
+private const val TRAIN_PATH = "stories/TinyStories-train.txt"
+private const val VALID_PATH = "stories/TinyStories-valid.txt"
 
 private const val VOCAB_SIZE = 3000
 private const val EMBEDDING_DIM = 256
@@ -53,58 +55,56 @@ class TinyStoriesTest {
         val network = createModel(words)
 
         println("学習開始")
-        File(TRAIN_PATH)
-            .useLines { lines ->
-                lines
-                    .generateStories()
-                    .flatMap { tokenize(it).toData() }
-                    // バッチサイズ
-                    .chunked(BATCH_SIZE)
-                    // 学習バッチ数
-                    .take(NUM_OF_STORIES)
-                    .forEachIndexed { lineIndex, trainData ->
-                        val inputs = trainData.map { it.first }
-                        val labels = trainData.map { it.second }
+        FileSystem.RESOURCES.source(TRAIN_PATH.toPath()).buffer().use {
+            generateSequence { it.readUtf8Line() }
+                .generateStories()
+                .flatMap { tokenize(it).toData() }
+                // バッチサイズ
+                .chunked(BATCH_SIZE)
+                // 学習バッチ数
+                .take(NUM_OF_STORIES)
+                .forEachIndexed { lineIndex, trainData ->
+                    val inputs = trainData.map { it.first }
+                    val labels = trainData.map { it.second }
 
-                        val random = Random.nextInt(inputs.indices)
-                        println(
-                            "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
-                        )
-                        network.train(inputs, labels).also { println("loss: $it") }
-                    }
-            }
+                    val random = Random.nextInt(inputs.indices)
+                    println(
+                        "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
+                    )
+                    network.train(inputs, labels).also { println("loss: $it") }
+                }
+        }
 
         // テスト
         println("テスト開始")
         var all = 0
         var correct = 0
-        File(VALID_PATH)
-            .useLines { lines ->
-                lines
-                    .generateStories()
-                    .flatMap { tokenize(it).toData() }
-                    .chunked(100)
-                    .take(100)
-                    .forEach { testData ->
-                        val inputs = testData.map { it.first }
-                        val labels = testData.map { it.second }
-                        val expected = network.expect(inputs)
+        FileSystem.RESOURCES.source(VALID_PATH.toPath()).buffer().use {
+            generateSequence { it.readUtf8Line() }
+                .generateStories()
+                .flatMap { tokenize(it).toData() }
+                .chunked(100)
+                .take(100)
+                .forEach { testData ->
+                    val inputs = testData.map { it.first }
+                    val labels = testData.map { it.second }
+                    val expected = network.expect(inputs)
 
-                        val sampleIndex = inputs.size / 2
-                        println(
-                            """
+                    val sampleIndex = inputs.size / 2
+                    println(
+                        """
                             ---------------------------
                             入力: ${inputs[sampleIndex]}
                             予測: ${expected[sampleIndex]}
                             正解ラベル: ${labels[sampleIndex]}
                             ---------------------------
-                            """.trimIndent(),
-                        )
+                        """.trimIndent(),
+                    )
 
-                        all += expected.size
-                        correct += expected.zip(labels).count { (expected, actual) -> expected == actual }
-                    }
-            }
+                    all += expected.size
+                    correct += expected.zip(labels).count { (expected, actual) -> expected == actual }
+                }
+        }
 
         println("テストケース数: $all, 正解数: $correct")
 

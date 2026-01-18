@@ -1,40 +1,44 @@
 package dataset.mnist
 
-import java.io.DataInputStream
-import java.nio.file.Files
-import java.nio.file.NoSuchFileException
-import java.nio.file.Paths
-import java.util.zip.GZIPInputStream
+import okio.BufferedSource
+import okio.FileSystem
+import okio.GzipSource
+import okio.Path.Companion.toPath
+import okio.buffer
 
-data class MnistDataset(val pixels: List<Float>, val label: Int, val imageSize: Int) {
+data class MnistDataset(val pixels: List<Float>, val label: Int) {
     companion object {
-        private const val BASE_DIR = "src/main/resources"
-
         fun read(imagePath: String, labelPath: String): List<MnistDataset> = try {
-            val imagePath = Paths.get(BASE_DIR, imagePath)
-            val imageStream = DataInputStream(GZIPInputStream(Files.newInputStream(imagePath)))
+            gzipBuffer(imagePath).use { imgIn ->
+                gzipBuffer(labelPath).use { lblIn ->
+                    imgIn.skip(4)
+                    lblIn.skip(4)
 
-            val labelPath = Paths.get(BASE_DIR, labelPath)
-            val labelStream = DataInputStream(GZIPInputStream(Files.newInputStream(labelPath)))
+                    val numOfImages = imgIn.readInt()
+                    val height = imgIn.readInt()
+                    val width = imgIn.readInt()
+                    val numOfLabels = lblIn.readInt()
 
-            imageStream.skip(4)
-            labelStream.skip(4)
+                    val numOfPixel = height * width
 
-            val numOfImages = imageStream.readInt()
-            val imageHeight = imageStream.readInt()
-            val imageWidth = imageStream.readInt()
-            val numObLabels = labelStream.readInt()
-
-            val images = List(numOfImages) {
-                List(imageHeight * imageWidth) {
-                    imageStream.readUnsignedByte().toFloat()
+                    List(numOfImages) {
+                        MnistDataset(
+                            pixels = List(numOfPixel) { imgIn.readUInt().toFloat() },
+                            label = lblIn.readUInt(),
+                        )
+                    }
                 }
             }
-            val labels = List(numObLabels) { labelStream.readUnsignedByte() }
-            images.zip(labels) { image, label -> MnistDataset(image, label, imageWidth) }
-        } catch (e: NoSuchFileException) {
+        } catch (e: Exception) {
             println("resource/mnistにMNISTデータセットを入れてください")
             throw e
         }
+
+        private fun gzipBuffer(path: String): BufferedSource {
+            val source = FileSystem.RESOURCES.source(path.toPath())
+            return GzipSource(source).buffer()
+        }
+
+        private fun BufferedSource.readUInt() = readByte().toInt() and 0xFF
     }
 }

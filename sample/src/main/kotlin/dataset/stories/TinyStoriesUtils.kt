@@ -18,11 +18,13 @@ import com.wsr.network.process.compute.position.roPE
 import com.wsr.network.process.compute.scale.d2.scale
 import com.wsr.network.process.compute.skip.skip
 import com.wsr.network.process.reshape.token.tokenEmbedding
-import java.io.File
 import kotlin.random.Random
 import kotlin.random.nextInt
+import okio.FileSystem
+import okio.Path.Companion.toPath
+import okio.buffer
 
-private const val TRAIN_PATH = "src/main/resources/stories/TinyStories-train.txt"
+private const val TRAIN_PATH = "stories/TinyStories-train.txt"
 
 private const val VOCAB_SIZE = 3000
 private const val EMBEDDING_DIM = 256
@@ -93,37 +95,36 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
         )
 
     println("学習開始")
-    File(TRAIN_PATH)
-        .useLines { lines ->
-            lines
-                .generateStories()
-                .flatMap { tokenize(it).toData() }
-                // バッチサイズ
-                .chunked(BATCH_SIZE)
-                // 学習バッチ数
-                .take(NUM_OF_STORIES)
-                .forEachIndexed { lineIndex, trainData ->
-                    val inputs = trainData.map { it.first }
-                    val labels = trainData.map { it.second }
-                    val random = Random.nextInt(inputs.indices)
-                    println(
-                        """
+    FileSystem.RESOURCES.source(TRAIN_PATH.toPath()).buffer().use {
+        generateSequence { it.readUtf8Line() }
+            .generateStories()
+            .flatMap { tokenize(it).toData() }
+            // バッチサイズ
+            .chunked(BATCH_SIZE)
+            // 学習バッチ数
+            .take(NUM_OF_STORIES)
+            .forEachIndexed { lineIndex, trainData ->
+                val inputs = trainData.map { it.first }
+                val labels = trainData.map { it.second }
+                val random = Random.nextInt(inputs.indices)
+                println(
+                    """
                             ---------------------------
                             train line: $lineIndex
                             入力例: ${inputs[random]}
                             ラベル: ${labels[random]}
-                        """.trimIndent(),
-                    )
+                    """.trimIndent(),
+                )
 
-                    val loss = network.train(inputs, labels)
-                    println(
-                        """
+                val loss = network.train(inputs, labels)
+                println(
+                    """
                             loss: $loss
                             ---------------------------
-                        """.trimIndent(),
-                    )
-                }
-        }
+                    """.trimIndent(),
+                )
+            }
+    }
 
     println("出力確認")
     val story = network.createStories(beginning = "One day, a sheep named Bob was very happy.", maxLength = 300)
