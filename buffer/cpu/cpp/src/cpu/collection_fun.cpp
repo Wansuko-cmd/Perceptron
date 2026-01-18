@@ -31,9 +31,9 @@ inline void perform_operation(float& acc, float x) {
 }
 
 template<Operation Op>
-inline float reduce_d1(const float* x, size_t size) {
+inline float reduce_d1(const float* x, int size) {
     float acc = x[0];
-    for (size_t i = 1; i < size; i++) {
+    for (int i = 1; i < size; i++) {
         perform_operation<Op>(acc, x[i]);
     }
     return acc;
@@ -155,7 +155,7 @@ inline void reduce_d4(const float* x, int xi, int xj, int xk, int xl, int axis, 
     }
 }
 
-float average_d1(const float* x, size_t size) {
+float average_d1(const float* x, int size) {
     return reduce_d1<Operation::Sum>(x, size) / size;
 }
 
@@ -219,7 +219,7 @@ void average_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float*
     }
 }
 
-float max_d1(const float* x, size_t size) {
+float max_d1(const float* x, int size) {
     return reduce_d1<Operation::Max>(x, size);
 }
 
@@ -235,7 +235,7 @@ void max_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float* res
     reduce_d4<Operation::Max>(x, xi, xj, xk, xl, axis, result);
 }
 
-float min_d1(const float* x, size_t size) {
+float min_d1(const float* x, int size) {
     return reduce_d1<Operation::Min>(x, size);
 }
 
@@ -251,7 +251,7 @@ void min_d4(const float* x, int xi, int xj, int xk, int xl, int axis, float* res
     reduce_d4<Operation::Min>(x, xi, xj, xk, xl, axis, result);
 }
 
-float sum_d1(const float* x, size_t size) {
+float sum_d1(const float* x, int size) {
     return reduce_d1<Operation::Sum>(x, size);
 }
 

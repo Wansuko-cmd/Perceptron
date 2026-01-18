@@ -1,8 +1,6 @@
 #ifndef OPERATION_FUN_H
 #define OPERATION_FUN_H
 
-#include <cstddef>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,13 +8,13 @@ extern "C" {
 void plus_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 );
 
 void plus_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 );
@@ -24,7 +22,7 @@ void plus_d1_to_d0(
 void plus_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 );
 
@@ -101,13 +99,13 @@ void plus_d4_to_d3(
 void minus_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 );
 
 void minus_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 );
@@ -115,7 +113,7 @@ void minus_d1_to_d0(
 void minus_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 );
 
@@ -192,13 +190,13 @@ void minus_d4_to_d3(
 void times_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 );
 
 void times_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 );
@@ -206,7 +204,7 @@ void times_d1_to_d0(
 void times_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 );
 
@@ -283,13 +281,13 @@ void times_d4_to_d3(
 void div_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 );
 
 void div_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 );
@@ -297,7 +295,7 @@ void div_d1_to_d0(
 void div_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 );
 
