@@ -42,7 +42,7 @@ class MnistTest {
 
         println("Json変換")
         network.toJson()
-            .also { println(it) }
+            .also { println(it.take(100) + "...") }
             .also { println(Network.fromJson<List<Float>, Int>(it)) }
 
         println("訓練開始")
