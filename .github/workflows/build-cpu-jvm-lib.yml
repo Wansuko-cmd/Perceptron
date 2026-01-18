@@ -143,6 +143,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "[CI] Update Open BLAS libraries"
+            git commit -m "[CI] Update CPU(JVM) libraries"
             git push
           fi
