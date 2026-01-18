@@ -6,13 +6,31 @@ kotlin {
     applyDefaultHierarchyTemplate()
     jvm()
 
-    mingwX64()
-
-    linuxX64()
-    linuxArm64()
-
-    macosX64()
-    macosArm64()
+    listOf(
+        mingwX64(),
+        linuxX64(),
+        linuxArm64(),
+        macosX64(),
+        macosArm64(),
+    ).forEach { arch ->
+        arch.compilations.getByName("main") {
+            cinterops {
+                val lib by creating {
+                    val headersDir = "$projectDir/cpp/src/cpu"
+                    headers(
+                        "$headersDir/collection_fun.h",
+                        "$headersDir/collection_fun.h",
+                        "$headersDir/mat_mul_fun.h",
+                        "$headersDir/math_fun.h",
+                        "$headersDir/operation_fun.h",
+                        "$headersDir/transpose_fun.h",
+                    )
+                    defFile(project.file("src/nativeMain/lib.def"))
+                    extraOpts("-libraryPath", "$projectDir/src/nativeMain/resources/cpu/${target.name}")
+                }
+            }
+        }
+    }
 
     iosX64()
     iosArm64()
