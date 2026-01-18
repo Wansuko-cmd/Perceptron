@@ -21,6 +21,7 @@ import dataset.mnist.MnistDataset
 import dataset.mnist.PixelConverter
 import dataset.mnist.inputPx
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 private const val TRAIN_IMAGE_PATH = "mnist/train-images-idx3-ubyte.gz"
 private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
@@ -65,7 +66,7 @@ class MnistTest {
 
         println("${accuracy * 100}%")
 
-        assert(accuracy > 0.9f) { "精度が90%を割っています" }
+        assertTrue(actual = accuracy > 0.9f, message = "精度が90%を割っています")
     }
 
     private fun createNetwork(): Network<List<Float>, Int> = NetworkBuilder

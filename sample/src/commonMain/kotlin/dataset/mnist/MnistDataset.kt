@@ -4,7 +4,9 @@ import dataset.resource
 import okio.BufferedSource
 import okio.FileSystem
 import okio.GzipSource
+import okio.SYSTEM
 import okio.buffer
+import okio.use
 
 data class MnistDataset(val pixels: List<Float>, val label: Int) {
     companion object {

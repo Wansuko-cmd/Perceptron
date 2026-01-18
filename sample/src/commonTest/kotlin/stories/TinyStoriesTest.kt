@@ -29,8 +29,9 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
 import okio.FileSystem
-import okio.Path.Companion.toPath
+import okio.SYSTEM
 import okio.buffer
+import okio.use
 
 private const val TRAIN_PATH = "stories/TinyStories-train.txt"
 private const val VALID_PATH = "stories/TinyStories-valid.txt"
@@ -80,8 +81,8 @@ class TinyStoriesTest {
         println("テスト開始")
         var all = 0
         var correct = 0
-        FileSystem.SYSTEM.resource(VALID_PATH).buffer().use {
-            generateSequence { it.readUtf8Line() }
+        FileSystem.SYSTEM.resource(VALID_PATH).buffer().use { buffer ->
+            generateSequence { buffer.readUtf8Line() }
                 .generateStories()
                 .flatMap { tokenize(it).toData() }
                 .chunked(100)
