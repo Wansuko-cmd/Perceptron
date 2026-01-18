@@ -48,8 +48,8 @@ val expect = network.expect(input = data.pixels)
 
 sampleにてMNIST(3層NN)とTinyStories(Transformer)の例を載せています
 
-- [MNIST](sample/src/main/kotlin/dataset/mnist/MnistUtils.kt)
-- [TinyStories](sample/src/main/kotlin/dataset/stories/TinyStoriesUtils.kt)
+- [MNIST](sample/src/commonMain/kotlin/dataset/mnist/MnistUtils.kt)
+- [TinyStories](sample/src/commonMain/kotlin/dataset/stories/TinyStoriesUtils.kt)
 
 ## ライブラリ構成
 

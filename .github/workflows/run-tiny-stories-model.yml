@@ -61,4 +61,4 @@ jobs:
       - name: TinyStoriesテストを実行
         shell: bash
         run: |
-          ./gradlew sample:test --tests "stories.TinyStoriesTest" --info
+          ./gradlew sample:jvmTest --tests "stories.TinyStoriesTest" --info
