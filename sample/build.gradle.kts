@@ -11,6 +11,13 @@ kotlin {
     applyDefaultHierarchyTemplate()
     jvm {
         mainRun { mainClass = "MainKt" }
+        testRuns.named("test") {
+            executionTask.configure {
+                minHeapSize = "256M"
+                maxHeapSize = "${1024 * 12}M"
+                jvmArgs("-XX:MaxMetaspaceSize=1024M")
+            }
+        }
     }
 
     listOf(
