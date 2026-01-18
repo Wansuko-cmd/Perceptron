@@ -5,7 +5,6 @@ package mnist
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.NetworkSerializer
-import com.wsr.network.NetworkSerializer.Companion.register
 import com.wsr.network.initializer.He
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.adam.AdamW
@@ -22,6 +21,7 @@ import dataset.mnist.MnistDataset
 import dataset.mnist.PixelConverter
 import dataset.mnist.inputPx
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 private const val TRAIN_IMAGE_PATH = "mnist/train-images-idx3-ubyte.gz"
 private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
@@ -42,7 +42,7 @@ class MnistTest {
 
         println("Json変換")
         network.toJson()
-            .also { println(it) }
+            .also { println(it.take(100) + "...") }
             .also { println(Network.fromJson<List<Float>, Int>(it)) }
 
         println("訓練開始")
@@ -66,7 +66,7 @@ class MnistTest {
 
         println("${accuracy * 100}%")
 
-        assert(accuracy > 0.9f) { "精度が90%を割っています" }
+        assertTrue(actual = accuracy > 0.9f, message = "精度が90%を割っています")
     }
 
     private fun createNetwork(): Network<List<Float>, Int> = NetworkBuilder

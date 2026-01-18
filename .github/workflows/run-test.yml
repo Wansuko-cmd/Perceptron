@@ -28,4 +28,6 @@ jobs:
 
       - name: テストを実行
         run: |
-          ./gradlew allTests
+          ./gradlew buffer:allTest
+          ./gradlew io-type:allTest
+          ./gradlew network:allTest

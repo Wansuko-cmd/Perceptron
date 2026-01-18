@@ -1,7 +1,10 @@
 package dataset.stories
 
-import java.io.File
-import java.io.FileNotFoundException
+import dataset.resource
+import okio.FileSystem
+import okio.SYSTEM
+import okio.buffer
+import okio.use
 
 /**
  * 語彙を構築
@@ -10,19 +13,16 @@ import java.io.FileNotFoundException
 fun createWordList(path: String, maxSize: Int): List<String> {
     val wordCount = mutableMapOf<String, Int>()
     runCatching {
-        File(path)
-            .useLines { lines ->
-                lines
-                    .flatMap { tokenize(it) }
-                    .forEach { token ->
-                        wordCount[token] = wordCount.getOrDefault(token, 0) + 1
-                    }
-            }
+        FileSystem.SYSTEM.resource(path).buffer().use {
+            generateSequence { it.readUtf8Line() }
+                .flatMap { tokenize(it) }
+                .forEach { token ->
+                    wordCount[token] = wordCount.getOrElse(token) { 0 } + 1
+                }
+        }
     }
         .onFailure { error ->
-            if (error is FileNotFoundException) {
-                println("resource/storiesにTiny Storiesデータセットを入れてください")
-            }
+            println("resource/storiesにTiny Storiesデータセットを入れてください")
             throw error
         }
 

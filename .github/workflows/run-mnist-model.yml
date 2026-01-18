@@ -22,22 +22,22 @@ jobs:
         id: cache-mnist
         uses: actions/cache@v4
         with:
-          path: sample/src/main/resources/mnist
+          path: sample/src/commonMain/resources/mnist
           key: mnist-dataset-v1
 
       - name: MNISTデータセットをダウンロード
         if: steps.cache-mnist.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          mkdir -p sample/src/main/resources/mnist
+          mkdir -p sample/src/commonMain/resources/mnist
           echo "train-images-idx3-ubyte.gzをダウンロード中..."
-          curl -L -o "sample/src/main/resources/mnist/train-images-idx3-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/train-images-idx3-ubyte.gz"
+          curl -L -o "sample/src/commonMain/resources/mnist/train-images-idx3-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/train-images-idx3-ubyte.gz"
           echo "train-labels-idx1-ubyte.gzをダウンロード中..."
-          curl -L -o "sample/src/main/resources/mnist/train-labels-idx1-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/train-labels-idx1-ubyte.gz"
+          curl -L -o "sample/src/commonMain/resources/mnist/train-labels-idx1-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/train-labels-idx1-ubyte.gz"
           echo "t10k-images-idx3-ubyte.gzをダウンロード中..."
-          curl -L -o "sample/src/main/resources/mnist/t10k-images-idx3-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz"
+          curl -L -o "sample/src/commonMain/resources/mnist/t10k-images-idx3-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz"
           echo "t10k-labels-idx1-ubyte.gzをダウンロード中..."
-          curl -L -o "sample/src/main/resources/mnist/t10k-labels-idx1-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte.gz"
+          curl -L -o "sample/src/commonMain/resources/mnist/t10k-labels-idx1-ubyte.gz" "https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte.gz"
           echo "ダウンロード完了"
 
       - name: ./gradlewに権限を付与
@@ -46,4 +46,4 @@ jobs:
 
       - name: MNISTテストを実行
         run: |
-          ${{ github.workspace }}/gradlew sample:test --tests "mnist.MnistTest" --info
+          ${{ github.workspace }}/gradlew sample:jvmTest --tests "mnist.MnistTest" --info
