@@ -101,6 +101,8 @@ import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -112,14 +114,13 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import kotlinx.serialization.serializer
 import okio.BufferedSink
 import okio.BufferedSource
 
 class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
-    private val converterSerializer = json.serializersModule.serializer<Converter>()
-    private val layerSerializer = json.serializersModule.serializer<List<Process>>()
-    private val outputSerializer = json.serializersModule.serializer<Output>()
+    private val converterSerializer = PolymorphicSerializer(Converter::class)
+    private val layerSerializer = ListSerializer(PolymorphicSerializer(Process::class))
+    private val outputSerializer = PolymorphicSerializer(Output::class)
 
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor(
