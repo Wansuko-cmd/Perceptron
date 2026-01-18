@@ -5,7 +5,6 @@ package mnist
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.NetworkSerializer
-import com.wsr.network.NetworkSerializer.Companion.register
 import com.wsr.network.initializer.He
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.adam.AdamW

@@ -1,9 +1,9 @@
 package dataset.mnist
 
+import dataset.resource
 import okio.BufferedSource
 import okio.FileSystem
 import okio.GzipSource
-import okio.Path.Companion.toPath
 import okio.buffer
 
 data class MnistDataset(val pixels: List<Float>, val label: Int) {
@@ -35,7 +35,7 @@ data class MnistDataset(val pixels: List<Float>, val label: Int) {
         }
 
         private fun gzipBuffer(path: String): BufferedSource {
-            val source = FileSystem.RESOURCES.source(path.toPath())
+            val source = FileSystem.SYSTEM.resource(path)
             return GzipSource(source).buffer()
         }
 

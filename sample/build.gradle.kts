@@ -1,25 +1,32 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     alias(libs.plugins.serialization)
-    application
 }
 
-dependencies {
-    implementation(projects.network)
+kotlin {
+    applyDefaultHierarchyTemplate()
+    jvm {
+        mainRun { mainClass = "MainKt" }
+    }
 
-    implementation(libs.serialization)
-    implementation(libs.okio)
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(projects.network)
 
-    testImplementation(kotlin("test"))
-}
+                implementation(libs.serialization)
+                implementation(libs.okio)
+            }
+        }
 
-application {
-    mainClass = "MainKt"
-}
-
-tasks.test {
-    minHeapSize = "256M"
-    maxHeapSize = "${1024 * 12}M"
-    jvmArgs = listOf("-XX:MaxMetaspaceSize=1024M")
-    useJUnit()
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
+        }
+    }
 }

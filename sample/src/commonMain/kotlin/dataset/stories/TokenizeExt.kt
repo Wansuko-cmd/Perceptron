@@ -1,7 +1,7 @@
 package dataset.stories
 
+import dataset.resource
 import okio.FileSystem
-import okio.Path.Companion.toPath
 import okio.buffer
 
 /**
@@ -11,7 +11,7 @@ import okio.buffer
 fun createWordList(path: String, maxSize: Int): List<String> {
     val wordCount = mutableMapOf<String, Int>()
     runCatching {
-        FileSystem.RESOURCES.source(path.toPath()).buffer().use {
+        FileSystem.SYSTEM.resource(path).buffer().use {
             generateSequence { it.readUtf8Line() }
                 .flatMap { tokenize(it) }
                 .forEach { token ->

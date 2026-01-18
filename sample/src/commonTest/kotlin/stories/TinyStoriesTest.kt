@@ -20,6 +20,7 @@ import com.wsr.network.process.compute.position.positionEmbedding
 import com.wsr.network.process.compute.scale.d2.scale
 import com.wsr.network.process.compute.skip.skip
 import com.wsr.network.process.reshape.token.tokenEmbedding
+import dataset.resource
 import dataset.stories.createWordList
 import dataset.stories.generateStories
 import dataset.stories.toData
@@ -55,7 +56,7 @@ class TinyStoriesTest {
         val network = createModel(words)
 
         println("学習開始")
-        FileSystem.RESOURCES.source(TRAIN_PATH.toPath()).buffer().use {
+        FileSystem.SYSTEM.resource(TRAIN_PATH).buffer().use {
             generateSequence { it.readUtf8Line() }
                 .generateStories()
                 .flatMap { tokenize(it).toData() }
@@ -79,7 +80,7 @@ class TinyStoriesTest {
         println("テスト開始")
         var all = 0
         var correct = 0
-        FileSystem.RESOURCES.source(VALID_PATH.toPath()).buffer().use {
+        FileSystem.SYSTEM.resource(VALID_PATH).buffer().use {
             generateSequence { it.readUtf8Line() }
                 .generateStories()
                 .flatMap { tokenize(it).toData() }

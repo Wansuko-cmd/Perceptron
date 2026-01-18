@@ -18,11 +18,11 @@ import com.wsr.network.process.compute.position.roPE
 import com.wsr.network.process.compute.scale.d2.scale
 import com.wsr.network.process.compute.skip.skip
 import com.wsr.network.process.reshape.token.tokenEmbedding
+import dataset.resource
+import okio.FileSystem
+import okio.buffer
 import kotlin.random.Random
 import kotlin.random.nextInt
-import okio.FileSystem
-import okio.Path.Companion.toPath
-import okio.buffer
 
 private const val TRAIN_PATH = "stories/TinyStories-train.txt"
 
@@ -95,7 +95,7 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
         )
 
     println("学習開始")
-    FileSystem.RESOURCES.source(TRAIN_PATH.toPath()).buffer().use {
+    FileSystem.RESOURCES.resource(TRAIN_PATH).buffer().use {
         generateSequence { it.readUtf8Line() }
             .generateStories()
             .flatMap { tokenize(it).toData() }
