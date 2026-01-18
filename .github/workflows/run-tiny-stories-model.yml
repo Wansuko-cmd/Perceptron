@@ -40,18 +40,18 @@ jobs:
         id: cache-tiny-stories
         uses: actions/cache@v4
         with:
-          path: sample/src/main/resources/stories
+          path: sample/src/commonMain/resources/stories
           key: tiny-stories-dataset-v1
 
       - name: TinyStoriesデータセットをダウンロード
         if: steps.cache-tiny-stories.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          mkdir -p sample/src/main/resources/stories
+          mkdir -p sample/src/commonMain/resources/stories
           echo "TinyStories-train.txtをダウンロード中..."
-          curl -L -o "sample/src/main/resources/stories/TinyStories-train.txt" "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStories-train.txt"
+          curl -L -o "sample/src/commonMain/resources/stories/TinyStories-train.txt" "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStories-train.txt"
           echo "TinyStories-valid.txtをダウンロード中..."
-          curl -L -o "sample/src/main/resources/stories/TinyStories-valid.txt" "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStories-valid.txt"
+          curl -L -o "sample/src/commonMain/resources/stories/TinyStories-valid.txt" "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStories-valid.txt"
           echo "ダウンロード完了"
 
       - name: gradlewに権限を付与 (Unix)
