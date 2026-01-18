@@ -1,8 +1,9 @@
-// パスの定義
 val cmakeSourceDir = projectDir
-val cmakeBuildDir = projectDir.resolve("build")        // ビルド用一時ディレクトリ
+val cmakeBuildDir = projectDir.resolve("build")
 
-// CMake 設定（cmake configure 相当）
+/**
+ * JVM
+ **/
 val cmakeJvmConfigure by tasks.registering(Exec::class) {
     group = "build"
     description = "JVM環境向けにCMakeをセットアップ"
@@ -20,7 +21,6 @@ val cmakeJvmConfigure by tasks.registering(Exec::class) {
     )
 }
 
-// CMake ビルド（make 相当）
 val cmakeJvmBuild by tasks.registering(Exec::class) {
     group = "build"
     description = "JVM環境向けにビルド"
@@ -33,11 +33,43 @@ val cmakeJvmBuild by tasks.registering(Exec::class) {
     )
 }
 
-// Cleanタスク
+/**
+ * Native
+ **/
+val cmakeNativeConfigure by tasks.registering(Exec::class) {
+    group = "build"
+    description = "Native環境向けにCMakeをセットアップ"
+    workingDir = cmakeSourceDir
+    doFirst {
+        cmakeBuildDir.mkdirs()
+    }
+    commandLine = listOf(
+        "cmake",
+        "-S", cmakeSourceDir.absolutePath,
+        "-B", cmakeBuildDir.absolutePath,
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DINCLUDE_JNI=OFF",
+        "-DAS_SHARED=OFF",
+    )
+}
+
+val cmakeNativeBuild by tasks.registering(Exec::class) {
+    group = "build"
+    description = "Native環境向けにビルド"
+    dependsOn(cmakeNativeConfigure)
+    workingDir = cmakeSourceDir
+    commandLine = listOf(
+        "cmake",
+        "--build", cmakeBuildDir.absolutePath,
+        "--config", "Release",
+    )
+}
+
 tasks.register<Delete>("clean") {
     group = "build"
     description = "ビルド成果物の削除"
-    delete(fileTree(projectDir.resolve("build")) {
+    val target = fileTree(cmakeBuildDir) {
         exclude("**/openblas/**")
-    })
+    }
+    delete(target)
 }
