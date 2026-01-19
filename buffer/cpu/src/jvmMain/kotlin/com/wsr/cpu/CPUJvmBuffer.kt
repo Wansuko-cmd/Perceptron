@@ -6,12 +6,12 @@ import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-internal fun DataBuffer.toCPUBuffer(): CPUBuffer = when (this) {
-    is CPUBuffer -> this
-    else -> CPUBuffer.create(this.toFloatArray())
+internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
+    is CPUJvmBuffer -> this
+    else -> CPUJvmBuffer.create(this.toFloatArray())
 }
 
-data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
+data class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
     private val floatBuffer = byteBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
     override val size = floatBuffer.capacity()
     override fun toFloatArray(): FloatArray {
@@ -30,13 +30,13 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         val start = indices.first * Float.SIZE_BYTES
         val length = (indices.last - indices.first + 1) * Float.SIZE_BYTES
         return byteBuffer.move(position = start, limit = start + length) {
-            CPUBuffer(slice().order(ByteOrder.nativeOrder()))
+            CPUJvmBuffer(slice().order(ByteOrder.nativeOrder()))
         }
     }
 
     override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
         when (destination) {
-            is CPUBuffer -> {
+            is CPUJvmBuffer -> {
                 byteBuffer.move(position = 0, limit = size) {
                     val destBuffer = destination.floatBuffer
                     destBuffer.move(position = destinationOffset, limit = destinationOffset + size) {
@@ -52,7 +52,7 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return when (other) {
-            is CPUBuffer -> size == other.size && byteBuffer == other.byteBuffer
+            is CPUJvmBuffer -> size == other.size && byteBuffer == other.byteBuffer
             is DataBuffer -> size == other.size && this.toFloatArray().contentEquals(other.toFloatArray())
             else -> false
         }
@@ -66,25 +66,25 @@ data class CPUBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         return result
     }
 
-    companion object {
-        fun create(size: Int): CPUBuffer {
+    companion object Companion {
+        fun create(size: Int): CPUJvmBuffer {
             val buffer = ByteBuffer.allocateDirect(size * Float.SIZE_BYTES)
                 .order(ByteOrder.nativeOrder())
-            return CPUBuffer(buffer)
+            return CPUJvmBuffer(buffer)
         }
 
-        fun create(value: FloatArray): CPUBuffer {
+        fun create(value: FloatArray): CPUJvmBuffer {
             val buffer = ByteBuffer
                 .allocateDirect(value.size * Float.SIZE_BYTES)
                 .order(ByteOrder.nativeOrder())
                 .apply { asFloatBuffer().put(value) }
-            return CPUBuffer(buffer)
+            return CPUJvmBuffer(buffer)
         }
 
         val generator = object : IDataBufferGenerator {
-            override fun create(size: Int): DataBuffer = CPUBuffer.create(size)
+            override fun create(size: Int): DataBuffer = CPUJvmBuffer.create(size)
 
-            override fun create(value: FloatArray): DataBuffer = CPUBuffer.create(value)
+            override fun create(value: FloatArray): DataBuffer = CPUJvmBuffer.create(value)
         }
     }
 }
