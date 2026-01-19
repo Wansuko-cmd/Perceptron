@@ -7,17 +7,16 @@ kotlin {
     applyDefaultHierarchyTemplate()
     jvm()
 
-    mingwX64()
-
-    linuxX64()
-    linuxArm64()
-
-    macosX64()
-    macosArm64()
-
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    val hostOs = System.getProperty("os.name")
+    val hostArch = System.getProperty("os.arch")
+    when {
+        hostOs == "Mac OS X" && hostArch == "x86_64" -> macosX64()
+        hostOs == "Mac OS X" && hostArch == "aarch64" -> macosArm64()
+        hostOs == "Linux" && hostArch == "x86_64" -> linuxX64()
+        hostOs == "Linux" && hostArch == "aarch64" -> linuxArm64()
+        hostOs.startsWith("Windows") -> mingwX64()
+        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }
 
     sourceSets {
         val commonMain by getting {

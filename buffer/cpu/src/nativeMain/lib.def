@@ -1,2 +1,2 @@
-staticLibraries = libcpu.a
-staticLibraries.mingw_x64 = cpu.lib
+package = com.wsr.cpu.cpp
+linkerOpts.osx = -framework Accelerate
