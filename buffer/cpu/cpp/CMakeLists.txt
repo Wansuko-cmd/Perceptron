@@ -62,7 +62,6 @@ elseif (ARM)
     target_compile_options(CPU PRIVATE
             -O3                # 高度な最適化
             -ffast-math        # 高速浮動小数点演算
-            -flto              # リンク時最適化
             -funroll-loops     # ループ展開
             -fomit-frame-pointer # フレームポインタ省略
     )
@@ -70,7 +69,6 @@ else()
     target_compile_options(CPU PRIVATE
             -O3                # 高度な最適化
             -ffast-math        # 高速浮動小数点演算
-            -flto              # リンク時最適化
             -funroll-loops     # ループ展開
             -fomit-frame-pointer # フレームポインタ省略
             -mavx2            # AVX2命令セットを有効化
