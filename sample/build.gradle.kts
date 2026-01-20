@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
@@ -20,14 +21,14 @@ kotlin {
         }
     }
 
-    val hostOs = System.getProperty("os.name")
-    val hostArch = System.getProperty("os.arch")
+    val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
+    val hostArch = DefaultNativePlatform.getCurrentArchitecture()
     val hostTarget = when {
-        hostOs == "Mac OS X" && hostArch == "x86_64" -> macosX64()
-        hostOs == "Mac OS X" && hostArch == "aarch64" -> macosArm64()
-        hostOs == "Linux" && hostArch == "x86_64" -> linuxX64()
-        hostOs == "Linux" && hostArch == "aarch64" -> linuxArm64()
-        hostOs.startsWith("Windows") -> mingwX64()
+        hostOs.isMacOsX && hostArch.isAmd64 -> macosX64()
+        hostOs.isMacOsX && hostArch.isArm64 -> macosArm64()
+        hostOs.isLinux && hostArch.isAmd64 -> linuxX64()
+        hostOs.isLinux && hostArch.isArm64 -> linuxArm64()
+        hostOs.isWindows && hostArch.isAmd64 -> mingwX64()
         else -> throw GradleException("$hostOs:$hostArch is not supported in Kotlin/Native.")
     }
     hostTarget.binaries {
