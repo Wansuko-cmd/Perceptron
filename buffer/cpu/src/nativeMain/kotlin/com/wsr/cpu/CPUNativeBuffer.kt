@@ -4,6 +4,8 @@ package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.ref.createCleaner
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
@@ -17,8 +19,6 @@ import kotlinx.cinterop.set
 import kotlinx.cinterop.usePinned
 import platform.posix.memcmp
 import platform.posix.memcpy
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.ref.createCleaner
 
 internal fun DataBuffer.toCPUBuffer(): CPUNativeBuffer = when (this) {
     is CPUNativeBuffer -> this

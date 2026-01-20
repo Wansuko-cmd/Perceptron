@@ -814,7 +814,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-
     // 0次元
     override fun div(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(y.size)
