@@ -9,7 +9,7 @@ import kotlin.jvm.JvmName
 import kotlin.random.Random
 
 object Backend : IBackend {
-    private var instance: IBackend = cpu
+    var instance: IBackend = cpu
 
     init {
         DataBufferGenerator.set(instance.generator)

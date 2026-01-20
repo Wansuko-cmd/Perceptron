@@ -2,6 +2,7 @@
 
 package stories
 
+import com.wsr.Backend
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.word.WordD2
@@ -53,6 +54,7 @@ class TinyStoriesTest {
     @Test
     fun `TinyStoriesモデルの出力を確認`() {
         println("単語リスト生成開始")
+        println(Backend.instance)
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)
 
@@ -73,6 +75,7 @@ class TinyStoriesTest {
                     println(
                         "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
                     )
+                    println(Backend.instance)
                     network.train(inputs, labels).also { println("loss: $it") }
                 }
         }
