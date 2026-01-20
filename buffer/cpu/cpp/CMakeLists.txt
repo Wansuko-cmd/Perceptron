@@ -71,7 +71,6 @@ else()
             -ffast-math        # 高速浮動小数点演算
             -funroll-loops     # ループ展開
             -fomit-frame-pointer # フレームポインタ省略
-            -mavx2            # AVX2命令セットを有効化
     )
 endif()
 
