@@ -28,7 +28,7 @@ kotlin {
         hostOs == "Linux" && hostArch == "x86_64" -> linuxX64()
         hostOs == "Linux" && hostArch == "aarch64" -> linuxArm64()
         hostOs.startsWith("Windows") -> mingwX64()
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+        else -> throw GradleException("$hostOs:$hostArch is not supported in Kotlin/Native.")
     }
     hostTarget.binaries {
         executable {
