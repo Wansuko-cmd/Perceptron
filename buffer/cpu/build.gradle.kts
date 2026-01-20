@@ -31,7 +31,7 @@ kotlin {
                     "$headersDir/transpose_fun.h",
                 )
                 defFile(project.file("src/nativeMain/lib.def"))
-                extraOpts("-libraryPath", "$projectDir/src/nativeMain/resources/cpu/${target.name}")
+                extraOpts("-libraryPath", "$projectDir/src/nativeMain/resources/cpu/${target.konanTarget.name}")
                 extraOpts("-staticLibrary", if (hostOs.isWindows) "cpu.lib" else "libcpu.a")
             }
         }
