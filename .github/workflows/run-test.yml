@@ -9,6 +9,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        include:
+          - os: macos-latest
+          - os: ubuntu-latest
+            OPENBLAS_HOME: /usr/lib/x86_64-linux-gnu
+          - os: windows-latest
+            OPENBLAS_HOME:
+
         os: [ macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -26,7 +33,15 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
 
+      - name: OpenBLASをインストール(Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install libopenblas-dev
+
       - name: テストを実行
+        env:
+          OPENBLAS_HOME: ${{ matrix.OPENBLAS_HOME }}
         run: |
           ./gradlew buffer:allTest
           ./gradlew io-type:allTest

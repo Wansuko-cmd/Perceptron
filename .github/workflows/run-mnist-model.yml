@@ -51,12 +51,9 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libopenblas-dev
-          find /usr/lib -name "libopenblas*"
 
       - name: MNISTテストを実行(Native)
         run: |
-          sudo apt update
-          sudo apt install libopenblas-dev
           ${{ github.workspace }}/gradlew sample:linuxX64Test --tests "mnist.MnistTest" --info
 
       - name: MNISTテストを実行(JVM)
