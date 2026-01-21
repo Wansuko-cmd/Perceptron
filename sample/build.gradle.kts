@@ -34,7 +34,6 @@ kotlin {
     hostTarget.binaries {
         executable {
             entryPoint = "main"
-            linkerOpts("-L/usr/lib/x86_64-linux-gnu")
         }
     }
 
