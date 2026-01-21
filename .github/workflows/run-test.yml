@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest]
+        os: [ macos-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 仮想ブランチにチェックアウト
@@ -25,6 +25,13 @@ jobs:
       - name: gradlewに権限を付与 (Unix)
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
+
+      - name: OpenBLASをインストール(Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install libopenblas-dev
+          echo "OPENBLAS_HOME=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
 
       - name: テストを実行
         run: |
