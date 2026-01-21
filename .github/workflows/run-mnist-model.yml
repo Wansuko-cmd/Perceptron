@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   push:
 
+env:
+  OPENBLAS_HOME: '/usr/lib/x86_64-linux-gnu'
+
 jobs:
   test:
     runs-on: ubuntu-latest
