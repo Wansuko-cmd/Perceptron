@@ -32,12 +32,14 @@ kotlin {
         else -> throw GradleException("$hostOs:$hostArch is not supported in Kotlin/Native.")
     }
     hostTarget.binaries {
-        executable {
-            entryPoint = "main"
+        all {
             if (hostOs.isWindows || hostOs.isLinux) {
                 val path = System.getenv("OPENBLAS_HOME")
                 linkerOpts("-L/usr/lib/x86_64-linux-gnu")
             }
+        }
+        executable {
+            entryPoint = "main"
         }
     }
 
