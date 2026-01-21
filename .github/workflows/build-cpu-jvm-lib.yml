@@ -1,11 +1,11 @@
-name: 'CPUのビルド'
+name: 'CPUのビルド(JVM)'
 
 on:
   workflow_dispatch:
   push:
     paths:
       - 'buffer/cpu/cpp/src/**'
-      - '.github/workflows/build-cpu-library.yml'
+      - '.github/workflows/build-cpu-jvm-lib.yml'
 
 jobs:
   build:
@@ -69,7 +69,7 @@ jobs:
 
       - name: ネイティブライブラリをビルド
         shell: bash
-        run: ./gradlew :buffer:cpu:cpp:cmakeBuild
+        run: ./gradlew :buffer:cpu:cpp:cmakeJvmBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
@@ -143,6 +143,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "[CI] Update Open BLAS libraries"
+            git commit -m "[CI] Update CPU(JVM) libraries"
             git push
           fi

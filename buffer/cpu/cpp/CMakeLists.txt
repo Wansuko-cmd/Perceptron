@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(io-type-blas C CXX)
 
+option(INCLUDE_JNI "JNI関連をビルド成果物に入れるかどうか" OFF)
+option(AS_SHARED "共有ライブラリとしてビルドする" OFF)
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64|ARM64|armv7|armv8)")
     set(ARM TRUE)
 else()
@@ -24,13 +27,23 @@ set(SOURCE_FILES
         ${SRC_DIR}/math_fun.cpp
         ${SRC_DIR}/operation_fun.cpp
         ${SRC_DIR}/transpose_fun.cpp
-        ${SRC_DIR}/jni/com_wsr_cpu_JCollection.cpp
-        ${SRC_DIR}/jni/com_wsr_cpu_JMath.cpp
-        ${SRC_DIR}/jni/com_wsr_cpu_JMatMul.cpp
-        ${SRC_DIR}/jni/com_wsr_cpu_JOperation.cpp
-        ${SRC_DIR}/jni/com_wsr_cpu_JTranspose.cpp
 )
-add_library(CPU SHARED ${HEADER_FILES} ${SOURCE_FILES})
+if (INCLUDE_JNI)
+    set(JNI_SOURCE_FILES
+            ${SRC_DIR}/jni/com_wsr_cpu_JCollection.cpp
+            ${SRC_DIR}/jni/com_wsr_cpu_JMath.cpp
+            ${SRC_DIR}/jni/com_wsr_cpu_JMatMul.cpp
+            ${SRC_DIR}/jni/com_wsr_cpu_JOperation.cpp
+            ${SRC_DIR}/jni/com_wsr_cpu_JTranspose.cpp
+    )
+endif ()
+
+if (AS_SHARED)
+    add_library(CPU SHARED ${HEADER_FILES} ${SOURCE_FILES} ${JNI_SOURCE_FILES})
+else ()
+    add_library(CPU STATIC ${HEADER_FILES} ${SOURCE_FILES} ${JNI_SOURCE_FILES})
+endif ()
+
 target_include_directories(CPU PRIVATE ${SRC_DIR})
 
 # コンパイラの設定
@@ -70,8 +83,10 @@ endif()
 ###########################
 # JNI
 ###########################
-find_package(JNI REQUIRED)
-include_directories(${JNI_INCLUDE_DIRS})
+if (INCLUDE_JNI)
+    find_package(JNI REQUIRED)
+    include_directories(${JNI_INCLUDE_DIRS})
+endif ()
 
 
 
