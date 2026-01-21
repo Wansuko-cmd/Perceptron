@@ -34,6 +34,10 @@ kotlin {
     hostTarget.binaries {
         executable {
             entryPoint = "main"
+            if (hostOs.isWindows || hostOs.isLinux) {
+                val path = System.getenv("OPENBLAS_HOME")
+                linkerOpts("-L/usr/lib/x86_64-linux-gnu")
+            }
         }
     }
 

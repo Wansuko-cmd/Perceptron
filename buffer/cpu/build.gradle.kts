@@ -31,10 +31,6 @@ kotlin {
                     "$headersDir/transpose_fun.h",
                 )
                 defFile(project.file("src/nativeMain/lib.def"))
-                if (hostOs.isWindows || hostOs.isLinux) {
-                    val path = System.getenv("OPENBLAS_HOME")
-                    linkerOpts("-L/usr/lib/x86_64-linux-gnu", "-lopenblas")
-                }
             }
         }
     }
