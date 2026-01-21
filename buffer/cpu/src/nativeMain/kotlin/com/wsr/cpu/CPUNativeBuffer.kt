@@ -34,7 +34,8 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
 
     override fun toFloatArray(): FloatArray = FloatArray(size).also { array ->
         array.usePinned { pinned ->
-            memcpy(pinned.addressOf(0), buffer, size.toULong())
+            val byteSize = (size * Float.SIZE_BYTES).toULong()
+            memcpy(pinned.addressOf(0), buffer, byteSize)
         }
     }
 
