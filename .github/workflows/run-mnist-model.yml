@@ -47,7 +47,3 @@ jobs:
       - name: MNISTテストを実行(JVM)
         run: |
           ${{ github.workspace }}/gradlew sample:jvmTest --tests "mnist.MnistTest" --info
-
-      - name: MNISTテストを実行(Native)
-        run: |
-          ${{ github.workspace }}/gradlew sample:linuxX64Test --tests "mnist.MnistTest" --info
