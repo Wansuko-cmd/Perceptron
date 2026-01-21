@@ -12,5 +12,11 @@ staticLibraries.macos_arm64 = libcpu.a
 staticLibraries.macos_x64 = libcpu.a
 staticLibraries.mingw_x64 = cpu.lib
 
+linkerOpts.linux_x64 = -lopenblas
+linkerOpts.linux_arm64 = -lopenblas
 linkerOpts.osx = -framework Accelerate
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lopenblas
+linkerOpts.mingw_x64 = -lopenblas
+
+modules.linux_x64 = openblas
+modules.linux_arm64 = openblas
+modules.mingw_x64 = openblas
