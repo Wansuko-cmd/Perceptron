@@ -35,12 +35,12 @@ jobs:
 
       - name: OpenBLASをインストール(Windows)
         if: runner.os == 'Windows'
+        shell: bash
         run: |
           mkdir -p build/openblas
           curl -L -o "build/openblas.zip" "https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.31/OpenBLAS-0.3.31-x64.zip"
           tar -xf build/openblas.zip -C build/openblas
           echo "OPENBLAS_HOME=$((Get-Item .).FullName)\build\openblas\win64\lib\libopenblas.a" >> $GITHUB_ENV
-          echo ${{ env.OPENBLAS_HOME }}
 
       - name: テストを実行
         run: |
