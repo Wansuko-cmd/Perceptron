@@ -83,7 +83,7 @@ jobs:
         run: ./gradlew :buffer:cpu:cpp:cmakeNativeBuild
 
       - name: ネイティブライブラリをビルド(Windows)
-        if: runner.os != 'Windows'
+        if: runner.os == 'Windows'
         shell: msys2 {0}
         run: ./gradlew :buffer:cpu:cpp:cmakeNativeBuild
 
