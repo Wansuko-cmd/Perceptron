@@ -46,14 +46,15 @@ val cmakeNativeConfigure by tasks.registering(Exec::class) {
         cmakeBuildDir.mkdirs()
     }
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
-    commandLine = listOf(
-        "cmake",
-        "-S", cmakeSourceDir.absolutePath,
-        "-B", cmakeBuildDir.absolutePath,
-        "-DCMAKE_BUILD_TYPE=Release",
-        "-DINCLUDE_JNI=OFF",
-        "-DAS_SHARED=OFF",
-    ) + if (hostOs.isWindows) listOf("-G", "MinGW Makefiles") else emptyList()
+    commandLine = buildList {
+        add("cmake")
+        addAll(listOf("-S", cmakeSourceDir.absolutePath))
+        addAll(listOf("-B", cmakeBuildDir.absolutePath))
+        if (hostOs.isWindows) addAll(listOf("-G", "MinGW Makefiles"))
+        add("-DCMAKE_BUILD_TYPE=Release")
+        add("-DINCLUDE_JNI=OFF")
+        add("-DAS_SHARED=OFF")
+    }
 }
 
 val cmakeNativeBuild by tasks.registering(Exec::class) {
