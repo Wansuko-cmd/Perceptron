@@ -66,6 +66,7 @@ val cmakeNativeBuild by tasks.registering(Exec::class) {
         "cmake",
         "--build", cmakeBuildDir.absolutePath,
         "--config", "Release",
+        "--verbose",
     )
 }
 
