@@ -41,8 +41,6 @@ jobs:
           tar -xf build/openblas.zip -C build/openblas
           echo "OPENBLAS_HOME=$((Get-Item .).FullName)\build\openblas\win64\lib\libopenblas.a" | Out-File -FilePath $env:GITHUB_ENV -Append
           
-          cd %USERPROFILE%\.konan\
-          ls
           tree
 
       - name: テストを実行
