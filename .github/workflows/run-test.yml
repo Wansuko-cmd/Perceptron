@@ -39,11 +39,11 @@ jobs:
           mkdir -p build/openblas
           curl -L -o "build/openblas.zip" "https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.31/OpenBLAS-0.3.31-x64.zip"
           tar -xf build/openblas.zip -C build/openblas
-          echo "OPENBLAS_PATH=$((Get-Item .).FullName)\build\openblas\win64\lib"
-          echo "OPENBLAS_PATH=$((Get-Item .).FullName)\build\openblas\win64\lib" >> $env:GITHUB_ENV
-          cd build/openblas/win64/lib
-          mv libopenblas.lib openblas.lib
-          ls
+
+          $rawPath = "$((Get-Item .).FullName)\build\openblas\win64\lib"
+          $unixPath = $rawPath -replace '\\', '/'
+
+          echo "OPENBLAS_PATH=$unixPath" >> $env:GITHUB_ENV
 
       - name: テストを実行
         run: |
