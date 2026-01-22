@@ -43,6 +43,6 @@ jobs:
 
       - name: テストを実行
         run: |
-          ./gradlew buffer:allTest --info
-          ./gradlew io-type:allTest --info
-          ./gradlew network:allTest --info
+          ./gradlew buffer:allTest --info --debug
+          ./gradlew io-type:allTest --info --debug
+          ./gradlew network:allTest --info --debug
