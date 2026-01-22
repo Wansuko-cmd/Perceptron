@@ -43,6 +43,13 @@ jobs:
           
           tree
 
+      - name: 探索
+        if: runner.os == 'Windows'
+        run: |
+          cd D
+          dir /s libmsvcprt.a
+          dir /s libOLDNAMES.a
+
       - name: テストを実行
         run: |
           ./gradlew buffer:allTest --info
