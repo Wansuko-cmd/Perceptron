@@ -46,8 +46,7 @@ jobs:
       - name: 探索
         if: runner.os == 'Windows'
         run: |
-          cd D:\msys64\mingw64\x86_64-w64-mingw32\lib
-          ls
+          Get-ChildItem -Path D:\ -Filter libmsvcprt.a -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
 
       - name: テストを実行
         run: |
