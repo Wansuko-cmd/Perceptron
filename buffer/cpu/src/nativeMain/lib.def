@@ -10,7 +10,7 @@ staticLibraries.linux_x64 = libcpu.a
 staticLibraries.linux_arm64 = libcpu.a
 staticLibraries.macos_arm64 = libcpu.a
 staticLibraries.macos_x64 = libcpu.a
-staticLibraries.mingw_x64 = cpu.lib
+staticLibraries.mingw_x64 = libcpu.a
 
 linkerOpts.osx = -framework Accelerate
 linkerOpts.linux = -lopenblas
