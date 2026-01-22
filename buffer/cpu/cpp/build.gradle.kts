@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 val cmakeSourceDir = projectDir
 val cmakeBuildDir = projectDir.resolve("build")
 
@@ -43,6 +45,7 @@ val cmakeNativeConfigure by tasks.registering(Exec::class) {
     doFirst {
         cmakeBuildDir.mkdirs()
     }
+    val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
     commandLine = listOf(
         "cmake",
         "-S", cmakeSourceDir.absolutePath,
@@ -50,7 +53,7 @@ val cmakeNativeConfigure by tasks.registering(Exec::class) {
         "-DCMAKE_BUILD_TYPE=Release",
         "-DINCLUDE_JNI=OFF",
         "-DAS_SHARED=OFF",
-    )
+    ) + if (hostOs.isWindows) listOf("-G", "MinGW Makefiles") else emptyList()
 }
 
 val cmakeNativeBuild by tasks.registering(Exec::class) {
