@@ -88,6 +88,11 @@ jobs:
         shell: msys2 {0}
         run: ./gradlew :buffer:cpu:cpp:cmakeNativeBuild
 
+      - name: ログを確認
+        if: failure()
+        run:
+          cat D:/a/knist/knist/buffer/cpu/cpp/build/openblas/src/OpenBLAS-stamp/OpenBLAS-build-*.log
+
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
         uses: actions/upload-artifact@v4
