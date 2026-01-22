@@ -46,7 +46,7 @@ jobs:
       - name: 探索
         if: runner.os == 'Windows'
         run: |
-          cd C:\msys64\mingw64\x86_64-w64-mingw32\lib
+          cd D:\msys64\mingw64\x86_64-w64-mingw32\lib
           ls
 
       - name: テストを実行
