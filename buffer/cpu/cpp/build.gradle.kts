@@ -50,7 +50,7 @@ val cmakeNativeConfigure by tasks.registering(Exec::class) {
         add("cmake")
         addAll(listOf("-S", cmakeSourceDir.absolutePath))
         addAll(listOf("-B", cmakeBuildDir.absolutePath))
-        if (hostOs.isWindows) addAll(listOf("-G", "Ninja"))
+        if (hostOs.isWindows) addAll(listOf("-G", "MinGW Makefiles", "-DCMAKE_MAKE_PROGRAM=mingw32-make"))
         add("-DCMAKE_BUILD_TYPE=Release")
         add("-DINCLUDE_JNI=OFF")
         add("-DAS_SHARED=OFF")
