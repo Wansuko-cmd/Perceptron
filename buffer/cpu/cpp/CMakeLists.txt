@@ -118,8 +118,8 @@ else()
             -DCMAKE_BUILD_TYPE=Release
             -DBUILD_SHARED_LIBS=OFF
             -DBUILD_TESTING=OFF
-            -DBUILD_WITHOUT_LAPACK=OFF
-            -DC_LAPACK=ON
+            -DBUILD_WITHOUT_LAPACK=ON
+            -DC_LAPACK=OFF
             -DUSE_THREAD=ON
             ${OPENBLAS_TARGET}
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
