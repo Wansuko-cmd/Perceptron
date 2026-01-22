@@ -22,7 +22,7 @@ kotlin {
     hostTarget.binaries.all {
         if (hostOs.isWindows || hostOs.isLinux) {
             val path = System.getenv("OPENBLAS_HOME")
-            linkerOpts("-L$path")
+            linkerOpts("$path")
         }
     }
 
