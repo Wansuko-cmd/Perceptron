@@ -42,6 +42,7 @@ jobs:
           echo "OPENBLAS_PATH=$((Get-Item .).FullName)\build\openblas\win64\lib"
           echo "OPENBLAS_PATH=$((Get-Item .).FullName)\build\openblas\win64\lib" >> $env:GITHUB_ENV
           cd build/openblas/win64/lib
+          mv libopenblas.lib openblas.lib
           ls
 
       - name: テストを実行
