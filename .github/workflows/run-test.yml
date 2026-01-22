@@ -46,7 +46,7 @@ jobs:
       - name: 探索
         if: runner.os == 'Windows'
         run: |
-          cd D
+          cd D://
           dir /s libmsvcprt.a
           dir /s libOLDNAMES.a
 
