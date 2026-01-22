@@ -46,7 +46,10 @@ jobs:
       - name: 探索
         if: runner.os == 'Windows'
         run: |
-          Get-ChildItem -Path C:\ -Filter libmsvcprt.lib -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+          cd C:
+          tree
+          cd D:
+          tree
 
       - name: テストを実行
         run: |
