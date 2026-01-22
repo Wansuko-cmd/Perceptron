@@ -40,16 +40,6 @@ jobs:
           curl -L -o "openblas.zip" "https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.31/OpenBLAS-0.3.31-x64.zip"
           tar -xf openblas.zip -C openblas
           echo "OPENBLAS_HOME=$((Get-Item .).FullName)\openblas\win64\lib" | Out-File -FilePath $env:GITHUB_ENV -Append
-          
-          tree
-
-      - name: 探索
-        if: runner.os == 'Windows'
-        run: |
-          cd C:
-          tree
-          cd D:
-          tree
 
       - name: テストを実行
         run: |

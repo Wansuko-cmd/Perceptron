@@ -35,7 +35,7 @@ jobs:
           - os: windows-latest
             os_name: mingw
             arch: X64
-            lib_extension: lib
+            lib_extension: a
 
     runs-on: ${{ matrix.os }}
     name: Build (${{ matrix.os_name }}/${{ matrix.arch }})
@@ -130,7 +130,7 @@ jobs:
 
           # Windows/X64
           mkdir -p buffer/cpu/src/nativeMain/resources/cpu/mingwX64
-          find artifacts/cpu-mingw-X64 -name "cpu.lib" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
+          find artifacts/cpu-mingw-X64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
 
           echo "=== Resources structure ==="
           find buffer/cpu/src/nativeMain/resources -type f
