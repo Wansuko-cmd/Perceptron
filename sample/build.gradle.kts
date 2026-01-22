@@ -35,7 +35,7 @@ kotlin {
         all {
             if (hostOs.isWindows || hostOs.isLinux) {
                 val path = System.getenv("OPENBLAS_HOME")
-                linkerOpts("-l$path")
+                linkerOpts("$path")
             }
         }
         executable {
