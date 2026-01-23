@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'buffer/cpu/cpp/src/**'
+      - 'buffer/cpu/cpp/**'
       - '.github/workflows/build-cpu-native-lib.yml'
 
 jobs:
