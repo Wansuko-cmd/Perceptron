@@ -51,6 +51,10 @@ jobs:
           tar -xf openblas.zip -C openblas
           echo "OPENBLAS_HOME=$((Get-Item .).FullName)\openblas\win64\lib" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      - name: ビルド
+        run: |
+          ./gradlew sample:mingX64Binaries --info
+
       - name: テストを実行
         run: |
           ./gradlew buffer:mingX64Test --info --debug
