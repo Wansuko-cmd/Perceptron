@@ -118,7 +118,6 @@ else()
             GIT_TAG v0.3.27
             GIT_SHALLOW TRUE
             CMAKE_ARGS
-            -G Ninja
             -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
             -DCMAKE_BUILD_TYPE=Release
             -DBUILD_SHARED_LIBS=OFF
