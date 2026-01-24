@@ -125,6 +125,7 @@ else()
             -DBUILD_TESTING=OFF
             -DBUILD_WITHOUT_LAPACK=ON
             -DUSE_THREAD=ON
+            -DNOFORTRAN=ON
             ${OPENBLAS_TARGET}
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
             ${OPENBLAS_CMAKE_ARGS}
