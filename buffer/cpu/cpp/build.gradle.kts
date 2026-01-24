@@ -47,6 +47,7 @@ val cmakeNativeConfigure by tasks.registering(Exec::class) {
         "cmake",
         "-S", cmakeSourceDir.absolutePath,
         "-B", cmakeBuildDir.absolutePath,
+        "-G", "Ninja",
         "-DCMAKE_BUILD_TYPE=Release",
         "-DINCLUDE_JNI=OFF",
         "-DAS_SHARED=OFF",

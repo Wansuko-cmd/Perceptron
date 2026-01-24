@@ -118,13 +118,14 @@ else()
             GIT_TAG v0.3.27
             GIT_SHALLOW TRUE
             CMAKE_ARGS
+            -G Ninja
             -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
             -DCMAKE_BUILD_TYPE=Release
             -DBUILD_SHARED_LIBS=OFF
             -DBUILD_TESTING=OFF
-            -DBUILD_WITHOUT_LAPACK=OFF
-            -DC_LAPACK=ON
+            -DBUILD_WITHOUT_LAPACK=ON
             -DUSE_THREAD=ON
+            -DNOFORTRAN=ON
             ${OPENBLAS_TARGET}
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
             ${OPENBLAS_CMAKE_ARGS}
