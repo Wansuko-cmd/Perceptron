@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'buffer/cpu/cpp/src/**'
+      - 'buffer/cpu/cpp/**'
       - '.github/workflows/build-cpu-jvm-lib.yml'
 
 jobs:
@@ -67,9 +67,26 @@ jobs:
           path: buffer/cpu/cpp/build/cpu
           key: cpu-${{ hashFiles('buffer/cpu/cpp/CMakeLists.txt') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
-      - name: ネイティブライブラリをビルド
+      - name: ネイティブライブラリをビルド(Windows以外)
+        if: runner.os != 'Windows'
         shell: bash
-        run: ./gradlew :buffer:cpu:cpp:cmakeJvmBuild
+        run: ./gradlew buffer:cpu:cpp:cmakeJvmBuild
+
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
+      - name: ネイティブライブラリをビルド(Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:cpu:cpp:cmakeJvmBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
