@@ -88,6 +88,11 @@ jobs:
           call "%VCVARSALL_PATH%" x64
           call gradlew.bat buffer:cpu:cpp:cmakeNativeBuild
 
+      - name: ログを出力
+        if: failure()
+        run: |
+          cat D:/a/knist/knist/buffer/cpu/cpp/build/openblas/src/OpenBLAS-stamp/OpenBLAS-build-*.log
+
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
         uses: actions/upload-artifact@v4
