@@ -1,13 +1,13 @@
 #ifndef MAT_MUL_FUN_H
 #define MAT_MUL_FUN_H
 
-#include <cstddef>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void inner(float* x, float* y, size_t size, int b, float* result);
+void inner(float* x, float* y, int size, int b, float* result);
 
 void mat_mul_d1_to_d2(
     const float* x,

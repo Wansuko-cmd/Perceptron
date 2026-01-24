@@ -7,7 +7,7 @@
 #include <cblas.h>
 #endif
 
-void inner(float* x, float* y, size_t size, int b, float* result) {
+void inner(float* x, float* y, int size, int b, float* result) {
     int n = size / b;
     for (int i = 0; i < b; ++i) {
         float* a_ptr = x + (i * n);

@@ -24,10 +24,10 @@ template<Operation Op>
 inline void zip_with_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 ) {
-    for (size_t i = 0; i < y_size; i++) {
+    for (int i = 0; i < y_size; i++) {
         perform_operation<Op>(result[i], x, y[i]);
     }
 }
@@ -35,11 +35,11 @@ inline void zip_with_d0_to_d1(
 template<Operation Op>
 inline void zip_with_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 ) {
-    for (size_t i = 0; i < x_size; i++) {
+    for (int i = 0; i < x_size; i++) {
         perform_operation<Op>(result[i], x[i], y);
     }
 }
@@ -48,10 +48,10 @@ template<Operation Op>
 inline void zip_with_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 ) {
-    for (size_t i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         perform_operation<Op>(result[i], x[i], y[i]);
     }
 }
@@ -561,7 +561,7 @@ inline void zip_with_d4_to_d3(
 void plus_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 ) {
     zip_with_d0_to_d1<Operation::Plus>(x, y, y_size, result);
@@ -569,7 +569,7 @@ void plus_d0_to_d1(
 
 void plus_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 ) {
@@ -579,7 +579,7 @@ void plus_d1_to_d0(
 void plus_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 ) {
     zip_with_d1_to_d1<Operation::Plus>(x, y, size, result);
@@ -678,7 +678,7 @@ void plus_d4_to_d3(
 void minus_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 ) {
     zip_with_d0_to_d1<Operation::Minus>(x, y, y_size, result);
@@ -686,7 +686,7 @@ void minus_d0_to_d1(
 
 void minus_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 ) {
@@ -696,7 +696,7 @@ void minus_d1_to_d0(
 void minus_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 ) {
     zip_with_d1_to_d1<Operation::Minus>(x, y, size, result);
@@ -795,7 +795,7 @@ void minus_d4_to_d3(
 void times_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 ) {
     zip_with_d0_to_d1<Operation::Times>(x, y, y_size, result);
@@ -803,7 +803,7 @@ void times_d0_to_d1(
 
 void times_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 ) {
@@ -813,7 +813,7 @@ void times_d1_to_d0(
 void times_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 ) {
     zip_with_d1_to_d1<Operation::Times>(x, y, size, result);
@@ -912,7 +912,7 @@ void times_d4_to_d3(
 void div_d0_to_d1(
     float x,
     const float* y,
-    size_t y_size,
+    int y_size,
     float* result
 ) {
     zip_with_d0_to_d1<Operation::Div>(x, y, y_size, result);
@@ -920,7 +920,7 @@ void div_d0_to_d1(
 
 void div_d1_to_d0(
     const float* x,
-    size_t x_size,
+    int x_size,
     float y,
     float* result
 ) {
@@ -930,7 +930,7 @@ void div_d1_to_d0(
 void div_d1_to_d1(
     const float* x,
     const float* y,
-    size_t size,
+    int size,
     float* result
 ) {
     zip_with_d1_to_d1<Operation::Div>(x, y, size, result);

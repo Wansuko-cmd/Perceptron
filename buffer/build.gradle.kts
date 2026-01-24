@@ -10,13 +10,19 @@ kotlin {
 
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
     val hostArch = DefaultNativePlatform.getCurrentArchitecture()
-    when {
+    val hostTarget = when {
         hostOs.isMacOsX && hostArch.isAmd64 -> macosX64()
         hostOs.isMacOsX && hostArch.isArm64 -> macosArm64()
         hostOs.isLinux && hostArch.isAmd64 -> linuxX64()
         hostOs.isLinux && hostArch.isArm64 -> linuxArm64()
         hostOs.isWindows && hostArch.isAmd64 -> mingwX64()
         else -> throw GradleException("$hostOs:$hostArch is not supported in Kotlin/Native.")
+    }
+    hostTarget.binaries.all {
+        if (hostOs.isWindows || hostOs.isLinux) {
+            val path = System.getenv("OPENBLAS_HOME")
+            linkerOpts("-L$path")
+        }
     }
 
     sourceSets {
