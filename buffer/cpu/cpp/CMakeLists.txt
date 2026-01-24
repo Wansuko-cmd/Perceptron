@@ -118,6 +118,7 @@ else()
             GIT_TAG v0.3.27
             GIT_SHALLOW TRUE
             CMAKE_ARGS
+            -G Ninja
             -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_DIR}
             -DCMAKE_BUILD_TYPE=Release
             -DBUILD_SHARED_LIBS=OFF
@@ -136,15 +137,17 @@ else()
     )
 
     if(WIN32)
-        set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/openblas.lib)
+        set(OPENBLAS_LIB_PATH ${OPENBLAS_INSTALL_DIR}/lib/openblas.lib)
     else()
-        set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/libopenblas.a)
+        set(OPENBLAS_LIB_PATH ${OPENBLAS_INSTALL_DIR}/lib/libopenblas.a)
     endif()
 
-    add_dependencies(CPU OpenBLAS)
-    target_include_directories(CPU PRIVATE
-            ${OPENBLAS_INCLUDE_DIR}
-            ${OPENBLAS_INSTALL_DIR}/include
+    add_library(OPENBLAS_LIB STATIC IMPORTED GLOBAL)
+    add_dependencies(OPENBLAS_LIB OpenBLAS)
+    set_target_properties(OPENBLAS_LIB PROPERTIES
+            IMPORTED_LOCATION "${OPENBLAS_LIB_PATH}"
+            INTERFACE_INCLUDE_DIRECTORIES "${OPENBLAS_INCLUDE_DIR};${OPENBLAS_INSTALL_DIR}/include"
     )
+
     target_link_libraries(CPU PRIVATE ${OPENBLAS_LIB})
 endif()
