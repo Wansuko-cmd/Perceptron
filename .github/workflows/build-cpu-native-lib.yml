@@ -57,6 +57,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gfortran
 
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
       - name: gradlewに権限を付与 (Unix)
         if: runner.os != 'Windows'
         run: chmod 777 ./gradlew
@@ -67,9 +76,17 @@ jobs:
           path: buffer/cpu/cpp/build/cpu
           key: cpu-${{ hashFiles('buffer/cpu/cpp/CMakeLists.txt') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
-      - name: ネイティブライブラリをビルド
+      - name: ネイティブライブラリをビルド(Windows以外)
+        if: runner.os != 'Windows'
         shell: bash
-        run: ./gradlew :buffer:cpu:cpp:cmakeNativeBuild
+        run: ./gradlew buffer:cpu:cpp:cmakeNativeBuild
+
+      - name: ネイティブライブラリをビルド(Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:cpu:cpp:cmakeNativeBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
