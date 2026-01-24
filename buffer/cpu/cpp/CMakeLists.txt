@@ -136,7 +136,7 @@ else()
             LOG_BUILD ON
     )
 
-    if(WIN32)
+    if(MSVC)
         set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/openblas.lib)
     else()
         set(OPENBLAS_LIB ${OPENBLAS_INSTALL_DIR}/lib/libopenblas.a)

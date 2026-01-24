@@ -35,7 +35,7 @@ jobs:
           - os: windows-latest
             os_name: mingw
             arch: X64
-            lib_extension: lib
+            lib_extension: a
 
     runs-on: ${{ matrix.os }}
     name: Build (${{ matrix.os_name }}/${{ matrix.arch }})
@@ -51,11 +51,16 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-      - name: Fortranのセットアップ (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gfortran
+      - name: MSYS2のセットアップ (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-gcc-fortran
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
 
       - name: gradlewに権限を付与 (Unix)
         if: runner.os != 'Windows'
@@ -67,26 +72,20 @@ jobs:
           path: buffer/cpu/cpp/build/cpu
           key: cpu-${{ hashFiles('buffer/cpu/cpp/CMakeLists.txt') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
-      - name: ネイティブライブラリをビルド(Windows以外)
+      - name: ネイティブライブラリをビルド (Windows以外)
         if: runner.os != 'Windows'
         shell: bash
         run: ./gradlew buffer:cpu:cpp:cmakeNativeBuild
 
-      - name: vcvarsall.batへのパスを取得
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $installPath = vswhere -latest -property installationPath
-          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
-
-          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
-
       - name: ネイティブライブラリをビルド(Windows)
         if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          call "%VCVARSALL_PATH%" x64
-          call gradlew.bat buffer:cpu:cpp:cmakeNativeBuild
+        shell: msys2 {0}
+        run: ./gradlew :buffer:cpu:cpp:cmakeNativeBuild
+
+      - name: ログを確認
+        if: failure()
+        run:
+          cat D:/a/knist/knist/buffer/cpu/cpp/build/openblas/src/OpenBLAS-stamp/OpenBLAS-build-*.log
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
@@ -147,7 +146,7 @@ jobs:
 
           # Windows/X64
           mkdir -p buffer/cpu/src/nativeMain/resources/cpu/mingwX64
-          find artifacts/cpu-mingw-X64 -name "cpu.lib" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
+          find artifacts/cpu-mingw-X64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
 
           echo "=== Resources structure ==="
           find buffer/cpu/src/nativeMain/resources -type f
