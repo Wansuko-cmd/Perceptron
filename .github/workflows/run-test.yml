@@ -57,6 +57,12 @@ jobs:
 
       - name: テストを実行
         run: |
-          ./gradlew buffer:mingX64Test --info --debug
-          ./gradlew io-type:mingX64Test --info --debug
-          ./gradlew network:mingX64Test --info --debug
+          ./gradlew buffer:mingX64Test --info
+          ./gradlew io-type:mingX64Test --info
+          ./gradlew network:mingX64Test --info
+
+      - name: 直接実行
+        if: failure()
+        shell: cmd
+        run: |
+          D:\a\knist\knist\buffer\build\bin\mingwX64\debugTest\test.exe
