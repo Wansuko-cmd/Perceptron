@@ -1,4 +1,7 @@
+import org.gradle.kotlin.dsl.assign
+import org.gradle.kotlin.dsl.withType
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     kotlin("multiplatform")
@@ -24,6 +27,9 @@ kotlin {
             val path = System.getenv("OPENBLAS_HOME")
             linkerOpts("-L$path")
         }
+    }
+    tasks.withType<KotlinNativeTest>().configureEach {
+        failOnNoDiscoveredTests = false
     }
 
     sourceSets {

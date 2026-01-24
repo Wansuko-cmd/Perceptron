@@ -2,6 +2,7 @@
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
     kotlin("multiplatform")
@@ -41,6 +42,10 @@ kotlin {
         executable {
             entryPoint = "main"
         }
+    }
+
+    tasks.withType<KotlinNativeTest>().configureEach {
+        failOnNoDiscoveredTests = false
     }
 
     sourceSets {
