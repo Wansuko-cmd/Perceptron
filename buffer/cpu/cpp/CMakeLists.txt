@@ -57,6 +57,7 @@ if (MSVC)
             /Oi                # 組み込み関数使用
             /Ot                # 速度優先
             /arch:AVX2         # AVX2命令セットを有効化
+            /MT
     )
 elseif (ARM)
     target_compile_options(CPU PRIVATE
