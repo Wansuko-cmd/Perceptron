@@ -51,16 +51,29 @@ jobs:
           tar -xf openblas.zip -C openblas
           echo "OPENBLAS_HOME=$((Get-Item .).FullName)\openblas\win64\lib" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: ビルド
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
         run: |
-          ./gradlew sample:mingX64Binaries --info
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
+      - name: ビルド
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat sample:mingX64Binaries --info
 
       - name: テストを実行
-        shell: msys2 {0}
+        shell: cmd
         run: |
-          ./gradlew buffer:mingX64Test --info
-          ./gradlew io-type:mingX64Test --info
-          ./gradlew network:mingX64Test --info
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:mingX64Test --info
+          call gradlew.bat io-type:mingX64Test --info
+          call gradlew.bat network:mingX64Test --info
+
 
       - name: 直接実行
         if: failure()
