@@ -2,7 +2,6 @@ package com.wsr.network.process.compute.norm.rms.d3
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.average
-import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
@@ -20,10 +19,7 @@ class RmsNormD3 internal constructor(
     override val outputY: Int,
     override val outputZ: Int,
     private val e: Float,
-) :
-    Compute.D3() {
-    private val outputSize = outputX * outputY
-
+) : Compute.D3() {
     override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
@@ -41,7 +37,7 @@ class RmsNormD3 internal constructor(
         val delta = calcDelta(output)
 
         val dx1 = delta / deviation
-        val dx2 = -1f * input * (delta * input).sum() / (deviation.pow(3) * outputSize.toFloat())
+        val dx2 = -1f * input * (delta * input).average() / deviation.pow(3)
 
         return dx1 + dx2
     }

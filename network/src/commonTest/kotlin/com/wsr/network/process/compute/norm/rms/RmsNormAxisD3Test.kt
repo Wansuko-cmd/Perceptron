@@ -81,7 +81,7 @@ class RmsNormAxisD3Test {
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f,  0.6324f, 0.0882f),
+            expected = IOType.d1(0.0000f, 0.6324f, 0.0882f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
@@ -307,23 +307,23 @@ class RmsNormAxisD3Test {
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1( 0.0000f, 0.0000f, 9.0000f),
+            expected = IOType.d1(0.0000f, 0.0000f, 9.0000f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 13.2500f, 26.5000f),
+            expected = IOType.d1(0.0000f, 13.1250f, 26.2500f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
         assertEquals(
-            expected = IOType.d1(0.0000f, 0.0156f, 0.0625f),
+            expected = IOType.d1(0.0000f, 0.0078f, 0.0312f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 0.0000f, 0.0000f),
+            expected = IOType.d1(0.0156f, 0.0000f, 0.0156f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )

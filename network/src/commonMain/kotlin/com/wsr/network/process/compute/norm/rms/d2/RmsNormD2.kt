@@ -2,7 +2,6 @@ package com.wsr.network.process.compute.norm.rms.d2
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.average
-import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
@@ -17,8 +16,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 class RmsNormD2 internal constructor(override val outputX: Int, override val outputY: Int, private val e: Float) :
     Compute.D2() {
-    private val outputSize = outputX * outputY
-
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
@@ -36,7 +33,7 @@ class RmsNormD2 internal constructor(override val outputX: Int, override val out
         val delta = calcDelta(output)
 
         val dx1 = delta / deviation
-        val dx2 = -1f * input * (delta * input).sum() / (deviation.pow(3) * outputSize.toFloat())
+        val dx2 = -1f * input * (delta * input).average() / deviation.pow(3)
 
         return dx1 + dx2
     }

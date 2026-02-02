@@ -2,7 +2,6 @@ package com.wsr.network.process.compute.norm.rms.d1
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.average
-import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
@@ -33,11 +32,10 @@ class RmsNormD1 internal constructor(override val outputSize: Int, private val e
         val delta = calcDelta(output)
 
         val dx1 = delta / deviation
-        val dx2 = -1f * input * (delta * input).sum() / (deviation.pow(3) * outputSize.toFloat())
+        val dx2 = -1f * input * (delta * input).average() / deviation.pow(3)
 
         return dx1 + dx2
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f) =
-    addProcess(process = RmsNormD1(outputSize = inputSize, e = e))
+fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f) = addProcess(process = RmsNormD1(outputSize = inputSize, e = e))

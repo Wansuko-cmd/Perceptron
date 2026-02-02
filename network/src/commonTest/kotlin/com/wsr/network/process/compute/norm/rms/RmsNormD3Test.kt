@@ -98,46 +98,44 @@ class RmsNormD3Test {
             calcDelta = { 1e6f * it as Batch<IOType.D2> },
         ) as Batch<IOType.D3>
 
-        println(actual[0])
-        println(actual[1])
         assertEquals(
-            expected = IOType.d1(0.0000f, -907371.4000f, -1814742.8000f),
+            expected = IOType.d1(0.0000f, 0.1875f, 0.3750f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, -1814742.8000f, -3629485.5000f),
+            expected = IOType.d1(0.0000f, 0.3750f, 0.7500f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 0.0000f, -907371.4000f),
+            expected = IOType.d1(0.0000f, 0.0000f, 0.1875f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, -272211.4400f, -544422.9000f),
+            expected = IOType.d1(0.0000f, 0.0468f, 0.0937f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
         assertEquals(
-            expected = IOType.d1(0.0000f, -239268.8400f, -957075.4000f),
+            expected = IOType.d1(0.0000f, 0.0156f, 0.0625f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(-598172.0000f, -717806.5600f, -837441.0000f),
+            expected = IOType.d1(0.0312f, 0.0312f, 0.0625f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, -119634.4200f, -59817.2100f),
+            expected = IOType.d1(0.0000f, 0.0078f, 0.0039f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(239268.8400f, 299086.0000f, 398781.4000f),
+            expected = IOType.d1(-0.0156f, -0.0156f, -0.0156f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
         )

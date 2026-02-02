@@ -36,7 +36,7 @@ class RmsNormAxisD2Test {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
         assertEquals(
-            expected = IOType.d1(0.0000f,  0.6324f,  0.6324f),
+            expected = IOType.d1(0.0000f, 0.6324f, 0.6324f),
             actual = actual[0][0],
             absoluteTolerance = 1e-4f,
         )
@@ -141,7 +141,7 @@ class RmsNormAxisD2Test {
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 13.2500f, 26.5000f),
+            expected = IOType.d1(0.0000f, 13.1250f, 26.2500f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,
         )

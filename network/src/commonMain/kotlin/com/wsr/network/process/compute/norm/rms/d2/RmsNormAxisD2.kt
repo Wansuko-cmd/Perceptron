@@ -2,7 +2,6 @@ package com.wsr.network.process.compute.norm.rms.d2
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.average
-import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
@@ -47,8 +46,8 @@ class RmsNormAxisD2 internal constructor(
 
         val dx1 = delta.div(other = deviation, axis = basicOpAxis)
         val dx2 = -1f * input
-            .times(other = (delta * input).sum(axis = axis), axis = basicOpAxis)
-            .div(other = (deviation.pow(3) * outputT.toFloat()), axis = basicOpAxis)
+            .times(other = (delta * input).average(axis = axis), axis = basicOpAxis)
+            .div(other = (deviation.pow(3)), axis = basicOpAxis)
 
         return dx1 + dx2
     }

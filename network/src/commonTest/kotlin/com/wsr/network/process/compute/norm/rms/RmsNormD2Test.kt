@@ -77,7 +77,7 @@ class RmsNormD2Test {
         )
 
         assertEquals(
-            expected = IOType.d1(0.0000f, 0.0000f, 17.0000f),
+            expected = IOType.d1(0.0000f, 0.0000f, 17.2500f),
             actual = actual[1][0],
             absoluteTolerance = 1e-4f,
         )
