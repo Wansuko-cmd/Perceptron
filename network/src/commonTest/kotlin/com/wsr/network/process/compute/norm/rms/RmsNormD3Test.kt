@@ -1,0 +1,145 @@
+@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+
+package com.wsr.network.process.compute.norm.rms
+
+import com.wsr.batch.Batch
+import com.wsr.batch.batchOf
+import com.wsr.batch.get
+import com.wsr.batch.operation.times.times
+import com.wsr.core.IOType
+import com.wsr.core.d1
+import com.wsr.core.d2
+import com.wsr.core.d3
+import com.wsr.core.get
+import com.wsr.network.assertEquals
+import com.wsr.network.networkTestRule
+import com.wsr.network.process.Context
+import com.wsr.network.process.compute.norm.rms.d3.RmsNormD3
+import kotlin.test.Test
+
+class RmsNormD3Test {
+    val target get() = RmsNormD3(outputX = 2, outputY = 2, outputZ = 3, e = 1e-6f)
+    val input
+        get() = batchOf(
+            IOType.d3(
+                IOType.d2(
+                    IOType.d1(3) { it.toFloat() },
+                    IOType.d1(3) { it * 2f },
+                ),
+                IOType.d2(
+                    IOType.d1(3) { 10f % (it + 1) },
+                    IOType.d1(3) { it * 0.3f },
+                ),
+            ),
+            IOType.d3(
+                IOType.d2(
+                    IOType.d1(3) { it * it * 2f },
+                    IOType.d1(3) { it + 5f },
+                ),
+                IOType.d2(
+                    IOType.d1(3) { it % 1.5f },
+                    IOType.d1(3) { 10f / (it - 5) },
+                ),
+            ),
+        )
+
+    @Test
+    fun `expect=層正規化`() = networkTestRule {
+        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.6735f, 1.3471f),
+            actual = actual[0][0][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, 1.3471f, 2.6942f),
+            actual = actual[0][0][1],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.0000f, 0.6735f),
+            actual = actual[0][1][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.2020f, 0.4041f),
+            actual = actual[0][1][1],
+            absoluteTolerance = 1e-4f,
+        )
+
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.4891f, 1.9566f),
+            actual = actual[1][0][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(1.2228f, 1.4674f, 1.7120f),
+            actual = actual[1][0][1],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.2445f, 0.1222f),
+            actual = actual[1][1][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(-0.4891f, -0.6114f, -0.8152f),
+            actual = actual[1][1][1],
+            absoluteTolerance = 1e-4f,
+        )
+    }
+
+    @Test
+    fun `train=正規化および勾配を伝播`() = networkTestRule {
+        val actual = target._train(
+            input = input,
+            context = Context(input),
+            calcDelta = { 1e6f * it as Batch<IOType.D2> },
+        ) as Batch<IOType.D3>
+
+        println(actual[0])
+        println(actual[1])
+        assertEquals(
+            expected = IOType.d1(0.0000f, -907371.4000f, -1814742.8000f),
+            actual = actual[0][0][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, -1814742.8000f, -3629485.5000f),
+            actual = actual[0][0][1],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, 0.0000f, -907371.4000f),
+            actual = actual[0][1][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, -272211.4400f, -544422.9000f),
+            actual = actual[0][1][1],
+            absoluteTolerance = 1e-4f,
+        )
+
+        assertEquals(
+            expected = IOType.d1(0.0000f, -239268.8400f, -957075.4000f),
+            actual = actual[1][0][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(-598172.0000f, -717806.5600f, -837441.0000f),
+            actual = actual[1][0][1],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(0.0000f, -119634.4200f, -59817.2100f),
+            actual = actual[1][1][0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertEquals(
+            expected = IOType.d1(239268.8400f, 299086.0000f, 398781.4000f),
+            actual = actual[1][1][1],
+            absoluteTolerance = 1e-4f,
+        )
+    }
+}
