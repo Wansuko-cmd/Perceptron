@@ -16,7 +16,6 @@ import com.wsr.network.process.compute.bias.d2.bias
 import com.wsr.network.process.compute.dropout.dropout
 import com.wsr.network.process.compute.function.relu.swish
 import com.wsr.network.process.compute.norm.layer.d2.layerNorm
-import com.wsr.network.process.compute.norm.rms.d2.rmsNorm
 import com.wsr.network.process.compute.position.positionEmbedding
 import com.wsr.network.process.compute.scale.d2.scale
 import com.wsr.network.process.compute.skip.skip
@@ -140,19 +139,19 @@ class TinyStoriesTest {
             this
                 .skip {
                     this
-                        .rmsNorm(axis = 1).scale(axis = 1)
+                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
                         .attention(numOfHeads = NUM_HEADS, maskValue = PAD_INDEX, isCausal = true)
                         .dropout(0.9f)
                 }
                 .skip {
                     this
-                        .rmsNorm(axis = 1).scale(axis = 1)
+                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
                         .affine(FFN_DIM).bias(axis = 1).swish()
                         .affine(EMBEDDING_DIM).bias(axis = 1)
                         .dropout(0.9f)
                 }
         }
-        .rmsNorm(axis = 1).scale(axis = 1)
+        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
         .affine(words.size)
         .softmaxWithLoss(
             converter = {
