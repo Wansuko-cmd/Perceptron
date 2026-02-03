@@ -83,7 +83,7 @@ class RmsNormAxisD2Test {
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0000f, 147.0000f, 1.3125f),
+            expected = IOType.d1(0.0000f, 147.5000f, 1.3125f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,
         )

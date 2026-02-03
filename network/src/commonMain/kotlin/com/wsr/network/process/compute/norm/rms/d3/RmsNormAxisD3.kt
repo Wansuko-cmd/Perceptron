@@ -5,7 +5,7 @@ import com.wsr.batch.collecction.average.average
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
-import com.wsr.batch.operation.plus.plus
+import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.process.Context
@@ -46,10 +46,10 @@ class RmsNormAxisD3 internal constructor(
         val delta = calcDelta(output)
 
         val dx1 = delta.div(other = deviation, axis1 = axis1, axis2 = axis2)
-        val dx2 = -1f * input
-            .times(other = (delta * input).average(axis = axis), axis1 = axis1, axis2 = axis2)
-            .div(other = deviation.pow(3), axis1 = axis1, axis2 = axis2)
-
-        return dx1 + dx2
+        val dx2 = run {
+            val m = (delta * input).average(axis = axis) / deviation.pow(3)
+            m.times(other = input, axis1 = axis1, axis2 = axis2)
+        }
+        return dx1 - dx2
     }
 }

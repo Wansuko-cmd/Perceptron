@@ -5,7 +5,7 @@ import com.wsr.batch.collecction.average.average
 import com.wsr.batch.math.pow
 import com.wsr.batch.math.sqrt
 import com.wsr.batch.operation.div.div
-import com.wsr.batch.operation.plus.plus
+import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.process.Context
@@ -19,12 +19,6 @@ class RmsNormAxisD2 internal constructor(
     private val axis: Int,
     private val e: Float,
 ) : Compute.D2() {
-    private val outputT = when (axis) {
-        0 -> outputX
-        1 -> outputY
-        else -> throw IllegalArgumentException("LayerNormAxisD2 axis is $axis, not 0 or 1.")
-    }
-
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0
 
@@ -45,10 +39,10 @@ class RmsNormAxisD2 internal constructor(
         val delta = calcDelta(output)
 
         val dx1 = delta.div(other = deviation, axis = basicOpAxis)
-        val dx2 = -1f * input
-            .times(other = (delta * input).average(axis = axis), axis = basicOpAxis)
-            .div(other = (deviation.pow(3)), axis = basicOpAxis)
-
-        return dx1 + dx2
+        val dx2 = run {
+            val m = (delta * input).average(axis = axis) / deviation.pow(3)
+            m.times(other = input, axis = basicOpAxis)
+        }
+        return dx1 - dx2
     }
 }

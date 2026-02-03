@@ -125,7 +125,7 @@ class RmsNormD3Test {
             absoluteTolerance = 1e-4f,
         )
         assertEquals(
-            expected = IOType.d1(0.0312f, 0.0312f, 0.0625f),
+            expected = IOType.d1(0.0312f, 0.0625f, 0.0625f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
