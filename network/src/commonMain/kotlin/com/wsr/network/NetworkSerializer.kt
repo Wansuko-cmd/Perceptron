@@ -77,6 +77,11 @@ import com.wsr.network.process.compute.norm.layer.d3.LayerNormD3
 import com.wsr.network.process.compute.norm.minmax.MinMaxNormD1
 import com.wsr.network.process.compute.norm.minmax.MinMaxNormD2
 import com.wsr.network.process.compute.norm.minmax.MinMaxNormD3
+import com.wsr.network.process.compute.norm.rms.d1.RmsNormD1
+import com.wsr.network.process.compute.norm.rms.d2.RmsNormAxisD2
+import com.wsr.network.process.compute.norm.rms.d2.RmsNormD2
+import com.wsr.network.process.compute.norm.rms.d3.RmsNormAxisD3
+import com.wsr.network.process.compute.norm.rms.d3.RmsNormD3
 import com.wsr.network.process.compute.pool.MaxPoolD2
 import com.wsr.network.process.compute.pool.MaxPoolD3
 import com.wsr.network.process.compute.position.PositionEmbeddingD2
@@ -284,12 +289,16 @@ private val buildInSerializersModule = SerializersModule {
 
         // Norm
         subclass(LayerNormD1::class)
-
         subclass(LayerNormD2::class)
         subclass(LayerNormAxisD2::class)
-
         subclass(LayerNormD3::class)
         subclass(LayerNormAxisD3::class)
+
+        subclass(RmsNormD1::class)
+        subclass(RmsNormD2::class)
+        subclass(RmsNormAxisD2::class)
+        subclass(RmsNormD3::class)
+        subclass(RmsNormAxisD3::class)
 
         subclass(MinMaxNormD1::class)
         subclass(MinMaxNormD2::class)
