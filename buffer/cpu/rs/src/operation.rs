@@ -800,9 +800,9 @@ fn zip_with_d3_to_d4<F: Fn(f32, f32) -> f32>(
     result: &mut[f32],
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
-    assert!(y.len() == yi * yj * yk * yl);
-    assert!(result.len() == yi * yj * yk * yl);
+    assert_eq!(x.len(), xi * xj * xk);
+    assert_eq!(y.len(), yi * yj * yk * yl);
+    assert_eq!(result.len(), yi * yj * yk * yl);
 
     match (axis1, axis2, axis3) {
         (0, 1, 2) => {
