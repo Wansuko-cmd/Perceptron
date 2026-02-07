@@ -934,7 +934,7 @@ pub extern "system" fn Java_com_wsr_cpu_JOperation_divD4ToD2(
     let y = unsafe { y.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
     operation::div_with_d4_to_d2(
-        x,  xi as usize, xj as usize, xk as usize, xl as usize,
+        x, xi as usize, xj as usize, xk as usize, xl as usize,
         y, yi as usize, yj as usize,
         axis1 as usize, axis2 as usize,
         result,
