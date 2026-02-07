@@ -1,8 +1,8 @@
-mod collection_fun;
-mod mat_mul_fun;
-mod math_fun;
-mod operation_fun;
-mod transpose_fun;
+mod collection;
+mod mat_mul;
+mod math;
+mod operation;
+mod transpose;
 
 fn main() {
     println!("Hello, world!");
