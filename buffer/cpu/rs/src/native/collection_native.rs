@@ -21,7 +21,7 @@ pub extern "C" fn com_wsr_cpu_average_d2(x: *const f32, xi: usize, xj: usize, ax
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_average_d3(x: *const f32, xi: usize, xj: usize, xk: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk) };
 
     let result_size = match axis {
         0 => xj * xk,
@@ -35,7 +35,7 @@ pub extern "C" fn com_wsr_cpu_average_d3(x: *const f32, xi: usize, xj: usize, xk
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_average_d4(x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk * xl) };
 
     let result_size = match axis {
         0 => xj * xk * xl,
@@ -70,7 +70,7 @@ pub extern "C" fn com_wsr_cpu_max_d2(x: *const f32, xi: usize, xj: usize, axis: 
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_max_d3(x: *const f32, xi: usize, xj: usize, xk: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk) };
 
     let result_size = match axis {
         0 => xj * xk,
@@ -84,7 +84,7 @@ pub extern "C" fn com_wsr_cpu_max_d3(x: *const f32, xi: usize, xj: usize, xk: us
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_max_d4(x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk * xl) };
 
     let result_size = match axis {
         0 => xj * xk * xl,
@@ -119,7 +119,7 @@ pub extern "C" fn com_wsr_cpu_min_d2(x: *const f32, xi: usize, xj: usize, axis: 
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_min_d3(x: *const f32, xi: usize, xj: usize, xk: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk) };
 
     let result_size = match axis {
         0 => xj * xk,
@@ -133,7 +133,7 @@ pub extern "C" fn com_wsr_cpu_min_d3(x: *const f32, xi: usize, xj: usize, xk: us
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_min_d4(x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk * xl) };
 
     let result_size = match axis {
         0 => xj * xk * xl,
@@ -168,7 +168,7 @@ pub extern "C" fn com_wsr_cpu_sum_d2(x: *const f32, xi: usize, xj: usize, axis: 
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_sum_d3(x: *const f32, xi: usize, xj: usize, xk: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk) };
 
     let result_size = match axis {
         0 => xj * xk,
@@ -182,7 +182,7 @@ pub extern "C" fn com_wsr_cpu_sum_d3(x: *const f32, xi: usize, xj: usize, xk: us
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_sum_d4(x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize, axis: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, xi * xj) };
+    let x = unsafe { std::slice::from_raw_parts(x, xi * xj * xk * xl) };
 
     let result_size = match axis {
         0 => xj * xk * xl,
