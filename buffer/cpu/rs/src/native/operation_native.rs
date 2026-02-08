@@ -1,865 +1,865 @@
 use crate::operation;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_plus_d0_to_d1(x: f32, y: *const f32, y_size: usize, result: *mut f32) {
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
+pub extern "C" fn com_wsr_cpu_plus_d0_to_d1(x: f32, y: *const f32, y_size: i32, result: *mut f32) {
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
     operation::plus_with_d0_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_plus_d1_to_d0(x: *const f32, x_size: usize, y: f32, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
+pub extern "C" fn com_wsr_cpu_plus_d1_to_d0(x: *const f32, x_size: i32, y: f32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
     operation::plus_with_d1_to_d0(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_plus_d1_to_d1(x: *const f32, y: *const f32, size: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, size) };
-    let y = unsafe { std::slice::from_raw_parts(y, size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, size) };
+pub extern "C" fn com_wsr_cpu_plus_d1_to_d1(x: *const f32, y: *const f32, size: i32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
+    let y = unsafe { std::slice::from_raw_parts(y, size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
     operation::plus_with_d1_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d1_to_d2(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
+        0 => yi as usize,
+        1 => yj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::plus_with_d1_to_d2(x, y, yi, yj, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::plus_with_d1_to_d2(x, y, yi as usize, yj as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d1_to_d3(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
-        2 => yk,
+        0 => yi as usize,
+        1 => yj as usize,
+        2 => yk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::plus_with_d1_to_d3(x, y, yi, yj, yk, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::plus_with_d1_to_d3(x, y, yi as usize, yj as usize, yk as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d2_to_d1(
-    x: *const f32, xi: usize, xj: usize,
+    x: *const f32, xi: i32, xj: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
+        0 => xi as usize,
+        1 => xj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d2_to_d1(x, xi, xj, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d2_to_d1(x, xi as usize, xj as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d2_to_d3(
-    x: *const f32, xi: usize, xj: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::plus_with_d2_to_d3(x, xi, xj, y, yi, yj, yk, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::plus_with_d2_to_d3(x, xi as usize, xj as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d3_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d3_to_d1(x, xi, xj, xk, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d3_to_d1(x, xi as usize, xj as usize, xk as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d3_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d3_to_d2(x, xi, xj, xk, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d3_to_d2(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d3_to_d4(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize, yl: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32, yl: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk * yl;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::plus_with_d3_to_d4(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::plus_with_d3_to_d4(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, yk as usize, yl as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d4_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
-        3 => xl,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
+        3 => xl as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d4_to_d1(x, xi, xj, xk, xl, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d4_to_d1(x, xi as usize, xj as usize, xk as usize, xl as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d4_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d4_to_d2(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d4_to_d2(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d4_to_d3(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::plus_with_d4_to_d3(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::plus_with_d4_to_d3(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_minus_d0_to_d1(x: f32, y: *const f32, y_size: usize, result: *mut f32) {
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
+pub extern "C" fn com_wsr_cpu_minus_d0_to_d1(x: f32, y: *const f32, y_size: i32, result: *mut f32) {
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
     operation::minus_with_d0_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_minus_d1_to_d0(x: *const f32, x_size: usize, y: f32, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
+pub extern "C" fn com_wsr_cpu_minus_d1_to_d0(x: *const f32, x_size: i32, y: f32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
     operation::minus_with_d1_to_d0(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_minus_d1_to_d1(x: *const f32, y: *const f32, size: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, size) };
-    let y = unsafe { std::slice::from_raw_parts(y, size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, size) };
+pub extern "C" fn com_wsr_cpu_minus_d1_to_d1(x: *const f32, y: *const f32, size: i32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
+    let y = unsafe { std::slice::from_raw_parts(y, size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
     operation::minus_with_d1_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d1_to_d2(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
+        0 => yi as usize,
+        1 => yj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::minus_with_d1_to_d2(x, y, yi, yj, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::minus_with_d1_to_d2(x, y, yi as usize, yj as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d1_to_d3(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
-        2 => yk,
+        0 => yi as usize,
+        1 => yj as usize,
+        2 => yk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::minus_with_d1_to_d3(x, y, yi, yj, yk, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::minus_with_d1_to_d3(x, y, yi as usize, yj as usize, yk as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d2_to_d1(
-    x: *const f32, xi: usize, xj: usize,
+    x: *const f32, xi: i32, xj: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
+        0 => xi as usize,
+        1 => xj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d2_to_d1(x, xi, xj, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d2_to_d1(x, xi as usize, xj as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d2_to_d3(
-    x: *const f32, xi: usize, xj: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::minus_with_d2_to_d3(x, xi, xj, y, yi, yj, yk, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::minus_with_d2_to_d3(x, xi as usize, xj as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d3_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d3_to_d1(x, xi, xj, xk, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d3_to_d1(x, xi as usize, xj as usize, xk as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d3_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d3_to_d2(x, xi, xj, xk, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d3_to_d2(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d3_to_d4(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize, yl: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32, yl: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk * yl;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::minus_with_d3_to_d4(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::minus_with_d3_to_d4(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, yk as usize, yl as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d4_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
-        3 => xl,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
+        3 => xl as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d4_to_d1(x, xi, xj, xk, xl, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d4_to_d1(x, xi as usize, xj as usize, xk as usize, xl as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d4_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d4_to_d2(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d4_to_d2(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_minus_d4_to_d3(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::minus_with_d4_to_d3(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::minus_with_d4_to_d3(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_times_d0_to_d1(x: f32, y: *const f32, y_size: usize, result: *mut f32) {
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
+pub extern "C" fn com_wsr_cpu_times_d0_to_d1(x: f32, y: *const f32, y_size: i32, result: *mut f32) {
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
     operation::times_with_d0_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_times_d1_to_d0(x: *const f32, x_size: usize, y: f32, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
+pub extern "C" fn com_wsr_cpu_times_d1_to_d0(x: *const f32, x_size: i32, y: f32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
     operation::times_with_d1_to_d0(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_times_d1_to_d1(x: *const f32, y: *const f32, size: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, size) };
-    let y = unsafe { std::slice::from_raw_parts(y, size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, size) };
+pub extern "C" fn com_wsr_cpu_times_d1_to_d1(x: *const f32, y: *const f32, size: i32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
+    let y = unsafe { std::slice::from_raw_parts(y, size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
     operation::times_with_d1_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d1_to_d2(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
+        0 => yi as usize,
+        1 => yj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::times_with_d1_to_d2(x, y, yi, yj, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::times_with_d1_to_d2(x, y, yi as usize, yj as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d1_to_d3(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
-        2 => yk,
+        0 => yi as usize,
+        1 => yj as usize,
+        2 => yk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::times_with_d1_to_d3(x, y, yi, yj, yk, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::times_with_d1_to_d3(x, y, yi as usize, yj as usize, yk as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d2_to_d1(
-    x: *const f32, xi: usize, xj: usize,
+    x: *const f32, xi: i32, xj: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
+        0 => xi as usize,
+        1 => xj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d2_to_d1(x, xi, xj, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d2_to_d1(x, xi as usize, xj as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d2_to_d3(
-    x: *const f32, xi: usize, xj: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::times_with_d2_to_d3(x, xi, xj, y, yi, yj, yk, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::times_with_d2_to_d3(x, xi as usize, xj as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d3_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d3_to_d1(x, xi, xj, xk, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d3_to_d1(x, xi as usize, xj as usize, xk as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d3_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d3_to_d2(x, xi, xj, xk, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d3_to_d2(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d3_to_d4(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize, yl: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32, yl: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk * yl;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::times_with_d3_to_d4(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::times_with_d3_to_d4(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, yk as usize, yl as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d4_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
-        3 => xl,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
+        3 => xl as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d4_to_d1(x, xi, xj, xk, xl, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d4_to_d1(x, xi as usize, xj as usize, xk as usize, xl as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d4_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d4_to_d2(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d4_to_d2(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_times_d4_to_d3(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::times_with_d4_to_d3(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::times_with_d4_to_d3(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_div_d0_to_d1(x: f32, y: *const f32, y_size: usize, result: *mut f32) {
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
+pub extern "C" fn com_wsr_cpu_div_d0_to_d1(x: f32, y: *const f32, y_size: i32, result: *mut f32) {
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
     operation::div_with_d0_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_div_d1_to_d0(x: *const f32, x_size: usize, y: f32, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
+pub extern "C" fn com_wsr_cpu_div_d1_to_d0(x: *const f32, x_size: i32, y: f32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
     operation::div_with_d1_to_d0(x, y, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_div_d1_to_d1(x: *const f32, y: *const f32, size: usize, result: *mut f32) {
-    let x = unsafe { std::slice::from_raw_parts(x, size) };
-    let y = unsafe { std::slice::from_raw_parts(y, size) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, size) };
+pub extern "C" fn com_wsr_cpu_div_d1_to_d1(x: *const f32, y: *const f32, size: i32, result: *mut f32) {
+    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
+    let y = unsafe { std::slice::from_raw_parts(y, size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
     operation::div_with_d1_to_d1(x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d1_to_d2(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
+        0 => yi as usize,
+        1 => yj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::div_with_d1_to_d2(x, y, yi, yj, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::div_with_d1_to_d2(x, y, yi as usize, yj as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d1_to_d3(
     x: *const f32,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis: usize,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = match axis {
-        0 => yi,
-        1 => yj,
-        2 => yk,
+        0 => yi as usize,
+        1 => yj as usize,
+        2 => yk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::div_with_d1_to_d3(x, y, yi, yj, yk, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::div_with_d1_to_d3(x, y, yi as usize, yj as usize, yk as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d2_to_d1(
-    x: *const f32, xi: usize, xj: usize,
+    x: *const f32, xi: i32, xj: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
+        0 => xi as usize,
+        1 => xj as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d2_to_d1(x, xi, xj, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d2_to_d1(x, xi as usize, xj as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d2_to_d3(
-    x: *const f32, xi: usize, xj: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::div_with_d2_to_d3(x, xi, xj, y, yi, yj, yk, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::div_with_d2_to_d3(x, xi as usize, xj as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d3_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d3_to_d1(x, xi, xj, xk, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d3_to_d1(x, xi as usize, xj as usize, xk as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d3_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d3_to_d2(x, xi, xj, xk, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d3_to_d2(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d3_to_d4(
-    x: *const f32, xi: usize, xj: usize, xk: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize, yl: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32, yl: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk * yl;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size) };
-    operation::div_with_d3_to_d4(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, y_size as usize) };
+    operation::div_with_d3_to_d4(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, yk as usize, yl as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d4_to_d1(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
     y: *const f32,
-    axis: usize,
+    axis: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = match axis {
-        0 => xi,
-        1 => xj,
-        2 => xk,
-        3 => xl,
+        0 => xi as usize,
+        1 => xj as usize,
+        2 => xk as usize,
+        3 => xl as usize,
         _ => panic!("invalid parameter. [axis: {}]", axis)
     };
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d4_to_d1(x, xi, xj, xk, xl, y, axis, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d4_to_d1(x, xi as usize, xj as usize, xk as usize, xl as usize, y, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d4_to_d2(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize,
-    axis1: usize, axis2: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32,
+    axis1: i32, axis2: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d4_to_d2(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d4_to_d2(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_div_d4_to_d3(
-    x: *const f32, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: *const f32, yi: usize, yj: usize, yk: usize,
-    axis1: usize, axis2: usize, axis3: usize,
+    x: *const f32, xi: i32, xj: i32, xk: i32, xl: i32,
+    y: *const f32, yi: i32, yj: i32, yk: i32,
+    axis1: i32, axis2: i32, axis3: i32,
     result: *mut f32,
 ) {
     let x_size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, x_size) };
+    let x = unsafe { std::slice::from_raw_parts(x, x_size as usize) };
 
     let y_size = yi * yj * yk;
-    let y = unsafe { std::slice::from_raw_parts(y, y_size) };
+    let y = unsafe { std::slice::from_raw_parts(y, y_size as usize) };
 
-    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size) };
-    operation::div_with_d4_to_d3(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3, result);
+    let result = unsafe { std::slice::from_raw_parts_mut(result, x_size as usize) };
+    operation::div_with_d4_to_d3(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
