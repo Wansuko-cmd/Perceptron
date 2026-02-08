@@ -41,7 +41,7 @@ pub extern "C" fn com_wsr_cpu_mat_mul_d2_to_d1(x: *const f32, trans_x: bool, y: 
 pub extern "C" fn com_wsr_cpu_mat_mul_d2_to_d2(
     x: *const f32, trans_x: bool,
     y: *const f32, trans_y: bool,
-    m: usize, k: usize, n: usize, b: usize,
+    m: usize, n: usize, k: usize, b: usize,
     result: *mut f32,
 ) {
     let x_size = m * k * b;
