@@ -15,18 +15,19 @@ pub fn transpose_d3(
     let old_shape = [xi, xj, xk];
     let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k]];
 
-    let mut result_iter = result.iter_mut();
-    for ni in 0..new_shape[0] {
-        for nj in 0..new_shape[1] {
-            for nk in 0..new_shape[2] {
-                let mut old_indexes = [0, 0, 0];
-                old_indexes[axis_i] = ni;
-                old_indexes[axis_j] = nj;
-                old_indexes[axis_k] = nk;
-                let old_index = (old_indexes[0] * xj + old_indexes[1]) * xk + old_indexes[2];
+    let old_strides = [xj * xk, xk, 1];
 
+    let ni_stride = old_strides[axis_i];
+    let nj_stride = old_strides[axis_j];
+    let nk_stride = old_strides[axis_k];
+
+    let mut result_iter = result.iter_mut();
+
+    for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
+        for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
+            for index in (n_j..n_j + new_shape[2] * nk_stride).step_by(nk_stride) {
                 if let Some(result_value) = result_iter.next() {
-                    *result_value = x[old_index];
+                    *result_value = x[index];
                 }
             }
         }
@@ -42,20 +43,21 @@ pub fn transpose_d4(
     let old_shape = [xi, xj, xk, xl];
     let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k], old_shape[axis_l]];
 
-    let mut result_iter = result.iter_mut();
-    for ni in 0..new_shape[0] {
-        for nj in 0..new_shape[1] {
-            for nk in 0..new_shape[2] {
-                for nl in 0..new_shape[3] {
-                    let mut old_indexes = [0, 0, 0, 0];
-                    old_indexes[axis_i] = ni;
-                    old_indexes[axis_j] = nj;
-                    old_indexes[axis_k] = nk;
-                    old_indexes[axis_l] = nl;
-                    let old_index = ((old_indexes[0] * xj + old_indexes[1]) * xk + old_indexes[2]) * xl + old_indexes[3];
+    let old_strides = [xj * xk * xl, xk * xl, xl, 1];
 
+    let ni_stride = old_strides[axis_i];
+    let nj_stride = old_strides[axis_j];
+    let nk_stride = old_strides[axis_k];
+    let nl_stride = old_strides[axis_l];
+
+    let mut result_iter = result.iter_mut();
+
+    for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
+        for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
+            for n_k in (n_j..n_j + new_shape[2] * nk_stride).step_by(nk_stride) {
+                for index in (n_k..n_k + new_shape[3] * nl_stride).step_by(nl_stride) {
                     if let Some(result_value) = result_iter.next() {
-                        *result_value = x[old_index];
+                        *result_value = x[index];
                     }
                 }
             }
