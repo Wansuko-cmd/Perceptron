@@ -10,6 +10,11 @@ crate-type = ["cdylib", "staticlib"]
 jni = "0.21.1"
 matrixmultiply = "0.3.10"
 
+[features]
+default = ["jni", "native"]
+jni = []
+native = []
+
 [profile.release]
 lto = true
 codegen-units = 1
