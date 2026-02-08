@@ -257,7 +257,7 @@ class TimesTest {
 
     @Test
     fun `3次元×4次元_axis1=0_axis2=1_axis3=2`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
+        val x = DataBuffer.create(FloatArray(8) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
         val actual = Backend.times(
@@ -274,7 +274,7 @@ class TimesTest {
 
     @Test
     fun `3次元×4次元_axis1=0_axis2=1_axis3=3`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
+        val x = DataBuffer.create(FloatArray(8) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
         val actual = Backend.times(
@@ -291,7 +291,7 @@ class TimesTest {
 
     @Test
     fun `3次元×4次元_axis1=0_axis2=2_axis3=3`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
+        val x = DataBuffer.create(FloatArray(8) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
         val actual = Backend.times(
@@ -308,7 +308,7 @@ class TimesTest {
 
     @Test
     fun `3次元×4次元_axis1=1_axis2=2_axis3=3`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(12) { it.toFloat() })
+        val x = DataBuffer.create(FloatArray(8) { it.toFloat() })
         val y = DataBuffer.create(FloatArray(16) { it.toFloat() })
 
         val actual = Backend.times(
