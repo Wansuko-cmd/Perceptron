@@ -70,7 +70,7 @@ jobs:
       - name: ネイティブライブラリをビルド(Windows以外)
         if: runner.os != 'Windows'
         shell: bash
-        run: ./gradlew buffer:cpu:cpp:cargoNativeBuild
+        run: ./gradlew buffer:cpu:rs:cargoNativeBuild
 
       - name: vcvarsall.batへのパスを取得
         if: runner.os == 'Windows'
@@ -86,7 +86,7 @@ jobs:
         shell: cmd
         run: |
           call "%VCVARSALL_PATH%" x64
-          call gradlew.bat buffer:cpu:cpp:cargoNativeBuild
+          call gradlew.bat buffer:cpu:rs:cargoNativeBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
