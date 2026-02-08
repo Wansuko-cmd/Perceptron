@@ -107,7 +107,12 @@ class CPUNativeBackend : IBackend by KotlinBackend {
 
     override fun plus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_plus_d1_to_d1(x = x.toCPUBuffer().buffer, y = y.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_plus_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = x.size,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -348,7 +353,12 @@ class CPUNativeBackend : IBackend by KotlinBackend {
 
     override fun minus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_minus_d1_to_d1(x = x.toCPUBuffer().buffer, y = y.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_minus_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = x.size,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -589,7 +599,12 @@ class CPUNativeBackend : IBackend by KotlinBackend {
 
     override fun times(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_times_d1_to_d1(x = x.toCPUBuffer().buffer, y = y.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_times_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = x.size,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -830,7 +845,12 @@ class CPUNativeBackend : IBackend by KotlinBackend {
 
     override fun div(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_div_d1_to_d1(x = x.toCPUBuffer().buffer, y = y.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_div_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = x.size,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -1163,7 +1183,14 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        com_wsr_cpu_average_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, axis = axis, result = result.buffer)
+        com_wsr_cpu_average_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -1176,7 +1203,15 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                 else -> xi * xj * xk
             },
         )
-        com_wsr_cpu_average_d4(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, xl = xl, axis = axis, result = result.buffer)
+        com_wsr_cpu_average_d4(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -1214,7 +1249,15 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                 else -> xi * xj * xk
             },
         )
-        com_wsr_cpu_max_d4(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, xl = xl, axis = axis, result = result.buffer)
+        com_wsr_cpu_max_d4(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -1252,7 +1295,15 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                 else -> xi * xj * xk
             },
         )
-        com_wsr_cpu_min_d4(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, xl = xl, axis = axis, result = result.buffer)
+        com_wsr_cpu_min_d4(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 
@@ -1290,7 +1341,15 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                 else -> xi * xj * xk
             },
         )
-        com_wsr_cpu_sum_d4(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, xl = xl, axis = axis, result = result.buffer)
+        com_wsr_cpu_sum_d4(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 
