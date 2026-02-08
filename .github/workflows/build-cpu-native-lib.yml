@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'buffer/cpu/cpp/**'
+      - 'buffer/cpu/rs/**'
       - '.github/workflows/build-cpu-native-lib.yml'
 
 jobs:
@@ -61,16 +61,16 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ./gradlew
 
-      - name: OpenBLASのキャッシュを復元
+      - name: キャッシュを復元
         uses: actions/cache@v4
         with:
-          path: buffer/cpu/cpp/build/cpu
-          key: cpu-${{ hashFiles('buffer/cpu/cpp/CMakeLists.txt') }}-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: buffer/cpu/cpp/build/rs/target
+          key: cpu-${{ hashFiles('buffer/cpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
       - name: ネイティブライブラリをビルド(Windows以外)
         if: runner.os != 'Windows'
         shell: bash
-        run: ./gradlew buffer:cpu:cpp:cmakeNativeBuild
+        run: ./gradlew buffer:cpu:cpp:cargoNativeBuild
 
       - name: vcvarsall.batへのパスを取得
         if: runner.os == 'Windows'
@@ -86,7 +86,7 @@ jobs:
         shell: cmd
         run: |
           call "%VCVARSALL_PATH%" x64
-          call gradlew.bat buffer:cpu:cpp:cmakeNativeBuild
+          call gradlew.bat buffer:cpu:cpp:cargoNativeBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
@@ -94,8 +94,7 @@ jobs:
         with:
           name: cpu-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
-            buffer/cpu/cpp/build/libcpu.${{ matrix.lib_extension }}
-            buffer/cpu/cpp/build/Release/libcpu.${{ matrix.lib_extension }}
+            buffer/cpu/rs/target/release/libcpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
       - name: 成果物をアップロード (Windows)
@@ -104,8 +103,7 @@ jobs:
         with:
           name: cpu-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
-            buffer/cpu/cpp/build/cpu.${{ matrix.lib_extension }}
-            buffer/cpu/cpp/build/Release/cpu.${{ matrix.lib_extension }}
+            buffer/cpu/rs/target/release/cpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
   commit:

@@ -55,7 +55,7 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ./gradlew
 
-      - name: OpenBLASのキャッシュを復元
+      - name: キャッシュを復元
         uses: actions/cache@v4
         with:
           path: buffer/cpu/cpp/rs/target
