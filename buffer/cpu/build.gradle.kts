@@ -21,14 +21,14 @@ kotlin {
     hostTarget.compilations.getByName("main") {
         cinterops {
             val lib by creating {
-                val headersDir = "$projectDir/cpp/src/cpu"
+                val headersDir = "$projectDir/rs/src/native/headers"
                 headers(
-                    "$headersDir/collection_fun.h",
-                    "$headersDir/collection_fun.h",
-                    "$headersDir/mat_mul_fun.h",
-                    "$headersDir/math_fun.h",
-                    "$headersDir/operation_fun.h",
-                    "$headersDir/transpose_fun.h",
+                    "$headersDir/collection_native.h",
+                    "$headersDir/collection_native.h",
+                    "$headersDir/mat_mul_native.h",
+                    "$headersDir/math_native.h",
+                    "$headersDir/operation_native.h",
+                    "$headersDir/transpose_native.h",
                 )
                 defFile(project.file("src/nativeMain/lib.def"))
             }

@@ -1,4 +1,4 @@
-package = com.wsr.cpu.cpp
+package = com.wsr.cpu.rs
 
 libraryPaths.linux_x64 = src/nativeMain/resources/cpu/linuxX64
 libraryPaths.linux_arm64 = src/nativeMain/resources/cpu/linuxX64
@@ -11,7 +11,3 @@ staticLibraries.linux_arm64 = libcpu.a
 staticLibraries.macos_arm64 = libcpu.a
 staticLibraries.macos_x64 = libcpu.a
 staticLibraries.mingw_x64 = cpu.lib
-
-linkerOpts.osx = -framework Accelerate
-linkerOpts.linux = -lopenblas
-linkerOpts.mingw = -lopenblas
