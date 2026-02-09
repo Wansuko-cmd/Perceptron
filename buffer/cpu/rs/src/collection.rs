@@ -9,20 +9,16 @@ pub fn average_d2(
     result: &mut[f32],
 ) {
     sum_d2(x, xi, xj, axis, result);
-    match axis {
-        0 => {
-            let inv = 1f32 / xi as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        1 => {
-            let inv = 1f32 / xj as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        _ => panic!("invalid parameter. [axis: {}]", axis)
+
+    let n = match axis {
+        0 => xi,
+        1 => xj,
+        _ => panic!("invalid parameter. [axis: {}]", axis),
+    };
+
+    let inv = 1f32 / n as f32;
+    for res in result.iter_mut() {
+        *res *= inv;
     }
 }
 
@@ -33,26 +29,17 @@ pub fn average_d3(
     result: &mut[f32],
 ) {
     sum_d3(x, xi, xj, xk, axis, result);
-    match axis {
-        0 => {
-            let inv = 1f32 / xi as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        1 => {
-            let inv = 1f32 / xj as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        2 => {
-            let inv = 1f32 / xk as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        _ => panic!("invalid parameter. [axis: {}]", axis)
+
+    let n = match axis {
+        0 => xi,
+        1 => xj,
+        2 => xk,
+        _ => panic!("invalid parameter. [axis: {}]", axis),
+    };
+
+    let inv = 1f32 / n as f32;
+    for res in result.iter_mut() {
+        *res *= inv;
     }
 }
 
@@ -63,32 +50,18 @@ pub fn average_d4(
     result: &mut[f32],
 ) {
     sum_d4(x, xi, xj, xk, xl, axis, result);
-    match axis {
-        0 => {
-            let inv = 1f32 / xi as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        1 => {
-            let inv = 1f32 / xj as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        2 => {
-            let inv = 1f32 / xk as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        3 => {
-            let inv = 1f32 / xl as f32;
-            for res in result.iter_mut() {
-                *res *= inv;
-            }
-        }
-        _ => panic!("invalid parameter. [axis: {}]", axis)
+
+    let n = match axis {
+        0 => xi,
+        1 => xj,
+        2 => xk,
+        3 => xl,
+        _ => panic!("invalid parameter. [axis: {}]", axis),
+    };
+
+    let inv = 1f32 / n as f32;
+    for res in result.iter_mut() {
+        *res *= inv;
     }
 }
 
@@ -216,11 +189,9 @@ fn reduce_d2<F: Fn(f32, f32) -> f32>(
             assert_eq!(result.len(), xi);
             for i in 0..xi {
                 let x_i = i * xj;
-                let mut acc = result[i];
-                for j in 0..xj {
-                    acc = block(acc, x[x_i + j]);
-                }
-                result[i] = acc;
+                result[i] = x[x_i..x_i + xj].iter().copied()
+                    .reduce(|acc, i| block(acc, i))
+                    .unwrap();
             }
         }
         _ => panic!("invalid parameter. [axis: {}]", axis)
@@ -269,11 +240,9 @@ fn reduce_d3<F: Fn(f32, f32) -> f32>(
                 let r_i = i * xj; 
                 for j in 0..xj {
                     let x_j = (x_i + j) * xk;
-                    let mut acc = result[r_i + j];
-                    for k in 0..xk {
-                        acc = block(acc, x[x_j + k]);
-                    }
-                    result[r_i + j] = acc;
+                    result[r_i + j] = x[x_j..x_j + xk].iter().copied()
+                        .reduce(|acc, i| block(acc, i))
+                        .unwrap();
                 }
             }
         }
@@ -351,11 +320,9 @@ fn reduce_d4<F: Fn(f32, f32) -> f32>(
                     let r_j = (r_i + j) * xk;
                     for k in 0..xk {
                         let x_k = (x_j + k) * xl;
-                        let mut acc = result[r_j + k];
-                        for l in 0..xl {
-                            acc = block(acc, x[x_k + l]);
-                        }
-                        result[r_j + k] = acc;
+                        result[r_j + k] = x[x_k..x_k + xl].iter().copied()
+                            .reduce(|acc, i| block(acc, i))
+                            .unwrap();
                     }
                 }
             }
