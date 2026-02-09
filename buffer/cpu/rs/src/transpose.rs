@@ -1,7 +1,11 @@
 pub fn transpose_d2(x: &[f32], xi: usize, xj: usize, result: &mut [f32]) {
-    for (i, d1) in x.chunks_exact(xj).enumerate() {
-        for (j, &value) in d1.iter().enumerate() {
-            result[j * xi + i] = value;
+    let mut result_iter = result.iter_mut();
+
+    for n_i in 0..xj {
+        for index in (n_i..n_i + xi * xj).step_by(xj) {
+            if let Some(result_value) = result_iter.next() {
+                *result_value = x[index];
+            }
         }
     }
 }
