@@ -368,22 +368,18 @@ interface IBackend {
     fun average(x: DataBuffer): Float
     fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
     fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
-    fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
 
     fun max(x: DataBuffer): Float
     fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
     fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
-    fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
 
     fun min(x: DataBuffer): Float
     fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
     fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
-    fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
 
     fun sum(x: DataBuffer): Float
     fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
     fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
-    fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
 
     fun maxIndex(x: DataBuffer): Int
 

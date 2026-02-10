@@ -1041,19 +1041,6 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUJvmBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        collection.averageD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axis, result.byteBuffer)
-        return result
-    }
-
     override fun max(x: DataBuffer): Float = collection.maxD1(x.toCPUBuffer().byteBuffer)
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1076,19 +1063,6 @@ class CPUJvmBackend : IBackend by KotlinBackend {
             },
         )
         collection.maxD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
-        return result
-    }
-
-    override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUJvmBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        collection.maxD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axis, result.byteBuffer)
         return result
     }
 
@@ -1117,19 +1091,6 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUJvmBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        collection.minD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axis, result.byteBuffer)
-        return result
-    }
-
     override fun sum(x: DataBuffer): Float = collection.sumD1(x.toCPUBuffer().byteBuffer)
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1152,19 +1113,6 @@ class CPUJvmBackend : IBackend by KotlinBackend {
             },
         )
         collection.sumD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
-        return result
-    }
-
-    override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUJvmBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        collection.sumD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axis, result.byteBuffer)
         return result
     }
 

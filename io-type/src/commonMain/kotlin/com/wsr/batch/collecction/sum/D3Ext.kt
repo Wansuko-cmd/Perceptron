@@ -9,15 +9,21 @@ fun Batch<IOType.D3>.sum(): Batch<IOType.D0> {
     return Batch(size = size, shape = listOf(1), value = result)
 }
 
-fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2> {
-    val result = Backend.sum(x = value, xi = size, xj = shape[0], xk = shape[1], xl = shape[2], axis = axis + 1)
-    return Batch(
+fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2> = when (axis) {
+    0 -> Batch(
         size = size,
-        shape = when (axis) {
-            0 -> listOf(shape[1], shape[2])
-            1 -> listOf(shape[0], shape[2])
-            else -> listOf(shape[0], shape[1])
-        },
-        value = result,
+        shape = listOf(shape[1], shape[2]),
+        value = Backend.sum(x = value, xi = size, xj = shape[0], xk = shape[1] * shape[2], axis = 1),
     )
+    1 -> Batch(
+        size = size,
+        shape = listOf(shape[0], shape[2]),
+        value = Backend.sum(x = value, xi = size * shape[0], xj = shape[1], xk = shape[2], axis = 1),
+    )
+    2 -> Batch(
+        size = size,
+        shape = listOf(shape[0], shape[1]),
+        value = Backend.sum(x = value, xi = size, xj = shape[0] * shape[1], xk = shape[2], axis = 2),
+    )
+    else -> throw IllegalArgumentException("axis is $axis, not 0, 1 or 2.")
 }
