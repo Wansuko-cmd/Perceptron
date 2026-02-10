@@ -178,20 +178,17 @@ fn reduce_d2<F: Fn(f32, f32) -> f32>(
     match axis {
         0 => {
             assert_eq!(result.len(), xj);
-            for i in 0..xi {
-                let x_i = i * xj;
-                for j in 0..xj {
-                    result[j] = block(result[j], x[x_i + j]);
+            for inner in x.chunks_exact(xj) {
+                for (res, &val) in result.iter_mut().zip(inner) {
+                    *res = block(*res, val);
                 }
             }
         }
         1 => {
             assert_eq!(result.len(), xi);
-            for i in 0..xi {
-                let x_i = i * xj;
-                result[i] = x[x_i..x_i + xj].iter().copied()
-                    .reduce(|acc, i| block(acc, i))
-                    .unwrap();
+            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xj)) {
+                *res = outer.iter().copied()
+                    .fold(*res, |acc, i| block(acc, i));
             }
         }
         _ => panic!("invalid parameter. [axis: {}]", axis)
@@ -209,41 +206,27 @@ fn reduce_d3<F: Fn(f32, f32) -> f32>(
     match axis {
         0 => {
             assert_eq!(result.len(), xj * xk);
-            for i in 0..xi {
-                let x_i = i * xj;
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    let r_i = j * xk; 
-                    for k in 0..xk {
-                        result[r_i + k] = block(result[r_i + k], x[x_j + k]);
-                    }
+            for reduction in x.chunks_exact(xj * xk) {
+                 for (res, &val) in result.iter_mut().zip(reduction) {
+                    *res = block(*res, val);
                 }
             }
         }
         1 => {
             assert_eq!(result.len(), xi * xk);
-            for i in 0..xi {
-                let x_i = i * xj;
-                let r_i = i * xk; 
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    for k in 0..xk {
-                        result[r_i + k] = block(result[r_i + k], x[x_j + k]);
+            for (res_slice, outer) in result.chunks_exact_mut(xk).zip(x.chunks_exact(xj * xk)) {
+                for reduction in outer.chunks_exact(xk) {
+                    for (res, &val) in res_slice.iter_mut().zip(reduction) {
+                        *res = block(*res, val);
                     }
                 }
             }
         }
         2 => {
             assert_eq!(result.len(), xi * xj);
-            for i in 0..xi {
-                let x_i = i * xj;
-                let r_i = i * xj; 
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    result[r_i + j] = x[x_j..x_j + xk].iter().copied()
-                        .reduce(|acc, i| block(acc, i))
-                        .unwrap();
-                }
+            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xk)) {
+                *res = outer.iter().copied()
+                    .fold(*res, |acc, i| block(acc, i));
             }
         }
         _ => panic!("invalid parameter. [axis: {}]", axis)
@@ -261,70 +244,36 @@ fn reduce_d4<F: Fn(f32, f32) -> f32>(
     match axis {
         0 => {
             assert_eq!(result.len(), xj * xk * xl);
-            for i in 0..xi {
-                let x_i = i * xj;
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    let r_i = j * xk; 
-                    for k in 0..xk {
-                        let x_k = (x_j + k) * xl;
-                        let r_j = (r_i + k) * xl;
-                        for l in 0..xl {
-                            result[r_j + l] = block(result[r_j + l], x[x_k + l]);
-                        }
-                    }
+            for reduction in x.chunks_exact(xj * xk * xl) {
+                for (res, &val) in result.iter_mut().zip(reduction) {
+                    *res = block(*res, val);
                 }
             }
         }
         1 => {
             assert_eq!(result.len(), xi * xk * xl);
-            for i in 0..xi {
-                let x_i = i * xj;
-                let r_i = i * xk; 
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    for k in 0..xk {
-                        let x_k = (x_j + k) * xl;
-                        let r_j = (r_i + k) * xl;
-                        for l in 0..xl {
-                            result[r_j + l] = block(result[r_j + l], x[x_k + l]);
-                        }
+            for (res_slice, outer) in result.chunks_exact_mut(xk * xl).zip(x.chunks_exact(xj * xk * xl)) {
+                for reduction in outer.chunks_exact(xk * xl) {
+                    for (res, &val) in res_slice.iter_mut().zip(reduction) {
+                        *res = block(*res, val);
                     }
                 }
             }
         }
         2 => {
             assert_eq!(result.len(), xi * xj * xl);
-            for i in 0..xi {
-                let x_i = i * xj;
-                let r_i = i * xj; 
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    let r_j = (r_i + j) * xl;
-                    for k in 0..xk {
-                        let x_k = (x_j + k) * xl;
-                        for l in 0..xl {
-                            result[r_j + l] = block(result[r_j + l], x[x_k + l]);
-                        }
+            for (res_slice, outer) in result.chunks_exact_mut(xl).zip(x.chunks_exact(xk * xl)) {
+                for reduction in outer.chunks_exact(xl) {
+                    for (res, &val) in res_slice.iter_mut().zip(reduction) {
+                        *res = block(*res, val);
                     }
                 }
             }
         }
         3 => {
-            assert_eq!(result.len(), xi * xj * xk);
-            for i in 0..xi {
-                let x_i = i * xj;
-                let r_i = i * xj; 
-                for j in 0..xj {
-                    let x_j = (x_i + j) * xk;
-                    let r_j = (r_i + j) * xk;
-                    for k in 0..xk {
-                        let x_k = (x_j + k) * xl;
-                        result[r_j + k] = x[x_k..x_k + xl].iter().copied()
-                            .reduce(|acc, i| block(acc, i))
-                            .unwrap();
-                    }
-                }
+            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xl)) {
+                *res = outer.iter().copied()
+                    .fold(*res, |acc, i| block(acc, i));
             }
         }
         _ => panic!("invalid parameter. [axis: {}]", axis)
