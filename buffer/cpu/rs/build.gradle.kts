@@ -8,7 +8,7 @@ val cargoJvmBuild by tasks.registering(Exec::class) {
     group = "build"
     description = "JVM環境向けにビルド"
     workingDir = sourceDir
-    commandLine = listOf("cargo", "build", "--release")
+    commandLine = listOf("cargo", "build", "--release", "--features", "jni")
 }
 
 /**
@@ -18,7 +18,7 @@ val cargoNativeBuild by tasks.registering(Exec::class) {
     group = "build"
     description = "Native環境向けにビルド"
     workingDir = sourceDir
-    commandLine = listOf("cargo", "build", "--release")
+    commandLine = listOf("cargo", "build", "--release", "--features", "native")
 }
 
 tasks.register<Delete>("clean") {

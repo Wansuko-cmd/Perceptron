@@ -8,7 +8,6 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.cpu.rs.com_wsr_cpu_average_d1
 import com.wsr.cpu.rs.com_wsr_cpu_average_d2
 import com.wsr.cpu.rs.com_wsr_cpu_average_d3
-import com.wsr.cpu.rs.com_wsr_cpu_average_d4
 import com.wsr.cpu.rs.com_wsr_cpu_div_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_div_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_div_d1_to_d1
@@ -31,11 +30,9 @@ import com.wsr.cpu.rs.com_wsr_cpu_mat_mul_d2_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_max_d1
 import com.wsr.cpu.rs.com_wsr_cpu_max_d2
 import com.wsr.cpu.rs.com_wsr_cpu_max_d3
-import com.wsr.cpu.rs.com_wsr_cpu_max_d4
 import com.wsr.cpu.rs.com_wsr_cpu_min_d1
 import com.wsr.cpu.rs.com_wsr_cpu_min_d2
 import com.wsr.cpu.rs.com_wsr_cpu_min_d3
-import com.wsr.cpu.rs.com_wsr_cpu_min_d4
 import com.wsr.cpu.rs.com_wsr_cpu_minus_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_minus_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_minus_d1_to_d1
@@ -67,7 +64,6 @@ import com.wsr.cpu.rs.com_wsr_cpu_sqrt_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d2
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d3
-import com.wsr.cpu.rs.com_wsr_cpu_sum_d4
 import com.wsr.cpu.rs.com_wsr_cpu_times_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_times_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_times_d1_to_d1
@@ -1194,27 +1190,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUNativeBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        com_wsr_cpu_average_d4(
-            x = x.toCPUBuffer().buffer,
-            xi = xi,
-            xj = xj,
-            xk = xk,
-            xl = xl,
-            axis = axis,
-            result = result.buffer,
-        )
-        return result
-    }
-
     override fun max(x: DataBuffer): Float = com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size)
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1237,27 +1212,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             },
         )
         com_wsr_cpu_max_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, axis = axis, result = result.buffer)
-        return result
-    }
-
-    override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUNativeBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        com_wsr_cpu_max_d4(
-            x = x.toCPUBuffer().buffer,
-            xi = xi,
-            xj = xj,
-            xk = xk,
-            xl = xl,
-            axis = axis,
-            result = result.buffer,
-        )
         return result
     }
 
@@ -1286,27 +1240,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUNativeBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        com_wsr_cpu_min_d4(
-            x = x.toCPUBuffer().buffer,
-            xi = xi,
-            xj = xj,
-            xk = xk,
-            xl = xl,
-            axis = axis,
-            result = result.buffer,
-        )
-        return result
-    }
-
     override fun sum(x: DataBuffer): Float = com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size)
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1329,27 +1262,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             },
         )
         com_wsr_cpu_sum_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, axis = axis, result = result.buffer)
-        return result
-    }
-
-    override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUNativeBuffer.create(
-            size = when (axis) {
-                0 -> xj * xk * xl
-                1 -> xi * xk * xl
-                2 -> xi * xj * xl
-                else -> xi * xj * xk
-            },
-        )
-        com_wsr_cpu_sum_d4(
-            x = x.toCPUBuffer().buffer,
-            xi = xi,
-            xj = xj,
-            xk = xk,
-            xl = xl,
-            axis = axis,
-            result = result.buffer,
-        )
         return result
     }
 

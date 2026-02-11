@@ -44,20 +44,6 @@ pub extern "system" fn Java_com_wsr_cpu_JCollection_averageD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCollection_averageD4(
-    env: JNIEnv,
-    _class: JClass,
-    x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
-    axis: jint,
-    result: JByteBuffer,
-) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
-
-    collection::average_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_cpu_JCollection_maxD1(
     env: JNIEnv,
     _class: JClass,
@@ -93,20 +79,6 @@ pub extern "system" fn Java_com_wsr_cpu_JCollection_maxD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
 
     collection::max_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCollection_maxD4(
-    env: JNIEnv,
-    _class: JClass,
-    x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
-    axis: jint,
-    result: JByteBuffer,
-) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
-
-    collection::max_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
 }
 
 #[unsafe(no_mangle)]
@@ -148,20 +120,6 @@ pub extern "system" fn Java_com_wsr_cpu_JCollection_minD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCollection_minD4(
-    env: JNIEnv,
-    _class: JClass,
-    x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
-    axis: jint,
-    result: JByteBuffer,
-) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
-
-    collection::min_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
-}
-
-#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_cpu_JCollection_sumD1(
     env: JNIEnv,
     _class: JClass,
@@ -197,18 +155,4 @@ pub extern "system" fn Java_com_wsr_cpu_JCollection_sumD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
 
     collection::sum_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
-}
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCollection_sumD4(
-    env: JNIEnv,
-    _class: JClass,
-    x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
-    axis: jint,
-    result: JByteBuffer,
-) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
-
-    collection::sum_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
 }
