@@ -10,3 +10,8 @@ crate-type = ["cdylib", "staticlib"]
 jni = "0.22.1"
 pollster = "0.4.0"
 wgpu = "28.0.0"
+
+[features]
+default = ["jni", "native"]
+jni = []
+native = []
