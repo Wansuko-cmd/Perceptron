@@ -20,7 +20,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     init {
         val ptr = context
-        cleaner.register(this) {JContext().release(ptr) }
+        cleaner.register(this) { JContext().release(ptr) }
     }
 
     companion object {
