@@ -1,10 +1,8 @@
-package com.wsr.cpu;
-
-import java.nio.ByteBuffer;
+package com.wsr.gpu;
 
 public class JMath {
-    public native void exp(ByteBuffer x, ByteBuffer result);
-    public native void ln(ByteBuffer x, float e, ByteBuffer result);
-    public native void pow(ByteBuffer x, int n, ByteBuffer result);
-    public native void sqrt(ByteBuffer x, float e, ByteBuffer result);
+    public native void exp(long x, long result, long context);
+    public native void ln(long x, float e, long result, long context);
+    public native void pow(long x, int n, long result, long context);
+    public native void sqrt(long x, float e, long result, long context);
 }

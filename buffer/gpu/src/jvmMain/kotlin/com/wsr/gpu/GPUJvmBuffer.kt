@@ -5,6 +5,11 @@ import com.wsr.base.data.Default
 import com.wsr.base.data.IDataBufferGenerator
 import java.lang.ref.Cleaner
 
+internal fun DataBuffer.toGPUBuffer(context: Long, native: JBuffer): GPUJvmBuffer = when (this) {
+    is GPUJvmBuffer -> this
+    else -> GPUJvmBuffer.create(this.toFloatArray(), context, native)
+}
+
 data class GPUJvmBuffer(
     override val size: Int,
     internal val ptr: Long,
@@ -44,6 +49,8 @@ data class GPUJvmBuffer(
         result = 31 * result + this.toFloatArray().contentHashCode()
         return result
     }
+
+    override fun toString(): String = toFloatArray().joinToString()
 
     companion object {
         private val cleaner = Cleaner.create()
