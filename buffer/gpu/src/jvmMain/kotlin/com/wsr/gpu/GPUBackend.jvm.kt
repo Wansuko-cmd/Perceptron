@@ -29,9 +29,29 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun exp(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size, context, buffer)
-        math.exp(x.toGPUBuffer(context, buffer).ptr, result.ptr, context)
+        math.exp(x.toGPUBuffer().ptr, result.ptr, context)
         return result
     }
+
+    override fun ln(x: DataBuffer, e: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        math.ln(x.toGPUBuffer().ptr, e, result.ptr, context)
+        return result
+    }
+
+    override fun pow(x: DataBuffer, n: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        math.pow(x.toGPUBuffer().ptr, n, result.ptr, context)
+        return result
+    }
+
+    override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        math.sqrt(x.toGPUBuffer().ptr, e, result.ptr, context)
+        return result
+    }
+
+    private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(context, buffer)
 
     companion object {
         private val cleaner = Cleaner.create()

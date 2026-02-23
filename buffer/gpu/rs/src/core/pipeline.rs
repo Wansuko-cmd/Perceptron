@@ -96,7 +96,7 @@ impl Math {
         });
         let pipeline_layout_with_param = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Math::new"),
-            bind_group_layouts: &[&bind_group_layout],
+            bind_group_layouts: &[&bind_group_layout_with_param],
             immediate_size: 0,
         });
 

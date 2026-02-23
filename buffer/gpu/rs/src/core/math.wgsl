@@ -7,7 +7,7 @@ struct Params {
 
 @group(0) @binding(0) var<storage, read> input_buf: array<f32>;
 @group(0) @binding(1) var<storage, read_write> output_buf: array<f32>;
-@group(0) @binding(2) var<uniformd> param: Params;
+@group(0) @binding(2) var<uniform> param: Params;
 
 @compute @workgroup_size(64)
 fn exp_d1(@builtin(global_invocation_id) id: vec3<u32>) {
