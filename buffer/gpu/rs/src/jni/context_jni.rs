@@ -10,7 +10,7 @@ pub extern "system" fn Java_com_wsr_gpu_JContext_allocate(
     _class: JClass,
 ) -> jlong {
     let context = pollster::block_on(context::Context::new());
-    Box::into_raw(Box::new(context)) as i64
+    Box::into_raw(Box::new(context)) as jlong
 }
 
 #[unsafe(no_mangle)]
