@@ -1,4 +1,4 @@
-use wgpu::{BindGroupLayout, Device, wgc::device};
+use wgpu::{BindGroupLayout, Device};
 
 pub struct Pipeline {
     pub math: Math,

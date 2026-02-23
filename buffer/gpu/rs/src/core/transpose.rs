@@ -89,7 +89,7 @@ fn transpose(
 
     let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some(label),
-        layout: &pipeline.math.bind_group_layout,
+        layout: &pipeline.transpose.bind_group_layout,
         entries: &[
             wgpu::BindGroupEntry {
                 binding: 0,
