@@ -21,6 +21,7 @@ class GPUBackend : IBackend by KotlinBackend {
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(context, buffer)
 
     private val math = JMath()
+    private val transpose = JTranspose()
 
     init {
         val ptr = context
@@ -28,28 +29,58 @@ class GPUBackend : IBackend by KotlinBackend {
     }
 
     override fun exp(x: DataBuffer): DataBuffer {
-        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        val result = GPUJvmBuffer.create(x.size)
         math.exp(x.toGPUBuffer().ptr, result.ptr, context)
         return result
     }
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
-        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        val result = GPUJvmBuffer.create(x.size)
         math.ln(x.toGPUBuffer().ptr, e, result.ptr, context)
         return result
     }
 
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
-        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        val result = GPUJvmBuffer.create(x.size)
         math.pow(x.toGPUBuffer().ptr, n, result.ptr, context)
         return result
     }
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
-        val result = GPUJvmBuffer.create(x.size, context, buffer)
+        val result = GPUJvmBuffer.create(x.size)
         math.sqrt(x.toGPUBuffer().ptr, e, result.ptr, context)
         return result
     }
+
+    override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        transpose.transposeD2(x.toGPUBuffer().ptr, xi, xj, result.ptr, context)
+        return result
+    }
+
+    override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        transpose.transposeD3(x.toGPUBuffer().ptr, xi, xj, xk, axisI, axisJ, axisK, result.ptr, context)
+        return result
+    }
+
+    override fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+    ): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        transpose.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, context)
+        return result
+    }
+
+    private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(size, context, buffer)
 
     private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(context, buffer)
 

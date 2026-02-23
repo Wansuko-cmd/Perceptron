@@ -7,7 +7,7 @@ struct Params {
 
 @group(0) @binding(0) var<storage, read> input_buf: array<f32>;
 @group(0) @binding(1) var<storage, read_write> output_buf: array<f32>;
-@group(0) @binding(2) var<uniform> param: Params;
+@group(0) @binding(2) var<uniform> params: Params;
 
 @compute @workgroup_size(64)
 fn exp_d1(@builtin(global_invocation_id) id: vec3<u32>) {
@@ -22,7 +22,7 @@ fn exp_d1(@builtin(global_invocation_id) id: vec3<u32>) {
 @compute @workgroup_size(64)
 fn ln_d1(@builtin(global_invocation_id) id: vec3<u32>) {
     let idx = id.x;
-    let e = param.val;
+    let e = params.val;
     if (idx >= arrayLength(&input_buf)) {
         return;
     }
@@ -33,7 +33,7 @@ fn ln_d1(@builtin(global_invocation_id) id: vec3<u32>) {
 @compute @workgroup_size(64)
 fn pow_d1(@builtin(global_invocation_id) id: vec3<u32>) {
     let idx = id.x;
-    let n = param.val;
+    let n = params.val;
     if (idx >= arrayLength(&input_buf)) {
         return;
     }
@@ -44,7 +44,7 @@ fn pow_d1(@builtin(global_invocation_id) id: vec3<u32>) {
 @compute @workgroup_size(64)
 fn sqrt_d1(@builtin(global_invocation_id) id: vec3<u32>) {
     let idx = id.x;
-    let e = param.val;
+    let e = params.val;
     if (idx >= arrayLength(&input_buf)) {
         return;
     }
