@@ -1,7 +1,7 @@
 use wgpu::{BindGroupLayout, Device};
 
 pub struct Pipeline {
-    math: Math,
+    pub math: Math,
 }
 
 impl Pipeline {

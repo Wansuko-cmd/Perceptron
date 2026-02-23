@@ -1,10 +1,10 @@
 use std::sync::Arc;
-use crate::core::pipeline;
+use crate::core::pipeline::Pipeline;
 
 pub struct Context {
     pub device: Arc<wgpu::Device>,
     pub queue: Arc<wgpu::Queue>,
-    pub pipeline: pipeline::Pipeline,
+    pub pipeline: Pipeline,
 }
 
 impl Context {
@@ -33,7 +33,7 @@ impl Context {
 
         let device = Arc::new(device);
         let queue = Arc::new(queue);
-        let pipeline = pipeline::Pipeline::new(&device);
+        let pipeline = Pipeline::new(&device);
 
         Self {
             device: device,
