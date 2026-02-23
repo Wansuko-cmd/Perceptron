@@ -1,8 +1,10 @@
 use std::sync::Arc;
+use crate::core::pipeline::Pipeline;
 
 pub struct Context {
     pub device: Arc<wgpu::Device>,
     pub queue: Arc<wgpu::Queue>,
+    pub pipeline: Pipeline,
 }
 
 impl Context {
@@ -19,7 +21,7 @@ impl Context {
         
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
-                label: Some("Context"),
+                label: Some("Context::new"),
                 required_features: wgpu::Features::empty(),
                 experimental_features: wgpu::ExperimentalFeatures::disabled(),
                 required_limits: wgpu::Limits::default(),
@@ -29,9 +31,14 @@ impl Context {
             .await
             .unwrap();
 
+        let device = Arc::new(device);
+        let queue = Arc::new(queue);
+        let pipeline = Pipeline::new(&device);
+
         Self {
-            device: Arc::new(device),
-            queue: Arc::new(queue),
+            device: device,
+            queue: queue,
+            pipeline: pipeline,
         }
     }
 }

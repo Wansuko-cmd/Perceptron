@@ -2,7 +2,7 @@ use jni::{JNIEnv};
 use jni::objects::{JClass};
 use jni::sys::jlong;
 
-use crate::context;
+use crate::core::context;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JContext_allocate(

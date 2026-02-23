@@ -33,7 +33,6 @@ class DivTest {
                 0.08333f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -59,7 +58,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -86,7 +84,6 @@ class DivTest {
                 0.25f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -100,7 +97,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 0.2f, 0.3333f, 0.4285f, 0.5f, 0.1111f, 0.2f, 0.2727f, 0.3333f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -127,7 +123,6 @@ class DivTest {
                 0.1666f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -154,7 +149,6 @@ class DivTest {
                 0.1666f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -168,7 +162,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 0.25f, 0.4f, 0.5f, 0.1428f, 0.25f, 0.3333f, 0.1f, 0.1818f, 0.25f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -182,7 +175,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 2.5f, 3f, 3.5f, 4f, 3f, 3.3333f, 3.6666f, 4f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -196,7 +188,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 5f, 3f, 2.3333f, 2f, 9f, 5f, 3.6666f, 3f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -223,7 +214,6 @@ class DivTest {
                 0.5f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -237,7 +227,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 0.25f, 0.4f, 0.5f, 0.5714f, 0.625f, 0.6666f, 0.4f, 0.4545f, 0.5f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -251,7 +240,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 0.1428f, 0.25f, 0.3333f, 0.4f, 0.4545f, 0.5f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -304,7 +292,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 2f, 1.5f, 2f, 1.6666f, 2f, 1.75f, 2f, 1.8f, 2f, 1.8333f, 2f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -365,7 +352,6 @@ class DivTest {
                 0.5f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -400,7 +386,6 @@ class DivTest {
                 0.5f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -435,7 +420,6 @@ class DivTest {
                 0.5f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -470,7 +454,6 @@ class DivTest {
                 0.5f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -557,7 +540,6 @@ class DivTest {
                 4f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -592,7 +574,6 @@ class DivTest {
                 4f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -610,7 +591,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 3f, 2f, 5f, 3f, 7f, 4f, 3f, 2.5f, 3.6666f, 3f, 4.3333f, 3.5f, 5f, 4f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -645,7 +625,6 @@ class DivTest {
                 4f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -680,7 +659,6 @@ class DivTest {
                 4f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -698,7 +676,6 @@ class DivTest {
         assertEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 5f, 3f, 2.3333f, 2f, 9f, 5f, 3.6666f, 3f, 13f, 7f, 5f, 4f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -733,7 +710,6 @@ class DivTest {
                 2f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -768,7 +744,6 @@ class DivTest {
                 2f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -803,7 +778,6 @@ class DivTest {
                 2f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 }

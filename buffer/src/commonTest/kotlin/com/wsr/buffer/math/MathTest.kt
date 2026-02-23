@@ -30,7 +30,6 @@ class MathTest {
                 8103.084f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -52,7 +51,6 @@ class MathTest {
                 2.1972f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -63,7 +61,6 @@ class MathTest {
         assertEquals(
             expected = DataBuffer.create(0f, 1f, 8f, 27f, 64f, 125f, 216f, 343f, 512f, 729f),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 
@@ -85,7 +82,6 @@ class MathTest {
                 3.0000f,
             ),
             actual = actual,
-            absoluteTolerance = 1e-4f,
         )
     }
 }

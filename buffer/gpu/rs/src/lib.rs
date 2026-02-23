@@ -1,4 +1,2 @@
-pub mod buffer;
-pub mod context;
-
+pub mod core;
 pub mod jni;

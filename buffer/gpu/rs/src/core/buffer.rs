@@ -1,4 +1,4 @@
-use crate::context::Context;
+use crate::core::context::Context;
 
 use wgpu::util::DeviceExt;
 use bytemuck;
@@ -70,5 +70,10 @@ impl GPUBuffer {
     pub fn count(self: &Self) -> usize {
         let byte_size = self.buffer.size() as usize;
         byte_size / std::mem::size_of::<f32>()
+    }
+
+    pub fn workgroup_count(self: &Self, workgroup_size: u32) -> u32 {
+        let count = self.count() as u32;
+        (count + workgroup_size - 1) / workgroup_size
     }
 }
