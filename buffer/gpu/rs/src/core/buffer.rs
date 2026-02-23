@@ -1,4 +1,4 @@
-use crate::context::Context;
+use crate::core::context::Context;
 
 use wgpu::util::DeviceExt;
 use bytemuck;

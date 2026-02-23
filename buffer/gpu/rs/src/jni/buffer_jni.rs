@@ -2,8 +2,8 @@ use jni::{JNIEnv};
 use jni::objects::{JClass, JFloatArray, ReleaseMode};
 use jni::sys::{jfloat, jfloatArray, jint, jlong};
 
-use crate::buffer::GPUBuffer;
-use crate::context::Context;
+use crate::core::buffer::GPUBuffer;
+use crate::core::context::Context;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JBuffer_allocate(
