@@ -2,6 +2,7 @@ package com.wsr.gpu
 
 import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
+import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.base.loadNativeLibrary
 import java.lang.ref.Cleaner
 
@@ -15,6 +16,7 @@ actual fun loadGPUBackend(): IBackend? {
 
 class GPUBackend : IBackend by KotlinBackend {
     val context = JContext().allocate()
+    override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(context, JBuffer())
 
     init {
         val ptr = context

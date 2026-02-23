@@ -1,4 +1,4 @@
-use jni::{EnvUnowned};
+use jni::{JNIEnv};
 use jni::objects::{JClass};
 use jni::sys::jlong;
 
@@ -6,7 +6,7 @@ use crate::context;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JContext_allocate(
-    _: EnvUnowned,
+    _: JNIEnv,
     _class: JClass,
 ) -> jlong {
     let context = pollster::block_on(context::Context::new());
@@ -15,7 +15,7 @@ pub extern "system" fn Java_com_wsr_gpu_JContext_allocate(
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JContext_release(
-    _: EnvUnowned,
+    _: JNIEnv,
     _class: JClass,
     ptr: jlong,
 ) {
