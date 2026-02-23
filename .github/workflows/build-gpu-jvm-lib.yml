@@ -1,14 +1,11 @@
-name: 'GPUのビルド'
+name: 'GPUのビルド(JVM)'
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'buffer/gpu/cpp/src/**'
-      - '.github/workflows/build-gpu-library.yml'
-
-env:
-  WINDOWS_OPENCL_SDK_VERSION: '2024.05.08'
+      - 'buffer/gpu/rs/**'
+      - '.github/workflows/build-gpu-jvm-lib.yml'
 
 jobs:
   build:
@@ -54,34 +51,36 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
-      - name: OpenCLのセットアップ (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ocl-icd-opencl-dev opencl-headers
-
-      - name: OpenCLのセットアップ (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          # OpenCL SDK (Khronos) をダウンロード・インストール
-          curl -L -o opencl-sdk.zip https://github.com/KhronosGroup/OpenCL-SDK/releases/download/v${WINDOWS_OPENCL_SDK_VERSION}/OpenCL-SDK-v${WINDOWS_OPENCL_SDK_VERSION}-Win-x64.zip
-          unzip opencl-sdk.zip -d opencl-sdk
-          echo "OpenCL_ROOT=${{ github.workspace }}/opencl-sdk/OpenCL-SDK-v${WINDOWS_OPENCL_SDK_VERSION}-Win-x64" >> $GITHUB_ENV
-        shell: bash
-
       - name: gradlewに権限を付与 (Unix)
         if: runner.os != 'Windows'
         run: chmod 777 ./gradlew
 
-      - name: CLBlastのキャッシュを復元
+      - name: キャッシュを復元
         uses: actions/cache@v4
         with:
-          path: buffer/gpu/cpp/build/clblast
-          key: gpu-${{ hashFiles('buffer/gpu/cpp/CMakeLists.txt') }}-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: buffer/gpu/cpp/rs/target
+          key: gpu-${{ hashFiles('buffer/gpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
-      - name: ネイティブライブラリをビルド
-        run: ./gradlew :buffer:gpu:cpp:cmakeBuild
+      - name: ネイティブライブラリをビルド(Windows以外)
+        if: runner.os != 'Windows'
         shell: bash
+        run: ./gradlew buffer:gpu:rs:cargoJvmBuild
+
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
+      - name: ネイティブライブラリをビルド(Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:gpu:rs:cargoJvmBuild
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
@@ -89,8 +88,7 @@ jobs:
         with:
           name: gpu-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
-            buffer/gpu/cpp/build/libgpu.${{ matrix.lib_extension }}
-            buffer/gpu/cpp/build/Release/libgpu.${{ matrix.lib_extension }}
+            buffer/gpu/rs/target/release/libgpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
       - name: 成果物をアップロード (Windows)
@@ -99,8 +97,7 @@ jobs:
         with:
           name: gpu-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
-            buffer/gpu/cpp/build/gpu.${{ matrix.lib_extension }}
-            buffer/gpu/cpp/build/Release/gpu.${{ matrix.lib_extension }}
+            buffer/gpu/rs/target/release/gpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
   commit:
@@ -151,10 +148,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull
           git add buffer/gpu/src/jvmMain/resources/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "[CI] Update CL Blast libraries"
+            git commit -m "[CI] Update GPU(JVM) libraries"
             git push
           fi
