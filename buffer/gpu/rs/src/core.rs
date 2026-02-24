@@ -3,4 +3,5 @@ pub mod context;
 pub mod pipeline;
 
 pub mod math;
+pub mod operation;
 pub mod transpose;
