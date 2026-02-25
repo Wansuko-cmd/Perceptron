@@ -21,6 +21,7 @@ class GPUBackend : IBackend by KotlinBackend {
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(context, buffer)
 
     private val math = JMath()
+    private val matMul = JMatMul()
     private val collection = JCollection()
     private val operation = JOperation()
     private val transpose = JTranspose()
@@ -964,6 +965,63 @@ class GPUBackend : IBackend by KotlinBackend {
             axis1,
             axis2,
             axis3,
+            result.ptr,
+            context,
+        )
+        return result
+    }
+
+    override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(b)
+        matMul.matMul(
+            x.toGPUBuffer().ptr, false,
+            y.toGPUBuffer().ptr, false,
+            1, 1, x.size, b,
+            result.ptr,
+            context,
+        )
+        return result
+    }
+
+    override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(n)
+        matMul.matMul(
+            x.toGPUBuffer().ptr, false,
+            y.toGPUBuffer().ptr, transY,
+            1, n, k, 1,
+            result.ptr,
+            context,
+        )
+        return result
+    }
+
+    override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(m)
+        matMul.matMul(
+            x.toGPUBuffer().ptr, transX,
+            y.toGPUBuffer().ptr, false,
+            m, 1, k, 1,
+            result.ptr,
+            context,
+        )
+        return result
+    }
+
+    override fun matMul(
+        x: DataBuffer,
+        transX: Boolean,
+        y: DataBuffer,
+        transY: Boolean,
+        m: Int,
+        n: Int,
+        k: Int,
+        b: Int
+    ): DataBuffer {
+        val result = GPUJvmBuffer.create(b * m * n)
+        matMul.matMul(
+            x.toGPUBuffer().ptr, transX,
+            y.toGPUBuffer().ptr, transY,
+            m, n, k, b,
             result.ptr,
             context,
         )
