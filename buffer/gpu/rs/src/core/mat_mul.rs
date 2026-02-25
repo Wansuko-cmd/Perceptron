@@ -5,24 +5,14 @@ use wgpu::util::DeviceExt;
 
 const WORKGROUP_SIZE: u32 = 256;
 
-pub fn mat_mul_d2_to_d2(
+pub fn mat_mul(
     x: &GPUBuffer, trans_x: bool,
     y: &GPUBuffer, trans_y: bool,
     m: usize, n: usize, k: usize, b: usize,
     result: &GPUBuffer,
     context: &Context,
 ) {
-    mat_mul("mat_mul_d2_to_d2", x, trans_x, y, trans_y, m, n, k, b, result, context);
-}
-
-fn mat_mul(
-    label: &str,
-    x: &GPUBuffer, trans_x: bool,
-    y: &GPUBuffer, trans_y: bool,
-    m: usize, n: usize, k: usize, b: usize,
-    result: &GPUBuffer,
-    context: &Context,
-) {
+    let label = "mat_mul";
     let device = &context.device;
     let queue = &context.queue;
     let pipeline = match (trans_x, trans_y) {
