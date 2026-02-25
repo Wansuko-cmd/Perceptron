@@ -37,7 +37,7 @@ pub fn mat_mul(
                 resource: x.buffer.as_entire_binding(),
             },
             wgpu::BindGroupEntry {
-                binding: 0,
+                binding: 1,
                 resource: y.buffer.as_entire_binding(),
             },
             wgpu::BindGroupEntry {

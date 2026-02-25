@@ -976,7 +976,7 @@ class GPUBackend : IBackend by KotlinBackend {
         matMul.matMul(
             x.toGPUBuffer().ptr, false,
             y.toGPUBuffer().ptr, false,
-            1, 1, x.size, b,
+            1, 1, x.size / b, b,
             result.ptr,
             context,
         )
@@ -1015,7 +1015,7 @@ class GPUBackend : IBackend by KotlinBackend {
         m: Int,
         n: Int,
         k: Int,
-        b: Int
+        b: Int,
     ): DataBuffer {
         val result = GPUJvmBuffer.create(b * m * n)
         matMul.matMul(
