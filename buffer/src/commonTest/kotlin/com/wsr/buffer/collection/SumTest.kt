@@ -4,11 +4,11 @@ package com.wsr.buffer.collection
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
 class SumTest {
     @Test
     fun `1次元内累積値`() = bufferTestRule {
@@ -16,7 +16,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x)
 
-        assertEquals(expected = 276f, actual = actual)
+        assertEquals(expected = 276f, actual = actual, absoluteTolerance = 1e-4f)
     }
 
     @Test

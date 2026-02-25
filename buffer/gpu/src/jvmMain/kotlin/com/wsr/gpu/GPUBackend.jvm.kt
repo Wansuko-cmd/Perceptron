@@ -21,6 +21,7 @@ class GPUBackend : IBackend by KotlinBackend {
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(context, buffer)
 
     private val math = JMath()
+    private val collection = JCollection()
     private val operation = JOperation()
     private val transpose = JTranspose()
 
@@ -990,6 +991,122 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         math.sqrt(x.toGPUBuffer().ptr, e, result.ptr, context)
+        return result
+    }
+
+    override fun average(x: DataBuffer): Float {
+        val result = GPUJvmBuffer.create(1)
+        collection.averageD1(x.toGPUBuffer().ptr, result.ptr, context)
+        return result.toFloatArray()[0]
+    }
+
+    override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.averageD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, context)
+        return result
+    }
+
+    override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.averageD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, context)
+        return result
+    }
+
+    override fun max(x: DataBuffer): Float {
+        val result = GPUJvmBuffer.create(1)
+        collection.maxD1(x.toGPUBuffer().ptr, result.ptr, context)
+        return result.toFloatArray()[0]
+    }
+
+    override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.maxD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, context)
+        return result
+    }
+
+    override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.maxD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, context)
+        return result
+    }
+
+    override fun min(x: DataBuffer): Float {
+        val result = GPUJvmBuffer.create(1)
+        collection.minD1(x.toGPUBuffer().ptr, result.ptr, context)
+        return result.toFloatArray()[0]
+    }
+
+    override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.minD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, context)
+        return result
+    }
+
+    override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.minD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, context)
+        return result
+    }
+
+    override fun sum(x: DataBuffer): Float {
+        val result = GPUJvmBuffer.create(1)
+        collection.sumD1(x.toGPUBuffer().ptr, result.ptr, context)
+        return result.toFloatArray()[0]
+    }
+
+    override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.sumD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, context)
+        return result
+    }
+
+    override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.sumD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, context)
         return result
     }
 

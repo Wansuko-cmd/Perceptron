@@ -1,6 +1,7 @@
 use wgpu::{BindGroupLayout, Device};
 
 pub struct Pipeline {
+    pub collection: Collection,
     pub math: Math,
     pub operation: Operation,
     pub transpose: Transpose,
@@ -9,9 +10,106 @@ pub struct Pipeline {
 impl Pipeline {
     pub fn new(device: &Device) -> Self {
         Pipeline {
+            collection: Collection::new(device),
             math: Math::new(device),
             operation: Operation::new(device),
             transpose: Transpose::new(device),
+        }
+    }
+}
+
+pub struct Collection {
+    pub average_d3: wgpu::ComputePipeline,
+    pub max_d3: wgpu::ComputePipeline,
+    pub min_d3: wgpu::ComputePipeline,
+    pub sum_d3: wgpu::ComputePipeline,
+
+    pub bind_group_layout: BindGroupLayout,
+}
+
+impl Collection {
+    pub fn new(device: &Device) -> Self {
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Collection::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("collection.wgsl").into()),
+        });
+
+        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Collection::new"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+            ],
+        });
+
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("Collection::new"),
+            bind_group_layouts: &[&bind_group_layout],
+            immediate_size: 0,
+        });
+
+        Collection {
+            average_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("average_d3"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("average_d3"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            max_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("max_d3"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("max_d3"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            min_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("min_d3"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("min_d3"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            sum_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("sum_d3"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("sum_d3"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            bind_group_layout: bind_group_layout,
         }
     }
 }

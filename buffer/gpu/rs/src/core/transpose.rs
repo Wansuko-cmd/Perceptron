@@ -119,7 +119,7 @@ fn transpose(
         compute_pass.set_pipeline(&pipeline.transpose.transpose_d4);
         compute_pass.set_bind_group(0, &bind_group, &[]);
 
-        compute_pass.dispatch_workgroups(x.workgroup_count(WORKGROUP_SIZE), 1, 1);
+        compute_pass.dispatch_workgroups(result.workgroup_count(WORKGROUP_SIZE), 1, 1);
     }
 
     queue.submit(Some(encoder.finish()));
