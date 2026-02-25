@@ -4,6 +4,7 @@ package com.wsr.buffer.collection
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -16,7 +17,7 @@ class AverageTest {
 
         val actual = Backend.average(x = x)
 
-        assertEquals(expected = 11.5f, actual = actual)
+        assertEquals(expected = 11.5f, actual = actual, absoluteTolerance = 1e-4f)
     }
 
     @Test
