@@ -5,9 +5,10 @@ package com.wsr.network.converter.linear
 import com.wsr.batch.batchOf
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class LinearD1Test {
     @Test
@@ -17,7 +18,7 @@ class LinearD1Test {
 
         val actual = target.encode(input)
 
-        assertEquals(expected = batchOf(IOType.d1(3) { it.toFloat() }), actual = actual)
+        assertContentEquals(expected = batchOf(IOType.d1(3) { it.toFloat() }), actual = actual)
     }
 
     @Test
@@ -27,6 +28,6 @@ class LinearD1Test {
 
         val actual = target.decode(input)
 
-        assertEquals(expected = listOf(IOType.d1(3) { it.toFloat() }), actual = actual)
+        assertContentEquals(expected = listOf(IOType.d1(3) { it.toFloat() }), actual = actual)
     }
 }

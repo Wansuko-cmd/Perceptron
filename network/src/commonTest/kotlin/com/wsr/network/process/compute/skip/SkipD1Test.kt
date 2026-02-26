@@ -7,13 +7,14 @@ import com.wsr.batch.batchOf
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.bias.d1.BiasD1
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class SkipD1Test {
     val target = SkipD1(
@@ -42,15 +43,15 @@ class SkipD1Test {
     fun `expect=スキップ接続を行う`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
 
-        assertEquals(expected = IOType.d1(0f, 6f, 12f), actual = actual[0])
-        assertEquals(expected = IOType.d1(0f, 8f, 16f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(0f, 6f, 12f), actual = actual[0])
+        assertContentEquals(expected = IOType.d1(0f, 8f, 16f), actual = actual[1])
     }
 
     @Test
     fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D1>
 
-        assertEquals(expected = IOType.d1(0f, 12f, 24f), actual = actual[0])
-        assertEquals(expected = IOType.d1(0f, 16f, 32f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(0f, 12f, 24f), actual = actual[0])
+        assertContentEquals(expected = IOType.d1(0f, 16f, 32f), actual = actual[1])
     }
 }

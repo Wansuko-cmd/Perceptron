@@ -9,10 +9,10 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class MaxPoolD2Test {
     val target get() = MaxPoolD2(poolSize = 2, channel = 2, inputSize = 4)
@@ -32,21 +32,21 @@ class MaxPoolD2Test {
     fun `expect=指定区間内での最大値を取得`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(1f, 2f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(2f, 4f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(1f, 2f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(2f, 4f), actual = actual[0][1])
 
-        assertEquals(expected = IOType.d1(0f, 1f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0.3f, 0.6f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 1f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0.3f, 0.6f), actual = actual[1][1])
     }
 
     @Test
     fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 1f, 2f, 0f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0f, 2f, 4f, 0f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 2f, 0f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0f, 2f, 4f, 0f), actual = actual[0][1])
 
-        assertEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0f, 0.3f, 0.6f, 0f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0.3f, 0.6f, 0f), actual = actual[1][1])
     }
 }

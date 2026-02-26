@@ -40,11 +40,11 @@ class D3Test {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         assertContentEquals(
             expected = IOType.d2(shape = listOf(2, 2), value = listOf(0.0f, 4.0f, 2.0f, 6.0f)),
-            actual = d3[0]
+            actual = d3[0],
         )
         assertContentEquals(
             expected = IOType.d2(shape = listOf(2, 2), value = listOf(1.0f, 5.0f, 3.0f, 7.0f)),
-            actual = d3[1]
+            actual = d3[1],
         )
     }
 

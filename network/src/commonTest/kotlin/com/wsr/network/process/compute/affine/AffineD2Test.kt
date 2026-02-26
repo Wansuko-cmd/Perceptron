@@ -15,7 +15,7 @@ import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class AffineD2Test {
     val target
@@ -41,20 +41,20 @@ class AffineD2Test {
     fun `expect=全結合`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(30f, 39f, 48f, 57f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(40f, 52f, 64f, 76f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(50f, 65f, 80f, 95f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(30f, 39f, 48f, 57f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(40f, 52f, 64f, 76f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(50f, 65f, 80f, 95f), actual = actual[1][1])
     }
 
     @Test
     fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(306f, 654f, 1002f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(408f, 872f, 1336f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(510f, 1090f, 1670f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(306f, 654f, 1002f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(408f, 872f, 1336f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(510f, 1090f, 1670f), actual = actual[1][1])
     }
 
     @Test

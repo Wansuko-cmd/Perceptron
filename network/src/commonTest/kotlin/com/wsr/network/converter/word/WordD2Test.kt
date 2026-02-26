@@ -8,9 +8,10 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class WordD2Test {
     private val words = listOf("<PAD>", "<UNK>", "hello", "world")
@@ -28,14 +29,14 @@ class WordD2Test {
         val actual = target.encode(input)
 
         // hello world !
-        assertEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0f, 0f, 0f, 1f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[0][2])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 1f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[0][2])
 
         // new world <PAD>
-        assertEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0f, 0f, 0f, 1f), actual = actual[1][1])
-        assertEquals(expected = IOType.d1(1f, 0f, 0f, 0f), actual = actual[1][2])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 1f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(1f, 0f, 0f, 0f), actual = actual[1][2])
     }
 
     @Test
@@ -60,7 +61,7 @@ class WordD2Test {
 
         val actual = target.decode(input)
 
-        assertEquals(expected = listOf("hello", "world", "<UNK>", "<PAD>", "<PAD>"), actual = actual[0])
-        assertEquals(expected = listOf("<UNK>", "world", "<PAD>", "<PAD>", "<PAD>"), actual = actual[1])
+        assertContentEquals(expected = listOf("hello", "world", "<UNK>", "<PAD>", "<PAD>"), actual = actual[0])
+        assertContentEquals(expected = listOf("<UNK>", "world", "<PAD>", "<PAD>", "<PAD>"), actual = actual[1])
     }
 }

@@ -16,7 +16,7 @@ import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class ScaleAxisD3Test {
     val target0
@@ -67,8 +67,8 @@ class ScaleAxisD3Test {
     fun `Axis0_expect=axis0で共通のスケール項`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -77,8 +77,8 @@ class ScaleAxisD3Test {
     fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkTestRule {
         val actual = target0._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -90,8 +90,8 @@ class ScaleAxisD3Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -1.9f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -0.95f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -100,8 +100,8 @@ class ScaleAxisD3Test {
     fun `Axis1_expect=axis1で共通のスケール項`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -110,8 +110,8 @@ class ScaleAxisD3Test {
     fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkTestRule {
         val actual = target1._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -123,7 +123,7 @@ class ScaleAxisD3Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0f, 2.6999f), actual = actual[0][0][1], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -0.9f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
@@ -133,8 +133,8 @@ class ScaleAxisD3Test {
     fun `Axis2_expect=axis2で共通のスケール項`() = networkTestRule {
         val actual = target2._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -143,8 +143,8 @@ class ScaleAxisD3Test {
     fun `Axis2_train=Axis2で共通の勾配を伝播`() = networkTestRule {
         val actual = target2._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
@@ -156,8 +156,8 @@ class ScaleAxisD3Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 1.64f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 2.46f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 1.64f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 2.46f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(0f, -1.64f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertContentEquals(expected = IOType.d1(0f, -0.82f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }

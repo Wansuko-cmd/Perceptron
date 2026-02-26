@@ -9,10 +9,11 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class DropoutD3Test {
     val target get() = DropoutD3(outputX = 2, outputY = 2, outputZ = 2, ratio = 0.8f, seed = 0)
@@ -26,21 +27,21 @@ class DropoutD3Test {
     fun `expect=入力をそのまま返す`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = input[0], actual = actual[0])
-        assertEquals(expected = input[1], actual = actual[1])
+        assertContentEquals(expected = input[0], actual = actual[0])
+        assertContentEquals(expected = input[1], actual = actual[1])
     }
 
     @Test
     fun `train=dropoutを行いratioを掛け勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(3.125f, 4.6875f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(6.25f, 7.8125f), actual = actual[0][1][0])
-        assertEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[0][1][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0][0])
-        assertEquals(expected = IOType.d1(4.6875f, 6.25f), actual = actual[1][0][1])
-        assertEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[1][1][0])
-        assertEquals(expected = IOType.d1(14.0625f, 15.625f), actual = actual[1][1][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(3.125f, 4.6875f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(6.25f, 7.8125f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[0][1][1])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(4.6875f, 6.25f), actual = actual[1][0][1])
+        assertContentEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(14.0625f, 15.625f), actual = actual[1][1][1])
     }
 }

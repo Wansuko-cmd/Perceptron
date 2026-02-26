@@ -14,7 +14,7 @@ import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class AffineD1Test {
     val target
@@ -33,16 +33,16 @@ class AffineD1Test {
     fun `expect=全結合`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
 
-        assertEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0])
-        assertEquals(expected = IOType.d1(30f, 39f, 48f, 57f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0])
+        assertContentEquals(expected = IOType.d1(30f, 39f, 48f, 57f), actual = actual[1])
     }
 
     @Test
     fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D1>
 
-        assertEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0])
-        assertEquals(expected = IOType.d1(306f, 654f, 1002f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0])
+        assertContentEquals(expected = IOType.d1(306f, 654f, 1002f), actual = actual[1])
     }
 
     @Test

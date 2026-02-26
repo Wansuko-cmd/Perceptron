@@ -15,7 +15,6 @@ import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class PositionEmbeddingD2Test {
     val target
@@ -41,22 +40,22 @@ class PositionEmbeddingD2Test {
     fun `expect=学習型位置情報埋め込み`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(2f, 5f, 8f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(2f, 5f, 8f), actual = actual[0][1])
 
-        assertEquals(expected = IOType.d1(0f, 1f, 3f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(2f, 3.3f, 4.6f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 3f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(2f, 3.3f, 4.6f), actual = actual[1][1])
     }
 
     @Test
     fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(2f, 5f, 8f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(2f, 5f, 8f), actual = actual[0][1])
 
-        assertEquals(expected = IOType.d1(0f, 1f, 3f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(2f, 3.3f, 4.6f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 3f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(2f, 3.3f, 4.6f), actual = actual[1][1])
     }
 
     @Test

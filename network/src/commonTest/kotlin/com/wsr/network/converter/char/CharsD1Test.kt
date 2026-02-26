@@ -5,6 +5,7 @@ package com.wsr.network.converter.char
 import com.wsr.batch.batchOf
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +18,7 @@ class CharsD1Test {
 
         val actual = target.encode(input)
 
-        assertEquals(
+        assertContentEquals(
             expected = batchOf(IOType.d1(2f, 15f, 15f, 0f, 0f)),
             actual = actual,
         )
