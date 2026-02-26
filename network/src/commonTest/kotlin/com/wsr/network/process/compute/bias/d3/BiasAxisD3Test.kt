@@ -10,7 +10,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -90,18 +90,18 @@ class BiasAxisD3Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.0499f, 1.95f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.0499f, 2.95f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
         assertEquals(expected = IOType.d1(0.99f, -1.01f), actual = actual[0][1][0])
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.99f, -0.0099f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
@@ -138,7 +138,7 @@ class BiasAxisD3Test {
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0.94f, 3.94f), actual = actual[0][0][1])
         assertEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0])
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.94f, -0.0600f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
@@ -175,7 +175,7 @@ class BiasAxisD3Test {
         assertEquals(expected = IOType.d1(0f, 2.94f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 3.94f), actual = actual[0][0][1])
         assertEquals(expected = IOType.d1(0f, -1.06f), actual = actual[0][1][0])
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, -0.0600f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,

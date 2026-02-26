@@ -4,7 +4,7 @@ package com.wsr.buffer.transpose
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -16,7 +16,7 @@ class TransposeD3Test {
     fun `transpose_012=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 0, axisJ = 1, axisK = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 1f, 2f, 3f,
                 4f, 5f, 6f, 7f,
@@ -34,7 +34,7 @@ class TransposeD3Test {
     fun `transpose_021=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 0, axisJ = 2, axisK = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 4f, 8f,
                 1f, 5f, 9f,
@@ -54,7 +54,7 @@ class TransposeD3Test {
     fun `transpose_102=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 1, axisJ = 0, axisK = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 1f, 2f, 3f,
                 12f, 13f, 14f, 15f,
@@ -73,7 +73,7 @@ class TransposeD3Test {
     fun `transpose_120=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 1, axisJ = 2, axisK = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 12f,
                 1f, 13f,
@@ -98,7 +98,7 @@ class TransposeD3Test {
     fun `transpose_201=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 2, axisJ = 0, axisK = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 4f, 8f,
                 12f, 16f, 20f,
@@ -120,7 +120,7 @@ class TransposeD3Test {
     fun `transpose_210=3次元転置`() = bufferTestRule {
         val result = Backend.transpose(x = input, xi = 2, xj = 3, xk = 4, axisI = 2, axisJ = 1, axisK = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f, 12f,
                 4f, 16f,

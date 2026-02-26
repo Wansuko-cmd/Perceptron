@@ -5,7 +5,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.test.fail
 
-fun assertEquals(
+fun assertContentEquals(
     expected: DataBuffer,
     actual: DataBuffer,
     absoluteTolerance: Float = 1e-4f,

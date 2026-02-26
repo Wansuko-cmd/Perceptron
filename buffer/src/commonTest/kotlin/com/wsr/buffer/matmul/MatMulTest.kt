@@ -4,7 +4,7 @@ package com.wsr.buffer.matmul
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -17,7 +17,7 @@ class MatMulTest {
 
         val actual = Backend.inner(x = x, y = y, b = 4)
 
-        assertEquals(expected = DataBuffer.create(0f, -300f, -1100f, -2400f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(0f, -300f, -1100f, -2400f), actual = actual)
     }
 
     @Test
@@ -27,7 +27,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, y = y, transY = false, n = 4, k = 5)
 
-        assertEquals(expected = DataBuffer.create(-180f, -200f, -220f, -240f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(-180f, -200f, -220f, -240f), actual = actual)
     }
 
     @Test
@@ -37,7 +37,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, y = y, transY = true, n = 4, k = 5)
 
-        assertEquals(expected = DataBuffer.create(0f, -100f, -200f, -300f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(0f, -100f, -200f, -300f), actual = actual)
     }
 
     @Test
@@ -47,7 +47,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = false, y = y, m = 4, k = 5)
 
-        assertEquals(expected = DataBuffer.create(0f, 50f, 100f, 150f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(0f, 50f, 100f, 150f), actual = actual)
     }
 
     @Test
@@ -57,7 +57,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = true, y = y, m = 4, k = 5)
 
-        assertEquals(expected = DataBuffer.create(0f, 10f, 20f, 30f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(0f, 10f, 20f, 30f), actual = actual)
     }
 
     @Test
@@ -67,7 +67,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = false, y = y, transY = false, m = 3, n = 3, k = 5, b = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 -120f,
                 -140f,
@@ -99,7 +99,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = false, y = y, transY = true, m = 3, n = 3, k = 5, b = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f,
                 -100f,
@@ -131,7 +131,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = true, y = y, transY = false, m = 3, n = 3, k = 5, b = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 -360f,
                 -420f,
@@ -163,7 +163,7 @@ class MatMulTest {
 
         val actual = Backend.matMul(x = x, transX = true, y = y, transY = true, m = 3, n = 3, k = 5, b = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0f,
                 -300f,

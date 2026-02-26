@@ -4,7 +4,7 @@ import com.wsr.core.IOType
 import kotlin.math.abs
 import kotlin.test.fail
 
-fun <T : IOType> assertEquals(expected: T, actual: T, absoluteTolerance: Float) {
+fun <T : IOType> assertContentEquals(expected: T, actual: T, absoluteTolerance: Float) {
     if (expected.shape != actual.shape) {
         fail("Expected <$expected> with absolute tolerance <$absoluteTolerance>, actual <$actual>.")
     }

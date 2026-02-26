@@ -9,7 +9,7 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -54,8 +54,8 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -64,8 +64,8 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -77,8 +77,8 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 2.85f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -0.95f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -0.95f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -87,8 +87,8 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -97,8 +97,8 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -110,7 +110,7 @@ class ScaleAxisD2Test {
 
         assertEquals(expected = IOType.d1(0f, 1.82f), actual = actual[0][0])
         assertEquals(expected = IOType.d1(0f, 2.73f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -1.82f), actual = actual[1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -0.91f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1.82f), actual = actual[1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -0.91f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 }

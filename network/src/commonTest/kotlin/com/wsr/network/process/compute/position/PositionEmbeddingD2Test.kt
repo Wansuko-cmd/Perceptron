@@ -9,7 +9,7 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -66,23 +66,23 @@ class PositionEmbeddingD2Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, 1.985f, 3.9650f),
             actual = actual[0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(1.98f, 4.9585f, 7.9370f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, 0.985f, 2.9650f),
             actual = actual[1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(1.98f, 3.2584f, 4.537f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,

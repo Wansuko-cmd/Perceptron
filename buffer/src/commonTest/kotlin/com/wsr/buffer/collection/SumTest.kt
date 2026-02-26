@@ -4,7 +4,7 @@ package com.wsr.buffer.collection
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -25,7 +25,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x, xi = 4, xj = 6, axis = 0)
 
-        assertEquals(expected = DataBuffer.create(36f, 40f, 44f, 48f, 52f, 56f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(36f, 40f, 44f, 48f, 52f, 56f), actual = actual)
     }
 
     @Test
@@ -34,7 +34,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x, xi = 4, xj = 6, axis = 1)
 
-        assertEquals(expected = DataBuffer.create(15f, 51f, 87f, 123f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(15f, 51f, 87f, 123f), actual = actual)
     }
 
     @Test
@@ -43,7 +43,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x, xi = 4, xj = 3, xk = 2, axis = 0)
 
-        assertEquals(expected = DataBuffer.create(36f, 40f, 44f, 48f, 52f, 56f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(36f, 40f, 44f, 48f, 52f, 56f), actual = actual)
     }
 
     @Test
@@ -52,7 +52,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x, xi = 4, xj = 3, xk = 2, axis = 1)
 
-        assertEquals(expected = DataBuffer.create(6f, 9f, 24f, 27f, 42f, 45f, 60f, 63f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(6f, 9f, 24f, 27f, 42f, 45f, 60f, 63f), actual = actual)
     }
 
     @Test
@@ -61,7 +61,7 @@ class SumTest {
 
         val actual = Backend.sum(x = x, xi = 4, xj = 3, xk = 2, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 5f, 9f, 13f, 17f, 21f, 25f, 29f, 33f, 37f, 41f, 45f),
             actual = actual,
         )

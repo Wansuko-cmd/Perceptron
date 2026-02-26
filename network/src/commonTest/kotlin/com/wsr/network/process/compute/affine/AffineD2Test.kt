@@ -9,7 +9,7 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -64,23 +64,23 @@ class AffineD2Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-7.0000f, -9.1f, -11.2000f, -13.3000f),
             actual = actual[0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-10.5000f, -13.6500f, -16.8000f, -19.95f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-14.0000f, -18.2f, -22.3999f, -26.6000f),
             actual = actual[1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-17.5000f, -22.7500f, -27.9999f, -33.2500f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,

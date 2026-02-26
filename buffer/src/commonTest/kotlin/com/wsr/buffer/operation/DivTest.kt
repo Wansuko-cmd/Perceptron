@@ -4,7 +4,7 @@ package com.wsr.buffer.operation
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -16,7 +16,7 @@ class DivTest {
 
         val actual = Backend.div(x = 1f, y = x)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -41,7 +41,7 @@ class DivTest {
 
         val actual = Backend.div(x = y, y = 1f)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f),
             actual = actual,
         )
@@ -54,7 +54,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f),
             actual = actual,
         )
@@ -67,7 +67,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y, yi = 3, yj = 4, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -93,7 +93,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y, yi = 3, yj = 4, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 0.2f, 0.3333f, 0.4285f, 0.5f, 0.1111f, 0.2f, 0.2727f, 0.3333f),
             actual = actual,
         )
@@ -106,7 +106,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -132,7 +132,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -158,7 +158,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 0.25f, 0.4f, 0.5f, 0.1428f, 0.25f, 0.3333f, 0.1f, 0.1818f, 0.25f),
             actual = actual,
         )
@@ -171,7 +171,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 3, xj = 4, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 2.5f, 3f, 3.5f, 4f, 3f, 3.3333f, 3.6666f, 4f),
             actual = actual,
         )
@@ -184,7 +184,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 3, xj = 4, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 5f, 3f, 2.3333f, 2f, 9f, 5f, 3.6666f, 3f),
             actual = actual,
         )
@@ -197,7 +197,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 3, yk = 2, axis1 = 0, axis2 = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -223,7 +223,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 2, yk = 3, axis1 = 0, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 0.25f, 0.4f, 0.5f, 0.5714f, 0.625f, 0.6666f, 0.4f, 0.4545f, 0.5f),
             actual = actual,
         )
@@ -236,7 +236,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 2, yk = 3, axis1 = 1, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 0.1428f, 0.25f, 0.3333f, 0.4f, 0.4545f, 0.5f),
             actual = actual,
         )
@@ -249,7 +249,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 5f, 6f, 3.5f, 4f, 4.5f, 5f, 5.5f, 6f),
             actual = actual,
         )
@@ -262,7 +262,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 2f, 2.5f, 3f, 7f, 8f, 9f, 5f, 5.5f, 6f),
             actual = actual,
         )
@@ -275,7 +275,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 4f, 2.5f, 2f, 7f, 4f, 3f, 10f, 5.5f, 4f),
             actual = actual,
         )
@@ -288,7 +288,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 3, xk = 2, y = y, yi = 2, yj = 3, axis1 = 0, axis2 = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 1.5f, 2f, 1.6666f, 2f, 1.75f, 2f, 1.8f, 2f, 1.8333f, 2f),
             actual = actual,
         )
@@ -301,7 +301,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 3, y = y, yi = 2, yj = 3, axis1 = 0, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 4f, 2.5f, 2f, 1.75f, 1.6f, 1.5f, 2.5f, 2.2f, 2f),
             actual = actual,
         )
@@ -314,7 +314,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 3, y = y, yi = 2, yj = 3, axis1 = 1, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 1f, 1f, 7f, 4f, 3f, 2.5f, 2.2f, 2f),
             actual = actual,
         )
@@ -331,7 +331,7 @@ class DivTest {
             axis1 = 0, axis2 = 1, axis3 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 0.5f,
@@ -365,7 +365,7 @@ class DivTest {
             axis1 = 0, axis2 = 1, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,
@@ -399,7 +399,7 @@ class DivTest {
             axis1 = 0, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,
@@ -433,7 +433,7 @@ class DivTest {
             axis1 = 1, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,
@@ -463,7 +463,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 4.5f, 5f, 5.5f, 6f, 6.5f, 7f, 7.5f, 8f),
             actual = actual,
         )
@@ -476,7 +476,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 3f, 4f, 2.5f, 3f, 3.5f, 4f, 9f, 10f, 11f, 12f, 6.5f, 7f, 7.5f, 8f),
             actual = actual,
         )
@@ -489,7 +489,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 1.5f, 2f, 5f, 6f, 3.5f, 4f, 9f, 10f, 5.5f, 6f, 13f, 14f, 7.5f, 8f),
             actual = actual,
         )
@@ -502,7 +502,7 @@ class DivTest {
 
         val actual = Backend.div(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 3)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 3f, 2f, 5f, 3f, 7f, 4f, 9f, 5f, 11f, 6f, 13f, 7f, 15f, 8f),
             actual = actual,
         )
@@ -519,7 +519,7 @@ class DivTest {
             axis1 = 0, axis2 = 1,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 2f,
@@ -553,7 +553,7 @@ class DivTest {
             axis1 = 0, axis2 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 2f,
@@ -587,7 +587,7 @@ class DivTest {
             axis1 = 0, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 3f, 2f, 5f, 3f, 7f, 4f, 3f, 2.5f, 3.6666f, 3f, 4.3333f, 3.5f, 5f, 4f),
             actual = actual,
         )
@@ -604,7 +604,7 @@ class DivTest {
             axis1 = 1, axis2 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 2f,
@@ -638,7 +638,7 @@ class DivTest {
             axis1 = 1, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,
@@ -672,7 +672,7 @@ class DivTest {
             axis1 = 2, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 1f, 1f, 1f, 5f, 3f, 2.3333f, 2f, 9f, 5f, 3.6666f, 3f, 13f, 7f, 5f, 4f),
             actual = actual,
         )
@@ -689,7 +689,7 @@ class DivTest {
             axis1 = 0, axis2 = 1, axis3 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 2f,
@@ -723,7 +723,7 @@ class DivTest {
             axis1 = 0, axis2 = 1, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,
@@ -757,7 +757,7 @@ class DivTest {
             axis1 = 1, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 1f,

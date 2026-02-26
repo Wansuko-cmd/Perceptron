@@ -10,7 +10,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -69,8 +69,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -79,8 +79,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -92,8 +92,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -1.9f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -0.95f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1.9f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -0.95f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -102,8 +102,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -112,8 +112,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -124,9 +124,9 @@ class ScaleAxisD3Test {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
         assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 2.6999f), actual = actual[0][0][1], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -0.9f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 2.6999f), actual = actual[0][0][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -0.9f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -135,8 +135,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -145,8 +145,8 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -158,7 +158,7 @@ class ScaleAxisD3Test {
 
         assertEquals(expected = IOType.d1(0f, 1.64f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(0f, 2.46f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(0f, -1.64f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(0f, -0.82f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -1.64f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, -0.82f), actual = actual[0][1][1], absoluteTolerance = 1e-4f)
     }
 }

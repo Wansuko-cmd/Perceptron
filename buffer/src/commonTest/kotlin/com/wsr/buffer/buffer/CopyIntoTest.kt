@@ -3,7 +3,7 @@
 package com.wsr.buffer.buffer
 
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -21,7 +21,7 @@ class CopyIntoTest {
             expected = 15,
             actual = actual.size,
         )
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 floatArrayOf(
                     0f, 0f, 0f, 0f, 0f,

@@ -10,7 +10,7 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.layer.d2.LayerNormD2
@@ -34,23 +34,23 @@ class LayerNormD2Test {
     fun `expect=層正規化`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.0834f, -0.3611f, 0.3611f),
             actual = actual[0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.0834f, 0.3611f, 1.8057f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.8421f, -0.8421f, 1.8172f),
             actual = actual[1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.8421f, -0.0443f, 0.7535f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,
@@ -65,23 +65,23 @@ class LayerNormD2Test {
             calcDelta = { 1e6f * it as Batch<IOType.D2> },
         ) as Batch<IOType.D2>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.3125f, -0.1406f, 0.1093f),
             actual = actual[0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.3125f, 0.1093f, 0.6250f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-16.0000f, -16.0000f, 34.5000f),
             actual = actual[1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-16.0000f, -0.9453f, 14.1250f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,

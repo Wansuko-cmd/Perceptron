@@ -11,7 +11,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.rms.d3.RmsNormD3
@@ -47,43 +47,43 @@ class RmsNormD3Test {
     fun `expect=層正規化`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.6735f, 1.3471f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 1.3471f, 2.6942f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0000f, 0.6735f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.2020f, 0.4041f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.4891f, 1.9566f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(1.2228f, 1.4674f, 1.7120f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.2445f, 0.1222f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.4891f, -0.6114f, -0.8152f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
@@ -98,43 +98,43 @@ class RmsNormD3Test {
             calcDelta = { 1e6f * it as Batch<IOType.D2> },
         ) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.1875f, 0.3750f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.3750f, 0.7500f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0000f, 0.1875f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0468f, 0.0937f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0156f, 0.0625f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0312f, 0.0625f, 0.0625f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0078f, 0.0039f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.0156f, -0.0156f, -0.0156f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,

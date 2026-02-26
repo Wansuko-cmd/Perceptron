@@ -8,7 +8,7 @@ import com.wsr.batch.get
 import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.rms.d1.RmsNormD1
@@ -26,12 +26,12 @@ class RmsNormD1Test {
     fun `expect=層正規化`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.7745f, 1.5491f),
             actual = actual[0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.7745f, 1.5491f),
             actual = actual[1],
             absoluteTolerance = 1e-4f,
@@ -46,12 +46,12 @@ class RmsNormD1Test {
             calcDelta = { 1e6f * it as Batch<IOType.D1> },
         ) as Batch<IOType.D1>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.3125f, 0.6250f),
             actual = actual[0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.0312f, 0.0625f),
             actual = actual[1],
             absoluteTolerance = 1e-4f,

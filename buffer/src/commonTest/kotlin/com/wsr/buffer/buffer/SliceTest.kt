@@ -3,7 +3,7 @@
 package com.wsr.buffer.buffer
 
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -20,7 +20,7 @@ class SliceTest {
             expected = 10,
             actual = actual.size,
         )
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(FloatArray(10) { it + 5f }),
             actual = actual,
         )

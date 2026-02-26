@@ -10,7 +10,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
@@ -71,7 +71,7 @@ class BiasD3Test {
 
         assertEquals(expected = IOType.d1(0f, 2.97f), actual = actual[0][0][0])
         assertEquals(expected = IOType.d1(1.98f, 5.94f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(3.96f, 2.9699f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(3.96f, 2.9699f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
         assertEquals(expected = IOType.d1(5.94f, 5.94f), actual = actual[0][1][1])
     }
 }

@@ -4,7 +4,7 @@ package com.wsr.buffer.math
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -16,7 +16,7 @@ class MathTest {
     fun `exp=指数関数`() = bufferTestRule {
         val actual = Backend.exp(x = input)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 1f,
                 2.7182f,
@@ -37,7 +37,7 @@ class MathTest {
     fun `ln=自然対数`() = bufferTestRule {
         val actual = Backend.ln(x = input, e = 1e-5f)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 -11.5129f,
                 0.0000f,
@@ -58,7 +58,7 @@ class MathTest {
     fun `pow=階乗`() = bufferTestRule {
         val actual = Backend.pow(x = input, n = 3)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 8f, 27f, 64f, 125f, 216f, 343f, 512f, 729f),
             actual = actual,
         )
@@ -68,7 +68,7 @@ class MathTest {
     fun `sqrt=平方根`() = bufferTestRule {
         val actual = Backend.sqrt(x = input, e = 1e-5f)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(
                 0.0031f,
                 1.0000f,
