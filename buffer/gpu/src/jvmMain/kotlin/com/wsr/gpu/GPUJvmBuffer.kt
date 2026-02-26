@@ -48,8 +48,8 @@ data class GPUJvmBuffer(
         val context = context
         val native = native
         return GPUJvmBuffer(
-            size = indices.last - indices.first,
-            ptr = native.slice(ptr, indices.first, indices.last, context),
+            size = indices.count(),
+            ptr = native.slice(ptr, indices.first, indices.last + 1, context),
             context = context,
             native = native,
         )
