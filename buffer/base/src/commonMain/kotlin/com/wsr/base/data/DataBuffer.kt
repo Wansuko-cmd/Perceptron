@@ -17,5 +17,7 @@ interface DataBuffer {
 
     fun copyInto(destination: DataBuffer, destinationOffset: Int = 0)
 
+    fun contentEquals(other: DataBuffer): Boolean
+
     companion object
 }

@@ -10,13 +10,13 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class BiasD3Test {
     val target
@@ -46,20 +46,20 @@ class BiasD3Test {
     fun `expect=バイアス項`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(4f, 3f), actual = actual[0][1][0])
-        assertEquals(expected = IOType.d1(6f, 6f), actual = actual[0][1][1])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(4f, 3f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(6f, 6f), actual = actual[0][1][1])
     }
 
     @Test
     fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(4f, 3f), actual = actual[0][1][0])
-        assertEquals(expected = IOType.d1(6f, 6f), actual = actual[0][1][1])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(4f, 3f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(6f, 6f), actual = actual[0][1][1])
     }
 
     @Test
@@ -69,9 +69,9 @@ class BiasD3Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 2.97f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(1.98f, 5.94f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(3.96f, 2.9699f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = IOType.d1(5.94f, 5.94f), actual = actual[0][1][1])
+        assertContentEquals(expected = IOType.d1(0f, 2.97f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(1.98f, 5.94f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(3.96f, 2.9699f), actual = actual[0][1][0], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(5.94f, 5.94f), actual = actual[0][1][1])
     }
 }

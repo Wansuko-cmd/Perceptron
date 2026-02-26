@@ -8,10 +8,11 @@ import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.core.get
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class SgdTest {
     @Test
@@ -22,7 +23,7 @@ class SgdTest {
 
         val actual = target.adapt(weight, dw)
 
-        assertEquals(expected = IOType.d1(-1f, -2f, -3f), actual = actual)
+        assertContentEquals(expected = IOType.d1(-1f, -2f, -3f), actual = actual)
     }
 
     @Test
@@ -33,8 +34,8 @@ class SgdTest {
 
         val actual = target.adapt(weight, dw)
 
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0])
-        assertEquals(expected = IOType.d1(-2f, -3f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0])
+        assertContentEquals(expected = IOType.d1(-2f, -3f), actual = actual[1])
     }
 
     @Test
@@ -45,10 +46,10 @@ class SgdTest {
 
         val actual = target.adapt(weight, dw)
 
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(-2f, -3f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(-4f, -5f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(-6f, -7f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(-2f, -3f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(-4f, -5f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(-6f, -7f), actual = actual[1][1])
     }
 
     @Test
@@ -59,13 +60,13 @@ class SgdTest {
 
         val actual = target.adapt(weight, dw)
 
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(-2f, -3f), actual = actual[0][0][1])
-        assertEquals(expected = IOType.d1(-4f, -5f), actual = actual[0][1][0])
-        assertEquals(expected = IOType.d1(-6f, -7f), actual = actual[0][1][1])
-        assertEquals(expected = IOType.d1(-8f, -9f), actual = actual[1][0][0])
-        assertEquals(expected = IOType.d1(-10f, -11f), actual = actual[1][0][1])
-        assertEquals(expected = IOType.d1(-12f, -13f), actual = actual[1][1][0])
-        assertEquals(expected = IOType.d1(-14f, -15f), actual = actual[1][1][1])
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(-2f, -3f), actual = actual[0][0][1])
+        assertContentEquals(expected = IOType.d1(-4f, -5f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(-6f, -7f), actual = actual[0][1][1])
+        assertContentEquals(expected = IOType.d1(-8f, -9f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(-10f, -11f), actual = actual[1][0][1])
+        assertContentEquals(expected = IOType.d1(-12f, -13f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(-14f, -15f), actual = actual[1][1][1])
     }
 }

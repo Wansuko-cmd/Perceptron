@@ -9,11 +9,11 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class PositionEncodeD2Test {
     val target get() = PositionEncodeD2(outputX = 2, outputY = 3, waveLength = 100f)
@@ -33,15 +33,15 @@ class PositionEncodeD2Test {
     fun `expect=位置情報埋め込み`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f, 2f), actual = actual[0][0])
-        assertEquals(
+        assertContentEquals(expected = IOType.d1(0f, 2f, 2f), actual = actual[0][0])
+        assertContentEquals(
             expected = IOType.d1(0.8414f, 2.5403f, 4.0463f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(expected = IOType.d1(0f, 1f, 1f), actual = actual[1][0])
-        assertEquals(
+        assertContentEquals(expected = IOType.d1(0f, 1f, 1f), actual = actual[1][0])
+        assertContentEquals(
             expected = IOType.d1(0.8414f, 0.8403f, 0.6463f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,
@@ -52,15 +52,15 @@ class PositionEncodeD2Test {
     fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f, 2f), actual = actual[0][0])
-        assertEquals(
+        assertContentEquals(expected = IOType.d1(0f, 2f, 2f), actual = actual[0][0])
+        assertContentEquals(
             expected = IOType.d1(0.8414f, 2.5403f, 4.0463f),
             actual = actual[0][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(expected = IOType.d1(0f, 1f, 1f), actual = actual[1][0])
-        assertEquals(
+        assertContentEquals(expected = IOType.d1(0f, 1f, 1f), actual = actual[1][0])
+        assertContentEquals(
             expected = IOType.d1(0.8414f, 0.8403f, 0.6463f),
             actual = actual[1][1],
             absoluteTolerance = 1e-4f,

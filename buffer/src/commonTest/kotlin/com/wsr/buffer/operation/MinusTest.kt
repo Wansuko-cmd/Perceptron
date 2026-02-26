@@ -4,10 +4,10 @@ package com.wsr.buffer.operation
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class MinusTest {
     @Test
@@ -16,7 +16,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = 1f, y = x)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 0f, -1f, -2f, -3f, -4f, -5f, -6f, -7f, -8f, -9f, -10f),
             actual = actual,
         )
@@ -28,7 +28,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = y, y = 1f)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(-1f, 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f),
             actual = actual,
         )
@@ -41,7 +41,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f),
             actual = actual,
         )
@@ -54,7 +54,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y, yi = 3, yj = 4, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, -1f, -2f, -3f, -3f, -4f, -5f, -6f, -6f, -7f, -8f, -9f),
             actual = actual,
         )
@@ -67,7 +67,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y, yi = 3, yj = 4, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, -4f, -4f, -4f, -4f, -8f, -8f, -8f, -8f),
             actual = actual,
         )
@@ -80,7 +80,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, -1f, -2f, -3f, -4f, -5f, -5f, -6f, -7f, -8f, -9f, -10f),
             actual = actual,
         )
@@ -93,7 +93,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, -1f, -2f, -2f, -3f, -4f, -6f, -7f, -8f, -8f, -9f, -10f),
             actual = actual,
         )
@@ -106,7 +106,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, y = y, yi = 2, yj = 2, yk = 3, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, -3f, -3f, -3f, -6f, -6f, -6f, -9f, -9f, -9f),
             actual = actual,
         )
@@ -119,7 +119,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 3, xj = 4, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 3f, 3f, 4f, 5f, 6f, 6f, 7f, 8f, 9f),
             actual = actual,
         )
@@ -132,7 +132,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 3, xj = 4, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 4f, 4f, 4f, 4f, 8f, 8f, 8f, 8f),
             actual = actual,
         )
@@ -145,7 +145,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 3, yk = 2, axis1 = 0, axis2 = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, -1f, -1f, -2f, -2f, -3f, -3f, -4f, -4f, -5f, -5f, -6f),
             actual = actual,
         )
@@ -158,7 +158,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 2, yk = 3, axis1 = 0, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, -3f, -3f, -3f, -3f, -3f, -3f, -6f, -6f, -6f),
             actual = actual,
         )
@@ -171,7 +171,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 3, y = y, yi = 2, yj = 2, yk = 3, axis1 = 1, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 0f, 0f, -6f, -6f, -6f, -6f, -6f, -6f),
             actual = actual,
         )
@@ -184,7 +184,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 3f, 4f, 5f, 5f, 6f, 7f, 8f, 9f, 10f),
             actual = actual,
         )
@@ -197,7 +197,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 2f, 3f, 4f, 6f, 7f, 8f, 8f, 9f, 10f),
             actual = actual,
         )
@@ -210,7 +210,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 3, y = y, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 3f, 3f, 3f, 6f, 6f, 6f, 9f, 9f, 9f),
             actual = actual,
         )
@@ -223,7 +223,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 3, xk = 2, y = y, yi = 2, yj = 3, axis1 = 0, axis2 = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f),
             actual = actual,
         )
@@ -236,7 +236,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 3, y = y, yi = 2, yj = 3, axis1 = 0, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 3f, 3f, 3f, 3f, 3f, 3f, 6f, 6f, 6f),
             actual = actual,
         )
@@ -249,7 +249,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 3, y = y, yi = 2, yj = 3, axis1 = 1, axis2 = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 0f, 0f, 6f, 6f, 6f, 6f, 6f, 6f),
             actual = actual,
         )
@@ -266,7 +266,7 @@ class MinusTest {
             axis1 = 0, axis2 = 1, axis3 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, -1f, -1f, -2f, -2f, -3f, -3f, -4f, -4f, -5f, -5f, -6f, -6f, -7f, -7f, -8f),
             actual = actual,
         )
@@ -283,7 +283,7 @@ class MinusTest {
             axis1 = 0, axis2 = 1, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, -2f, -2f, -2f, -2f, -4f, -4f, -4f, -4f, -6f, -6f, -6f, -6f, -8f, -8f),
             actual = actual,
         )
@@ -300,7 +300,7 @@ class MinusTest {
             axis1 = 0, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, -4f, -4f, -4f, -4f, -4f, -4f, -4f, -4f, -8f, -8f, -8f, -8f),
             actual = actual,
         )
@@ -317,7 +317,7 @@ class MinusTest {
             axis1 = 1, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, -8f, -8f, -8f, -8f, -8f, -8f, -8f, -8f),
             actual = actual,
         )
@@ -330,7 +330,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 0)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 7f, 8f, 9f, 10f, 11f, 12f, 13f, 14f),
             actual = actual,
         )
@@ -343,7 +343,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 1)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 3f, 3f, 4f, 5f, 6f, 8f, 9f, 10f, 11f, 11f, 12f, 13f, 14f),
             actual = actual,
         )
@@ -356,7 +356,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 1f, 2f, 4f, 5f, 5f, 6f, 8f, 9f, 9f, 10f, 12f, 13f, 13f, 14f),
             actual = actual,
         )
@@ -369,7 +369,7 @@ class MinusTest {
 
         val actual = Backend.minus(x = x, xi = 2, xj = 2, xk = 2, xl = 2, y = y, axis = 3)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 2f, 2f, 4f, 4f, 6f, 6f, 8f, 8f, 10f, 10f, 12f, 12f, 14f, 14f),
             actual = actual,
         )
@@ -386,7 +386,7 @@ class MinusTest {
             axis1 = 0, axis2 = 1,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 2f, 3f, 3f, 4f, 5f, 6f, 6f, 7f, 8f, 9f, 9f, 10f, 11f, 12f),
             actual = actual,
         )
@@ -403,7 +403,7 @@ class MinusTest {
             axis1 = 0, axis2 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 1f, 2f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f, 10f, 11f, 11f, 12f),
             actual = actual,
         )
@@ -420,7 +420,7 @@ class MinusTest {
             axis1 = 0, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 2f, 2f, 4f, 4f, 6f, 6f, 6f, 6f, 8f, 8f, 10f, 10f, 12f, 12f),
             actual = actual,
         )
@@ -437,7 +437,7 @@ class MinusTest {
             axis1 = 1, axis2 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 8f, 9f, 9f, 10f, 10f, 11f, 11f, 12f),
             actual = actual,
         )
@@ -454,7 +454,7 @@ class MinusTest {
             axis1 = 1, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 2f, 2f, 2f, 2f, 4f, 4f, 8f, 8f, 10f, 10f, 10f, 10f, 12f, 12f),
             actual = actual,
         )
@@ -471,7 +471,7 @@ class MinusTest {
             axis1 = 2, axis2 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 4f, 4f, 4f, 4f, 8f, 8f, 8f, 8f, 12f, 12f, 12f, 12f),
             actual = actual,
         )
@@ -488,7 +488,7 @@ class MinusTest {
             axis1 = 0, axis2 = 1, axis3 = 2,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 1f, 1f, 2f, 2f, 3f, 3f, 4f, 4f, 5f, 5f, 6f, 6f, 7f, 7f, 8f),
             actual = actual,
         )
@@ -505,7 +505,7 @@ class MinusTest {
             axis1 = 0, axis2 = 1, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 2f, 2f, 2f, 2f, 4f, 4f, 4f, 4f, 6f, 6f, 6f, 6f, 8f, 8f),
             actual = actual,
         )
@@ -522,7 +522,7 @@ class MinusTest {
             axis1 = 1, axis2 = 2, axis3 = 3,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f),
             actual = actual,
         )

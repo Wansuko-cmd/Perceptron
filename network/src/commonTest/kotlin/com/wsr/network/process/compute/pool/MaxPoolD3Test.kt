@@ -10,10 +10,10 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class MaxPoolD3Test {
     val target get() = MaxPoolD3(poolSize = 2, channel = 2, inputX = 2, inputY = 4)
@@ -45,21 +45,21 @@ class MaxPoolD3Test {
     fun `expect=指定区間内での最大値を取得`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(2f, 4f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0.3f, 1f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(2f, 4f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0.3f, 1f), actual = actual[0][1][0])
 
-        assertEquals(expected = IOType.d1(6f, 8f), actual = actual[1][0][0])
-        assertEquals(expected = IOType.d1(1f, 1f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(6f, 8f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(1f, 1f), actual = actual[1][1][0])
     }
 
     @Test
     fun `train=勾配を伝播`() = networkTestRule {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
-        assertEquals(expected = IOType.d1(0f, 0f, 0f, 0f), actual = actual[0][0][0])
-        assertEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 0f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[0][1][0])
 
-        assertEquals(expected = IOType.d1(0f, 0f, 8f, 0f), actual = actual[1][0][0])
-        assertEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 8f, 0f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[1][1][0])
     }
 }

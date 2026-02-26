@@ -1,6 +1,6 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr
+package com.wsr.access
 
 import com.wsr.core.IOType
 import com.wsr.core.d1

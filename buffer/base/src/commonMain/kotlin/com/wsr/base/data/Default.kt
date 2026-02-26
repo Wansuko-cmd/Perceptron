@@ -3,7 +3,7 @@ package com.wsr.base.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Default(private val value: FloatArray) : DataBuffer {
+class Default(private val value: FloatArray) : DataBuffer {
     constructor(size: Int) : this(value = FloatArray(size))
 
     override val size = value.size
@@ -24,21 +24,12 @@ data class Default(private val value: FloatArray) : DataBuffer {
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DataBuffer) return false
+    override fun contentEquals(other: DataBuffer): Boolean {
         if (size != other.size) return false
         return when (other) {
             is Default -> value.contentEquals(other.value)
             else -> value.contentEquals(other.toFloatArray())
         }
-    }
-
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + value.contentHashCode()
-        result = 31 * result + indices.hashCode()
-        return result
     }
 
     companion object {

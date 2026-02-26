@@ -6,9 +6,10 @@ import com.wsr.batch.batchOf
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class WordD1Test {
     private val words = listOf("<PAD>", "<UNK>", "hello", "world")
@@ -21,15 +22,15 @@ class WordD1Test {
 
         val actual = target.encode(input)
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, 0f, 1f, 0f),
             actual = actual[0],
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, 0f, 0f, 1f),
             actual = actual[1],
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0f, 1f, 0f, 0f),
             actual = actual[2],
         )
@@ -46,6 +47,6 @@ class WordD1Test {
 
         val actual = target.decode(input)
 
-        assertEquals(expected = listOf("hello", "world", "<UNK>"), actual = actual)
+        assertContentEquals(expected = listOf("hello", "world", "<UNK>"), actual = actual)
     }
 }

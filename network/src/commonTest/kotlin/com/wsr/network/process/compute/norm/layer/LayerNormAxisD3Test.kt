@@ -11,7 +11,7 @@ import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.norm.layer.d3.LayerNormAxisD3
@@ -49,43 +49,43 @@ class LayerNormAxisD3Test {
     fun `Axis0_expect=axis0で層正規化`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.9999f, 0.9999f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.9999f, 0.9999f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -0.9999f, -0.9999f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -0.9999f, -0.9999f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.9999f, 0.9999f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.9999f, 1.0000f, 1.0000f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -0.9999f, -0.9999f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.9999f, -1.0000f, -1.0000f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
@@ -100,43 +100,43 @@ class LayerNormAxisD3Test {
             calcDelta = { 1e6f * it as Batch<IOType.D2> },
         ) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 8.1250f, 8.1250f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 1.5000f, 0.2500f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -8.1250f, -8.1250f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -1.6250f, -0.3125f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 8.1250f, 0.0312f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0312f, 0.0156f, 0.0000f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -8.1250f, -0.0312f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.0312f, -0.0156f, 0.0000f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
@@ -147,43 +147,43 @@ class LayerNormAxisD3Test {
     fun `Axis1_expect=axis1で層正規化`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -0.9999f, -0.9999f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.9999f, 0.9999f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -0.9999f, 0.9999f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 0.9999f, -0.9999f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.9999f, -0.9999f, 0.9999f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.9999f, 0.9999f, -0.9999f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.9999f, 0.9999f, 0.9999f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.9999f, -1.0000f, -1.0000f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
@@ -198,43 +198,43 @@ class LayerNormAxisD3Test {
             calcDelta = { it },
         ) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -8.1062e-6f, -9.5367e-7f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-6f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 8.1062e-6f, 9.5367e-7f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-6f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, -2.9659e-4f, 1.2540e-4f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(0.0000f, 2.9659e-4f, -1.2540E-4f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.1920e-7f, -1.1920e-7f, 8.1062e-6f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-6f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(1.1920e-7f, 1.1920e-7f, -8.1062e-6f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-7f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(9.5367e-7f, 1.7881e-7f, 1.1920e-7f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-7f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-9.5367e-7f, -1.7881e-7f, -1.1920e-7f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-7f,
@@ -245,43 +245,43 @@ class LayerNormAxisD3Test {
     fun `Axis2_expect=axis2で層正規化`() = networkTestRule {
         val actual = target2._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.2247f, 0.0000f, 1.2247f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.2247f, 0.0000f, 1.2247f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.7071f, -0.7071f, 1.4142f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.2247f, 0.0000f, 1.2247f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.9805f, -0.3922f, 1.3728f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.2247f, 0.0000f, 1.2247f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-1.2247f, 1.2247f, 0.0000f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(1.1111f, 0.2020f, -1.3131f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,
@@ -296,43 +296,43 @@ class LayerNormAxisD3Test {
             calcDelta = { 1e6f * it as Batch<IOType.D2> },
         ) as Batch<IOType.D3>
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-2.2500f, 0.0000f, 2.2500f),
             actual = actual[0][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.1875f, 0.0000f, 0.1875f),
             actual = actual[0][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-6.6250f, -6.6250f, 13.2500f),
             actual = actual[0][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-82.5000f, 0.0000f, 82.5000f),
             actual = actual[0][1][1],
             absoluteTolerance = 1e-4f,
         )
 
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-0.0312f, -0.0156f, 0.0000f),
             actual = actual[1][0][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-2.2500f, 0.0000f, 2.2500f),
             actual = actual[1][0][1],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(-17.7500f, 17.7500f, 0.0000f),
             actual = actual[1][1][0],
             absoluteTolerance = 1e-4f,
         )
-        assertEquals(
+        assertContentEquals(
             expected = IOType.d1(6.8750f, 1.3125f, -8.2500f),
             actual = actual[1][1][1],
             absoluteTolerance = 1e-4f,

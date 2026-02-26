@@ -4,7 +4,7 @@ package com.wsr.buffer.collection
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
-import com.wsr.buffer.assertEquals
+import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -25,7 +25,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x, xi = 4, xj = 6, axis = 0)
 
-        assertEquals(expected = DataBuffer.create(18f, 19f, 20f, 21f, 22f, 23f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(18f, 19f, 20f, 21f, 22f, 23f), actual = actual)
     }
 
     @Test
@@ -34,7 +34,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x, xi = 4, xj = 6, axis = 1)
 
-        assertEquals(expected = DataBuffer.create(5f, 11f, 17f, 23f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(5f, 11f, 17f, 23f), actual = actual)
     }
 
     @Test
@@ -43,7 +43,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x, xi = 4, xj = 3, xk = 2, axis = 0)
 
-        assertEquals(expected = DataBuffer.create(18f, 19f, 20f, 21f, 22f, 23f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(18f, 19f, 20f, 21f, 22f, 23f), actual = actual)
     }
 
     @Test
@@ -52,7 +52,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x, xi = 4, xj = 3, xk = 2, axis = 1)
 
-        assertEquals(expected = DataBuffer.create(4f, 5f, 10f, 11f, 16f, 17f, 22f, 23f), actual = actual)
+        assertContentEquals(expected = DataBuffer.create(4f, 5f, 10f, 11f, 16f, 17f, 22f, 23f), actual = actual)
     }
 
     @Test
@@ -61,7 +61,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x, xi = 4, xj = 3, xk = 2, axis = 2)
 
-        assertEquals(
+        assertContentEquals(
             expected = DataBuffer.create(1f, 3f, 5f, 7f, 9f, 11f, 13f, 15f, 17f, 19f, 21f, 23f),
             actual = actual,
         )

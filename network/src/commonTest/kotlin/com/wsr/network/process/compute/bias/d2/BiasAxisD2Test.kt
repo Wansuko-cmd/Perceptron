@@ -9,13 +9,13 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
-import com.wsr.network.assertEquals
+import com.wsr.network.assertContentEquals
 import com.wsr.network.networkTestRule
 import com.wsr.network.optimizer.Scheduler
 import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 
 class BiasAxisD2Test {
     val target0
@@ -52,20 +52,20 @@ class BiasAxisD2Test {
     fun `Axis0_expect=axis0で共通のバイアス項`() = networkTestRule {
         val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(1f, 4f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(1f, 0f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(1f, 4f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(1f, 0f), actual = actual[1][1])
     }
 
     @Test
     fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkTestRule {
         val actual = target0._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(1f, 4f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(1f, 0f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(1f, 4f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(1f, 0f), actual = actual[1][1])
     }
 
     @Test
@@ -75,30 +75,30 @@ class BiasAxisD2Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0.97f, 3.97f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0.97f, -0.0299f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0.97f, 3.97f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -2f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0.97f, -0.0299f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 
     @Test
     fun `Axis1_expect=axis1で共通のバイアス項`() = networkTestRule {
         val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0f, 4f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0f, 4f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][1])
     }
 
     @Test
     fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkTestRule {
         val actual = target1._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0f, 4f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -1f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0f, 0f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0f, 4f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -1f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][1])
     }
 
     @Test
@@ -108,9 +108,9 @@ class BiasAxisD2Test {
         target._train(input = input, context = Context(input), calcDelta = { it })
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
 
-        assertEquals(expected = IOType.d1(0f, 2.97f), actual = actual[0][0])
-        assertEquals(expected = IOType.d1(0f, 3.97f), actual = actual[0][1])
-        assertEquals(expected = IOType.d1(0f, -1.03f), actual = actual[1][0])
-        assertEquals(expected = IOType.d1(0f, -0.0299f), actual = actual[1][1], absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = IOType.d1(0f, 2.97f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(0f, 3.97f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(0f, -1.03f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, -0.0299f), actual = actual[1][1], absoluteTolerance = 1e-4f)
     }
 }
