@@ -3,7 +3,6 @@
 package com.wsr.gpu
 
 import com.wsr.base.data.DataBuffer
-import com.wsr.base.data.Default
 import com.wsr.base.data.IDataBufferGenerator
 import java.lang.ref.Cleaner
 import kotlin.concurrent.atomics.AtomicInt
@@ -45,26 +44,39 @@ data class GPUJvmBuffer(
     }
 
     override fun slice(indices: IntRange): DataBuffer {
-        val slice = toFloatArray().sliceArray(indices)
-        return Default.generator.create(slice)
+        val ptr = ptr
+        val context = context
+        val native = native
+        return GPUJvmBuffer(
+            size = indices.last - indices.first,
+            ptr = native.slice(ptr, indices.first, indices.last, context),
+            context = context,
+            native = native,
+        )
     }
 
     override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
-        val value = toFloatArray()
-        for (i in indices) destination[i + destinationOffset] = value[i]
+        when (destination) {
+            is GPUJvmBuffer -> {
+                native.copyInto(ptr, destination.ptr, destinationOffset, context)
+            }
+            else -> {
+                val value = toFloatArray()
+                for (i in indices) destination[i + destinationOffset] = value[i]
+            }
+        }
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is DataBuffer) return false
-        return size == other.size && toFloatArray().contentEquals(other.toFloatArray())
+        return when (other) {
+            is GPUJvmBuffer -> native.equals(ptr, other.ptr, context)
+            is DataBuffer -> size == other.size && toFloatArray().contentEquals(other.toFloatArray())
+            else -> false
+        }
     }
 
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + this.toFloatArray().contentHashCode()
-        return result
-    }
+    override fun hashCode(): Int = native.hashCode(ptr, context)
 
     override fun toString(): String = toFloatArray().joinToString()
 
