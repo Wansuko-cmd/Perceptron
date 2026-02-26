@@ -64,22 +64,14 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         }
     }
 
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + buffer[0].hashCode()
-        return result
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
+    override fun contentEquals(other: DataBuffer): Boolean {
+        if (size != other.size) return false
         return when (other) {
             is CPUNativeBuffer -> {
-                if (size != other.size) return false
                 val byteSize = (size * Float.SIZE_BYTES).toULong()
                 memcmp(buffer, other.buffer, byteSize) == 0
             }
-            is DataBuffer -> size == other.size && this.toFloatArray().contentEquals(other.toFloatArray())
-            else -> false
+            else -> this.toFloatArray().contentEquals(other.toFloatArray())
         }
     }
 

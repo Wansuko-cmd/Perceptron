@@ -11,7 +11,7 @@ internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
     else -> CPUJvmBuffer.create(this.toFloatArray())
 }
 
-data class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
+class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
     private val floatBuffer = byteBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
     override val size = floatBuffer.capacity()
     override fun toFloatArray(): FloatArray {
@@ -49,22 +49,15 @@ data class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
+    override fun contentEquals(other: DataBuffer): Boolean {
+        if (size != other.size) return false
         return when (other) {
-            is CPUJvmBuffer -> size == other.size && byteBuffer == other.byteBuffer
-            is DataBuffer -> size == other.size && this.toFloatArray().contentEquals(other.toFloatArray())
-            else -> false
+            is CPUJvmBuffer -> byteBuffer == other.byteBuffer
+            else -> this.toFloatArray().contentEquals(other.toFloatArray())
         }
     }
 
     override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
-
-    override fun hashCode(): Int {
-        var result = size
-        result = 31 * result + this.toFloatArray().contentHashCode()
-        return result
-    }
 
     companion object Companion {
         fun create(size: Int): CPUJvmBuffer {

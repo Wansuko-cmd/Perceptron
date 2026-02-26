@@ -17,7 +17,7 @@ internal fun DataBuffer.toGPUBuffer(context: Long, native: JBuffer): GPUJvmBuffe
     else -> GPUJvmBuffer.create(this.toFloatArray(), context, native)
 }
 
-data class GPUJvmBuffer(
+class GPUJvmBuffer(
     override val size: Int,
     internal val ptr: Long,
     private val context: Long,
@@ -67,18 +67,15 @@ data class GPUJvmBuffer(
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
+    override fun contentEquals(other: DataBuffer): Boolean {
+        if (size != other.size) return false
         return when (other) {
             is GPUJvmBuffer -> native.contentEquals(ptr, other.ptr, context)
-            is DataBuffer -> size == other.size && toFloatArray().contentEquals(other.toFloatArray())
-            else -> false
+            else -> toFloatArray().contentEquals(other.toFloatArray())
         }
     }
 
-    override fun hashCode(): Int = toFloatArray().contentHashCode()
-
-    override fun toString(): String = toFloatArray().joinToString()
+    override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
 
     companion object {
         private val cleaner = Cleaner.create()
