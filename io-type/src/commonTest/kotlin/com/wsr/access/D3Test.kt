@@ -1,7 +1,8 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr
+package com.wsr.access
 
+import com.wsr.assertContentEquals
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
@@ -28,17 +29,23 @@ class D3Test {
     @Test
     fun `D3のget_ij=各D1取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
-        assertEquals(expected = IOType.d1(value = listOf(0.0f, 4.0f)), actual = d3[0, 0])
-        assertEquals(expected = IOType.d1(value = listOf(2.0f, 6.0f)), actual = d3[0, 1])
-        assertEquals(expected = IOType.d1(value = listOf(1.0f, 5.0f)), actual = d3[1, 0])
-        assertEquals(expected = IOType.d1(value = listOf(3.0f, 7.0f)), actual = d3[1, 1])
+        assertContentEquals(expected = IOType.d1(value = listOf(0.0f, 4.0f)), actual = d3[0, 0])
+        assertContentEquals(expected = IOType.d1(value = listOf(2.0f, 6.0f)), actual = d3[0, 1])
+        assertContentEquals(expected = IOType.d1(value = listOf(1.0f, 5.0f)), actual = d3[1, 0])
+        assertContentEquals(expected = IOType.d1(value = listOf(3.0f, 7.0f)), actual = d3[1, 1])
     }
 
     @Test
     fun `D3のget_i=各D2取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
-        assertEquals(expected = IOType.d2(shape = listOf(2, 2), value = listOf(0.0f, 4.0f, 2.0f, 6.0f)), actual = d3[0])
-        assertEquals(expected = IOType.d2(shape = listOf(2, 2), value = listOf(1.0f, 5.0f, 3.0f, 7.0f)), actual = d3[1])
+        assertContentEquals(
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(0.0f, 4.0f, 2.0f, 6.0f)),
+            actual = d3[0]
+        )
+        assertContentEquals(
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(1.0f, 5.0f, 3.0f, 7.0f)),
+            actual = d3[1]
+        )
     }
 
     @Test

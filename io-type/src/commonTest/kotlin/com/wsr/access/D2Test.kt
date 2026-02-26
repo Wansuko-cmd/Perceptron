@@ -1,7 +1,8 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr
+package com.wsr.access
 
+import com.wsr.assertContentEquals
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
@@ -23,8 +24,8 @@ class D2Test {
     @Test
     fun `D2のget_i=各D1取得`() {
         val d2 = IOType.d2(listOf(2, 2)) { x, y -> x + y * 2.0f }
-        assertEquals(expected = IOType.d1(value = listOf(0.0f, 2.0f)), actual = d2[0])
-        assertEquals(expected = IOType.d1(value = listOf(1.0f, 3.0f)), actual = d2[1])
+        assertContentEquals(expected = IOType.d1(value = listOf(0.0f, 2.0f)), actual = d2[0])
+        assertContentEquals(expected = IOType.d1(value = listOf(1.0f, 3.0f)), actual = d2[1])
     }
 
     @Test
