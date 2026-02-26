@@ -3,6 +3,7 @@
 package com.wsr.buffer.buffer
 
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
@@ -10,7 +11,7 @@ import kotlin.test.assertEquals
 
 class SliceTest {
     @Test
-    fun `指定範囲の切り取り`() = bufferTestRule {
+    fun `slice=指定範囲の切り取り`() = bufferTestRule {
         val input = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
         val actual = input.slice(5 until 15)

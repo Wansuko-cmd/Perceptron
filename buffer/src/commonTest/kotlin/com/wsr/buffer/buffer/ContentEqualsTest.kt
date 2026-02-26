@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 class ContentEqualsTest {
     @Test
-    fun `要素数と中身が同じ=true`() = bufferTestRule {
+    fun `contentEquals=要素数と中身が同じならtrue`() = bufferTestRule {
         val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
         val other = DataBuffer.create(FloatArray(10) { it.toFloat() })
 
@@ -21,7 +21,7 @@ class ContentEqualsTest {
     }
 
     @Test
-    fun `要素数が違う=false`() = bufferTestRule {
+    fun `contentEquals=要素数が違うならfalse`() = bufferTestRule {
         val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
         val other = DataBuffer.create(FloatArray(9) { it.toFloat() })
 
@@ -31,7 +31,7 @@ class ContentEqualsTest {
     }
 
     @Test
-    fun `要素数が同じで中身が違う=false`() = bufferTestRule {
+    fun `contentEquals=中身が違うならfalse`() = bufferTestRule {
         val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
         val other = DataBuffer.create(FloatArray(10) { it.toFloat() + 1 })
 

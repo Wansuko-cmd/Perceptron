@@ -4,10 +4,10 @@ package com.wsr.buffer.transpose
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class TransposeD3Test {
     val input = DataBuffer.create(FloatArray(24) { it.toFloat() })

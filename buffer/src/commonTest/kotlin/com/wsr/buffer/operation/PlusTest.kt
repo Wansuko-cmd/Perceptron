@@ -4,10 +4,10 @@ package com.wsr.buffer.operation
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.buffer.assertEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class PlusTest {
     @Test
