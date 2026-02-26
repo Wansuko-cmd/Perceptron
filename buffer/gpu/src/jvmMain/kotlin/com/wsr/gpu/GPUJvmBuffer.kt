@@ -17,6 +17,9 @@ data class GPUJvmBuffer(
     private val native: JBuffer,
 ) : DataBuffer {
     init {
+        val ptr = ptr
+        val context = context
+        val native = native
         cleaner.register(this) { native.release(ptr, context) }
     }
 
