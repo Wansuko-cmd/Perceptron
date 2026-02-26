@@ -12,7 +12,5 @@ public class JBuffer {
 
     public native void copyInto(long ptr, long dest, int destinationOffset, long context);
 
-    public native boolean equals(long ptr, long other, long context);
-
-    public native int hashCode(long ptr, long context);
+    public native boolean contentEquals(long ptr, long other, long context);
 }

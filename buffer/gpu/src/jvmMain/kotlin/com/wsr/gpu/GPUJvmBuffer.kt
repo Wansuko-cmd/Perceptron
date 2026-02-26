@@ -70,13 +70,13 @@ data class GPUJvmBuffer(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         return when (other) {
-            is GPUJvmBuffer -> native.equals(ptr, other.ptr, context)
+            is GPUJvmBuffer -> native.contentEquals(ptr, other.ptr, context)
             is DataBuffer -> size == other.size && toFloatArray().contentEquals(other.toFloatArray())
             else -> false
         }
     }
 
-    override fun hashCode(): Int = native.hashCode(ptr, context)
+    override fun hashCode(): Int = toFloatArray().contentHashCode()
 
     override fun toString(): String = toFloatArray().joinToString()
 

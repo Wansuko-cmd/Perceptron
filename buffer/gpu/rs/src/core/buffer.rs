@@ -67,6 +67,52 @@ impl GPUBuffer {
         context.queue.write_buffer(&self.buffer, offset, bytemuck::bytes_of(&value));
     }
 
+    pub fn slice(&self, start: usize, end: usize, context: &Context) -> GPUBuffer {
+        let size = ((end - start) * std::mem::size_of::<f32>()) as u64;
+        let offset = (start * std::mem::size_of::<f32>()) as u64;
+
+        let new_buffer = context.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("GPUBuffer::slice"),
+            size: size,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("GPUBuffer::slice"),
+        });
+
+        encoder.copy_buffer_to_buffer(&self.buffer, offset, &new_buffer, 0, size);
+        context.queue.submit(std::iter::once(encoder.finish()));
+
+        GPUBuffer { buffer: new_buffer }
+    }
+
+    pub fn copy_into(&self, dest: &GPUBuffer, dest_offset: usize, context: &Context) {
+        let size = self.buffer.size();
+        let offset = (dest_offset * std::mem::size_of::<f32>()) as u64;
+
+        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("GPUBuffer::copy_into"),
+        });
+
+        encoder.copy_buffer_to_buffer(&self.buffer, 0, &dest.buffer, offset, size);
+        context.queue.submit(std::iter::once(encoder.finish()));
+    }
+
+    pub fn content_equals(&self, other: &GPUBuffer, context: &Context) -> bool {
+        if self.buffer == other.buffer { return true; }
+        if self.buffer.size() != other.buffer.size() { return false; }
+
+        let mut self_data = vec![0.0f32; self.count()];
+        let mut other_data = vec![0.0f32; other.count()];
+        
+        self.read_all(&mut self_data, context);
+        other.read_all(&mut other_data, context);
+
+        return self_data == other_data;
+    }
+
     pub fn count(self: &Self) -> usize {
         let byte_size = self.buffer.size() as usize;
         byte_size / std::mem::size_of::<f32>()
