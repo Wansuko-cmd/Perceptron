@@ -1,9 +1,17 @@
+@file:OptIn(ExperimentalAtomicApi::class)
+
 package com.wsr.gpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.Default
 import com.wsr.base.data.IDataBufferGenerator
 import java.lang.ref.Cleaner
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.minusAssign
+
+private val allocateSize = AtomicInt(0)
+private const val MAX_ALLOCATE_SIZE = 1_500_000_000
 
 internal fun DataBuffer.toGPUBuffer(context: Long, native: JBuffer): GPUJvmBuffer = when (this) {
     is GPUJvmBuffer -> this
@@ -17,10 +25,15 @@ data class GPUJvmBuffer(
     private val native: JBuffer,
 ) : DataBuffer {
     init {
+        val size = size
         val ptr = ptr
         val context = context
         val native = native
-        cleaner.register(this) { native.release(ptr, context) }
+        if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
+        cleaner.register(this) {
+            native.release(ptr, context)
+            allocateSize.minusAssign(size)
+        }
     }
 
     override fun toFloatArray(): FloatArray = native.readAll(ptr, context)
