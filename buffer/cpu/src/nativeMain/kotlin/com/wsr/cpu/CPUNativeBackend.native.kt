@@ -1158,7 +1158,10 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun average(x: DataBuffer): Float = com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, size = x.size)
+    override fun average(x: DataBuffer): DataBuffer {
+        val result = com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, size = x.size)
+        return CPUNativeBuffer.create(floatArrayOf(result))
+    }
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
         val result = CPUNativeBuffer.create(
@@ -1190,7 +1193,10 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun max(x: DataBuffer): Float = com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size)
+    override fun max(x: DataBuffer): DataBuffer {
+        val result = com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size)
+        return CPUNativeBuffer.create(floatArrayOf(result))
+    }
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
         val result = CPUNativeBuffer.create(
@@ -1215,7 +1221,10 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun min(x: DataBuffer): Float = com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, size = x.size)
+    override fun min(x: DataBuffer): DataBuffer {
+        val result = com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, size = x.size)
+        return CPUNativeBuffer.create(floatArrayOf(result))
+    }
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
         val result = CPUNativeBuffer.create(
@@ -1240,7 +1249,10 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun sum(x: DataBuffer): Float = com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size)
+    override fun sum(x: DataBuffer): DataBuffer {
+        val result = com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size)
+        return CPUNativeBuffer.create(floatArrayOf(result))
+    }
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
         val result = CPUNativeBuffer.create(
