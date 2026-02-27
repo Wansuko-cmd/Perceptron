@@ -16,7 +16,7 @@ class MinTest {
 
         val actual = Backend.min(x = x)
 
-        assertEquals(expected = 0f, actual = actual, absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = DataBuffer.create(0f), actual = actual, absoluteTolerance = 1e-4f)
     }
 
     @Test

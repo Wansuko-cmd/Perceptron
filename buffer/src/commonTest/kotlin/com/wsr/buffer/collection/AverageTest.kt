@@ -8,7 +8,6 @@ import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class AverageTest {
     @Test
@@ -17,7 +16,7 @@ class AverageTest {
 
         val actual = Backend.average(x = x)
 
-        assertEquals(expected = 11.5f, actual = actual, absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = DataBuffer.create(11.5f), actual = actual, absoluteTolerance = 1e-4f)
     }
 
     @Test
