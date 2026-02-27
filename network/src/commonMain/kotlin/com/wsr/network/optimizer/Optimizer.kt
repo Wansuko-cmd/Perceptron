@@ -4,7 +4,9 @@ import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.core.IOType
 import com.wsr.core.collection.sum.sum
+import com.wsr.core.get
 import com.wsr.core.math.pow
+import com.wsr.core.math.sqrt
 import com.wsr.core.operation.times.times
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
@@ -23,7 +25,7 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             if (enableClip) {
-                val norm = sqrt(dw.pow(2).sum())
+                val norm = dw.pow(2).sum().sqrt().get()
                 if (norm > _maxNorm) {
                     val scale = _maxNorm / norm
                     return adapt(weight, dw * scale).also { _step++ }
@@ -47,7 +49,7 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             if (enableClip) {
-                val norm = sqrt(dw.pow(2).sum())
+                val norm = dw.pow(2).sum().sqrt().get()
                 if (norm > _maxNorm) {
                     val scale = _maxNorm / norm
                     return adapt(weight, dw * scale).also { _step++ }
@@ -71,7 +73,7 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             if (enableClip) {
-                val norm = sqrt(dw.pow(2).sum())
+                val norm = dw.pow(2).sum().sqrt().get()
                 if (norm > _maxNorm) {
                     val scale = _maxNorm / norm
                     return adapt(weight, dw * scale).also { _step++ }
@@ -95,7 +97,7 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             if (enableClip) {
-                val norm = sqrt(dw.pow(2).sum())
+                val norm = dw.pow(2).sum().sqrt().get()
                 if (norm > _maxNorm) {
                     val scale = _maxNorm / norm
                     return adapt(weight, dw * scale).also { _step++ }
