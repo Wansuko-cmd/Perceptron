@@ -2,6 +2,10 @@ package com.wsr.core.reshape.reshape
 
 import com.wsr.core.IOType
 
+fun IOType.D1.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
+
+fun IOType.D1.reshapeToD2(shape: List<Int>) = IOType.D2(shape = shape, value = value)
+
 fun IOType.D2.reshapeToD3(i: Int, j: Int, k: Int) = reshapeToD3(shape = listOf(i, j, k))
 
 fun IOType.D2.reshapeToD3(shape: List<Int>) = IOType.D3(shape = shape, value = value)

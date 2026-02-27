@@ -6,6 +6,8 @@ import com.wsr.batch.math.pow
 import com.wsr.batch.operation.minus.minus
 import com.wsr.core.IOType
 import com.wsr.core.collection.average.average
+import com.wsr.core.get
+import com.wsr.core.operation.times.times
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output
@@ -21,7 +23,7 @@ internal class MeanSquareD2 internal constructor(val outputX: Int, val outputY: 
         val loss = delta
             .pow(2)
             .batchAverage().average() * 0.5f
-        return TResult(loss = loss, delta = delta)
+        return TResult(loss = loss.get(), delta = delta)
     }
 }
 

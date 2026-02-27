@@ -1,6 +1,7 @@
 package com.wsr.network.output.softmax
 
 import com.wsr.batch.Batch
+import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.batch.collecction.map.map
 import com.wsr.batch.collecction.sum.sum
 import com.wsr.batch.get
@@ -14,6 +15,7 @@ import com.wsr.core.collection.sum.sum
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
+import com.wsr.core.operation.div.div
 import com.wsr.core.reshape.broadcast.broadcastToD2
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
@@ -46,9 +48,7 @@ internal class SoftmaxWithLossD2 internal constructor(
         val maskedLosses = losses * maskD1
 
         // 有効値のみの平均を取る
-        val loss = List(input.size) { maskedLosses[it].sum() / maskD1[it].sum() }
-            .average()
-            .toFloat()
+        val loss = (maskedLosses.sum() / maskD1.sum()).batchAverage().get()
 
         val delta = (output - label) * mask
         return TResult(loss = loss, delta = delta)

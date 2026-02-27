@@ -401,28 +401,28 @@ object Backend : IBackend {
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = instance.sqrt(x, e)
 
-    override fun average(x: DataBuffer): Float = instance.average(x)
+    override fun average(x: DataBuffer): DataBuffer = instance.average(x)
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.average(x, xi, xj, axis)
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.average(x, xi, xj, xk, axis)
 
-    override fun max(x: DataBuffer): Float = instance.max(x)
+    override fun max(x: DataBuffer): DataBuffer = instance.max(x)
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.max(x, xi, xj, axis)
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.max(x, xi, xj, xk, axis)
 
-    override fun min(x: DataBuffer): Float = instance.min(x)
+    override fun min(x: DataBuffer): DataBuffer = instance.min(x)
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.min(x, xi, xj, axis)
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.min(x, xi, xj, xk, axis)
 
-    override fun sum(x: DataBuffer): Float = instance.sum(x)
+    override fun sum(x: DataBuffer): DataBuffer = instance.sum(x)
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.sum(x, xi, xj, axis)
 

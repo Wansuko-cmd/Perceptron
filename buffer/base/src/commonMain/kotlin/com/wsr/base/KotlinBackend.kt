@@ -685,9 +685,9 @@ object KotlinBackend : IBackend {
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = x.map { kotlin.math.sqrt(it + e) }
 
-    override fun average(x: DataBuffer): Float {
+    override fun average(x: DataBuffer): DataBuffer {
         val sum = sum(x = x)
-        return sum / x.size
+        return div(sum, x.size.toFloat())
     }
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -713,7 +713,7 @@ object KotlinBackend : IBackend {
         )
     }
 
-    override fun max(x: DataBuffer): Float = x.reduce { acc, i -> maxOf(acc, i) }
+    override fun max(x: DataBuffer): DataBuffer = x.reduce { acc, i -> maxOf(acc, i) }
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, axis = axis) { acc, i -> maxOf(acc, i) }
@@ -721,7 +721,7 @@ object KotlinBackend : IBackend {
     override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, xk = xk, axis = axis) { acc, i -> maxOf(acc, i) }
 
-    override fun min(x: DataBuffer): Float = x.reduce { acc, i -> minOf(acc, i) }
+    override fun min(x: DataBuffer): DataBuffer = x.reduce { acc, i -> minOf(acc, i) }
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, axis = axis) { acc, i -> minOf(acc, i) }
@@ -729,7 +729,7 @@ object KotlinBackend : IBackend {
     override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, xk = xk, axis = axis) { acc, i -> minOf(acc, i) }
 
-    override fun sum(x: DataBuffer): Float = x.reduce { acc, i -> acc + i }
+    override fun sum(x: DataBuffer): DataBuffer = x.reduce { acc, i -> acc + i }
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, axis = axis) { acc, i -> acc + i }

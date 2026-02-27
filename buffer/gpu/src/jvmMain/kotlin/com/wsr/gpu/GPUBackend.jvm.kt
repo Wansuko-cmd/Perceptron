@@ -1052,10 +1052,10 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun average(x: DataBuffer): Float {
+    override fun average(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
         collection.averageD1(x.toGPUBuffer().ptr, result.ptr, context)
-        return result.toFloatArray()[0]
+        return result
     }
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1081,10 +1081,10 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun max(x: DataBuffer): Float {
+    override fun max(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
         collection.maxD1(x.toGPUBuffer().ptr, result.ptr, context)
-        return result.toFloatArray()[0]
+        return result
     }
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1110,10 +1110,10 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun min(x: DataBuffer): Float {
+    override fun min(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
         collection.minD1(x.toGPUBuffer().ptr, result.ptr, context)
-        return result.toFloatArray()[0]
+        return result
     }
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1139,10 +1139,10 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun sum(x: DataBuffer): Float {
+    override fun sum(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
         collection.sumD1(x.toGPUBuffer().ptr, result.ptr, context)
-        return result.toFloatArray()[0]
+        return result
     }
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {

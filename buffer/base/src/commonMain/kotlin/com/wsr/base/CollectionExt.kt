@@ -706,12 +706,12 @@ internal inline fun DataBuffer.zipWith(
     return result
 }
 
-internal inline fun DataBuffer.reduce(operation: (Float, Float) -> Float): Float {
+internal inline fun DataBuffer.reduce(operation: (Float, Float) -> Float): DataBuffer {
     var acc = this[0]
     for (i in 1 until size) {
         acc = operation(acc, this[i])
     }
-    return acc
+    return Default(floatArrayOf(acc))
 }
 
 internal inline fun DataBuffer.reduce(xi: Int, xj: Int, axis: Int, operation: (Float, Float) -> Float): DataBuffer =

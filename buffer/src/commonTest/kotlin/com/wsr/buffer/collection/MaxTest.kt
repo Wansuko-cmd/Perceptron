@@ -8,7 +8,6 @@ import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 class MaxTest {
     @Test
     fun `1次元内最大値`() = bufferTestRule {
@@ -16,7 +15,7 @@ class MaxTest {
 
         val actual = Backend.max(x = x)
 
-        assertEquals(expected = 23f, actual = actual, absoluteTolerance = 1e-4f)
+        assertContentEquals(expected = DataBuffer.create(23f), actual = actual, absoluteTolerance = 1e-4f)
     }
 
     @Test
