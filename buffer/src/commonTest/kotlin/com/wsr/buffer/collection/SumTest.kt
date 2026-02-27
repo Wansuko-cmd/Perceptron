@@ -8,7 +8,6 @@ import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 class SumTest {
     @Test
     fun `1次元内累積値`() = bufferTestRule {
