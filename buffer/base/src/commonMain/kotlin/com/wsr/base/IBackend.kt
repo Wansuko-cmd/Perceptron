@@ -400,4 +400,14 @@ interface IBackend {
         axisK: Int,
         axisL: Int,
     ): DataBuffer
+
+    fun greaterThan(x: DataBuffer, y: Float): DataBuffer
+    fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer
+
+    fun lessThan(x: DataBuffer, y: Float): DataBuffer
+    fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer
+
+    fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer
+    fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer
+    fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer
 }
