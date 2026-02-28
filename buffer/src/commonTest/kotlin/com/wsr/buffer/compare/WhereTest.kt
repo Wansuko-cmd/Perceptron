@@ -11,7 +11,7 @@ import kotlin.test.Test
 
 class WhereTest {
     @Test
-    fun `Float_where_Buffer=conditionが1の時x,0のときy`() = bufferTestRule {
+    fun `Float_where_Buffer=conditionが1の時x_0のときy`() = bufferTestRule {
         val condition = DataBuffer.create(floatArrayOf(0f, 1f, 0f, 1f, 0f))
         val x = 2f
         val y = DataBuffer.create(FloatArray(5) { 2f * it + 1 })
@@ -25,7 +25,7 @@ class WhereTest {
     }
 
     @Test
-    fun `Buffer_where_Float=conditionが1の時x,0のときy`() = bufferTestRule {
+    fun `Buffer_where_Float=conditionが1の時x_0のときy`() = bufferTestRule {
         val condition = DataBuffer.create(floatArrayOf(0f, 1f, 0f, 1f, 0f))
         val x = DataBuffer.create(FloatArray(5) { 2f * it })
         val y = 3f
@@ -39,7 +39,7 @@ class WhereTest {
     }
 
     @Test
-    fun `Buffer_where_Buffer=conditionが1の時x,0のときy`() = bufferTestRule {
+    fun `Buffer_where_Buffer=conditionが1の時x_0のときy`() = bufferTestRule {
         val condition = DataBuffer.create(floatArrayOf(0f, 1f, 0f, 1f, 0f))
         val x = DataBuffer.create(FloatArray(5) { 2f * it })
         val y = DataBuffer.create(FloatArray(5) { 2f * it + 1 })
