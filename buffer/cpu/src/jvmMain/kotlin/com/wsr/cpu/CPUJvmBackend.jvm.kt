@@ -1181,6 +1181,12 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(condition.size)
+        compare.whereD0ToD0(condition.toCPUBuffer().byteBuffer, x, y, result.byteBuffer)
+        return result
+    }
+
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
         compare.whereD0ToD1(condition.toCPUBuffer().byteBuffer, x, y.toCPUBuffer().byteBuffer, result.byteBuffer)

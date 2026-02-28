@@ -61,6 +61,20 @@ pub extern "system" fn Java_com_wsr_cpu_JCompare_lessThanD1ToD1(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JCompare_whereD0ToD0(
+    env: JNIEnv,
+    _class: JClass,
+    condition: JByteBuffer,
+    x: jfloat,
+    y: jfloat,
+    result: JByteBuffer,
+) {
+    let condition = unsafe { condition.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    compare::where_d0_to_d0(condition, x, y, result);
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_cpu_JCompare_whereD0ToD1(
     env: JNIEnv,
     _class: JClass,

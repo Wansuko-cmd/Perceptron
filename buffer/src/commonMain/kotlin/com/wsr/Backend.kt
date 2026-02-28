@@ -460,6 +460,8 @@ object Backend : IBackend {
 
     override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer = instance.lessThan(x, y)
 
+    override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer = instance.where(condition, x, y)
+
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer = instance.where(condition, x, y)
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer = instance.where(condition, x, y)

@@ -11,6 +11,20 @@ import kotlin.test.Test
 
 class WhereTest {
     @Test
+    fun `Float_where_Float=conditionが1の時x_0のときy`() = bufferTestRule {
+        val condition = DataBuffer.create(floatArrayOf(0f, 1f, 0f, 1f, 0f))
+        val x = 2f
+        val y = 3f
+
+        val actual = Backend.where(condition, x, y)
+
+        assertContentEquals(
+            expected = DataBuffer.create(floatArrayOf(3f, 2f, 3f, 2f, 3f)),
+            actual = actual,
+        )
+    }
+
+    @Test
     fun `Float_where_Buffer=conditionが1の時x_0のときy`() = bufferTestRule {
         val condition = DataBuffer.create(floatArrayOf(0f, 1f, 0f, 1f, 0f))
         val x = 2f
