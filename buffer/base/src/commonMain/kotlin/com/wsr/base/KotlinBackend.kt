@@ -878,6 +878,12 @@ object KotlinBackend : IBackend {
         return result
     }
 
+    override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
+        val result = DataBufferGenerator.create(condition.size)
+        for (i in result.indices) result[i] = if (condition[i] > 0f) x else y
+        return result
+    }
+
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
         val result = DataBufferGenerator.create(condition.size)
         for (i in result.indices) result[i] = if (condition[i] > 0f) x else y[i]
