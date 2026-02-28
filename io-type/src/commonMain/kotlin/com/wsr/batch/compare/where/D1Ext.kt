@@ -24,19 +24,31 @@ fun where(condition: Batch<IOType.D1>, onTrue: Batch<IOType.D1>, onFalse: Batch<
 }
 
 @JvmName("batchFloatWhereD1s")
-fun Batch<IOType.D1>.where(condition: Batch<IOType.D1>, onTrue: Float, onFalse: Batch<IOType.D1> = this): Batch<IOType.D1> {
+fun Batch<IOType.D1>.where(
+    condition: Batch<IOType.D1>,
+    onTrue: Float,
+    onFalse: Batch<IOType.D1> = this,
+): Batch<IOType.D1> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD1sWhereFloat")
-fun Batch<IOType.D1>.where(condition: Batch<IOType.D1>, onTrue: Batch<IOType.D1> = this, onFalse: Float): Batch<IOType.D1> {
+fun Batch<IOType.D1>.where(
+    condition: Batch<IOType.D1>,
+    onTrue: Batch<IOType.D1> = this,
+    onFalse: Float,
+): Batch<IOType.D1> {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD1sWhereD1s")
-fun Batch<IOType.D1>.where(condition: Batch<IOType.D1>, onTrue: Batch<IOType.D1> = this, onFalse: Batch<IOType.D1> = this): Batch<IOType.D1> {
+fun Batch<IOType.D1>.where(
+    condition: Batch<IOType.D1>,
+    onTrue: Batch<IOType.D1> = this,
+    onFalse: Batch<IOType.D1> = this,
+): Batch<IOType.D1> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch(size = size, shape = shape, value = result)
 }

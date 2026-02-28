@@ -454,35 +454,18 @@ object Backend : IBackend {
 
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer = instance.greaterThan(x, y)
 
-    override fun greaterThan(
-        x: DataBuffer,
-        y: DataBuffer,
-    ): DataBuffer = instance.greaterThan(x, y)
+    override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer = instance.greaterThan(x, y)
 
     override fun lessThan(x: DataBuffer, y: Float): DataBuffer = instance.lessThan(x, y)
 
-    override fun lessThan(
-        x: DataBuffer,
-        y: DataBuffer,
-    ): DataBuffer = instance.lessThan(x, y)
+    override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer = instance.lessThan(x, y)
 
-    override fun where(
-        condition: DataBuffer,
-        x: Float,
-        y: DataBuffer,
-    ): DataBuffer = instance.where(condition, x, y)
+    override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer = instance.where(condition, x, y)
 
-    override fun where(
-        condition: DataBuffer,
-        x: DataBuffer,
-        y: Float,
-    ): DataBuffer = instance.where(condition, x, y)
+    override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer = instance.where(condition, x, y)
 
-    override fun where(
-        condition: DataBuffer,
-        x: DataBuffer,
-        y: DataBuffer,
-    ): DataBuffer = instance.where(condition, x, y)
+    override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
+        instance.where(condition, x, y)
 }
 
 fun DataBuffer.Companion.create(size: Int) = DataBufferGenerator.create(size)
