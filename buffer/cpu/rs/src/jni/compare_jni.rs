@@ -61,7 +61,7 @@ pub extern "system" fn Java_com_wsr_cpu_JCompare_lessThanD1ToD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCompare_whereThanD0ToD1(
+pub extern "system" fn Java_com_wsr_cpu_JCompare_whereD0ToD1(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,
@@ -76,7 +76,7 @@ pub extern "system" fn Java_com_wsr_cpu_JCompare_whereThanD0ToD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JCompare_whereThanD1ToD0(
+pub extern "system" fn Java_com_wsr_cpu_JCompare_whereD1ToD0(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,
