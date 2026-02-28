@@ -22,7 +22,11 @@ import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_exp_d1
+import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d0
+import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_inner
+import com.wsr.cpu.rs.com_wsr_cpu_less_than_d1_to_d0
+import com.wsr.cpu.rs.com_wsr_cpu_less_than_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_ln_d1
 import com.wsr.cpu.rs.com_wsr_cpu_mat_mul_d1_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_mat_mul_d2_to_d1
@@ -80,6 +84,9 @@ import com.wsr.cpu.rs.com_wsr_cpu_times_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d2
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d4
+import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d1
+import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d0
+import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d1
 import kotlinx.cinterop.ExperimentalForeignApi
 
 actual fun loadCPUBackend(): IBackend? = CPUNativeBackend()
@@ -1320,6 +1327,86 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             axis_j = axisJ,
             axis_k = axisK,
             axis_l = axisL,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_greater_than_d1_to_d0(
+            x = x.toCPUBuffer().buffer,
+            size = x.size,
+            y = y,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_greater_than_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_less_than_d1_to_d0(
+            x = x.toCPUBuffer().buffer,
+            size = x.size,
+            y = y,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_less_than_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
+        val result = CPUNativeBuffer.create(y.size)
+        com_wsr_cpu_where_d0_to_d1(
+            condition = condition.toCPUBuffer().buffer,
+            x = x,
+            y = y.toCPUBuffer().buffer,
+            size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_where_d1_to_d0(
+            condition = condition.toCPUBuffer().buffer,
+            x = x.toCPUBuffer().buffer,
+            y = y,
+            size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_where_d1_to_d1(
+            condition = condition.toCPUBuffer().buffer,
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = result.size,
             result = result.buffer,
         )
         return result
