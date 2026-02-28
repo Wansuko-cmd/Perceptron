@@ -29,6 +29,19 @@ fun where(condition: Batch<IOType.D2>, onTrue: Batch<IOType.D2>, onFalse: Batch<
     return Batch(size = condition.size, shape = condition.shape, value = result)
 }
 
+@JvmName("batchFloatWhereFloat")
+fun Batch<IOType.D2>.where(condition: Batch<IOType.D2>, onTrue: Float, onFalse: Float): Batch<IOType.D2> {
+    val result = Backend.where(condition.value, onTrue, onFalse)
+    return Batch(size = size, shape = shape, value = result)
+}
+
+@JvmName("batchFloatWhereFloatWithLambda")
+inline fun Batch<IOType.D2>.where(
+    onTrue: Float,
+    onFalse: Float,
+    condition: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+): Batch<IOType.D2> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
+
 @JvmName("batchFloatWhereD2s")
 fun Batch<IOType.D2>.where(
     condition: Batch<IOType.D2>,
