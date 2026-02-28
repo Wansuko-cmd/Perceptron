@@ -75,7 +75,7 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         }
     }
 
-    override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
+    override fun toString(): String = toFloatArray().joinToString(prefix = "CPUNativeBuffer[", postfix = "]")
 
     companion object {
         fun create(size: Int) = CPUNativeBuffer(

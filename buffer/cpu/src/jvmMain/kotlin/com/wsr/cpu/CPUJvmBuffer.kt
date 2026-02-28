@@ -57,7 +57,7 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         }
     }
 
-    override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
+    override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
 
     companion object Companion {
         fun create(size: Int): CPUJvmBuffer {
