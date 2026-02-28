@@ -19,7 +19,118 @@ pub fn gt_d1_to_d0(
     context: &Context,
 ) {
     compare_execute(
-        &context.pipeline., label, condition, x, y, params, result, context);
+        &context.pipeline.compare.gt_d1_to_d0,
+        "gt_d1_to_d0",
+        // condition, yは使わない
+        x, x, x,
+        CompareParams { val: y, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn gt_d1_to_d1(
+    x: &GPUBuffer,
+    y: &GPUBuffer,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.gt_d1_to_d1,
+        "gt_d1_to_d1",
+        // conditionは使わない
+        x, x, y,
+        CompareParams { val: 0f32, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn lt_d1_to_d0(
+    x: &GPUBuffer,
+    y: f32,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.lt_d1_to_d0,
+        "lt_d1_to_d0",
+       // condition, yは使わない
+        x, x, x,
+        CompareParams { val: y, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn lt_d1_to_d1(
+    x: &GPUBuffer,
+    y: &GPUBuffer,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.lt_d1_to_d1,
+        "lt_d1_to_d1",
+        // conditionは使わない
+        x, x, y,
+        CompareParams { val: 0f32, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn where_d0_to_d1(
+    condition: &GPUBuffer,
+    x: f32,
+    y: &GPUBuffer,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.where_d0_to_d1,
+        "condition_d0_to_d1",
+        // xは使わない
+        condition, y, y,
+        CompareParams { val: x, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn where_d1_to_d0(
+    condition: &GPUBuffer,
+    x: &GPUBuffer,
+    y: f32,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.where_d1_to_d0,
+        "condition_d1_to_d1",
+       // yは使わない
+        condition, x, x,
+        CompareParams { val: y, _pad: [0; 3], },
+        result,
+        context,
+    );
+}
+
+pub fn where_d1_to_d1(
+    condition: &GPUBuffer,
+    x: &GPUBuffer,
+    y: &GPUBuffer,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.where_d1_to_d1,
+        "condition_d1_to_d1",
+        condition, x, y,
+        CompareParams { val: 0f32, _pad: [0; 3], },
+        result,
+        context,
+    );
 }
 
 fn compare_execute(
