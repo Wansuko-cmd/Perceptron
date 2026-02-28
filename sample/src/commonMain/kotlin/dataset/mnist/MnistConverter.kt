@@ -1,12 +1,11 @@
 package dataset.mnist
 
+import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
-import com.wsr.batch.toBatch
 import com.wsr.batch.toList
 import com.wsr.core.IOType
 import com.wsr.core.collection.index.maxIndex
-import com.wsr.core.d1
-import com.wsr.core.d2
+import com.wsr.create
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.initializer.WeightInitializer
@@ -15,13 +14,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PixelConverter(override val outputX: Int, override val outputY: Int) : Converter.D2<List<Float>>() {
-    override fun encode(input: List<List<Float>>): Batch<IOType.D2> = input
-        .map { IOType.d2(listOf(28, 28), it) }
-        .toBatch()
+    override fun encode(input: List<List<Float>>): Batch<IOType.D2> {
+        val value = input.flatten().toFloatArray()
+        return Batch(
+            size = input.size,
+            shape = listOf(outputX, outputY),
+            value = DataBuffer.create(value),
+        )
+    }
 
-    override fun decode(input: Batch<IOType.D2>): List<List<Float>> = input
+    override fun decode(input: Batch<IOType.D2>): List<List<Float>> = input.value.toFloatArray()
         .toList()
-        .map { it.value.toFloatArray().toList() }
+        .chunked(input.size)
 }
 
 fun NetworkBuilder.Companion.inputPx(x: Int, y: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
@@ -32,9 +36,17 @@ fun NetworkBuilder.Companion.inputPx(x: Int, y: Int, optimizer: Optimizer, initi
 
 @Serializable
 data class LabelConverter(override val outputSize: Int) : Converter.D1<Int>() {
-    override fun encode(input: List<Int>): Batch<IOType.D1> = input
-        .map { input -> IOType.d1(10) { if (input == it) 1f else 0f } }
-        .toBatch()
+    override fun encode(input: List<Int>): Batch<IOType.D1> {
+        val value = FloatArray(input.size * outputSize)
+        repeat(input.size) { batchIndex ->
+            val label = input[batchIndex]
+            value[batchIndex * outputSize + label] = 1f
+        }
+        return Batch(size = input.size, shape = listOf(outputSize), value = DataBuffer.create(value))
+    }
 
-    override fun decode(input: Batch<IOType.D1>): List<Int> = input.toList().map { it.maxIndex() }
+    override fun decode(input: Batch<IOType.D1>): List<Int> {
+        println(input.value.toString())
+        return input.toList().map { it.maxIndex() }
+    }
 }
