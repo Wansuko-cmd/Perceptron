@@ -853,4 +853,46 @@ object KotlinBackend : IBackend {
         }
         return result
     }
+
+    override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        for (i in result.indices) result[i] = if (x[i] > y) 1f else 0f
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        for (i in result.indices) result[i] = if (x[i] > y[i]) 1f else 0f
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        for (i in result.indices) result[i] = if (x[i] < y) 1f else 0f
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        for (i in result.indices) result[i] = if (x[i] < y[i]) 1f else 0f
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
+        val result = DataBufferGenerator.create(condition.size)
+        for (i in result.indices) result[i] = if (condition[i] > 0f) x else y[i]
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
+        val result = DataBufferGenerator.create(condition.size)
+        for (i in result.indices) result[i] = if (condition[i] > 0f) x[i] else y
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = DataBufferGenerator.create(condition.size)
+        for (i in result.indices) result[i] = if (condition[i] > 0f) x[i] else y[i]
+        return result
+    }
 }
