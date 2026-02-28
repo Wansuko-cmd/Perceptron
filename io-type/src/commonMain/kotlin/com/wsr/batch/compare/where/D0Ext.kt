@@ -5,6 +5,12 @@ import com.wsr.batch.Batch
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
+@JvmName("WhereFloatToFloatAsD0")
+fun where(condition: Batch<IOType.D0>, onTrue: Float, onFalse: Float): Batch<IOType.D0> {
+    val result = Backend.where(condition.value, onTrue, onFalse)
+    return Batch(size = condition.size, shape = condition.shape, value = result)
+}
+
 @JvmName("WhereFloatToD0s")
 fun where(condition: Batch<IOType.D0>, onTrue: Float, onFalse: Batch<IOType.D0>): Batch<IOType.D0> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
