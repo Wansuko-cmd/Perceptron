@@ -15,6 +15,7 @@ actual fun loadCPUBackend(): IBackend? {
 
 class CPUJvmBackend : IBackend by KotlinBackend {
     private val collection = JCollection()
+    private val compare = JCompare()
     private val math = JMath()
     private val matMul = JMatMul()
     private val operation = JOperation()
@@ -1153,6 +1154,53 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         transpose.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.greaterThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.greaterThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.lessThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.lessThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(y.size)
+        compare.whereD0ToD1(condition.toCPUBuffer().byteBuffer, x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.whereD1ToD0(condition.toCPUBuffer().byteBuffer, x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.whereD1ToD1(
+            condition.toCPUBuffer().byteBuffer,
+            x.toCPUBuffer().byteBuffer,
+            y.toCPUBuffer().byteBuffer,
+            result.byteBuffer,
+        )
         return result
     }
 }

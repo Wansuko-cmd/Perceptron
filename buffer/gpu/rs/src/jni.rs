@@ -1,6 +1,7 @@
 pub mod buffer_jni;
 pub mod context_jni;
 pub mod collection_jni;
+pub mod compare_jni;
 pub mod math_jni;
 pub mod mat_mul_jni;
 pub mod operation_jni;

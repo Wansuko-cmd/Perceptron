@@ -3,6 +3,7 @@ pub mod context;
 pub mod pipeline;
 
 pub mod collection;
+pub mod compare;
 pub mod math;
 pub mod mat_mul;
 pub mod operation;
