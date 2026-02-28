@@ -1221,6 +1221,12 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(condition.size)
+        compare.whereD0ToD0(condition.toGPUBuffer().ptr, x, y, result.ptr, context)
+        return result
+    }
+
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         compare.whereD0ToD1(condition.toGPUBuffer().ptr, x, y.toGPUBuffer().ptr, result.ptr, context)
