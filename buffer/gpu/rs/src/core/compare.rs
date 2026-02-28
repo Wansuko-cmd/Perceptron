@@ -153,7 +153,7 @@ fn compare_execute(
 
     let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some(label),
-        layout: &context.pipeline.operation.bind_group_layout,
+        layout: &context.pipeline.compare.bind_group_layout,
         entries: &[
             wgpu::BindGroupEntry {
                 binding: 0,

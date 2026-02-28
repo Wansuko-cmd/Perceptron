@@ -25,6 +25,7 @@ class GPUBackend : IBackend by KotlinBackend {
     private val collection = JCollection()
     private val operation = JOperation()
     private val transpose = JTranspose()
+    private val compare = JCompare()
 
     init {
         val ptr = context
@@ -1193,6 +1194,54 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         transpose.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, context)
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.greaterThanD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, context)
+        return result
+    }
+
+    override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.greaterThanD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, context)
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.lessThanD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, context)
+        return result
+    }
+
+    override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.lessThanD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, context)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
+        val result = GPUJvmBuffer.create(y.size)
+        compare.whereD0ToD1(condition.toGPUBuffer().ptr, x, y.toGPUBuffer().ptr, result.ptr, context)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.whereD1ToD0(condition.toGPUBuffer().ptr, x.toGPUBuffer().ptr, y, result.ptr, context)
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.whereD1ToD1(
+            condition.toGPUBuffer().ptr,
+            x.toGPUBuffer().ptr,
+            y.toGPUBuffer().ptr,
+            result.ptr,
+            context,
+        )
         return result
     }
 
