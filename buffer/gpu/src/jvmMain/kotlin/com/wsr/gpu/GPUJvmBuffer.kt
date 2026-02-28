@@ -75,7 +75,7 @@ class GPUJvmBuffer(
         }
     }
 
-    override fun toString(): String = toFloatArray().joinToString(prefix = "[", postfix = "]")
+    override fun toString(): String = toFloatArray().joinToString(prefix = "GPUJvmBuffer[", postfix = "]")
 
     companion object {
         private val cleaner = Cleaner.create()

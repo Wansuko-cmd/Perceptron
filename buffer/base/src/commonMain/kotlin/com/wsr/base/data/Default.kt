@@ -32,6 +32,8 @@ class Default(private val value: FloatArray) : DataBuffer {
         }
     }
 
+    override fun toString(): String = toFloatArray().joinToString(prefix = "Default[", postfix = "]")
+
     companion object {
         val generator = object : IDataBufferGenerator {
             override fun create(size: Int): DataBuffer = Default(size)

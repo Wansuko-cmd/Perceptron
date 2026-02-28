@@ -1,10 +1,11 @@
 package com.wsr.network.process.compute.function.relu
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.map.mapValue
+import com.wsr.batch.compare.greater.gt
+import com.wsr.batch.compare.where.where
 import com.wsr.batch.get
+import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
-import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
@@ -13,23 +14,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LeakyReLUD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+        val mask = input gt 0f
+        return input.where(condition = mask, onFalse = 0.01f)
+    }
 
     override fun train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val output = forward(input)
+        val mask = input gt 0f
+        val output = input.where(condition = mask, onFalse = 0f)
         val delta = calcDelta(output)
-        return Batch(input.size) { i ->
-            IOType.d2(outputX, outputY) { x, y ->
-                if (input[i][x, y] >= 0f) delta[i][x, y] else 0.01f * delta[i][x, y]
-            }
-        }
+        return delta.where(condition = mask, onFalse = 0.01f * delta)
     }
-
-    private fun forward(input: Batch<IOType.D2>): Batch<IOType.D2> = input.mapValue { if (it >= 0f) it else 0.01f }
 }
 
 fun <T> NetworkBuilder.D2<T>.leakyReLU() = addProcess(LeakyReLUD2(outputX = inputX, outputY = inputY))

@@ -1,10 +1,10 @@
 package com.wsr.network.process.compute.function.relu
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.map.mapValue
+import com.wsr.batch.compare.greater.gt
+import com.wsr.batch.compare.where.where
 import com.wsr.batch.get
 import com.wsr.core.IOType
-import com.wsr.core.d1
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
@@ -13,23 +13,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ReLUD1 internal constructor(override val outputSize: Int) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = forward(input)
+    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+        val mask = input gt 0f
+        return input.where(condition = mask, onFalse = 0f)
+    }
 
     override fun train(
         input: Batch<IOType.D1>,
         context: Context,
         calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
-        val output = forward(input)
+        val mask = input gt 0f
+        val output = input.where(condition = mask, onFalse = 0f)
         val delta = calcDelta(output)
-        return Batch(input.size) { i ->
-            IOType.d1(outputSize) {
-                if (input[i][it] >= 0f) delta[i][it] else 0f
-            }
-        }
+        return delta.where(condition = mask, onFalse = 0f)
     }
-
-    private fun forward(input: Batch<IOType.D1>): Batch<IOType.D1> = input.mapValue { if (it >= 0f) it else 0f }
 }
 
 fun <T> NetworkBuilder.D1<T>.reLU() = addProcess(ReLUD1(outputSize = inputSize))

@@ -1,10 +1,10 @@
 package com.wsr.network.process.compute.function.relu
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.map.mapValue
+import com.wsr.batch.compare.greater.gt
+import com.wsr.batch.compare.where.where
 import com.wsr.batch.get
 import com.wsr.core.IOType
-import com.wsr.core.d3
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
@@ -14,25 +14,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ReLUD3 internal constructor(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
     Compute.D3() {
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = forward(input)
+    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+        val mask = input gt 0f
+        return input.where(condition = mask, onFalse = 0f)
+    }
 
     override fun train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val output = forward(input)
+        val mask = input gt 0f
+        val output = input.where(condition = mask, onFalse = 0f)
         val delta = calcDelta(output)
-        return Batch(input.size) { i ->
-            IOType.d3(
-                i = outputX,
-                j = outputY,
-                k = outputZ,
-            ) { x, y, z -> if (input[i][x, y, z] >= 0f) delta[i][x, y, z] else 0f }
-        }
+        return delta.where(condition = mask, onFalse = 0f)
     }
-
-    private fun forward(input: Batch<IOType.D3>): Batch<IOType.D3> = input.mapValue { if (it >= 0f) it else 0f }
 }
 
 fun <T> NetworkBuilder.D3<T>.reLU() = addProcess(
