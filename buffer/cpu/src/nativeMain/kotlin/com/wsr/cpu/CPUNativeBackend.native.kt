@@ -84,6 +84,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_times_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d2
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d4
+import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d1
@@ -1370,6 +1371,18 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         com_wsr_cpu_less_than_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
+            size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(condition.size)
+        com_wsr_cpu_where_d0_to_d0(
+            condition = condition.toCPUBuffer().buffer,
+            x = x,
+            y = y,
             size = result.size,
             result = result.buffer,
         )
