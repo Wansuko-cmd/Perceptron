@@ -10,24 +10,24 @@ import com.wsr.create
 import kotlin.test.Test
 
 class MathTest {
-    val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
-
     @Test
     fun `exp=指数関数`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(10) { it - 5f })
+
         val actual = Backend.exp(x = input)
 
         assertContentEquals(
             expected = DataBuffer.create(
+                0.0067f,
+                0.0183f,
+                0.0497f,
+                0.1353f,
+                0.3678f,
                 1f,
                 2.7182f,
                 7.3890f,
-                20.0855f,
-                54.5981f,
-                148.4131f,
-                403.4288f,
-                1096.6332f,
-                2980.958f,
-                8103.084f,
+                20.085f,
+                54.598f
             ),
             actual = actual,
         )
@@ -35,6 +35,8 @@ class MathTest {
 
     @Test
     fun `ln=自然対数`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
+
         val actual = Backend.ln(x = input, e = 1e-5f)
 
         assertContentEquals(
@@ -56,16 +58,20 @@ class MathTest {
 
     @Test
     fun `pow=階乗`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(10) { it - 5f })
+
         val actual = Backend.pow(x = input, n = 3)
 
         assertContentEquals(
-            expected = DataBuffer.create(0f, 1f, 8f, 27f, 64f, 125f, 216f, 343f, 512f, 729f),
+            expected = DataBuffer.create(-125f, -64f, -27f, -8f, -1f, 0f, 1f, 8f, 27f, 64f),
             actual = actual,
         )
     }
 
     @Test
     fun `sqrt=平方根`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(10) { it.toFloat() })
+
         val actual = Backend.sqrt(x = input, e = 1e-5f)
 
         assertContentEquals(
