@@ -38,7 +38,11 @@ fn pow_d1(@builtin(global_invocation_id) id: vec3<u32>) {
         return;
     }
 
-    output_buf[idx] = pow(input_buf[idx], n);
+    if (params.val % 2 == 0) {
+        output_buf[idx] = pow(abs(input_buf[idx]), params.val);
+    } else {
+        output_buf[idx] = sign(input_buf[idx]) * pow(abs(input_buf[idx]), params.val);
+    }
 }
 
 @compute @workgroup_size(64)
