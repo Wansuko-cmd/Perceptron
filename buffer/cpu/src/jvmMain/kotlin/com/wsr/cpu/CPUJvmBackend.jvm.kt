@@ -4,6 +4,7 @@ import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.loadNativeLibrary
+import javax.xml.crypto.Data
 
 private const val LIB_PATH = "cpu"
 private const val LIB_NAME = "cpu"
@@ -1002,6 +1003,12 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         math.ln(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
+        return result
+    }
+
+    override fun sigmoid(x: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        math.sigmoid(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 

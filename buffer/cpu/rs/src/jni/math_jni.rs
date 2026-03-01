@@ -31,6 +31,18 @@ pub extern "system" fn Java_com_wsr_cpu_JMath_ln(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JMath_sigmoid(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    result: JByteBuffer,
+) {    
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    math::sigmoid_d1(x, result);
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_cpu_JMath_pow(
     env: JNIEnv,
     _class: JClass,
