@@ -2,9 +2,10 @@ package com.wsr.network.output.softmax
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
-import com.wsr.batch.collecction.map.mapValue
 import com.wsr.batch.collecction.minmax.max
 import com.wsr.batch.collecction.sum.sum
+import com.wsr.batch.compare.equals.eq
+import com.wsr.batch.compare.where.where
 import com.wsr.batch.math.exp
 import com.wsr.batch.math.ln
 import com.wsr.batch.operation.div.div
@@ -45,11 +46,11 @@ internal class SoftmaxWithLossD1 internal constructor(
             .ln(1e-7f)
             .batchAverage()
             .get()
-        val delta = (output - label) * label.generateMask()
+        val delta = (output - label).let { diff ->
+            if (maskValue == null) diff else diff.where(onTrue = 0f) { it eq maskValue.toFloat() }
+        }
         return TResult(loss = loss, delta = delta)
     }
-
-    private fun Batch<IOType.D1>.generateMask() = mapValue { if (it == maskValue?.toFloat()) 0f else 1f }
 }
 
 fun <T> NetworkBuilder.D1<T>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(

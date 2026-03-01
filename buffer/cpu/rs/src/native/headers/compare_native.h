@@ -13,6 +13,10 @@ float com_wsr_cpu_less_than_d1_to_d0(const float* x, int size, float y, float* r
 
 float com_wsr_cpu_less_than_d1_to_d1(const float* x, const float* y, int size, float* result);
 
+float com_wsr_cpu_equals_d1_to_d0(const float* x, int size, float y, float atol, float rtol, float* result);
+
+float com_wsr_cpu_equals_d1_to_d1(const float* x, const float* y, int size, float atol, float rtol, float* result);
+
 float com_wsr_cpu_where_d0_to_d0(const float* condition, float x, float y, int size, float* result);
 
 float com_wsr_cpu_where_d0_to_d1(const float* condition, float x, const float* y, int size, float* result);

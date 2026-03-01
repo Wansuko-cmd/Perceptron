@@ -8,9 +8,10 @@ const WORKGROUP_SIZE: u32 = 256;
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct CompareParams {
-    val1: f32,
-    val2: f32,
-    _pad: [u32; 2],
+    x_val: f32,
+    y_val: f32,
+    atol: f32,
+    rtol: f32,
 }
 
 pub fn gt_d1_to_d0(
@@ -24,7 +25,7 @@ pub fn gt_d1_to_d0(
         "gt_d1_to_d0",
         // condition, yは使わない
         x, x, x,
-        CompareParams { val1: y, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: y, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -41,7 +42,7 @@ pub fn gt_d1_to_d1(
         "gt_d1_to_d1",
         // conditionは使わない
         x, x, y,
-        CompareParams { val1: 0f32, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: 0f32, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -58,7 +59,7 @@ pub fn lt_d1_to_d0(
         "lt_d1_to_d0",
        // condition, yは使わない
         x, x, x,
-        CompareParams { val1: y, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: y, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -75,7 +76,45 @@ pub fn lt_d1_to_d1(
         "lt_d1_to_d1",
         // conditionは使わない
         x, x, y,
-        CompareParams { val1: 0f32, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: 0f32, atol: 0f32, rtol: 0f32 },
+        result,
+        context,
+    );
+}
+
+pub fn eq_d1_to_d0(
+    x: &GPUBuffer,
+    y: f32,
+    atol: f32,
+    rtol: f32,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.eq_d1_to_d0,
+        "eq_d1_to_d0",
+       // condition, yは使わない
+        x, x, x,
+        CompareParams { x_val: 0f32, y_val: y, atol: atol, rtol: rtol },
+        result,
+        context,
+    );
+}
+
+pub fn eq_d1_to_d1(
+    x: &GPUBuffer,
+    y: &GPUBuffer,
+    atol: f32,
+    rtol: f32,
+    result: &GPUBuffer,
+    context: &Context,
+) {
+    compare_execute(
+        &context.pipeline.compare.eq_d1_to_d1,
+        "eq_d1_to_d1",
+        // conditionは使わない
+        x, x, y,
+        CompareParams { x_val: 0f32, y_val: 0f32, atol: atol, rtol: rtol },
         result,
         context,
     );
@@ -90,10 +129,10 @@ pub fn where_d0_to_d0(
 ) {
     compare_execute(
         &context.pipeline.compare.where_d0_to_d0,
-        "condition_d0_to_d0",
+        "where_d0_to_d0",
         // x, yは使わない
         condition, condition, condition,
-        CompareParams { val1: x, val2: y, _pad: [0; 2] },
+        CompareParams { x_val: x, y_val: y, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -108,10 +147,10 @@ pub fn where_d0_to_d1(
 ) {
     compare_execute(
         &context.pipeline.compare.where_d0_to_d1,
-        "condition_d0_to_d1",
+        "where_d0_to_d1",
         // xは使わない
         condition, y, y,
-        CompareParams { val1: x, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: x, y_val: 0f32, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -126,10 +165,10 @@ pub fn where_d1_to_d0(
 ) {
     compare_execute(
         &context.pipeline.compare.where_d1_to_d0,
-        "condition_d1_to_d1",
+        "where_d1_to_d1",
        // yは使わない
         condition, x, x,
-        CompareParams { val1: y, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: y, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );
@@ -144,9 +183,9 @@ pub fn where_d1_to_d1(
 ) {
     compare_execute(
         &context.pipeline.compare.where_d1_to_d1,
-        "condition_d1_to_d1",
+        "where_d1_to_d1",
         condition, x, y,
-        CompareParams { val1: 0f32, val2: 0f32, _pad: [0; 2] },
+        CompareParams { x_val: 0f32, y_val: 0f32, atol: 0f32, rtol: 0f32 },
         result,
         context,
     );

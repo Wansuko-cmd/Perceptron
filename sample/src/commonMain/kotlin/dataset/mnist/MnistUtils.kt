@@ -52,7 +52,7 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<Float>, Int> {
             network.train(
                 input = data.map { it.pixels },
                 label = data.map { it.label },
-            )
+            ).also { println(it) }
         }
     }
 

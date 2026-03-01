@@ -4,6 +4,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.Default
 import com.wsr.base.data.IDataBufferGenerator
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -875,6 +876,22 @@ object KotlinBackend : IBackend {
     override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = DataBufferGenerator.create(x.size)
         for (i in result.indices) result[i] = if (x[i] < y[i]) 1f else 0f
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        val tolerance = absoluteTolerance + relativeTolerance * abs(y)
+        for (i in result.indices) result[i] = if (abs(x[i] - y) <= tolerance) 1f else 0f
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = DataBufferGenerator.create(x.size)
+        for (i in result.indices) {
+            val tolerance = absoluteTolerance + relativeTolerance * abs(y[i])
+            result[i] = if (abs(x[i] - y[i]) <= tolerance) 1f else 0f
+        }
         return result
     }
 

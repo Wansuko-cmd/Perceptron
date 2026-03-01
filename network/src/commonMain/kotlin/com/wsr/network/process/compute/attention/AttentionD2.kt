@@ -2,6 +2,8 @@ package com.wsr.network.process.compute.attention
 
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.sum.sum
+import com.wsr.batch.compare.equals.eq
+import com.wsr.batch.compare.where.where
 import com.wsr.batch.get
 import com.wsr.batch.math.softmax
 import com.wsr.batch.operation.div.div
@@ -13,7 +15,6 @@ import com.wsr.batch.reshape.reshape.reshapeToD2
 import com.wsr.batch.reshape.reshape.reshapeToD3
 import com.wsr.batch.reshape.transpose.transpose
 import com.wsr.core.IOType
-import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
@@ -152,11 +153,7 @@ class AttentionD2 internal constructor(
         if (maskValue != null) {
             @Suppress("UNCHECKED_CAST")
             val input = context.input as Batch<IOType.D1>
-            val mask = Batch(input.size) { index ->
-                val input = input[index]
-                IOType
-                    .d1(outputX) { if (input[it] == maskValue.toFloat()) -1e9f else 0f }
-            }
+            val mask = input.where(onTrue = -1e9f, onFalse = 0f) { it eq maskValue.toFloat() }
             result = result.plus(other = mask, axis = 2)
         }
         return result

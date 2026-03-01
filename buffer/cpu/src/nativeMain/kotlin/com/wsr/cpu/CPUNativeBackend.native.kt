@@ -21,6 +21,8 @@ import com.wsr.cpu.rs.com_wsr_cpu_div_d3_to_d4
 import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d3
+import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d0
+import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_exp_d1
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d1
@@ -1372,6 +1374,32 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
             size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_equals_d1_to_d0(
+            x = x.toCPUBuffer().buffer,
+            size = x.size,
+            y = y,
+            atol = absoluteTolerance,
+            rtol = relativeTolerance,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_equals_d1_to_d1(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            size = result.size,
+            atol = absoluteTolerance,
+            rtol = relativeTolerance,
             result = result.buffer,
         )
         return result
