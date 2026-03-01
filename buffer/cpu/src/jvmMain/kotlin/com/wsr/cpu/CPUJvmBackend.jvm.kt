@@ -4,7 +4,6 @@ import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.loadNativeLibrary
-import javax.xml.crypto.Data
 
 private const val LIB_PATH = "cpu"
 private const val LIB_NAME = "cpu"
