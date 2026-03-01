@@ -27,7 +27,7 @@ class MathTest {
                 2.7182f,
                 7.3890f,
                 20.085f,
-                54.598f
+                54.598f,
             ),
             actual = actual,
         )
