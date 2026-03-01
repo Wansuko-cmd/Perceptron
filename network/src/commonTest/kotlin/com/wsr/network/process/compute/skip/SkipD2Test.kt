@@ -16,7 +16,6 @@ import com.wsr.network.optimizer.sgd.Sgd
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.bias.d2.BiasD2
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class SkipD2Test {
     val target = SkipD2(
@@ -34,8 +33,6 @@ class SkipD2Test {
                 weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
             ),
         ),
-        inputX = 2,
-        inputY = 3,
         outputX = 2,
         outputY = 3,
     )
