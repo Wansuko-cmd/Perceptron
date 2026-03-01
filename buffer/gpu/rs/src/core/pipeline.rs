@@ -291,11 +291,11 @@ impl Compare {
 pub struct Math {
     pub exp_d1: wgpu::ComputePipeline,
     pub ln_d1: wgpu::ComputePipeline,
+    pub sigmoid_d1: wgpu::ComputePipeline,
     pub pow_d1: wgpu::ComputePipeline,
     pub sqrt_d1: wgpu::ComputePipeline,
 
     pub bind_group_layout: BindGroupLayout,
-    pub bind_group_layout_with_param: BindGroupLayout,
 }
 
 impl Math {
@@ -306,32 +306,6 @@ impl Math {
         });
 
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Math::new"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
-
-        let bind_group_layout_with_param = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("Math::new"),
             entries: &[
                 wgpu::BindGroupLayoutEntry {
@@ -372,11 +346,6 @@ impl Math {
             bind_group_layouts: &[&bind_group_layout],
             immediate_size: 0,
         });
-        let pipeline_layout_with_param = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Math::new"),
-            bind_group_layouts: &[&bind_group_layout_with_param],
-            immediate_size: 0,
-        });
 
         Math {
             exp_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
@@ -389,15 +358,23 @@ impl Math {
             }),
             ln_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("ln_d1"),
-                layout: Some(&pipeline_layout_with_param),
+                layout: Some(&pipeline_layout),
                 module: &shader,
                 entry_point: Some("ln_d1"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
+            sigmoid_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("sigmoid_d1"),
+                layout: Some(&pipeline_layout),
+                module: &shader,
+                entry_point: Some("sigmoid_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
             pow_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("pow_d1"),
-                layout: Some(&pipeline_layout_with_param),
+                layout: Some(&pipeline_layout),
                 module: &shader,
                 entry_point: Some("pow_d1"),
                 compilation_options: Default::default(),
@@ -405,14 +382,13 @@ impl Math {
             }),
             sqrt_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("sqrt_d1"),
-                layout: Some(&pipeline_layout_with_param),
+                layout: Some(&pipeline_layout),
                 module: &shader,
                 entry_point: Some("sqrt_d1"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
             bind_group_layout: bind_group_layout,
-            bind_group_layout_with_param: bind_group_layout_with_param,
         }
     }
 }

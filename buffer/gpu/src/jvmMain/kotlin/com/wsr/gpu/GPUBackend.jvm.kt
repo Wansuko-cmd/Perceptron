@@ -1041,6 +1041,12 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun sigmoid(x: DataBuffer): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        math.sigmoid(x.toGPUBuffer().ptr, result.ptr, context)
+        return result
+    }
+
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         math.pow(x.toGPUBuffer().ptr, n, result.ptr, context)
