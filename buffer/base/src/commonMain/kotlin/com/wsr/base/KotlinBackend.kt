@@ -682,6 +682,8 @@ object KotlinBackend : IBackend {
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer = x.map { kotlin.math.ln(it + e) }
 
+    override fun sigmoid(x: DataBuffer): DataBuffer = x.map { 1 / (1 + kotlin.math.exp(-it)) }
+
     override fun pow(x: DataBuffer, n: Int): DataBuffer = x.map { it.pow(n) }
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = x.map { kotlin.math.sqrt(it + e) }

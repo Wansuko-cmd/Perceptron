@@ -397,6 +397,8 @@ object Backend : IBackend {
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer = instance.ln(x, e)
 
+    override fun sigmoid(x: DataBuffer): DataBuffer = instance.sigmoid(x)
+
     override fun pow(x: DataBuffer, n: Int): DataBuffer = instance.pow(x, n)
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = instance.sqrt(x, e)
