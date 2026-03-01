@@ -27,6 +27,8 @@ class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: Lis
         result = 31 * result + shape.hashCode()
         return result
     }
+
+    override fun toString(): String = "Batch(shape=$shape, size=$size, value=$value)"
 }
 
 inline fun <T : IOType> Batch(size: Int, init: (index: Int) -> T): Batch<T> {
