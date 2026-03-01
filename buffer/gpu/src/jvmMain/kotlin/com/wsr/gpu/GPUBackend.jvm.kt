@@ -1221,6 +1221,25 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.equalsD1ToD0(x.toGPUBuffer().ptr, y, absoluteTolerance, relativeTolerance, result.ptr, context)
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        compare.equalsD1ToD1(
+            x.toGPUBuffer().ptr,
+            y.toGPUBuffer().ptr,
+            absoluteTolerance,
+            relativeTolerance,
+            result.ptr,
+            context,
+        )
+        return result
+    }
+
     override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(condition.size)
         compare.whereD0ToD0(condition.toGPUBuffer().ptr, x, y, result.ptr, context)

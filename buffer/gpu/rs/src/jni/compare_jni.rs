@@ -73,6 +73,43 @@ pub extern "system" fn Java_com_wsr_gpu_JCompare_lessThanD1ToD1(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JCompare_equalsD1ToD0(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    y: jfloat,
+    atol: jfloat,
+    rtol: jfloat,
+    result: jlong,
+    context: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let context = unsafe { &*(context as *const Context) };
+
+    compare::eq_d1_to_d0(x,  y, atol, rtol, result, context);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JCompare_equalsD1ToD1(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    y: jlong,
+    atol: jfloat,
+    rtol: jfloat,
+    result: jlong,
+    context: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let y = unsafe { &*(y as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let context = unsafe { &*(context as *const Context) };
+
+    compare::eq_d1_to_d1(x,  y, atol, rtol, result, context);
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JCompare_whereD0ToD0(
     _: JNIEnv,
     _class: JClass,
