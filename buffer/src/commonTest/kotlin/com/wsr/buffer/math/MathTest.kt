@@ -57,6 +57,29 @@ class MathTest {
     }
 
     @Test
+    fun `sigmoid=シグモイド`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(10) { it - 5f })
+
+        val actual = Backend.sigmoid(x = input)
+
+        assertContentEquals(
+            expected = DataBuffer.create(
+                0.0066f,
+                0.0179f,
+                0.0474f,
+                0.1192f,
+                0.2689f,
+                0.5f,
+                0.7310f,
+                0.8807f,
+                0.9525f,
+                0.9820f,
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
     fun `pow=階乗`() = bufferTestRule {
         val input = DataBuffer.create(FloatArray(10) { it - 5f })
 
