@@ -38,6 +38,21 @@ pub extern "system" fn Java_com_wsr_gpu_JMath_ln(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JMath_sigmoid(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    result: jlong,
+    context: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let context = unsafe { &*(context as *const Context) };
+
+    math::sigmoid_d1(x, result, context);
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_gpu_JMath_pow(
     _: JNIEnv,
     _class: JClass,

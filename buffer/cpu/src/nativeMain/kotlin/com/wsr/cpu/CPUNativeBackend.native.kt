@@ -66,6 +66,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_pow_d1
+import com.wsr.cpu.rs.com_wsr_cpu_sigmoid_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sqrt_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d2
@@ -1153,6 +1154,12 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
         com_wsr_cpu_ln_d1(x = x.toCPUBuffer().buffer, e = e, size = x.size, result = result.buffer)
+        return result
+    }
+
+    override fun sigmoid(x: DataBuffer): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_sigmoid_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
         return result
     }
 

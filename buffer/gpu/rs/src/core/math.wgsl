@@ -31,6 +31,16 @@ fn ln_d1(@builtin(global_invocation_id) id: vec3<u32>) {
 }
 
 @compute @workgroup_size(64)
+fn sigmoid_d1(@builtin(global_invocation_id) id: vec3<u32>) {
+    let idx = id.x;
+    if (idx >= arrayLength(&input_buf)) {
+        return;
+    }
+
+    output_buf[idx] = 1 / (1 + exp(-input_buf[idx]));
+}
+
+@compute @workgroup_size(64)
 fn pow_d1(@builtin(global_invocation_id) id: vec3<u32>) {
     let idx = id.x;
     let n = params.val;

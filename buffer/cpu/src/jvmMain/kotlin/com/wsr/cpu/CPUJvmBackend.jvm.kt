@@ -1005,6 +1005,12 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun sigmoid(x: DataBuffer): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        math.sigmoid(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
+    }
+
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         math.pow(x.toCPUBuffer().byteBuffer, n, result.byteBuffer)
