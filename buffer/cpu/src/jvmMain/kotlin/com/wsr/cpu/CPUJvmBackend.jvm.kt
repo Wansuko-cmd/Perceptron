@@ -1181,6 +1181,24 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.equalsD1ToD0(x.toCPUBuffer().byteBuffer, y, absoluteTolerance, relativeTolerance, result.byteBuffer)
+        return result
+    }
+
+    override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        compare.equalsD1ToD1(
+            x.toCPUBuffer().byteBuffer,
+            y.toCPUBuffer().byteBuffer,
+            absoluteTolerance,
+            relativeTolerance,
+            result.byteBuffer,
+        )
+        return result
+    }
+
     override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(condition.size)
         compare.whereD0ToD0(condition.toCPUBuffer().byteBuffer, x, y, result.byteBuffer)
