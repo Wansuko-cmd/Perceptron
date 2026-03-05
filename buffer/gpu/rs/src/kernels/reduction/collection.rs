@@ -3,6 +3,8 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Collection {
+    device: Device,
+
     average_d3: wgpu::ComputePipeline,
     max_d3: wgpu::ComputePipeline,
     min_d3: wgpu::ComputePipeline,
@@ -61,6 +63,7 @@ impl Collection {
         });
 
         Collection {
+            device: device.clone(),
             average_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("average_d3"),
                 layout: Some(&pipeline_layout),
@@ -115,7 +118,6 @@ impl Collection {
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "average_d3",
@@ -123,7 +125,6 @@ impl Collection {
             x,
             xi, xj, xk,
             result,
-            device,
         )
     }
 
@@ -132,7 +133,6 @@ impl Collection {
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "max_d3",
@@ -140,7 +140,6 @@ impl Collection {
             x,
             xi, xj, xk,
             result,
-            device,
         )
     }
 
@@ -149,7 +148,6 @@ impl Collection {
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "min_d3",
@@ -157,7 +155,6 @@ impl Collection {
             x,
             xi, xj, xk,
             result,
-            device,
         )
     }
 
@@ -166,7 +163,6 @@ impl Collection {
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "sum_d3",
@@ -174,7 +170,6 @@ impl Collection {
             x,
             xi, xj, xk,
             result,
-            device,
         )
     }
 
@@ -185,8 +180,8 @@ impl Collection {
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let params = Params { xi: xi as u32, xj: xj as u32, xk: xk as u32, _pad: 0 };
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),

@@ -3,6 +3,8 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct MatMul {
+    device: Device,
+
     mat_mul_nn: wgpu::ComputePipeline,
     mat_mul_nt: wgpu::ComputePipeline,
     mat_mul_tn: wgpu::ComputePipeline,
@@ -71,6 +73,7 @@ impl MatMul {
         });
 
         MatMul {
+            device: device.clone(),
             mat_mul_nn: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("mat_mul_nn"),
                 layout: Some(&pipeline_layout),
@@ -126,7 +129,6 @@ impl MatMul {
         y: &GPUBuffer,
         m: usize, n: usize, k: usize, b: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "mat_mul_nn",
@@ -135,7 +137,6 @@ impl MatMul {
             y,
             m, n, k, b,
             result,
-            device,
         )
     }
 
@@ -145,7 +146,6 @@ impl MatMul {
         y: &GPUBuffer,
         m: usize, n: usize, k: usize, b: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "mat_mul_nt",
@@ -154,7 +154,6 @@ impl MatMul {
             y,
             m, n, k, b,
             result,
-            device,
         )
     }
 
@@ -164,7 +163,6 @@ impl MatMul {
         y: &GPUBuffer,
         m: usize, n: usize, k: usize, b: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "mat_mul_tn",
@@ -173,7 +171,6 @@ impl MatMul {
             y,
             m, n, k, b,
             result,
-            device,
         )
     }
 
@@ -183,7 +180,6 @@ impl MatMul {
         y: &GPUBuffer,
         m: usize, n: usize, k: usize, b: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "mat_mul_tt",
@@ -192,7 +188,6 @@ impl MatMul {
             y,
             m, n, k, b,
             result,
-            device,
         )
     }
     
@@ -204,8 +199,8 @@ impl MatMul {
         y: &GPUBuffer,
         m: usize, n: usize, k: usize, b: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let params = Params { m: m as u32, n: n as u32, k: k as u32, b: b as u32 };
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),

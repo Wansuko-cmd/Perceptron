@@ -3,6 +3,8 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Operation {
+    device: Device,
+
     plus_d4: wgpu::ComputePipeline,
     minus_d4: wgpu::ComputePipeline,
     times_d4: wgpu::ComputePipeline,
@@ -71,6 +73,7 @@ impl Operation {
         });
 
         Operation {
+            device: device.clone(),
             plus_d4: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("plus_d4"),
                 layout: Some(&pipeline_layout),
@@ -127,7 +130,6 @@ impl Operation {
         x_stride: [u32; 4],
         y_stride: [u32; 4],
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "plus_d4",
@@ -136,7 +138,6 @@ impl Operation {
             y,
             &Params { result_shape: result_shape, x_stride: x_stride, y_stride: y_stride },
             result,
-            device,
         )
     }
 
@@ -148,7 +149,6 @@ impl Operation {
         x_stride: [u32; 4],
         y_stride: [u32; 4],
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "minus_d4",
@@ -157,7 +157,6 @@ impl Operation {
             y,
             &Params { result_shape: result_shape, x_stride: x_stride, y_stride: y_stride },
             result,
-            device,
         )
     }
 
@@ -169,7 +168,6 @@ impl Operation {
         x_stride: [u32; 4],
         y_stride: [u32; 4],
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "times_d4",
@@ -178,7 +176,6 @@ impl Operation {
             y,
             &Params { result_shape: result_shape, x_stride: x_stride, y_stride: y_stride },
             result,
-            device,
         )
     }
 
@@ -190,7 +187,6 @@ impl Operation {
         x_stride: [u32; 4],
         y_stride: [u32; 4],
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "div_d4",
@@ -199,7 +195,6 @@ impl Operation {
             y,
             &Params { result_shape: result_shape, x_stride: x_stride, y_stride: y_stride },
             result,
-            device,
         )
     }
 
@@ -211,8 +206,8 @@ impl Operation {
         y: &GPUBuffer,
         params: &Params,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),
             contents: bytemuck::bytes_of(params),

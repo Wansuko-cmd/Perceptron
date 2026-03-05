@@ -3,6 +3,8 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Math {
+    device: Device,
+
     exp_d1: wgpu::ComputePipeline,
     ln_d1: wgpu::ComputePipeline,
     sigmoid_d1: wgpu::ComputePipeline,
@@ -62,6 +64,7 @@ impl Math {
         });
 
         Math {
+            device: device.clone(),
             exp_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("exp_d1"),
                 layout: Some(&pipeline_layout),
@@ -124,59 +127,54 @@ impl Default for Params {
 impl Math {
     const WORKGROUP_SIZE: u32 = 64;
 
-    pub fn exp_d1<'a>(&'a self, x: &GPUBuffer, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn exp_d1<'a>(&'a self, x: &GPUBuffer, result: &GPUBuffer) -> ComputeTask<'a> {
        self.create_task(
            "exp_d1",
            &self.exp_d1,
            x,
            &Params::default(),
            result,
-           device,
         )
     }
 
-    pub fn ln_d1<'a>(&'a self, x: &GPUBuffer, e: f32, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn ln_d1<'a>(&'a self, x: &GPUBuffer, e: f32, result: &GPUBuffer) -> ComputeTask<'a> {
         self.create_task(
            "ln_d1",
            &self.ln_d1,
            x,
            &Params { e: e, ..Params::default() },
            result,
-           device,
         )
     }
 
     
-    pub fn sigmoid_d1<'a>(&'a self, x: &GPUBuffer, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn sigmoid_d1<'a>(&'a self, x: &GPUBuffer, result: &GPUBuffer) -> ComputeTask<'a> {
         self.create_task(
            "sigmoid_d1",
            &self.sigmoid_d1,
            x,
            &Params::default(),
            result,
-           device,
         )
     }
 
-    pub fn pow_d1<'a>(&'a self, x: &GPUBuffer, n: f32, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn pow_d1<'a>(&'a self, x: &GPUBuffer, n: f32, result: &GPUBuffer) -> ComputeTask<'a> {
         self.create_task(
            "pow_d1",
            &self.pow_d1,
            x,
            &Params { n: n, ..Params::default() },
            result,
-           device,
         )
     }
 
-    pub fn sqrt_d1<'a>(&'a self, x: &GPUBuffer, e: f32, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn sqrt_d1<'a>(&'a self, x: &GPUBuffer, e: f32, result: &GPUBuffer) -> ComputeTask<'a> {
         self.create_task(
            "sqrt_d1",
            &self.sqrt_d1,
            x,
            &Params { e: e, ..Params::default() },
            result,
-           device,
         )
     }
 
@@ -187,8 +185,8 @@ impl Math {
         x: &GPUBuffer,
         params: &Params,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),
             contents: bytemuck::bytes_of(params),

@@ -3,6 +3,7 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Transpose {
+    device: Device,
     transpose_d4: wgpu::ComputePipeline,
     bind_group_layout: wgpu::BindGroupLayout,
 }
@@ -57,6 +58,7 @@ impl Transpose {
         });
 
         Transpose {
+            device: device.clone(),
             transpose_d4: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("transpose_d4"),
                 layout: Some(&pipeline_layout),
@@ -81,13 +83,12 @@ struct Params {
 impl Transpose {
     const WORKGROUP_SIZE: u32 = 256;
 
-    pub fn transpose_d2<'a>(&'a self, x: &GPUBuffer, xi: usize, xj: usize, result: &GPUBuffer, device: &Device) -> ComputeTask<'a> {
+    pub fn transpose_d2<'a>(&'a self, x: &GPUBuffer, xi: usize, xj: usize, result: &GPUBuffer) -> ComputeTask<'a> {
         self.create_task(
             "transpose_d2",
             x, 1, 1,  xi, xj,
             0, 1,  3, 2,
             result,
-            device,
         )
     }
 
@@ -97,14 +98,12 @@ impl Transpose {
         xi: usize, xj: usize, xk: usize,
         axis_i: usize, axis_j: usize, axis_k: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "transpose_d3",
             x, 1,  xi, xj, xk,
             0, axis_i + 1,  axis_j + 1, axis_k + 1,
             result,
-            device,
         )
     }
 
@@ -114,14 +113,12 @@ impl Transpose {
         xi: usize, xj: usize, xk: usize, xl: usize,
         axis_i: usize, axis_j: usize, axis_k: usize, axis_l: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "transpose_d4",
             x,  xi, xj, xk, xl,
             axis_i,  axis_j, axis_k, axis_l,
             result,
-            device,
         )
     }
 
@@ -132,8 +129,8 @@ impl Transpose {
         xi: usize, xj: usize, xk: usize, xl: usize,
         axis_i: usize, axis_j: usize, axis_k: usize, axis_l: usize,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let old_shape = [xi, xj, xk, xl];
         let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k], old_shape[axis_l]];
 
