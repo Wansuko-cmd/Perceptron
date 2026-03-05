@@ -14,5 +14,5 @@ pub fn mat_mul(
         (true, false) => runtime.kernels.mat_mul.mat_mul_tn(x, y, m, n, k, b, result, device),
         (true, true) => runtime.kernels.mat_mul.mat_mul_tt(x, y, m, n, k, b, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }

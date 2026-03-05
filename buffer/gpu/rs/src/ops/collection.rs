@@ -7,7 +7,7 @@ pub fn average_d1(
 ) {
     let device = &runtime.device;
     let task = runtime.kernels.collection.average_d3(x, 1, x.count(), 1, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn average_d2(
@@ -22,7 +22,7 @@ pub fn average_d2(
         0 => runtime.kernels.collection.average_d3(x, 1, xi, xj, result, device),
         _ => runtime.kernels.collection.average_d3(x, xi, xj, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn average_d3(
@@ -38,7 +38,7 @@ pub fn average_d3(
         1 => runtime.kernels.collection.average_d3(x, xi, xj, xk, result, device),
         _ => runtime.kernels.collection.average_d3(x, xi * xj, xk, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn max_d1(
@@ -48,7 +48,7 @@ pub fn max_d1(
 ) {
     let device = &runtime.device;
     let task = runtime.kernels.collection.max_d3(x, 1, x.count(), 1, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn max_d2(
@@ -63,7 +63,7 @@ pub fn max_d2(
         0 => runtime.kernels.collection.max_d3(x, 1, xi, xj, result, device),
         _ => runtime.kernels.collection.max_d3(x, xi, xj, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn max_d3(
@@ -79,7 +79,7 @@ pub fn max_d3(
         1 => runtime.kernels.collection.max_d3(x, xi, xj, xk, result, device),
         _ => runtime.kernels.collection.max_d3(x, xi * xj, xk, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn min_d1(
@@ -89,7 +89,7 @@ pub fn min_d1(
 ) {
     let device = &runtime.device;
     let task = runtime.kernels.collection.min_d3(x, 1, x.count(), 1, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn min_d2(
@@ -104,7 +104,7 @@ pub fn min_d2(
         0 => runtime.kernels.collection.min_d3(x, 1, xi, xj, result, device),
         _ => runtime.kernels.collection.min_d3(x, xi, xj, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn min_d3(
@@ -120,7 +120,7 @@ pub fn min_d3(
         1 => runtime.kernels.collection.min_d3(x, xi, xj, xk, result, device),
         _ => runtime.kernels.collection.min_d3(x, xi * xj, xk, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn sum_d1(
@@ -130,7 +130,7 @@ pub fn sum_d1(
 ) {
     let device = &runtime.device;
     let task = runtime.kernels.collection.sum_d3(x, 1, x.count(), 1, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn sum_d2(
@@ -145,7 +145,7 @@ pub fn sum_d2(
         0 => runtime.kernels.collection.sum_d3(x, 1, xi, xj, result, device),
         _ => runtime.kernels.collection.sum_d3(x, xi, xj, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
 
 pub fn sum_d3(
@@ -161,5 +161,5 @@ pub fn sum_d3(
         1 => runtime.kernels.collection.sum_d3(x, xi, xj, xk, result, device),
         _ => runtime.kernels.collection.sum_d3(x, xi * xj, xk, 1, result, device),
     };
-    runtime.dispatcher.dispatch(task, device);
+    runtime.dispatch(task);
 }
