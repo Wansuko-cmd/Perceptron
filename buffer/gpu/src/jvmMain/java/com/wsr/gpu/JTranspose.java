@@ -6,7 +6,7 @@ class JTranspose {
             int xi,
             int xj,
             long result,
-            long context
+            long runtime
     );
 
     public native void transposeD3(
@@ -18,7 +18,7 @@ class JTranspose {
             int axisJ,
             int axisK,
             long result,
-            long context
+            long runtime
     );
 
     public native void transposeD4(
@@ -32,6 +32,6 @@ class JTranspose {
             int axisK,
             int axisL,
             long result,
-            long context
+            long runtime
     );
 }
