@@ -11,6 +11,6 @@ class JMatMul {
             int k,
             int b,
             long result,
-            long context
+            long runtime
     );
 }

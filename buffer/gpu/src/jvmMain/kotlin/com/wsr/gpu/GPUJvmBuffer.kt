@@ -12,45 +12,45 @@ import kotlin.concurrent.atomics.minusAssign
 private val allocateSize = AtomicInt(0)
 private const val MAX_ALLOCATE_SIZE = 1_500_000_000
 
-internal fun DataBuffer.toGPUBuffer(context: Long, native: JBuffer): GPUJvmBuffer = when (this) {
+internal fun DataBuffer.toGPUBuffer(runtime: Long, native: JBuffer): GPUJvmBuffer = when (this) {
     is GPUJvmBuffer -> this
-    else -> GPUJvmBuffer.create(this.toFloatArray(), context, native)
+    else -> GPUJvmBuffer.create(this.toFloatArray(), runtime, native)
 }
 
 class GPUJvmBuffer(
     override val size: Int,
     internal val ptr: Long,
-    private val context: Long,
+    private val runtime: Long,
     private val native: JBuffer,
 ) : DataBuffer {
     init {
         val size = size
         val ptr = ptr
-        val context = context
+        val runtime = runtime
         val native = native
         if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
         cleaner.register(this) {
-            native.release(ptr, context)
+            native.release(ptr, runtime)
             allocateSize.minusAssign(size)
         }
     }
 
-    override fun toFloatArray(): FloatArray = native.readAll(ptr, context)
+    override fun toFloatArray(): FloatArray = native.readAll(ptr, runtime)
 
-    override fun get(i: Int): Float = native.readAll(ptr, context)[i]
+    override fun get(i: Int): Float = native.readAll(ptr, runtime)[i]
 
     override fun set(i: Int, value: Float) {
-        native.write(ptr, i, value, context)
+        native.write(ptr, i, value, runtime)
     }
 
     override fun slice(indices: IntRange): DataBuffer {
         val ptr = ptr
-        val context = context
+        val runtime = runtime
         val native = native
         return GPUJvmBuffer(
             size = indices.count(),
-            ptr = native.slice(ptr, indices.first, indices.last + 1, context),
-            context = context,
+            ptr = native.slice(ptr, indices.first, indices.last + 1, runtime),
+            runtime = runtime,
             native = native,
         )
     }
@@ -58,8 +58,9 @@ class GPUJvmBuffer(
     override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
         when (destination) {
             is GPUJvmBuffer -> {
-                native.copyInto(ptr, destination.ptr, destinationOffset, context)
+                native.copyInto(ptr, destination.ptr, destinationOffset, runtime)
             }
+
             else -> {
                 val value = toFloatArray()
                 for (i in indices) destination[i + destinationOffset] = value[i]
@@ -70,7 +71,7 @@ class GPUJvmBuffer(
     override fun contentEquals(other: DataBuffer): Boolean {
         if (size != other.size) return false
         return when (other) {
-            is GPUJvmBuffer -> native.contentEquals(ptr, other.ptr, context)
+            is GPUJvmBuffer -> native.contentEquals(ptr, other.ptr, runtime)
             else -> toFloatArray().contentEquals(other.toFloatArray())
         }
     }
@@ -80,26 +81,26 @@ class GPUJvmBuffer(
     companion object {
         private val cleaner = Cleaner.create()
 
-        fun create(size: Int, context: Long, native: JBuffer): GPUJvmBuffer {
-            val ptr = native.allocate(size, context)
-            return GPUJvmBuffer(size = size, ptr = ptr, context = context, native = native)
+        fun create(size: Int, runtime: Long, native: JBuffer): GPUJvmBuffer {
+            val ptr = native.allocate(size, runtime)
+            return GPUJvmBuffer(size = size, ptr = ptr, runtime = runtime, native = native)
         }
 
-        fun create(value: FloatArray, context: Long, native: JBuffer): GPUJvmBuffer {
-            val ptr = native.init(value, context)
-            return GPUJvmBuffer(size = value.size, ptr = ptr, context = context, native = native)
+        fun create(value: FloatArray, runtime: Long, native: JBuffer): GPUJvmBuffer {
+            val ptr = native.init(value, runtime)
+            return GPUJvmBuffer(size = value.size, ptr = ptr, runtime = runtime, native = native)
         }
 
-        fun createGenerator(context: Long, native: JBuffer) = object : IDataBufferGenerator {
+        fun createGenerator(runtime: Long, native: JBuffer) = object : IDataBufferGenerator {
             override fun create(size: Int): DataBuffer = create(
                 size = size,
-                context = context,
+                runtime = runtime,
                 native = native,
             )
 
             override fun create(value: FloatArray): DataBuffer = create(
                 value = value,
-                context = context,
+                runtime = runtime,
                 native = native,
             )
         }

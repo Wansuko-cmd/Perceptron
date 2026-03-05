@@ -1,2 +1,5 @@
-pub mod core;
-pub mod jni;
+pub mod resource;
+pub mod kernels;
+pub mod runtime;
+pub mod ops;
+pub mod bindings;
