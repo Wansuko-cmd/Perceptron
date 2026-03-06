@@ -7,8 +7,10 @@ pub struct GPUBuffer {
 }
 
 impl GPUBuffer {
+    pub const SIZE_BYTES: usize = std::mem::size_of::<f32>();
+
     pub fn create(size: usize, device: &Device) -> GPUBuffer {
-        let byte_size = (size * std::mem::size_of::<f32>()) as u64;
+        let byte_size = (size * GPUBuffer::SIZE_BYTES) as u64;
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("GPUBuffer::create_buffer"),
             size: byte_size,
@@ -63,8 +65,8 @@ impl GPUBuffer {
     }
 
     pub fn slice(&self, start: usize, end: usize, device: &Device, queue: &Queue) -> GPUBuffer {
-        let size = ((end - start) * std::mem::size_of::<f32>()) as u64;
-        let offset = (start * std::mem::size_of::<f32>()) as u64;
+        let size = ((end - start) * GPUBuffer::SIZE_BYTES) as u64;
+        let offset = (start * GPUBuffer::SIZE_BYTES) as u64;
 
         let new_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("GPUBuffer::slice"),
@@ -85,7 +87,7 @@ impl GPUBuffer {
 
     pub fn copy_into(&self, dest: &GPUBuffer, dest_offset: usize, device: &Device, queue: &Queue) {
         let size = self.buffer.size();
-        let offset = (dest_offset * std::mem::size_of::<f32>()) as u64;
+        let offset = (dest_offset * GPUBuffer::SIZE_BYTES) as u64;
 
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("GPUBuffer::copy_into"),
@@ -98,7 +100,7 @@ impl GPUBuffer {
 
 impl GPUBuffer {
     pub fn write(self: &Self, index: usize, value: f32, queue: &Queue) {
-        let offset = (index * std::mem::size_of::<f32>()) as u64;
+        let offset = (index * GPUBuffer::SIZE_BYTES) as u64;
         queue.write_buffer(&self.buffer, offset, bytemuck::bytes_of(&value));
     }
 }
@@ -106,7 +108,7 @@ impl GPUBuffer {
 impl GPUBuffer {
     pub fn count(self: &Self) -> usize {
         let byte_size = self.buffer.size() as usize;
-        byte_size / std::mem::size_of::<f32>()
+        byte_size / GPUBuffer::SIZE_BYTES
     }
 
     pub fn workgroup_count(self: &Self, workgroup_size: u32) -> [u32; 3] {
