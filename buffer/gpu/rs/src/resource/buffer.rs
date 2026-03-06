@@ -63,39 +63,6 @@ impl GPUBuffer {
 
         read_buffer.unmap();
     }
-
-    pub fn slice(&self, start: usize, end: usize, device: &Device, queue: &Queue) -> GPUBuffer {
-        let size = ((end - start) * GPUBuffer::SIZE_BYTES) as u64;
-        let offset = (start * GPUBuffer::SIZE_BYTES) as u64;
-
-        let new_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("GPUBuffer::slice"),
-            size: size,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        });
-
-        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("GPUBuffer::slice"),
-        });
-
-        encoder.copy_buffer_to_buffer(&self.buffer, offset, &new_buffer, 0, size);
-        queue.submit(std::iter::once(encoder.finish()));
-
-        GPUBuffer { buffer: new_buffer }
-    }
-
-    pub fn copy_into(&self, dest: &GPUBuffer, dest_offset: usize, device: &Device, queue: &Queue) {
-        let size = self.buffer.size();
-        let offset = (dest_offset * GPUBuffer::SIZE_BYTES) as u64;
-
-        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("GPUBuffer::copy_into"),
-        });
-
-        encoder.copy_buffer_to_buffer(&self.buffer, 0, &dest.buffer, offset, size);
-        queue.submit(std::iter::once(encoder.finish()));
-    }
 }
 
 impl GPUBuffer {

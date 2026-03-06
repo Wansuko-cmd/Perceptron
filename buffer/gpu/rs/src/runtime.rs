@@ -1,7 +1,7 @@
 pub mod dispatcher;
 
 use std::sync::{Arc, Mutex};
-use crate::{kernels::{Kernels, task::ComputeTask}, runtime::dispatcher::Dispatcher};
+use crate::{kernels::{Kernels, task::Task}, runtime::dispatcher::Dispatcher};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
@@ -51,7 +51,7 @@ impl Runtime {
 impl Runtime {
     const THREHOLD: usize = 100;
 
-    pub fn dispatch(&self, task: ComputeTask) {
+    pub fn dispatch<T: Task>(&self, task: T) {
         let mut dispatcher = self.dispatcher.lock().unwrap();
 
         dispatcher.dispatch(task, &self.device);
