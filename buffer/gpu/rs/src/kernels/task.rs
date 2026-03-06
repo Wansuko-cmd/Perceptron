@@ -1,3 +1,5 @@
+use crate::resource::buffer::GPUBuffer;
+
 pub trait Task {
     fn recode(self, encoder: &mut wgpu::CommandEncoder);
 }
@@ -20,5 +22,25 @@ impl Task for ComputeTask<'_> {
         compute_pass.set_bind_group(0, &self.bind_group, &[]);
 
         compute_pass.dispatch_workgroups(self.workgroups[0], self.workgroups[1], self.workgroups[2]);
+    }
+}
+
+pub struct CopyTask<'a> {
+    pub src: &'a GPUBuffer,
+    pub src_offset: u64,
+    pub dest: &'a GPUBuffer,
+    pub dest_offset: u64,
+    pub size: u64,
+}
+
+impl Task for CopyTask<'_> {
+    fn recode(self, encoder: &mut wgpu::CommandEncoder) {
+        encoder.copy_buffer_to_buffer(
+            &self.src.buffer,
+            self.src_offset,
+            &self.dest.buffer,
+            self.dest_offset,
+            self.size,
+        );
     }
 }
