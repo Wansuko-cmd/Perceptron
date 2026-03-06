@@ -1,4 +1,4 @@
-use crate::{resource::buffer::GPUBuffer, runtime::Runtime};
+use crate::{kernels::task::CopyTask, resource::buffer::GPUBuffer, runtime::Runtime};
 
 pub fn create(size: usize, runtime: &Runtime) -> GPUBuffer {
     GPUBuffer::create(size, &runtime.device)
@@ -9,11 +9,21 @@ pub fn init(value: &[f32], runtime: &Runtime) -> GPUBuffer {
 }
 
 pub fn read_all(buffer: &GPUBuffer, runtime: &mut Runtime) -> Vec<f32> {
+    let size = buffer.count();
+    let map_buffer = GPUBuffer::create_map_read(size, &runtime.device);
+    runtime.dispatch(
+        CopyTask {
+            src: buffer,
+            src_offset: 0,
+            dest: &map_buffer,
+            dest_offset: 0,
+            size: size,
+        },
+    );
     runtime.submit();
 
     let mut dest = vec![0.0f32; buffer.count()];
-    buffer.read_all(&mut dest, &runtime.device, &runtime.queue);
-
+    map_buffer.copy_into(&mut dest, &runtime.device);
     return dest;
 }
 
@@ -23,16 +33,36 @@ pub fn write(buffer: &GPUBuffer, index: usize, value: f32, runtime: &mut Runtime
 }
 
 pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, runtime: &mut Runtime) -> GPUBuffer {
-    runtime.submit();
-    buffer.slice(start, end, &runtime.device, &runtime.queue)
+    let size = end - start;
+    let dest = create(size, runtime);
+    runtime.dispatch(
+        CopyTask {
+            src: buffer,
+            src_offset: start,
+            dest: &dest,
+            dest_offset: 0,
+            size: size,
+        },
+    );
+
+    return dest;
 }
 
 pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, dest_offset: usize, runtime: &mut Runtime) {
-    runtime.submit();
-    src.copy_into(dest, dest_offset, &runtime.device, &runtime.queue);
+    runtime.dispatch(
+        CopyTask {
+            src: src,
+            src_offset: 0,
+            dest: &dest,
+            dest_offset: dest_offset,
+            size: src.count(),
+        },
+    );
 }
 
 pub fn content_equals(x: &GPUBuffer, y: &GPUBuffer, runtime: &mut Runtime) -> bool {
-    runtime.submit();
-    x.content_equals(y, &runtime.device, &runtime.queue)
+    if x == y { return true; }
+    if x.count() != y.count() { return false; }
+
+    return read_all(x, runtime) == read_all(y, runtime);
 }

@@ -1,4 +1,4 @@
-use crate::kernels::task::ComputeTask;
+use crate::kernels::task::{ Task};
 
 pub struct Dispatcher {
     pub count: usize,
@@ -10,23 +10,12 @@ impl Dispatcher {
         Dispatcher { count: 0, active_encoder: None }
     }
 
-    pub fn dispatch(&mut self, task: ComputeTask, device: &wgpu::Device) {
+    pub fn dispatch<T: Task>(&mut self, task: T, device: &wgpu::Device) {
         let encoder = self.active_encoder.get_or_insert_with(|| {
             device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("Dispatcher::dispatch") })
         });
 
-        {
-            let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
-                label: Some(task.label),
-                timestamp_writes: None,
-            });
-
-            compute_pass.set_pipeline(task.pipeline);
-            compute_pass.set_bind_group(0, &task.bind_group, &[]);
-
-            compute_pass.dispatch_workgroups(task.workgroups[0], task.workgroups[1], task.workgroups[2]);
-        }
-
+        task.recode(encoder);
         self.count += 1;
     }
 
