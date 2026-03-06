@@ -1,13 +1,13 @@
 pub mod dispatcher;
 
-use std::sync::Arc;
-use crate::{kernels::Kernels, runtime::dispatcher::Dispatcher};
+use std::sync::{Arc, Mutex};
+use crate::{kernels::{Kernels, task::ComputeTask}, runtime::dispatcher::Dispatcher};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
     pub queue: Arc<wgpu::Queue>,
     pub kernels: Kernels,
-    pub dispatcher: Dispatcher,
+    dispatcher: Mutex<Dispatcher>,
 }
 
 impl Runtime {
@@ -37,7 +37,7 @@ impl Runtime {
         let device = Arc::new(device);
         let queue = Arc::new(queue);
         let kernels = Kernels::new(&device);
-        let dispatcher = Dispatcher::new();
+        let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
             device: device,
@@ -45,5 +45,22 @@ impl Runtime {
             kernels: kernels,
             dispatcher: dispatcher,
         }
+    }
+}
+
+impl Runtime {
+    const THREHOLD: usize = 100;
+
+    pub fn dispatch(&self, task: ComputeTask) {
+        let mut dispatcher = self.dispatcher.lock().unwrap();
+
+        dispatcher.dispatch(task, &self.device);
+        if dispatcher.count >= Runtime::THREHOLD {
+            dispatcher.submit(&self.queue);
+        }
+    }
+
+    pub fn submit(&self) {
+        self.dispatcher.lock().unwrap().submit(&self.queue);
     }
 }

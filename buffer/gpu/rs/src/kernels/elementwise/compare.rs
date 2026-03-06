@@ -3,6 +3,8 @@ use wgpu::{Device, util::DeviceExt};
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Compare {
+    device: Device,
+
     gt_d1_to_d0: wgpu::ComputePipeline,
     gt_d1_to_d1: wgpu::ComputePipeline,
     lt_d1_to_d0: wgpu::ComputePipeline,
@@ -87,6 +89,7 @@ impl Compare {
         });
 
         Compare {
+            device: device.clone(),
             gt_d1_to_d0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("gt_d1_to_d0"),
                 layout: Some(&pipeline_layout),
@@ -195,7 +198,6 @@ impl Compare {
         x: &GPUBuffer,
         y: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "gt_d1_to_d0",
@@ -204,7 +206,6 @@ impl Compare {
             x, x, x,
             &Params { y_val: y, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -213,7 +214,6 @@ impl Compare {
         x: &GPUBuffer,
         y: &GPUBuffer,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "gt_d1_to_d1",
@@ -222,7 +222,6 @@ impl Compare {
             x, x, y,
             &Params::default(),
             result,
-            device,
         )
     }
 
@@ -231,7 +230,6 @@ impl Compare {
         x: &GPUBuffer,
         y: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "lt_d1_to_d0",
@@ -240,7 +238,6 @@ impl Compare {
             x, x, x,
             &Params { y_val: y, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -249,7 +246,6 @@ impl Compare {
         x: &GPUBuffer,
         y: &GPUBuffer,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "lt_d1_to_d1",
@@ -258,7 +254,6 @@ impl Compare {
             x, x, y,
             &Params::default(),
             result,
-            device,
         )
     }
 
@@ -269,7 +264,6 @@ impl Compare {
         atol: f32,
         rtol: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "eq_d1_to_d0",
@@ -278,7 +272,6 @@ impl Compare {
             x, x, x,
             &Params { y_val: y, atol: atol, rtol: rtol, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -289,7 +282,6 @@ impl Compare {
         atol: f32,
         rtol: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "eq_d1_to_d1",
@@ -298,7 +290,6 @@ impl Compare {
             x, x, y,
             &Params { atol: atol, rtol: rtol, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -308,7 +299,6 @@ impl Compare {
         x: f32,
         y: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "where_d0_to_d0",
@@ -317,7 +307,6 @@ impl Compare {
             condition, condition, condition,
             &Params { x_val: x, y_val: y, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -327,7 +316,6 @@ impl Compare {
         x: f32,
         y: &GPUBuffer,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "where_d0_to_d1",
@@ -336,7 +324,6 @@ impl Compare {
             condition, y, y,
             &Params { x_val: x, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -346,7 +333,6 @@ impl Compare {
         x: &GPUBuffer,
         y: f32,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "where_d1_to_d1",
@@ -355,7 +341,6 @@ impl Compare {
             condition, x, x,
             &Params { y_val: y, ..Params::default() },
             result,
-            device,
         )
     }
 
@@ -365,7 +350,6 @@ impl Compare {
         x: &GPUBuffer,
         y: &GPUBuffer,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
         self.create_task(
             "where_d1_to_d1",
@@ -373,7 +357,6 @@ impl Compare {
             condition, x, y,
             &Params::default(),
             result,
-            device,
         )
     }
 
@@ -386,8 +369,8 @@ impl Compare {
         y: &GPUBuffer,
         params: &Params,
         result: &GPUBuffer,
-        device: &Device,
     ) -> ComputeTask<'a> {
+        let device = &self.device;
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),
             contents: bytemuck::bytes_of(params),

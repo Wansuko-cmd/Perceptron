@@ -12,9 +12,8 @@ pub fn plus_with_d0_to_d1(
     let x_stride = [0, 0, 0, 0];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d1_to_d0(
@@ -29,9 +28,8 @@ pub fn plus_with_d1_to_d0(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 0];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d1_to_d1(
@@ -44,9 +42,8 @@ pub fn plus_with_d1_to_d1(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d1_to_d2(
@@ -63,9 +60,8 @@ pub fn plus_with_d1_to_d2(
     };
     let y_stride = [0, 0, yj, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d1_to_d3(
@@ -83,9 +79,8 @@ pub fn plus_with_d1_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d2_to_d1(
@@ -102,9 +97,8 @@ pub fn plus_with_d2_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d2_to_d3(
@@ -122,9 +116,8 @@ pub fn plus_with_d2_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d3_to_d1(
@@ -142,9 +135,8 @@ pub fn plus_with_d3_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d3_to_d2(
@@ -162,9 +154,8 @@ pub fn plus_with_d3_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d3_to_d4(
@@ -183,9 +174,8 @@ pub fn plus_with_d3_to_d4(
     };
     let y_stride = [yj * yk * yl, yk * yl, yl, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d4_to_d1(
@@ -204,9 +194,8 @@ pub fn plus_with_d4_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d4_to_d2(
@@ -227,9 +216,8 @@ pub fn plus_with_d4_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn plus_with_d4_to_d3(
@@ -248,9 +236,8 @@ pub fn plus_with_d4_to_d3(
         _ => [0, yj * yk, yk, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d0_to_d1(
@@ -265,9 +252,8 @@ pub fn minus_with_d0_to_d1(
     let x_stride = [0, 0, 0, 0];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d1_to_d0(
@@ -282,9 +268,8 @@ pub fn minus_with_d1_to_d0(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 0];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d1_to_d1(
@@ -297,9 +282,8 @@ pub fn minus_with_d1_to_d1(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d1_to_d2(
@@ -316,9 +300,8 @@ pub fn minus_with_d1_to_d2(
     };
     let y_stride = [0, 0, yj, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d1_to_d3(
@@ -336,9 +319,8 @@ pub fn minus_with_d1_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d2_to_d1(
@@ -355,9 +337,8 @@ pub fn minus_with_d2_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d2_to_d3(
@@ -375,9 +356,8 @@ pub fn minus_with_d2_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d3_to_d1(
@@ -395,9 +375,8 @@ pub fn minus_with_d3_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d3_to_d2(
@@ -415,9 +394,8 @@ pub fn minus_with_d3_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d3_to_d4(
@@ -436,9 +414,8 @@ pub fn minus_with_d3_to_d4(
     };
     let y_stride = [yj * yk * yl, yk * yl, yl, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d4_to_d1(
@@ -457,9 +434,8 @@ pub fn minus_with_d4_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d4_to_d2(
@@ -480,9 +456,8 @@ pub fn minus_with_d4_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn minus_with_d4_to_d3(
@@ -501,9 +476,8 @@ pub fn minus_with_d4_to_d3(
         _ => [0, yj * yk, yk, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d0_to_d1(
@@ -518,9 +492,8 @@ pub fn times_with_d0_to_d1(
     let x_stride = [0, 0, 0, 0];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d1_to_d0(
@@ -535,9 +508,8 @@ pub fn times_with_d1_to_d0(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 0];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d1_to_d1(
@@ -550,9 +522,8 @@ pub fn times_with_d1_to_d1(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d1_to_d2(
@@ -569,9 +540,8 @@ pub fn times_with_d1_to_d2(
     };
     let y_stride = [0, 0, yj, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d1_to_d3(
@@ -589,9 +559,8 @@ pub fn times_with_d1_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d2_to_d1(
@@ -608,9 +577,8 @@ pub fn times_with_d2_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d2_to_d3(
@@ -628,9 +596,8 @@ pub fn times_with_d2_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d3_to_d1(
@@ -648,9 +615,8 @@ pub fn times_with_d3_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d3_to_d2(
@@ -668,9 +634,8 @@ pub fn times_with_d3_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d3_to_d4(
@@ -689,9 +654,8 @@ pub fn times_with_d3_to_d4(
     };
     let y_stride = [yj * yk * yl, yk * yl, yl, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d4_to_d1(
@@ -710,9 +674,8 @@ pub fn times_with_d4_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d4_to_d2(
@@ -733,9 +696,8 @@ pub fn times_with_d4_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn times_with_d4_to_d3(
@@ -754,9 +716,8 @@ pub fn times_with_d4_to_d3(
         _ => [0, yj * yk, yk, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d0_to_d1(
@@ -771,9 +732,8 @@ pub fn div_with_d0_to_d1(
     let x_stride = [0, 0, 0, 0];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d1_to_d0(
@@ -788,9 +748,8 @@ pub fn div_with_d1_to_d0(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 0];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d1_to_d1(
@@ -803,9 +762,8 @@ pub fn div_with_d1_to_d1(
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d1_to_d2(
@@ -822,9 +780,8 @@ pub fn div_with_d1_to_d2(
     };
     let y_stride = [0, 0, yj, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d1_to_d3(
@@ -842,9 +799,8 @@ pub fn div_with_d1_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d2_to_d1(
@@ -861,9 +817,8 @@ pub fn div_with_d2_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d2_to_d3(
@@ -881,9 +836,8 @@ pub fn div_with_d2_to_d3(
     };
     let y_stride = [0, yj * yk, yk, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d3_to_d1(
@@ -901,9 +855,8 @@ pub fn div_with_d3_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d3_to_d2(
@@ -921,9 +874,8 @@ pub fn div_with_d3_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d3_to_d4(
@@ -942,9 +894,8 @@ pub fn div_with_d3_to_d4(
     };
     let y_stride = [yj * yk * yl, yk * yl, yl, 1].map(|v| v as u32);
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d4_to_d1(
@@ -963,9 +914,8 @@ pub fn div_with_d4_to_d1(
         _ => [0, 0, 0, 1],
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d4_to_d2(
@@ -986,9 +936,8 @@ pub fn div_with_d4_to_d2(
         _ => [0, 0, yj, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
 
 pub fn div_with_d4_to_d3(
@@ -1007,7 +956,6 @@ pub fn div_with_d4_to_d3(
         _ => [0, yj * yk, yk, 1].map(|v| v as u32),
     };
 
-    let device = &runtime.device;
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result, device);
-    runtime.dispatcher.dispatch(task, device);
+    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    runtime.dispatch(task);
 }
