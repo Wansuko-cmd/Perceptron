@@ -27,20 +27,20 @@ impl Task for ComputeTask<'_> {
 
 pub struct CopyTask<'a> {
     pub src: &'a GPUBuffer,
-    pub src_offset: u64,
+    pub src_offset: usize,
     pub dest: &'a GPUBuffer,
-    pub dest_offset: u64,
-    pub size: u64,
+    pub dest_offset: usize,
+    pub size: usize,
 }
 
 impl Task for CopyTask<'_> {
     fn recode(self, encoder: &mut wgpu::CommandEncoder) {
         encoder.copy_buffer_to_buffer(
             &self.src.buffer,
-            self.src_offset,
+            (self.src_offset * GPUBuffer::SIZE_BYTES) as u64,
             &self.dest.buffer,
-            self.dest_offset,
-            self.size,
+            (self.dest_offset * GPUBuffer::SIZE_BYTES) as u64,
+            (self.size * GPUBuffer::SIZE_BYTES) as u64,
         );
     }
 }

@@ -9,14 +9,15 @@ pub fn init(value: &[f32], runtime: &Runtime) -> GPUBuffer {
 }
 
 pub fn read_all(buffer: &GPUBuffer, runtime: &mut Runtime) -> Vec<f32> {
-    let map_buffer = GPUBuffer::create_map_read(buffer.count(), &runtime.device);
+    let size = buffer.count();
+    let map_buffer = GPUBuffer::create_map_read(size, &runtime.device);
     runtime.dispatch(
         CopyTask {
             src: buffer,
             src_offset: 0,
             dest: &map_buffer,
             dest_offset: 0,
-            size: buffer.buffer.size(),
+            size: size,
         },
     );
     runtime.submit();
@@ -32,14 +33,12 @@ pub fn write(buffer: &GPUBuffer, index: usize, value: f32, runtime: &mut Runtime
 }
 
 pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, runtime: &mut Runtime) -> GPUBuffer {
-    let size = ((end - start) * GPUBuffer::SIZE_BYTES) as u64;
-    let offset = (start * GPUBuffer::SIZE_BYTES) as u64;
-    let dest = create(size as usize, runtime);
-
+    let size = end - start;
+    let dest = create(size, runtime);
     runtime.dispatch(
         CopyTask {
             src: buffer,
-            src_offset: offset,
+            src_offset: start,
             dest: &dest,
             dest_offset: 0,
             size: size,
@@ -50,16 +49,13 @@ pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, runtime: &mut Runtime
 }
 
 pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, dest_offset: usize, runtime: &mut Runtime) {
-    let size = src.buffer.size();
-    let offset = (dest_offset * GPUBuffer::SIZE_BYTES) as u64;
-
     runtime.dispatch(
         CopyTask {
             src: src,
             src_offset: 0,
             dest: &dest,
-            dest_offset: offset,
-            size: size,
+            dest_offset: dest_offset,
+            size: src.count(),
         },
     );
 }
