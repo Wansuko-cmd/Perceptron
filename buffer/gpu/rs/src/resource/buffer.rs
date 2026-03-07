@@ -9,6 +9,7 @@ pub struct GPUBuffer {
 
 impl GPUBuffer {
     pub const SIZE_BYTES: usize = std::mem::size_of::<f32>();
+    const MAX_GROUP_WIDTH: u32 = 65535;
 
     pub fn create(size: usize, device: &Device) -> GPUBuffer {
         let byte_size = (size * GPUBuffer::SIZE_BYTES) as u64;
@@ -66,7 +67,14 @@ impl GPUBuffer {
 
     pub fn workgroup_count(self: &Self, workgroup_size: u32) -> [u32; 3] {
         let count = self.count() as u32;
-        [(count + workgroup_size - 1) / workgroup_size, 1u32, 1u32]
+        let total = (count + workgroup_size - 1) / workgroup_size;
+        if total < GPUBuffer::MAX_GROUP_WIDTH {
+            [total, 1, 1]
+        } else {
+            let x = 256;
+            let y = (total + x - 1) / x;
+            [x, y, 1]
+        }
     }
 }
 
