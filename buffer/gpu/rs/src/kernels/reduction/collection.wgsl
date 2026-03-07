@@ -9,9 +9,10 @@ struct Params {
 @group(0) @binding(1) var<storage, read_write> result: array<f32>;
 @group(0) @binding(2) var<uniform> params: Params;
 
-@compute @workgroup_size(256)
-fn min_d3(@builtin(global_invocation_id) id: vec3<u32>) {
-    let index = id.x;
+@compute @workgroup_size(256, 1)
+fn min_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let index = id.y * stride + id.x;
     if (index >= arrayLength(&result)) {
         return;
     }
@@ -28,9 +29,10 @@ fn min_d3(@builtin(global_invocation_id) id: vec3<u32>) {
     result[index] = acc;
 }
 
-@compute @workgroup_size(256)
-fn max_d3(@builtin(global_invocation_id) id: vec3<u32>) {
-    let index = id.x;
+@compute @workgroup_size(256, 1)
+fn max_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let index = id.y * stride + id.x;
     if (index >= arrayLength(&result)) {
         return;
     }
@@ -47,9 +49,10 @@ fn max_d3(@builtin(global_invocation_id) id: vec3<u32>) {
     result[index] = acc;
 }
 
-@compute @workgroup_size(256)
-fn sum_d3(@builtin(global_invocation_id) id: vec3<u32>) {
-    let index = id.x;
+@compute @workgroup_size(256, 1)
+fn sum_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let index = id.y * stride + id.x;
     if (index >= arrayLength(&result)) {
         return;
     }
@@ -66,9 +69,10 @@ fn sum_d3(@builtin(global_invocation_id) id: vec3<u32>) {
     result[index] = acc;
 }
 
-@compute @workgroup_size(256)
-fn average_d3(@builtin(global_invocation_id) id: vec3<u32>) {
-    let index = id.x;
+@compute @workgroup_size(256, 1)
+fn average_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let index = id.y * stride + id.x;
     if (index >= arrayLength(&result)) {
         return;
     }

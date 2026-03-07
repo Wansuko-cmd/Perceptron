@@ -9,9 +9,10 @@ struct Params {
 @group(0) @binding(2) var<storage, read_write> result: array<f32>;
 @group(0) @binding(3) var<uniform> params: Params;
 
-@compute @workgroup_size(256)
-fn plus_d4(@builtin(global_invocation_id) id: vec3<u32>) {
-    let result_index = id.x;
+@compute @workgroup_size(256, 1)
+fn plus_d4(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let result_index = id.y * stride + id.x;
     if (result_index >= arrayLength(&result)) {
         return;
     }
@@ -20,9 +21,10 @@ fn plus_d4(@builtin(global_invocation_id) id: vec3<u32>) {
     result[result_index] = x[index.x] + y[index.y];
 }
 
-@compute @workgroup_size(256)
-fn minus_d4(@builtin(global_invocation_id) id: vec3<u32>) {
-    let result_index = id.x;
+@compute @workgroup_size(256, 1)
+fn minus_d4(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let result_index = id.y * stride + id.x;
     if (result_index >= arrayLength(&result)) {
         return;
     }
@@ -31,9 +33,10 @@ fn minus_d4(@builtin(global_invocation_id) id: vec3<u32>) {
     result[result_index] = x[index.x] - y[index.y];
 }
 
-@compute @workgroup_size(256)
-fn times_d4(@builtin(global_invocation_id) id: vec3<u32>) {
-    let result_index = id.x;
+@compute @workgroup_size(256, 1)
+fn times_d4(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let result_index = id.y * stride + id.x;
     if (result_index >= arrayLength(&result)) {
         return;
     }
@@ -42,9 +45,10 @@ fn times_d4(@builtin(global_invocation_id) id: vec3<u32>) {
     result[result_index] = x[index.x] * y[index.y];
 }
 
-@compute @workgroup_size(256)
-fn div_d4(@builtin(global_invocation_id) id: vec3<u32>) {
-    let result_index = id.x;
+@compute @workgroup_size(256, 1)
+fn div_d4(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let result_index = id.y * stride + id.x;
     if (result_index >= arrayLength(&result)) {
         return;
     }
