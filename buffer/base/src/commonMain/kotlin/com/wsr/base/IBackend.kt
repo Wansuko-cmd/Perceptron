@@ -402,6 +402,10 @@ interface IBackend {
         axisL: Int,
     ): DataBuffer
 
+    fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer
+
+    fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer
+
     fun greaterThan(x: DataBuffer, y: Float): DataBuffer
     fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer
 
