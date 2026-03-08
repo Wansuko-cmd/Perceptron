@@ -24,6 +24,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_exp_d1
+import com.wsr.cpu.rs.com_wsr_cpu_gather
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_inner
@@ -66,6 +67,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d2
 import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_pow_d1
+import com.wsr.cpu.rs.com_wsr_cpu_scatter_add
 import com.wsr.cpu.rs.com_wsr_cpu_sigmoid_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sqrt_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d1
@@ -1337,6 +1339,36 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             axis_j = axisJ,
             axis_k = axisK,
             axis_l = axisL,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val n = x.size
+        val result = CPUNativeBuffer.create(i * n * k)
+        com_wsr_cpu_gather(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            i = i,
+            j = j,
+            k = k,
+            n = n,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val n = x.size
+        val result = CPUNativeBuffer.create(i * j * k)
+        com_wsr_cpu_scatter_add(
+            x = x.toCPUBuffer().buffer,
+            y = y.toCPUBuffer().buffer,
+            i = i,
+            j = j,
+            k = k,
+            n = n,
             result = result.buffer,
         )
         return result
