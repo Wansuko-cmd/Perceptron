@@ -1210,6 +1210,12 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(i * j * k)
+        index.scatterAdd(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, b, result.ptr, runtime)
+        return result
+    }
+
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         compare.greaterThanD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
