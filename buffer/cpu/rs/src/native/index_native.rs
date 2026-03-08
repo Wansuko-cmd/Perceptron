@@ -1,7 +1,7 @@
 use crate::index;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn com_wsr_cpu_gatter(
+pub extern "system" fn com_wsr_cpu_gather(
     x: *const f32, y: *const f32,
     i: i32, j: i32, k: i32, n: i32,
     result: *mut f32,
