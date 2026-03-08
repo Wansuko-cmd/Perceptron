@@ -454,21 +454,11 @@ object Backend : IBackend {
         axisL: Int,
     ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
 
-    override fun gather(
-        x: DataBuffer,
-        y: DataBuffer,
-        i: Int,
-        j: Int,
-        k: Int,
-    ): DataBuffer = instance.gather(x, y, i, j, k)
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
+        instance.gather(x, y, i, j, k)
 
-    override fun scatterAdd(
-        x: DataBuffer,
-        y: DataBuffer,
-        i: Int,
-        j: Int,
-        k: Int,
-    ): DataBuffer = instance.scatterAdd(x, y, i, j, k)
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
+        instance.scatterAdd(x, y, i, j, k)
 
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer = instance.greaterThan(x, y)
 
