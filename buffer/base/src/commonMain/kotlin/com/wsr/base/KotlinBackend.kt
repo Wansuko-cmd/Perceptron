@@ -881,7 +881,7 @@ object KotlinBackend : IBackend {
         check(x.size == b * i * n * k)
 
         val result = DataBufferGenerator.create(i * j * k)
-        for(xb in 0 until b) {
+        for (xb in 0 until b) {
             for (xi in 0 until i) {
                 for (xj in 0 until n) {
                     val index = y[xb * n + xj].toInt()

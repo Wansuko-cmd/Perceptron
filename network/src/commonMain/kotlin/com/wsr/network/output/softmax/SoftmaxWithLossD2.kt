@@ -4,8 +4,6 @@ import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.batch.collecction.map.map
 import com.wsr.batch.collecction.sum.sum
-import com.wsr.batch.compare.equals.eq
-import com.wsr.batch.compare.where.where
 import com.wsr.batch.get
 import com.wsr.batch.math.ln
 import com.wsr.batch.math.softmax
