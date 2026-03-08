@@ -27,8 +27,8 @@ class TokenEmbeddingD1ToD2Test {
     )
     val input
         get() = batchOf(
-            IOType.d1(5) { it % 5f },
-            IOType.d1(5) { -it % 4f + 4 },
+            IOType.d1(3) { it % 5f },
+            IOType.d1(3) { -it % 4f + 4 },
         )
 
     @Test

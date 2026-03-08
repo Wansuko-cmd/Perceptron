@@ -857,6 +857,42 @@ object KotlinBackend : IBackend {
         return result
     }
 
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        check(y.size == i * j * k)
+        val n = x.size
+        val result = DataBufferGenerator.create(i * n * k)
+        for (ri in 0 until i) {
+            for (rj in 0 until n) {
+                val index = x[rj].toInt()
+                val yOffset = (ri * j + index) * k
+                val resultOffset = (ri * n + rj) * k
+                for (rk in 0 until k) {
+                    val yIndex = yOffset + rk
+                    val resultIndex = resultOffset + rk
+                    result[resultIndex] = y[yIndex]
+                }
+            }
+        }
+        return result
+    }
+
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val n = y.size
+        check(x.size == i * n * k)
+        val result = DataBufferGenerator.create(i * j * k)
+        for (xi in 0 until i) {
+            for (xj in 0 until n) {
+                val index = y[xj].toInt()
+                val xOffset = (xi * n + xj) * k
+                val resultOffset = (xi * j + index) * k
+                for (xk in 0 until k) {
+                    result[resultOffset + xk] += x[xOffset + xk]
+                }
+            }
+        }
+        return result
+    }
+
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
         val result = DataBufferGenerator.create(x.size)
         for (i in result.indices) result[i] = if (x[i] > y) 1f else 0f
