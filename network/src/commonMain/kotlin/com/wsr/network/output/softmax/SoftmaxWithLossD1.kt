@@ -47,7 +47,7 @@ internal class SoftmaxWithLossD1 internal constructor(
             .batchAverage()
             .get()
         val delta = (output - label).let { diff ->
-            if (maskValue == null) diff else diff.where(onTrue = 0f) { it eq maskValue.toFloat() }
+            if (maskValue == null) diff else diff * label.where(onTrue = 0f) { it eq maskValue.toFloat() }
         }
         return TResult(loss = loss, delta = delta)
     }

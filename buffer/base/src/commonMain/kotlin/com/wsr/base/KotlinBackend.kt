@@ -876,17 +876,20 @@ object KotlinBackend : IBackend {
         return result
     }
 
-    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
-        val n = y.size
-        check(x.size == i * n * k)
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
+        val n = y.size / b
+        check(x.size == b * i * n * k)
+
         val result = DataBufferGenerator.create(i * j * k)
-        for (xi in 0 until i) {
-            for (xj in 0 until n) {
-                val index = y[xj].toInt()
-                val xOffset = (xi * n + xj) * k
-                val resultOffset = (xi * j + index) * k
-                for (xk in 0 until k) {
-                    result[resultOffset + xk] += x[xOffset + xk]
+        for (xb in 0 until b) {
+            for (xi in 0 until i) {
+                for (xj in 0 until n) {
+                    val index = y[xb * n + xj].toInt()
+                    val xOffset = ((xb * i + xi) * n + xj) * k
+                    val resultOffset = (xi * j + index) * k
+                    for (xk in 0 until k) {
+                        result[resultOffset + xk] += x[xOffset + xk]
+                    }
                 }
             }
         }

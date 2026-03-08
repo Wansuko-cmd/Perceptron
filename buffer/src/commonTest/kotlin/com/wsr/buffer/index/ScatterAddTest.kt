@@ -21,6 +21,7 @@ class ScatterAddTest {
             i = 2,
             j = 3,
             k = 4,
+            b = 1,
         )
 
         assertContentEquals(

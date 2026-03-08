@@ -404,7 +404,7 @@ interface IBackend {
 
     fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer
 
-    fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer
+    fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer
 
     fun greaterThan(x: DataBuffer, y: Float): DataBuffer
     fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer
