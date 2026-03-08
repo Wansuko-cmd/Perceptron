@@ -1,5 +1,6 @@
 mod collection;
 mod compare;
+mod index;
 mod mat_mul;
 mod math;
 mod operation;

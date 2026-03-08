@@ -16,6 +16,7 @@ actual fun loadCPUBackend(): IBackend? {
 class CPUJvmBackend : IBackend by KotlinBackend {
     private val collection = JCollection()
     private val compare = JCompare()
+    private val index = JIndex()
     private val math = JMath()
     private val matMul = JMatMul()
     private val operation = JOperation()
@@ -1160,6 +1161,18 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         transpose.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
+        return result
+    }
+
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(i * x.size * k)
+        index.gather(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
+        return result
+    }
+
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(i * j * k)
+        index.scatterAdd(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
         return result
     }
 
