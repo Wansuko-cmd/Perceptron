@@ -2,6 +2,8 @@ package com.wsr.network.process.reshape.token
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
+import com.wsr.batch.index.gather.gather
+import com.wsr.batch.index.scatter.add.scatterAdd
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
@@ -25,46 +27,22 @@ class TokenEmbeddingD1ToD2 internal constructor(
     private var weight: IOType.D2,
 ) : Reshape.D1ToD2() {
 
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> = input.gather(other = weight)
 
     override fun train(
         input: Batch<IOType.D1>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D1> {
-        val input = input
-        val output = forward(input)
+        val output = input.gather(other = weight)
         val delta = calcDelta(output)
 
-        val dw = IOType.d2(shape = listOf(vocabSize, outputY))
-        repeat(input.size) {
-            val tokenIds = input[it]
-            val gradients = delta[it]
-
-            for (seqIndex in 0 until outputX) {
-                val tokenId = tokenIds[seqIndex].toInt()
-                if (tokenId in 0 until vocabSize) {
-                    dw[tokenId] += gradients[seqIndex]
-                }
-            }
-        }
-
-        weight = optimizer.adapt(
-            weight = weight,
-            dw = dw / input.size.toFloat(),
-        )
+        val dw = delta.scatterAdd(other = input, n = vocabSize)
+        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat())
 
         // Embedding層は離散的なので、入力への勾配は意味を持たない
         // しかし型の整合性のため、ダミーのD1を返す
         return Batch(input.size) { IOType.d1(input.shape) }
-    }
-
-    private fun forward(input: Batch<IOType.D1>): Batch<IOType.D2> = Batch(input.size) { index ->
-        val tokenIds = input[index]
-        IOType.d2(outputX, outputY) { x, y ->
-            val tokenId = tokenIds[x].toInt()
-            if (tokenId in 0 until vocabSize) weight[tokenId, y] else 0f
-        }
     }
 }
 
