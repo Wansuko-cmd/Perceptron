@@ -7,6 +7,7 @@ use crate::kernels::{
 };
 
 pub mod elementwise;
+pub mod index;
 pub mod linalg;
 pub mod reduction;
 pub mod task;
