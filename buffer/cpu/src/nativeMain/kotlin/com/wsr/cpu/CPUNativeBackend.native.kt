@@ -1359,7 +1359,7 @@ class CPUNativeBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
         val n = x.size
         val result = CPUNativeBuffer.create(i * j * k)
         com_wsr_cpu_scatter_add(
@@ -1369,6 +1369,7 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             j = j,
             k = k,
             n = n,
+            b = b,
             result = result.buffer,
         )
         return result

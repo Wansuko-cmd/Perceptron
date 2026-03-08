@@ -27,12 +27,12 @@ pub extern "system" fn Java_com_wsr_cpu_JIndex_scatterAdd(
     _class: JClass,
     x: JByteBuffer,
     y: JByteBuffer,
-    i: jint, j: jint, k: jint,
+    i: jint, j: jint, k: jint, b: jint,
     result: JByteBuffer,
 ) {    
     let x = unsafe { x.as_f32_slice(&env) };
     let y = unsafe { y.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
 
-    index::scatter_add(x, y, i as usize, j as usize, k as usize, result);
+    index::scatter_add(x, y, i as usize, j as usize, k as usize, b as usize, result);
 }

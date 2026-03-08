@@ -1170,9 +1170,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
         val result = CPUJvmBuffer.create(i * j * k)
-        index.scatterAdd(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
+        index.scatterAdd(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, b, result.byteBuffer)
         return result
     }
 
