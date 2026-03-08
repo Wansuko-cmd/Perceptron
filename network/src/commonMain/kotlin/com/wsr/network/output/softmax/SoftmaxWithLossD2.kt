@@ -1,19 +1,17 @@
 package com.wsr.network.output.softmax
 
-import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.batch.collecction.average.batchAverage
 import com.wsr.batch.collecction.sum.sum
-import com.wsr.batch.compare.equals.eq
-import com.wsr.batch.compare.where.where
+import com.wsr.batch.index.gather.gather
 import com.wsr.batch.math.ln
 import com.wsr.batch.math.softmax
 import com.wsr.batch.operation.div.div
 import com.wsr.batch.operation.minus.minus
 import com.wsr.batch.operation.times.times
-import com.wsr.batch.reshape.broadcast.broadcastToD2
 import com.wsr.core.IOType
 import com.wsr.core.d0
+import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
@@ -57,14 +55,14 @@ internal class SoftmaxWithLossD2 internal constructor(
         maskValue == null -> Batch(size) { IOType.d2(shape = shape) { _, _ -> 1f } }
 
         else -> {
-            val maskValue = IOType.d0(maskValue.toFloat())
-            Batch<IOType.D1>(
-                size = size,
-                shape = listOf(shape[0]),
-                value= Backend.gather(x = maskValue.value, y = this.value, i = size * shape[0], j = shape[1], k = 1),
-            )
-                .where(onTrue = 0f, onFalse = 1f) { it eq 1f }
-                .broadcastToD2(1, outputY)
+            IOType.d0(maskValue.toFloat())
+                .gather(other = this, axis = 1)
+                .gather(
+                    other = IOType.d2(
+                        IOType.d1(outputY) { 1f },
+                        IOType.d1(outputY) { 0f },
+                    ),
+                )
         }
     }
 }
