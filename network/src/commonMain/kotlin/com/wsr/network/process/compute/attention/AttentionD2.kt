@@ -154,6 +154,7 @@ class AttentionD2 internal constructor(
             @Suppress("UNCHECKED_CAST")
             val input = context.input as Batch<IOType.D1>
             val mask = input.where(onTrue = -1e9f, onFalse = 0f) { it eq maskValue.toFloat() }
+            println(mask.value)
             result = result.plus(other = mask, axis = 2)
         }
         return result
