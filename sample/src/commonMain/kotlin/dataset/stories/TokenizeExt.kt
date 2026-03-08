@@ -15,6 +15,7 @@ fun createWordList(path: String, maxSize: Int): List<String> {
     runCatching {
         FileSystem.SYSTEM.resource(path).buffer().use {
             generateSequence { it.readUtf8Line() }
+                .take(100)
                 .flatMap { tokenize(it) }
                 .forEach { token ->
                     wordCount[token] = wordCount.getOrElse(token) { 0 } + 1
