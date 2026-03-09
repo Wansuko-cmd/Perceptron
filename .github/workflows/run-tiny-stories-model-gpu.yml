@@ -1,4 +1,4 @@
-name: 'TinyStoriesモデルの出力を確認(CPU)'
+name: 'TinyStoriesモデルの出力を確認(GPU)'
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       environment:
         description: '実行環境'
         required: true
-        default: 'ubuntu-latest'
+        default: 'macos-latest'
         type: choice
         options:
           - macos-latest
@@ -59,4 +59,4 @@ jobs:
       - name: TinyStoriesテストを実行
         shell: bash
         run: |
-          ./gradlew sample:jvmTest --tests "stories.TinyStoriesCPUTest" --info
+          ./gradlew sample:jvmTest --tests "stories.TinyStoriesGPUTest" --info
