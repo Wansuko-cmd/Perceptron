@@ -56,6 +56,12 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
 
+      - name: Install Software GPU Drivers
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvulkan1 mesa-vulkan-drivers xvfb vulkan-tools
+
       - name: TinyStoriesテストを実行
         shell: bash
         run: |
