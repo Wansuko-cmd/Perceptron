@@ -46,7 +46,7 @@ private const val NUM_LAYERS = 2
 private const val NUM_HEADS = 8
 private const val FFN_DIM = EMBEDDING_DIM * 4
 
-private const val BATCH_SIZE = 64
+private const val BATCH_SIZE = 32
 private const val NUM_OF_STORIES = 1000
 
 private const val PAD_INDEX = 0
