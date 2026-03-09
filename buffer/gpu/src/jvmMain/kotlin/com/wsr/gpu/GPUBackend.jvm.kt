@@ -23,6 +23,7 @@ class GPUBackend : IBackend by KotlinBackend {
     private val math = JMath()
     private val matMul = JMatMul()
     private val collection = JCollection()
+    private val index = JIndex()
     private val operation = JOperation()
     private val transpose = JTranspose()
     private val compare = JCompare()
@@ -1200,6 +1201,18 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         transpose.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, runtime)
+        return result
+    }
+
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(i * x.size * k)
+        index.gather(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, result.ptr, runtime)
+        return result
+    }
+
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(i * j * k)
+        index.scatterAdd(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, b, result.ptr, runtime)
         return result
     }
 
