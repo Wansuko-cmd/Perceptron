@@ -6,7 +6,6 @@ import com.wsr.Backend
 import com.wsr.gpu.gpu
 import kotlin.test.Test
 
-
 class TinyStoriesGPUTest {
     @Test
     fun run() {
