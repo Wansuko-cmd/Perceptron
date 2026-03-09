@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         index: [ 0, 1, 2, 3, 4 ]
-    runs-on: ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'ubuntu-latest' }}
-    name: Build on ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'ubuntu-latest' }}/${{ matrix.index }}
+    runs-on: ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'macos-latest' }}
+    name: Build on ${{ (github.event_name == 'workflow_dispatch') && github.event.inputs.environment || 'macos-latest' }}/${{ matrix.index }}
     steps:
       - name: リポジトリにチェックアウト
         uses: actions/checkout@v4
