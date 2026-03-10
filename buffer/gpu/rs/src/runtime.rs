@@ -76,4 +76,8 @@ impl Runtime {
     pub fn submit(&self) {
         self.dispatcher.lock().unwrap().submit(&self.queue);
     }
+
+    pub fn wait(&self) {
+         let _ = self.device.poll(wgpu::PollType::wait_indefinitely());
+    }
 }
