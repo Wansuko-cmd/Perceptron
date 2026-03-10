@@ -7,6 +7,10 @@ edition = "2024"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [[bench]]
+name = "collection"
+harness = false
+
+[[bench]]
 name = "math"
 harness = false
 
