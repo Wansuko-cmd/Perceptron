@@ -10,6 +10,10 @@ crate-type = ["cdylib", "staticlib", "rlib"]
 name = "math"
 harness = false
 
+[[bench]]
+name = "transpose"
+harness = false
+
 [dependencies]
 bytemuck = "1.25.0"
 jni = "0.21.1"
