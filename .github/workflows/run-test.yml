@@ -26,12 +26,11 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
 
-      - name: OpenBLASをインストール(Linux)
+      - name: SW GPUドライバーを追加
         if: runner.os == 'Linux'
         run: |
-          sudo apt update
-          sudo apt install libopenblas-dev
-          echo "OPENBLAS_HOME=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
+          sudo apt-get update
+          sudo apt-get install -y libvulkan1 mesa-vulkan-drivers xvfb vulkan-tools
 
       - name: テストを実行
         run: |
