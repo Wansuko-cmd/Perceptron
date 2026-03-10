@@ -13,14 +13,27 @@ pub struct Runtime {
 impl Runtime {
     pub async fn new() -> Self {
         let instance = wgpu::Instance::default();
-        let adapter = instance
+        let request = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::HighPerformance,
                 compatible_surface: None,
                 force_fallback_adapter: false,
             })
-            .await
-            .unwrap();
+            .await;
+        let adapter = match request {
+            Ok(adapter) => adapter,
+            Err(_) => {
+                eprintln!("Warning: SW GPU will be used.");
+                instance
+                    .request_adapter(&wgpu::RequestAdapterOptions {
+                        power_preference: wgpu::PowerPreference::HighPerformance,
+                        compatible_surface: None,
+                        force_fallback_adapter: true,
+                    })
+                    .await
+                    .unwrap()
+            },
+        };
         
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
