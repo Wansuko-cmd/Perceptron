@@ -4,13 +4,16 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
 bytemuck = "1.25.0"
 jni = "0.21.1"
 pollster = "0.4.0"
 wgpu = "28.0.0"
+
+[dev-dependencies]
+criterion = "0.8.2"
 
 [features]
 default = ["jni", "native"]
