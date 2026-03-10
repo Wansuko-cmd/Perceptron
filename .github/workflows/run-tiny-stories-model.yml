@@ -1,4 +1,4 @@
-name: 'TinyStoriesモデルの出力を確認(CPU)'
+name: 'TinyStoriesモデルの出力を確認'
 
 on:
   workflow_dispatch:
@@ -14,6 +14,8 @@ on:
           - ubuntu-24.04-arm
           - windows-latest
   push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -59,4 +61,4 @@ jobs:
       - name: TinyStoriesテストを実行
         shell: bash
         run: |
-          ./gradlew sample:jvmTest --tests "stories.TinyStoriesCPUTest" --info
+          ./gradlew sample:jvmTest --tests "stories.TinyStoriesTest" --info
