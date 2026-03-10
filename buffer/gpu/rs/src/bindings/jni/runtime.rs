@@ -10,7 +10,7 @@ pub extern "system" fn Java_com_wsr_gpu_JRuntime_allocate(
     _: JNIEnv,
     _class: JClass,
 ) -> jlong {
-    let runtime = runtime::runtime_allocate();
+    let runtime = runtime::allocate();
     Box::into_raw(Box::new(runtime)) as jlong
 }
 
