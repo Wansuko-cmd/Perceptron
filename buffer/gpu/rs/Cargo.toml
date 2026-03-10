@@ -11,6 +11,10 @@ name = "math"
 harness = false
 
 [[bench]]
+name = "mat_mul"
+harness = false
+
+[[bench]]
 name = "transpose"
 harness = false
 
