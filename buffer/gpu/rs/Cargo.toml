@@ -11,6 +11,10 @@ name = "collection"
 harness = false
 
 [[bench]]
+name = "compare"
+harness = false
+
+[[bench]]
 name = "math"
 harness = false
 
