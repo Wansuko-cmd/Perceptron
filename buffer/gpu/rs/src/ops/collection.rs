@@ -5,7 +5,7 @@ pub fn average_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
-    let task = runtime.kernels.collection.average_d3(x, 1, x.count(), 1, result);
+    let task = runtime.kernels.collection.average_d1(x, result);
     runtime.dispatch(task);
 }
 
@@ -43,7 +43,7 @@ pub fn max_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
-    let task = runtime.kernels.collection.max_d3(x, 1, x.count(), 1, result);
+    let task = runtime.kernels.collection.max_d1(x, result);
     runtime.dispatch(task);
 }
 
@@ -81,7 +81,7 @@ pub fn min_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
-    let task = runtime.kernels.collection.min_d3(x, 1, x.count(), 1, result);
+    let task = runtime.kernels.collection.min_d1(x, result);
     runtime.dispatch(task);
 }
 
@@ -119,7 +119,7 @@ pub fn sum_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
-    let task = runtime.kernels.collection.sum_d3(x, 1, x.count(), 1, result);
+    let task = runtime.kernels.collection.sum_d1(x, result);
     runtime.dispatch(task);
 }
 

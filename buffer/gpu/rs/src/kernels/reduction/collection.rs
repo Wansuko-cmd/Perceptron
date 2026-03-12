@@ -286,7 +286,7 @@ impl Collection {
         let device = &self.device;
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some(label),
-            contents: bytemuck::bytes_of(&[0;0]),
+            contents: bytemuck::bytes_of(&[0;4]),
             usage: wgpu::BufferUsages::UNIFORM,
         });
 
