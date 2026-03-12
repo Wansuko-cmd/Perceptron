@@ -27,6 +27,10 @@ name = "mat_mul"
 harness = false
 
 [[bench]]
+name = "operation"
+harness = false
+
+[[bench]]
 name = "transpose"
 harness = false
 
