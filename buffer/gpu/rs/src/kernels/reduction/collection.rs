@@ -5,6 +5,11 @@ use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 pub struct Collection {
     device: Device,
 
+    average_d1: wgpu::ComputePipeline,
+    max_d1: wgpu::ComputePipeline,
+    min_d1: wgpu::ComputePipeline,
+    sum_d1: wgpu::ComputePipeline,
+
     average_d2_axis0: wgpu::ComputePipeline,
     average_d2_axis1: wgpu::ComputePipeline,
     max_d2_axis0: wgpu::ComputePipeline,
@@ -23,7 +28,13 @@ pub struct Collection {
 }
 
 impl Collection {
+    const WORKGROUP_SIZE: u32 = 256;
+
     pub fn new(device: &Device) -> Self {
+        let shader_d1 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Collection::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("collection_d1.wgsl").into()),
+        });
         let shader_d2 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Collection::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("collection_d2.wgsl").into()),
@@ -77,6 +88,39 @@ impl Collection {
 
         Collection {
             device: device.clone(),
+            average_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("average_d1"),
+                layout: Some(&pipeline_layout),
+                module: &shader_d1,
+                entry_point: Some("average_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            max_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("max_d1"),
+                layout: Some(&pipeline_layout),
+                module: &shader_d1,
+                entry_point: Some("max_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            min_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("min_d1"),
+                layout: Some(&pipeline_layout),
+                module: &shader_d1,
+                entry_point: Some("min_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            sum_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("sum_d1"),
+                layout: Some(&pipeline_layout),
+                module: &shader_d1,
+                entry_point: Some("sum_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+
             average_d2_axis0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("average_d2_axis0"),
                 layout: Some(&pipeline_layout),
@@ -179,6 +223,103 @@ impl Collection {
     }
 }
 
+impl Collection {
+    pub fn average_d1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.create_task_d1(
+            "average_d1",
+            &self.average_d1,
+            x,
+            result,
+        )
+    }
+
+    pub fn max_d1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.create_task_d1(
+            "max_d1",
+            &self.max_d1,
+            x,
+            result,
+        )
+    }
+
+    pub fn min_d1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.create_task_d1(
+            "min_d1",
+            &self.min_d1,
+            x,
+            result,
+        )
+    }
+
+    pub fn sum_d1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.create_task_d1(
+            "sum_d1",
+            &self.sum_d1,
+            x,
+            result,
+        )
+    }
+
+    fn create_task_d1<'a>(
+        &'a self,
+        label: &'static str,
+        pipeline: &'a wgpu::ComputePipeline,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let device = &self.device;
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&[0;0]),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = [1;3];
+
+        ComputeTask {
+            label: label,
+            pipeline: pipeline,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct D2Params {
@@ -186,15 +327,6 @@ struct D2Params {
     xj: u32,
     _pad1: u32,
     _pad2: u32,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct D3Params {
-    xi: u32,
-    xj: u32,
-    xk: u32,
-    _pad: u32,
 }
 
 impl Collection {
@@ -364,9 +496,16 @@ impl Collection {
     }
 }
 
-impl Collection {
-    const WORKGROUP_SIZE: u32 = 256;
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct D3Params {
+    xi: u32,
+    xj: u32,
+    xk: u32,
+    _pad: u32,
+}
 
+impl Collection {
     pub fn average_d3<'a>(
         &'a self,
         x: &GPUBuffer,
