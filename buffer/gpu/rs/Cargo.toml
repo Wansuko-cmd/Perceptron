@@ -4,13 +4,44 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[[bench]]
+name = "collection"
+harness = false
+
+[[bench]]
+name = "compare"
+harness = false
+
+[[bench]]
+name = "index"
+harness = false
+
+[[bench]]
+name = "math"
+harness = false
+
+[[bench]]
+name = "mat_mul"
+harness = false
+
+[[bench]]
+name = "operation"
+harness = false
+
+[[bench]]
+name = "transpose"
+harness = false
 
 [dependencies]
 bytemuck = "1.25.0"
 jni = "0.21.1"
 pollster = "0.4.0"
 wgpu = "28.0.0"
+
+[dev-dependencies]
+criterion = "0.8.2"
 
 [features]
 default = ["jni", "native"]
