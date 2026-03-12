@@ -3,7 +3,8 @@ use wgpu::Device;
 use crate::kernels::{
     elementwise::{compare::Compare, math::Math, operation::Operation},
     index::index::Index,
-    linalg::{mat_mul::MatMul, transpose::Transpose},
+    linalg::mat_mul::MatMul,
+    shape::transpose::Transpose,
     reduction::collection::Collection,
 };
 
@@ -11,6 +12,7 @@ pub mod elementwise;
 pub mod index;
 pub mod linalg;
 pub mod reduction;
+pub mod shape;
 pub mod task;
 
 pub struct Kernels {
