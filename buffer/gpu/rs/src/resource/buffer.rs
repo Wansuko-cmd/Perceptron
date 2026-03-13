@@ -71,8 +71,8 @@ impl GPUBuffer {
         if total < GPUBuffer::MAX_GROUP_WIDTH {
             [total, 1, 1]
         } else {
-            let x = 256;
-            let y = (total + x - 1) / x;
+            let y = (total + GPUBuffer::MAX_GROUP_WIDTH - 1) / GPUBuffer::MAX_GROUP_WIDTH;
+            let x = (total + y - 1) / y;
             [x, y, 1]
         }
     }
