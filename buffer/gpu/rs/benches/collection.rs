@@ -64,7 +64,7 @@ where
             &size,
             |b, _| {
                 b.iter(|| {
-                    for _ in 0..10 {
+                    for _ in 0..100 {
                         op(&x, &result, runtime);
                     }
                     runtime.submit();
@@ -90,7 +90,7 @@ where
             &size,
             |b, _| {
                 b.iter(|| {
-                    for _ in 0..10 {
+                    for _ in 0..100 {
                         op(&x, xi, xj, axis, &result, runtime);
                     }
                     runtime.submit();
@@ -116,7 +116,7 @@ where
             &size,
             |b, _| {
                 b.iter(|| {
-                    for _ in 0..10 {
+                    for _ in 0..100 {
                         op(&x, xi, xj, xk, axis, &result, runtime);
                     }
                     runtime.submit();
