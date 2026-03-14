@@ -34,13 +34,18 @@ impl Runtime {
                     .unwrap()
             },
         };
-        
+
+        let limits = adapter.limits();
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("Runtime:new"),
                 required_features: wgpu::Features::empty(),
                 experimental_features: wgpu::ExperimentalFeatures::disabled(),
-                required_limits: wgpu::Limits::default(),
+                required_limits: wgpu::Limits {
+                    max_storage_buffer_binding_size: limits.max_storage_buffer_binding_size,
+                    max_buffer_size: limits.max_buffer_size,
+                    ..wgpu::Limits::defaults()
+                },
                 memory_hints: Default::default(),
                 trace: wgpu::Trace::Off,
             })
