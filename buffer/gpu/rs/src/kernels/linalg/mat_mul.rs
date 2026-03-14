@@ -121,8 +121,6 @@ struct Params {
 }
 
 impl MatMul {
-    const WORKGROUP_SIZE: u32 = 256;
-
     pub fn mat_mul_nn<'a>(
         &'a self,
         x: &GPUBuffer,
@@ -231,7 +229,7 @@ impl MatMul {
             ]
         });
 
-        let workgroups = result.workgroup_count(MatMul::WORKGROUP_SIZE);
+        let workgroups = [((n + 15) / 16) as u32, ((m + 15) / 16) as u32, b as u32];
 
         ComputeTask {
             label: label,
