@@ -9,18 +9,26 @@ struct Params {
 @group(0) @binding(1) var<storage, read_write> result: array<f32>;
 @group(0) @binding(2) var<uniform> params: Params;
 
+var<workgroup> tile: array<array<f32, 16>, 16>;
+
 @compute @workgroup_size(16, 16)
 fn transpose_d2(
-    @builtin(global_invocation_id) global_id: vec3<u32>,
+    @builtin(workgroup_id) group_id: vec3<u32>,
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
-    let ni = global_id.y;
-    let nj = global_id.x;
+    let old_i = group_id.y * 16u + local_id.y;
+    let old_j = group_id.x * 16u + local_id.x;
+    if (old_i < params.oi && old_j < params.oj) {
+        let old_index = old_i * params.oj + old_j;
+        tile[local_id.y][local_id.x] = x[old_index];
+    }
 
-    let new_index = ni * params.oi + nj;
-    let old_index = nj * params.oj + ni;
-
-    if (ni < params.oj && nj < params.oi) {
-        result[new_index] = x[old_index];
+    workgroupBarrier();
+    
+    let new_i = group_id.x * 16u + local_id.y;
+    let new_j = group_id.y * 16u + local_id.x;
+    if (new_i < params.oj && new_j < params.oi) {
+        let new_index = new_i * params.oi + new_j;
+        result[new_index] = tile[local_id.x][local_id.y];
     }
 }
