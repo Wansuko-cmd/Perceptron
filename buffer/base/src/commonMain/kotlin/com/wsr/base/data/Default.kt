@@ -15,7 +15,14 @@ class Default(private val value: FloatArray) : DataBuffer {
         this.value[i] = value
     }
 
-    override fun slice(indices: IntRange): DataBuffer = Default(value.sliceArray(indices))
+    override fun slice(indices: IntProgression): DataBuffer {
+        val result = FloatArray(indices.size)
+        var targetIndex = 0
+        for (sourceIndex in indices) {
+            result[targetIndex++] = this[sourceIndex]
+        }
+        return Default(result)
+    }
 
     override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
         when (destination) {
@@ -42,3 +49,5 @@ class Default(private val value: FloatArray) : DataBuffer {
         }
     }
 }
+
+val IntProgression.size get() = (last - first) / step + 1

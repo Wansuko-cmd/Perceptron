@@ -43,7 +43,7 @@ class GPUJvmBuffer(
         native.write(ptr, i, value, runtime)
     }
 
-    override fun slice(indices: IntRange): DataBuffer {
+    override fun slice(indices: IntProgression): DataBuffer {
         val ptr = ptr
         val runtime = runtime
         val native = native

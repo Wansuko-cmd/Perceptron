@@ -8,7 +8,7 @@ public class JBuffer {
     public native float[] readAll(long ptr, long runtime);
     public native void write(long ptr, int index, float value, long runtime);
 
-    public native long slice(long ptr, int start, int end, long runtime);
+    public native long slice(long ptr, int start, int end, int step, long runtime);
 
     public native void copyInto(long ptr, long dest, int destinationOffset, long runtime);
 

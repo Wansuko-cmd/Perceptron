@@ -4,6 +4,7 @@ package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import com.wsr.base.data.size
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.ref.createCleaner
 import kotlinx.cinterop.CPointer
@@ -45,11 +46,21 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         buffer[i] = value
     }
 
-    override fun slice(indices: IntRange): DataBuffer {
-        val size = indices.last - indices.first + 1
+    override fun slice(indices: IntProgression): DataBuffer {
+        val size = indices.size
         val buffer = nativeHeap.allocArray<FloatVar>(size)
-        val byteSize = (size * Float.SIZE_BYTES).toULong()
-        memcpy(buffer, this.buffer + indices.first, byteSize)
+        when (indices.step) {
+            1 -> {
+                val byteSize = (size * Float.SIZE_BYTES).toULong()
+                memcpy(buffer, this.buffer + indices.first, byteSize)
+            }
+            else -> {
+                var targetIndex = 0
+                for (i in indices) {
+                    buffer[targetIndex++] = this[i]
+                }
+            }
+        }
         return CPUNativeBuffer(buffer = buffer, size = size)
     }
 
