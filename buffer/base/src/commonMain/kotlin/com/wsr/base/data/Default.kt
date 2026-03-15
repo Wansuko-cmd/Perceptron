@@ -31,6 +31,26 @@ class Default(private val value: FloatArray) : DataBuffer {
         }
     }
 
+    override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
+        val count = minOf(size, destIndices.size)
+        when {
+            dest is Default && destIndices.step == 1 -> {
+                value.copyInto(
+                    destination = dest.value,
+                    destinationOffset = destIndices.first,
+                    startIndex = 0,
+                    endIndex = count,
+                )
+            }
+            else -> {
+                val iterator = destIndices.iterator()
+                repeat(count) {
+                    if (iterator.hasNext()) dest[iterator.nextInt()] = this[it]
+                }
+            }
+        }
+    }
+
     override fun contentEquals(other: DataBuffer): Boolean {
         if (size != other.size) return false
         return when (other) {
