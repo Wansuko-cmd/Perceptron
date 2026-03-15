@@ -16,6 +16,7 @@ interface DataBuffer {
     fun slice(indices: IntProgression): DataBuffer
 
     fun copyInto(destination: DataBuffer, destinationOffset: Int = 0)
+    fun copyInto(dest: DataBuffer, destIndices: IntProgression = dest.indices)
 
     fun contentEquals(other: DataBuffer): Boolean
 
