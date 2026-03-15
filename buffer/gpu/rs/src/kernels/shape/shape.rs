@@ -2,28 +2,73 @@ use wgpu::{Device, util::DeviceExt};
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
-pub struct Transpose {
+pub struct Shape {
     device: Device,
+
+    slice: wgpu::ComputePipeline,
+    slice_bgl: wgpu::BindGroupLayout,
+
     transpose_d2: wgpu::ComputePipeline,
     transpose_d4: wgpu::ComputePipeline,
-    bind_group_layout: wgpu::BindGroupLayout,
+    transpose_bgl: wgpu::BindGroupLayout,
 }
 
-impl Transpose {
+impl Shape {
     const WORKGROUP_SIZE: u32 = 256;
 
     pub fn new(device: &Device) -> Self {
-        let shader_d2 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Transpose::new"),
+        let slice_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice.wgsl").into()),
+        });
+
+        let slice_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Shape::new"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+            ],
+        });
+
+        let transpose_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d2.wgsl").into()),
         });
-        let shader_d4 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Transpose::new"),
+        let transpose_d4_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d4.wgsl").into()),
         });
 
-        let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Transpose::new"),
+        let transpose_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Shape::new"),
             entries: &[
                 wgpu::BindGroupLayoutEntry {
                     binding: 0,
@@ -59,17 +104,26 @@ impl Transpose {
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Transpose::new"),
-            bind_group_layouts: &[&bind_group_layout],
+            label: Some("Shape::new"),
+            bind_group_layouts: &[&transpose_bgl],
             immediate_size: 0,
         });
 
-        Transpose {
+        Shape {
             device: device.clone(),
+            slice: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("slice"),
+                layout: Some(&pipeline_layout),
+                module: &slice_shader,
+                entry_point: Some("slice"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            slice_bgl: slice_bgl,
             transpose_d2: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("transpose_d2"),
                 layout: Some(&pipeline_layout),
-                module: &shader_d2,
+                module: &transpose_d2_shader,
                 entry_point: Some("transpose_d2"),
                 compilation_options: Default::default(),
                 cache: None,
@@ -77,37 +131,37 @@ impl Transpose {
             transpose_d4: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("transpose_d4"),
                 layout: Some(&pipeline_layout),
-                module: &shader_d4,
+                module: &transpose_d4_shader,
                 entry_point: Some("transpose_d4"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
-            bind_group_layout: bind_group_layout,
+            transpose_bgl: transpose_bgl,
         }
     }
 }
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct D2Params {
-    oi: u32,
-    oj: u32,
+struct SliceParams {
+    start: u32,
+    step: i32,
     _pad1: u32,
     _pad2: u32,
 }
 
-impl Transpose {
-    pub fn transpose_d2<'a>(
+impl Shape {
+    pub fn slice<'a>(
         &'a self,
         x: &GPUBuffer,
-        xi: usize, xj: usize,
+        start: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
-        let label = "transpose_d2";
+        let label = "slice";
         let device = &self.device;
-        let params = D2Params {
-            oi: xi as u32,
-            oj: xj as u32,
+        let params = SliceParams {
+            start: start as u32,
+            step: step as i32,
             _pad1: 0u32,
             _pad2: 0u32,
         };
@@ -120,7 +174,7 @@ impl Transpose {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.bind_group_layout,
+            layout: &self.slice_bgl,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -137,7 +191,68 @@ impl Transpose {
             ]
         });
 
-        let workgroups = result.workgroup_count(Transpose::WORKGROUP_SIZE);
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.slice,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct TransposeD2Params {
+    oi: u32,
+    oj: u32,
+    _pad1: u32,
+    _pad2: u32,
+}
+
+impl Shape {
+    pub fn transpose_d2<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "transpose_d2";
+        let device = &self.device;
+        let params = TransposeD2Params {
+            oi: xi as u32,
+            oj: xj as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.transpose_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,
@@ -150,12 +265,12 @@ impl Transpose {
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct D4Params {
+struct TransposeD4Params {
     new_stride: [u32; 4],
     permuted_stride: [u32; 4],
 }
 
-impl Transpose {
+impl Shape {
     pub fn transpose_d3<'a>(
         &'a self,
         x: &GPUBuffer,
@@ -201,7 +316,7 @@ impl Transpose {
         let old_stride = [old_shape[1] * old_shape[2] * old_shape[3], old_shape[2] * old_shape[3], old_shape[3], 1];
         let new_stride = [new_shape[1] * new_shape[2] * new_shape[3], new_shape[2] * new_shape[3], new_shape[3], 1];
         let permuted_stride = [old_stride[axis_i], old_stride[axis_j], old_stride[axis_k], old_stride[axis_l]];
-        let params = D4Params {
+        let params = TransposeD4Params {
             new_stride: new_stride.map(|v| v as u32),
             permuted_stride: permuted_stride.map(|v| v as u32),
         };
@@ -214,7 +329,7 @@ impl Transpose {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.bind_group_layout,
+            layout: &self.transpose_bgl,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -231,7 +346,7 @@ impl Transpose {
             ]
         });
 
-        let workgroups = result.workgroup_count(Transpose::WORKGROUP_SIZE);
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,

@@ -1,2 +1,1 @@
-pub mod buffer;
-pub mod transpose;
+pub mod shape;

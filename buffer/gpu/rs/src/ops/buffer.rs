@@ -46,7 +46,7 @@ pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: isize, runtime:
             },
         );
     } else {
-        runtime.dispatch(runtime.kernels.buffer.slice(buffer, start, step, &dest));
+        runtime.dispatch(runtime.kernels.shape.slice(buffer, start, step, &dest));
     }
 
     return dest;
