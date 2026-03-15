@@ -4,8 +4,8 @@ use crate::kernels::{
     elementwise::{compare::Compare, math::Math, operation::Operation},
     index::index::Index,
     linalg::mat_mul::MatMul,
-    shape::{buffer::Buffer, transpose::Transpose},
     reduction::collection::Collection,
+    shape::shape::Shape,
 };
 
 pub mod elementwise;
@@ -16,27 +16,25 @@ pub mod shape;
 pub mod task;
 
 pub struct Kernels {
-    pub buffer: Buffer,
     pub collection: Collection,
     pub compare: Compare,
     pub index: Index,
     pub mat_mul: MatMul,
     pub math: Math,
     pub operation: Operation,
-    pub transpose: Transpose,
+    pub shape: Shape,
 }
 
 impl Kernels {
     pub fn new(device: &Device) -> Self {
         Kernels {
-            buffer: Buffer::new(device),
             collection: Collection::new(device),
             compare: Compare::new(device),
             index: Index::new(device),
             mat_mul: MatMul::new(device),
             math: Math::new(device),
             operation: Operation::new(device),
-            transpose: Transpose::new(device),
+            shape: Shape::new(device),
         }
     }
 }

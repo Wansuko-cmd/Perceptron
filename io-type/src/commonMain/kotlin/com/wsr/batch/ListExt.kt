@@ -11,7 +11,8 @@ fun <T : IOType> List<T>.toBatch(): Batch<T> {
     val step = shape.reduce { acc, i -> acc * i }
     val batchValue = DataBuffer.create(batchSize * step)
     forEachIndexed { index, item ->
-        item.value.copyInto(batchValue, index * step)
+        val start = index * step
+        item.value.copyInto(batchValue, start until start + item.value.size)
     }
     return Batch(
         value = batchValue,

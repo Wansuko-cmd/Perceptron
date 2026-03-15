@@ -36,7 +36,9 @@ inline fun <T : IOType> Batch(size: Int, init: (index: Int) -> T): Batch<T> {
     val value = DataBuffer.create(size * first.value.size)
     first.value.copyInto(value)
     for (i in 1 until size) {
-        init(i).value.copyInto(value, i * first.value.size)
+        val src = init(i).value
+        val start = i * first.value.size
+        src.copyInto(value, start until start + src.size)
     }
     return Batch(
         value = value,
@@ -51,7 +53,8 @@ fun <T : IOType> batchOf(vararg elements: T): Batch<T> {
     val step = shape.reduce { acc, i -> acc * i }
     val batchValue = DataBuffer.create(batchSize * step)
     elements.forEachIndexed { index, item ->
-        item.value.copyInto(batchValue, index * step)
+        val start = index * step
+        item.value.copyInto(batchValue, start until start + item.value.size)
     }
     return Batch(
         value = batchValue,
@@ -95,17 +98,21 @@ operator fun Batch<IOType.D0>.set(i: Int, element: IOType.D0) {
 }
 
 operator fun Batch<IOType.D1>.set(i: Int, element: IOType.D1) {
-    element.value.copyInto(value, i * step)
+    val start = i * step
+    element.value.copyInto(value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D2>.set(i: Int, element: IOType.D2) {
-    element.value.copyInto(value, i * step)
+    val start = i * step
+    element.value.copyInto(value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D3>.set(i: Int, element: IOType.D3) {
-    element.value.copyInto(value, i * step)
+    val start = i * step
+    element.value.copyInto(value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D4>.set(i: Int, element: IOType.D4) {
-    element.value.copyInto(value, i * step)
+    val start = i * step
+    element.value.copyInto(value, start until start + element.value.size)
 }

@@ -51,18 +51,25 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         return result
     }
 
-    override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
-        when (destination) {
-            is CPUJvmBuffer -> {
-                byteBuffer.move(position = 0, limit = size) {
-                    val destBuffer = destination.floatBuffer
-                    destBuffer.move(position = destinationOffset, limit = destinationOffset + size) {
-                        destBuffer.put(floatBuffer)
+    override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
+        val count = minOf(size, destIndices.size)
+        when {
+            dest is CPUJvmBuffer && destIndices.step == 1 -> {
+                val byteCount = count * Float.SIZE_BYTES
+                val start = destIndices.first * Float.SIZE_BYTES
+                byteBuffer.move(position = 0, limit = byteCount) {
+                    val src = slice().order(ByteOrder.nativeOrder())
+                    dest.byteBuffer.move(position = start, limit = start + byteCount) {
+                        put(src)
                     }
                 }
             }
-
-            else -> for (i in indices) destination[i + destinationOffset] = this[i]
+            else -> {
+                val iterator = destIndices.iterator()
+                repeat(count) {
+                    if (iterator.hasNext()) dest[iterator.nextInt()] = this[it]
+                }
+            }
         }
     }
 

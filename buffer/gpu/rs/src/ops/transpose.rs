@@ -1,7 +1,7 @@
 use crate::{ops, resource::buffer::GPUBuffer, runtime::Runtime};
 
 pub fn transpose_d2(x: &GPUBuffer, xi: usize, xj: usize, result: &GPUBuffer, runtime: &mut Runtime) {
-    let task = runtime.kernels.transpose.transpose_d2(x, xi, xj, result);
+    let task = runtime.kernels.shape.transpose_d2(x, xi, xj, result);
     runtime.dispatch(task);
 }
 
@@ -14,12 +14,12 @@ pub fn transpose_d3(
 ) {
     let task = match(axis_i, axis_j, axis_k) {
         (0, 1, 2) => {
-            ops::buffer::copy_into(x, &result, 0, runtime);
+            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
             return;
         },
-        (1, 2, 0) => runtime.kernels.transpose.transpose_d2(x, xi, xj * xk, result),
-        (2, 0, 1) => runtime.kernels.transpose.transpose_d2(x, xi * xj, xk, result),
-        _ => runtime.kernels.transpose.transpose_d3(x, xi, xj, xk, axis_i, axis_j, axis_k, result)
+        (1, 2, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk, result),
+        (2, 0, 1) => runtime.kernels.shape.transpose_d2(x, xi * xj, xk, result),
+        _ => runtime.kernels.shape.transpose_d3(x, xi, xj, xk, axis_i, axis_j, axis_k, result)
     };
     runtime.dispatch(task);
 }
@@ -33,13 +33,13 @@ pub fn transpose_d4(
 ) {
     let task = match(axis_i, axis_j, axis_k, axis_l) {
         (0, 1, 2, 3) => {
-            ops::buffer::copy_into(x, &result, 0, runtime);
+            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
             return;
         },
-        (1, 2, 3, 0) => runtime.kernels.transpose.transpose_d2(x, xi, xj * xk * xl, result),
-        (2, 3, 0, 1) => runtime.kernels.transpose.transpose_d2(x, xi * xj, xk * xl, result),
-        (3, 0, 1, 2) => runtime.kernels.transpose.transpose_d2(x, xi * xj * xk, xl, result),
-        _ => runtime.kernels.transpose.transpose_d4(x, xi, xj, xk, xl, axis_i, axis_j, axis_k, axis_l, result),
+        (1, 2, 3, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk * xl, result),
+        (2, 3, 0, 1) => runtime.kernels.shape.transpose_d2(x, xi * xj, xk * xl, result),
+        (3, 0, 1, 2) => runtime.kernels.shape.transpose_d2(x, xi * xj * xk, xl, result),
+        _ => runtime.kernels.shape.transpose_d4(x, xi, xj, xk, xl, axis_i, axis_j, axis_k, axis_l, result),
     };
     runtime.dispatch(task);
 }
