@@ -4,6 +4,7 @@ package com.wsr.gpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import com.wsr.base.data.size
 import java.lang.ref.Cleaner
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -43,13 +44,14 @@ class GPUJvmBuffer(
         native.write(ptr, i, value, runtime)
     }
 
-    override fun slice(indices: IntRange): DataBuffer {
+    override fun slice(indices: IntProgression): DataBuffer {
         val ptr = ptr
         val runtime = runtime
         val native = native
+        1..10
         return GPUJvmBuffer(
-            size = indices.count(),
-            ptr = native.slice(ptr, indices.first, indices.last + 1, runtime),
+            size = indices.size,
+            ptr = native.slice(ptr, indices.first, indices.last, indices.step, runtime),
             runtime = runtime,
             native = native,
         )

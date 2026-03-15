@@ -13,7 +13,7 @@ interface DataBuffer {
     operator fun get(i: Int): Float
     operator fun set(i: Int, value: Float)
 
-    fun slice(indices: IntRange): DataBuffer
+    fun slice(indices: IntProgression): DataBuffer
 
     fun copyInto(destination: DataBuffer, destinationOffset: Int = 0)
 

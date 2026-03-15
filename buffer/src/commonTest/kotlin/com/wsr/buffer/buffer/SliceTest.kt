@@ -25,4 +25,20 @@ class SliceTest {
             actual = actual,
         )
     }
+
+    @Test
+    fun `slice=stepの指定が可能`() = bufferTestRule {
+        val input = DataBuffer.create(FloatArray(24) { it.toFloat() })
+
+        val actual = input.slice(15 downTo 5 step 2)
+
+        assertEquals(
+            expected = 6,
+            actual = actual.size,
+        )
+        assertContentEquals(
+            expected = DataBuffer.create(FloatArray(6) { it * 2 + 5f }.reversedArray()),
+            actual = actual,
+        )
+    }
 }

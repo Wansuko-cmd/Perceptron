@@ -2,6 +2,7 @@ package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import com.wsr.base.data.size
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -26,12 +27,28 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         floatBuffer.put(i, value)
     }
 
-    override fun slice(indices: IntRange): DataBuffer {
-        val start = indices.first * Float.SIZE_BYTES
-        val length = (indices.last - indices.first + 1) * Float.SIZE_BYTES
-        return byteBuffer.move(position = start, limit = start + length) {
-            CPUJvmBuffer(slice().order(ByteOrder.nativeOrder()))
+    override fun slice(indices: IntProgression): DataBuffer {
+        val result = create(indices.size)
+
+        when (indices.step) {
+            1 -> {
+                val start = indices.first * Float.SIZE_BYTES
+                val length = indices.size * Float.SIZE_BYTES
+                byteBuffer.move(position = start, limit = start + length) {
+                    val src = slice().order(ByteOrder.nativeOrder())
+                    result.byteBuffer.clear()
+                    result.byteBuffer.put(src)
+                    result.byteBuffer.flip()
+                }
+            }
+            else -> {
+                var targetIndex = 0
+                for (i in indices) {
+                    result[targetIndex++] = this[i]
+                }
+            }
         }
+        return result
     }
 
     override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
