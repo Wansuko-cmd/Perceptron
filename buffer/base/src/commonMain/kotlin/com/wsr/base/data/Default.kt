@@ -24,13 +24,6 @@ class Default(private val value: FloatArray) : DataBuffer {
         return Default(result)
     }
 
-    override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
-        when (destination) {
-            is Default -> value.copyInto(destination.value, destinationOffset)
-            else -> for (i in indices) destination[destinationOffset + i] = this[i]
-        }
-    }
-
     override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
         val count = minOf(size, destIndices.size)
         when {

@@ -57,19 +57,6 @@ class GPUJvmBuffer(
         )
     }
 
-    override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
-        when (destination) {
-            is GPUJvmBuffer -> {
-                native.copyInto(ptr, destination.ptr, destinationOffset, size, 1, runtime)
-            }
-
-            else -> {
-                val value = toFloatArray()
-                for (i in indices) destination[i + destinationOffset] = value[i]
-            }
-        }
-    }
-
     override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
         when (dest) {
             is GPUJvmBuffer -> {

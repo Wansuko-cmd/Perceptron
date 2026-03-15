@@ -126,7 +126,8 @@ fun IOType.Companion.d2(vararg elements: IOType.D1): IOType.D2 {
     val step = shape.reduce { acc, i -> acc * i }
     val value = DataBuffer.create(size * step)
     elements.forEachIndexed { index, item ->
-        item.value.copyInto(value, index * step)
+        val start = index * step
+        item.value.copyInto(value, start until start + item.size)
     }
     return IOType.D2(shape = listOf(size, shape[0]), value = value)
 }
@@ -165,7 +166,8 @@ fun IOType.Companion.d3(vararg elements: IOType.D2): IOType.D3 {
     val step = shape.reduce { acc, i -> acc * i }
     val value = DataBuffer.create(size * step)
     elements.forEachIndexed { index, item ->
-        item.value.copyInto(value, index * step)
+        val start = index * step
+        item.value.copyInto(value, start until start + item.size)
     }
     return IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value)
 }
@@ -215,7 +217,8 @@ fun IOType.Companion.d4(vararg elements: IOType.D3): IOType.D4 {
     val step = shape.reduce { acc, i -> acc * i }
     val value = DataBuffer.create(size * step)
     elements.forEachIndexed { index, item ->
-        item.value.copyInto(value, index * step)
+        val start = index * step
+        item.value.copyInto(value, start until start + item.size)
     }
     return IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
 }
@@ -291,9 +294,10 @@ operator fun IOType.D2.set(i: Int, j: Int, element: Float) {
 }
 
 operator fun IOType.D2.set(i: Int, element: IOType.D1) {
+    val start = i * shape[1]
     element.value.copyInto(
-        destination = value,
-        destinationOffset = i * shape[1],
+        dest = value,
+        destIndices = start until start + element.value.size,
     )
 }
 
@@ -302,16 +306,18 @@ operator fun IOType.D3.set(i: Int, j: Int, z: Int, element: Float) {
 }
 
 operator fun IOType.D3.set(i: Int, j: Int, element: IOType.D1) {
+    val start = (i * shape[1] + j) * shape[2]
     element.value.copyInto(
-        destination = value,
-        destinationOffset = (i * shape[1] + j) * shape[2],
+        dest = value,
+        destIndices = start until start + element.value.size,
     )
 }
 
 operator fun IOType.D3.set(i: Int, element: IOType.D2) {
+    val start = i * shape[1] * shape[2]
     element.value.copyInto(
-        destination = value,
-        destinationOffset = i * shape[1] * shape[2],
+        dest = value,
+        destIndices = start until start + element.value.size,
     )
 }
 

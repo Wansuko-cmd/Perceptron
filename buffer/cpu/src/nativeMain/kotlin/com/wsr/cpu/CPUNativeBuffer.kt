@@ -64,17 +64,6 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         return CPUNativeBuffer(buffer = buffer, size = size)
     }
 
-    override fun copyInto(destination: DataBuffer, destinationOffset: Int) {
-        when (destination) {
-            is CPUNativeBuffer -> {
-                val byteSize = (size * Float.SIZE_BYTES).toULong()
-                memcpy(destination.buffer + destinationOffset, buffer, byteSize)
-            }
-
-            else -> for (i in indices) destination[i + destinationOffset] = this[i]
-        }
-    }
-
     override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
         val count = minOf(size, destIndices.size)
         when (dest) {
