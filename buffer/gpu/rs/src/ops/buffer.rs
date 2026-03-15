@@ -32,18 +32,22 @@ pub fn write(buffer: &GPUBuffer, index: usize, value: f32, runtime: &mut Runtime
     buffer.write(index, value, &runtime.queue);
 }
 
-pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, runtime: &mut Runtime) -> GPUBuffer {
-    let size = end - start;
+pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: usize, runtime: &mut Runtime) -> GPUBuffer {
+    let size = (end - start) / step  + 1;
     let dest = create(size, runtime);
-    runtime.dispatch(
-        CopyTask {
-            src: buffer,
-            src_offset: start,
-            dest: &dest,
-            dest_offset: 0,
-            size: size,
-        },
-    );
+    if step == 1 {
+        runtime.dispatch(
+            CopyTask {
+                src: buffer,
+                src_offset: start,
+                dest: &dest,
+                dest_offset: 0,
+                size: size,
+            },
+        );
+    } else {
+        runtime.dispatch(runtime.kernels.buffer.slice(buffer, start, step, &dest));
+    }
 
     return dest;
 }

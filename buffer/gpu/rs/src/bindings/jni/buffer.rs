@@ -78,12 +78,13 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_slice(
     ptr: jlong,
     start: jint,
     end: jint,
+    step: jint,
     runtime_ptr: jlong,
 ) -> jlong {
     let buffer = unsafe { &*(ptr as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime_ptr as *mut Runtime) };
 
-    let result = ops::buffer::slice(buffer, start as usize, end as usize, runtime);
+    let result = ops::buffer::slice(buffer, start as usize, end as usize, step as usize, runtime);
     Box::into_raw(Box::new(result)) as jlong
 }
 
