@@ -4,6 +4,8 @@ use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Shape {
     device: Device,
+    copy_into: wgpu::ComputePipeline,
+    copy_into_bgl: wgpu::BindGroupLayout,
 
     slice: wgpu::ComputePipeline,
     slice_bgl: wgpu::BindGroupLayout,
@@ -17,6 +19,47 @@ impl Shape {
     const WORKGROUP_SIZE: u32 = 256;
 
     pub fn new(device: &Device) -> Self {
+        let copy_into_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into.wgsl").into()),
+        });
+
+        let copy_into_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Shape::new"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+            ],
+        });
+
         let slice_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("slice.wgsl").into()),
@@ -111,6 +154,15 @@ impl Shape {
 
         Shape {
             device: device.clone(),
+            copy_into: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into"),
+                layout: Some(&pipeline_layout),
+                module: &copy_into_shader,
+                entry_point: Some("copy_into"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            copy_into_bgl: copy_into_bgl,
             slice: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("slice"),
                 layout: Some(&pipeline_layout),
@@ -137,6 +189,67 @@ impl Shape {
                 cache: None,
             }),
             transpose_bgl: transpose_bgl,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct CopyIntoParams {
+    start: u32,
+    step: i32,
+    count : u32,
+    _pad: u32,
+}
+
+impl Shape {
+    pub fn copy_into<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        start: usize, step: isize, count: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "copy_into";
+        let device = &self.device;
+        let params = CopyIntoParams {
+            start: start as u32,
+            step: step as i32,
+            count: count as u32,
+            _pad: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.copy_into_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.copy_into,
+            bind_group: bind_group,
+            workgroups: workgroups,
         }
     }
 }

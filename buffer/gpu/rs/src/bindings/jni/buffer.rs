@@ -94,14 +94,16 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_copyInto(
     _: JClass,
     ptr: jlong,
     dest_ptr: jlong,
-    dest_offset: jint,
+    dest_start: jint,
+    dest_end: jint,
+    dest_step: jint,
     runtime_ptr: jlong,
 ) {
     let src = unsafe { &*(ptr as *const GPUBuffer) };
     let dest = unsafe { &*(dest_ptr as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime_ptr as *mut Runtime) };
 
-    ops::buffer::copy_into(src, dest, dest_offset as usize, runtime);
+    ops::buffer::copy_into(src, dest, dest_start as usize, dest_end as usize, dest_step as isize, runtime);
 }
 
 #[unsafe(no_mangle)]

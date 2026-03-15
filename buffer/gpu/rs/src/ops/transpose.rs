@@ -14,7 +14,7 @@ pub fn transpose_d3(
 ) {
     let task = match(axis_i, axis_j, axis_k) {
         (0, 1, 2) => {
-            ops::buffer::copy_into(x, &result, 0, runtime);
+            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
             return;
         },
         (1, 2, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk, result),
@@ -33,7 +33,7 @@ pub fn transpose_d4(
 ) {
     let task = match(axis_i, axis_j, axis_k, axis_l) {
         (0, 1, 2, 3) => {
-            ops::buffer::copy_into(x, &result, 0, runtime);
+            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
             return;
         },
         (1, 2, 3, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk * xl, result),

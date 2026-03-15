@@ -10,7 +10,7 @@ public class JBuffer {
 
     public native long slice(long ptr, int start, int end, int step, long runtime);
 
-    public native void copyInto(long ptr, long dest, int destinationOffset, long runtime);
+    public native void copyInto(long ptr, long dest, int start, int end, int step, long runtime);
 
     public native boolean contentEquals(long ptr, long other, long runtime);
 }
