@@ -32,8 +32,8 @@ pub fn write(buffer: &GPUBuffer, index: usize, value: f32, runtime: &mut Runtime
     buffer.write(index, value, &runtime.queue);
 }
 
-pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: usize, runtime: &mut Runtime) -> GPUBuffer {
-    let size = (end - start) / step  + 1;
+pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: isize, runtime: &mut Runtime) -> GPUBuffer {
+    let size = ((end as isize - start as isize) / step  + 1) as usize;
     let dest = create(size, runtime);
     if step == 1 {
         runtime.dispatch(

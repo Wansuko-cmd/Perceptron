@@ -1,6 +1,6 @@
 struct Params {
     start: u32,
-    step: u32,
+    step: i32,
     _pad1: u32,
     _pad2: u32,
 }
@@ -17,6 +17,6 @@ fn slice(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) 
         return;
     }
 
-    let old_index = params.start + new_index * params.step;
+    let old_index = i32(params.start) + i32(new_index) * params.step;
     result[new_index] = x[old_index];
 }

@@ -78,7 +78,7 @@ impl Buffer {
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct SliceParams {
     start: u32,
-    step: u32,
+    step: i32,
     _pad1: u32,
     _pad2: u32,
 }
@@ -87,14 +87,14 @@ impl Buffer {
     pub fn slice<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, step: usize,
+        start: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "slice";
         let device = &self.device;
         let params = SliceParams {
             start: start as u32,
-            step: step as u32,
+            step: step as i32,
             _pad1: 0u32,
             _pad2: 0u32,
         };
