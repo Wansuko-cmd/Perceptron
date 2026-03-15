@@ -10,6 +10,8 @@ pub struct Transpose {
 }
 
 impl Transpose {
+    const WORKGROUP_SIZE: u32 = 256;
+
     pub fn new(device: &Device) -> Self {
         let shader_d2 = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Transpose::new"),
@@ -135,7 +137,7 @@ impl Transpose {
             ]
         });
 
-        let workgroups = [((xj + 15) / 16) as u32, ((xi + 15) / 16) as u32, 1];
+        let workgroups = result.workgroup_count(Transpose::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,
@@ -154,8 +156,6 @@ struct D4Params {
 }
 
 impl Transpose {
-    const WORKGROUP_SIZE: u32 = 256;
-
     pub fn transpose_d3<'a>(
         &'a self,
         x: &GPUBuffer,

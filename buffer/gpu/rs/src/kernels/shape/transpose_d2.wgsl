@@ -9,26 +9,17 @@ struct Params {
 @group(0) @binding(1) var<storage, read_write> result: array<f32>;
 @group(0) @binding(2) var<uniform> params: Params;
 
-var<workgroup> tile: array<array<f32, 16>, 16>;
-
-@compute @workgroup_size(16, 16)
-fn transpose_d2(
-    @builtin(workgroup_id) group_id: vec3<u32>,
-    @builtin(local_invocation_id) local_id: vec3<u32>,
-) {
-    let old_i = group_id.y * 16u + local_id.y;
-    let old_j = group_id.x * 16u + local_id.x;
-    if (old_i < params.oi && old_j < params.oj) {
-        let old_index = old_i * params.oj + old_j;
-        tile[local_id.y][local_id.x] = x[old_index];
+@compute @workgroup_size(256, 1)
+fn transpose_d2(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+    let stride = num_groups.x * 256;
+    let new_index = id.y * stride + id.x;
+    if (new_index >= arrayLength(&result)) {
+        return;
     }
 
-    workgroupBarrier();
-    
-    let new_i = group_id.x * 16u + local_id.y;
-    let new_j = group_id.y * 16u + local_id.x;
-    if (new_i < params.oj && new_j < params.oi) {
-        let new_index = new_i * params.oi + new_j;
-        result[new_index] = tile[local_id.x][local_id.y];
-    }
+    let ni = new_index / params.oi;
+    let nj = new_index % params.oi;
+
+    let old_index = nj * params.oj + ni;
+    result[new_index] = x[old_index];
 }
