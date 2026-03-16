@@ -4,7 +4,6 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.core.IOType
 import com.wsr.create
-import kotlin.math.min
 
 fun IOType.D1.interleave(other: IOType.D1): IOType.D1 {
     check(size == other.size)
@@ -12,7 +11,7 @@ fun IOType.D1.interleave(other: IOType.D1): IOType.D1 {
     val result = DataBuffer.create(size + other.size)
     value.copyInto(dest = result, destIndices = result.indices step 2)
     other.value.copyInto(dest = result, destIndices = 1 until result.size step 2)
-    
+
     return IOType.D1(result)
 }
 

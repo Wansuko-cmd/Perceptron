@@ -17,7 +17,7 @@ fun IOType.D2.slice(indices: IntProgression, axis: Int) = when (axis) {
             val end = indices.last * j + it
             val step = indices.step * j
             value
-                .slice(start ..end step step)
+                .slice(start..end step step)
                 .copyInto(result, it until result.size step j)
         }
         IOType.D2(shape = listOf(count, j), value = result)
@@ -31,7 +31,7 @@ fun IOType.D2.slice(indices: IntProgression, axis: Int) = when (axis) {
             val end = offset + indices.last
             val destStart = it * count
             value
-                .slice(start ..end step indices.step)
+                .slice(start..end step indices.step)
                 .copyInto(result, destStart until destStart + count)
         }
         IOType.D2(shape = listOf(i, count), value = result)
