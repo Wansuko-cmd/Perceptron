@@ -15,7 +15,7 @@ fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
         val start = offset + indices.first
         val end = offset + indices.last
         value
-            .slice(start until end step indices.step)
+            .slice(start..end step indices.step)
             .copyInto(result, it * count until it * count + count)
     }
     return Batch(shape = listOf(count), size = size, value = result)
@@ -37,7 +37,7 @@ fun Batch<IOType.D2>.slice(indices: IntProgression, axis: Int): Batch<IOType.D2>
                 val end = srcOffset + indices.last * j + it
                 val step = indices.step * j
                 value
-                    .slice(start until end step step)
+                    .slice(start..end step step)
                     .copyInto(result, destOffset + it until destOffset + count * j step j)
             }
         }
@@ -52,7 +52,7 @@ fun Batch<IOType.D2>.slice(indices: IntProgression, axis: Int): Batch<IOType.D2>
             val end = offset + indices.last
             val destStart = it * count
             value
-                .slice(start until end step indices.step)
+                .slice(start..end step indices.step)
                 .copyInto(result, destStart until destStart + count)
         }
         Batch(shape = listOf(shape[0], count), size = size, value = result)
