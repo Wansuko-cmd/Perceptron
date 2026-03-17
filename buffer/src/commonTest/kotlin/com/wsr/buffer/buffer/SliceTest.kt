@@ -2,42 +2,131 @@
 
 package com.wsr.buffer.buffer
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import com.wsr.create
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class SliceTest {
     @Test
-    fun `slice=指定範囲の切り取り`() = bufferTestRule {
-        val input = DataBuffer.create(FloatArray(24) { it.toFloat() })
+    fun `slice=指定範囲を1次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
-        val actual = input.slice(5 until 15)
+        val actual = Backend.slice(x = x, indices = 10 downTo 4 step 2)
 
-        assertEquals(
-            expected = 10,
-            actual = actual.size,
-        )
         assertContentEquals(
-            expected = DataBuffer.create(FloatArray(10) { it + 5f }),
+            expected = DataBuffer.create(10f, 8f, 6f, 4f),
             actual = actual,
         )
     }
 
     @Test
-    fun `slice=stepの指定が可能`() = bufferTestRule {
-        val input = DataBuffer.create(FloatArray(24) { it.toFloat() })
+    fun `slice_axis0=指定範囲を2次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
 
-        val actual = input.slice(15 downTo 5 step 2)
+        val actual = Backend.slice(x = x, xi = 6, xj = 4, axis = 0, indices = 3 downTo 1 step 2)
 
-        assertEquals(
-            expected = 6,
-            actual = actual.size,
-        )
         assertContentEquals(
-            expected = DataBuffer.create(FloatArray(6) { it * 2 + 5f }.reversedArray()),
+            expected = DataBuffer.create(
+                floatArrayOf(
+                    12f,
+                    13f,
+                    14f,
+                    15f,
+                    4f,
+                    5f,
+                    6f,
+                    7f,
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `slice_axis1=指定範囲を2次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(24) { it.toFloat() })
+
+        val actual = Backend.slice(x = x, xi = 4, xj = 6, axis = 1, indices = 3 downTo 1 step 2)
+
+        assertContentEquals(
+            expected = DataBuffer.create(
+                floatArrayOf(
+                    3f,
+                    1f,
+                    9f,
+                    7f,
+                    15f,
+                    13f,
+                    21f,
+                    19f,
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `slice_axis0=指定範囲3次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(36) { it.toFloat() })
+
+        val actual = Backend.slice(x = x, xi = 6, xj = 3, xk = 2, axis = 0, indices = 3 downTo 1 step 2)
+
+        assertContentEquals(
+            expected = DataBuffer.create(
+                floatArrayOf(
+                    18f, 19f, 20f, 21f, 22f, 23f,
+                    6f, 7f, 8f, 9f, 10f, 11f,
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `slice_axis1=指定範囲3次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(36) { it.toFloat() })
+
+        val actual = Backend.slice(x = x, xi = 3, xj = 6, xk = 2, axis = 1, indices = 3 downTo 1 step 2)
+
+        assertContentEquals(
+            expected = DataBuffer.create(
+                floatArrayOf(
+                    6f, 7f,
+                    2f, 3f,
+
+                    18f, 19f,
+                    14f, 15f,
+
+                    30f, 31f,
+                    26f, 27f,
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `slice_axis2=指定範囲3次元スライス`() = bufferTestRule {
+        val x = DataBuffer.create(FloatArray(36) { it.toFloat() })
+
+        val actual = Backend.slice(x = x, xi = 3, xj = 2, xk = 6, axis = 2, indices = 3 downTo 1 step 2)
+
+        assertContentEquals(
+            expected = DataBuffer.create(
+                floatArrayOf(
+                    3f, 1f,
+                    9f, 7f,
+
+                    15f, 13f,
+                    21f, 19f,
+
+                    27f, 25f,
+                    33f, 31f,
+                ),
+            ),
             actual = actual,
         )
     }
