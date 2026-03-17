@@ -1,7 +1,11 @@
 package com.wsr.network.process.compute.position
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.map.map
+import com.wsr.batch.operation.minus.minus
+import com.wsr.batch.operation.plus.plus
+import com.wsr.batch.operation.times.times
+import com.wsr.batch.reshape.interleave.interleave
+import com.wsr.batch.reshape.slice.slice
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
@@ -44,24 +48,14 @@ class RoPED2 internal constructor(
         return delta.applyRoPE()
     }
 
-    private fun Batch<IOType.D2>.applyRoPE() = map { input ->
-        IOType.d2(outputX, outputY) { pos, dim ->
-            val pairIndex = dim / 2
-            val cosVal = cosCache[pos][pairIndex]
-            val sinVal = sinCache[pos][pairIndex]
+    private fun Batch<IOType.D2>.applyRoPE(): Batch<IOType.D2> {
+        val even = this.slice(0 until shape[1] step 2, axis = 1)
+        val odd = this.slice(1 until shape[1] step 2, axis = 1)
 
-            if (dim % 2 == 0) {
-                // 偶数次元: x * cos(θ) - y * sin(θ)
-                val x = input[pos, dim]
-                val y = input[pos, dim + 1]
-                x * cosVal - y * sinVal
-            } else {
-                // 奇数次元: x * sin(θ) + y * cos(θ)
-                val x = input[pos, dim - 1]
-                val y = input[pos, dim]
-                x * sinVal + y * cosVal
-            }
-        }
+        val resEven = even * cosCache - odd * sinCache
+        val resOdd = even * sinCache + odd * cosCache
+
+        return resEven.interleave(resOdd, axis = 1)
     }
 }
 
