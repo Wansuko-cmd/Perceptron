@@ -454,6 +454,14 @@ object Backend : IBackend {
         axisL: Int,
     ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
 
+    override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer = instance.slice(x, indices)
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer =
+        instance.slice(x, xi, xj, axis, indices)
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer =
+        instance.slice(x, xi, xj, xk, axis, indices)
+
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
         instance.gather(x, y, i, j, k)
 

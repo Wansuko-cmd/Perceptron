@@ -4,7 +4,9 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.Default
 import com.wsr.base.data.IDataBufferGenerator
+import com.wsr.base.data.size
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -856,6 +858,88 @@ object KotlinBackend : IBackend {
         }
         return result
     }
+
+    override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
+        val result = DataBufferGenerator.create(indices.size)
+        var resultIndex = 0
+        for (i in indices) {
+            result[resultIndex++] = x[i]
+        }
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer = when (axis) {
+        0 -> {
+            val count = min(xi, indices.size)
+            val result = DataBufferGenerator.create(count * xj)
+            var resultIndex = 0
+            for (i in indices) {
+                val xOffset = i * xj
+                for (j in 0 until xj) {
+                    result[resultIndex++] = x[xOffset + j]
+                }
+            }
+            result
+        }
+
+        else -> {
+            val count = min(xj, indices.size)
+            val result = DataBufferGenerator.create(xi * count)
+            for (i in 0 until xi) {
+                val xOffset = i * xj
+                var resultIndex = i * count
+                for (j in indices) {
+                    result[resultIndex++] = x[xOffset + j]
+                }
+            }
+            result
+        }
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer =
+        when (axis) {
+            0 -> {
+                val count = min(xi, indices.size)
+                val result = DataBufferGenerator.create(count * xj * xk)
+                var resultIndex = 0
+                for (i in indices) {
+                    val xOffset = i * xj * xk
+                    for (jk in 0 until xj * xk) {
+                        result[resultIndex++] = x[xOffset + jk]
+                    }
+                }
+                result
+            }
+
+            1 -> {
+                val count = min(xj, indices.size)
+                val result = DataBufferGenerator.create(xi * count * xk)
+                for (i in 0 until xi) {
+                    val xii = i * xj * xk
+                    var resultIndex = i * count * xk
+                    for (j in indices) {
+                        val xOffset = xii + j * xk
+                        for (k in 0 until xk) {
+                            result[resultIndex++] = x[xOffset + k]
+                        }
+                    }
+                }
+                result
+            }
+
+            else -> {
+                val count = min(xk, indices.size)
+                val result = DataBufferGenerator.create(xi * xj * count)
+                for (ij in 0 until xi * xj) {
+                    val xOffset = ij * xk
+                    var resultIndex = ij * count
+                    for (k in indices) {
+                        result[resultIndex++] = x[xOffset + k]
+                    }
+                }
+                result
+            }
+        }
 
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         check(y.size == i * j * k)
