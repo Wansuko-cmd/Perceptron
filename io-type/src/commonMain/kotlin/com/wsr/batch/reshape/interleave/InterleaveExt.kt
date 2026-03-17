@@ -1,5 +1,6 @@
 package com.wsr.batch.reshape.interleave
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.batch.Batch
@@ -15,11 +16,9 @@ fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
         val end = start + i
         val destStart = it * i * 2
         val destEnd = destStart + i * 2
-        value
-            .slice(start until end)
+        Backend.slice(x = value, indices = start until end)
             .copyInto(result, destStart until destEnd step 2)
-        other.value
-            .slice(start until end)
+        Backend.slice(x = other.value, indices = start until end)
             .copyInto(result, destStart + 1 until destEnd step 2)
     }
     return Batch(size = size, shape = listOf(i * 2), value = result)
@@ -37,15 +36,13 @@ fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOTyp
                 repeat(i) {
                     val start = offset + it * j
                     val end = start + j
-                    value
-                        .slice(start until end)
+                    Backend.slice(x = value, indices = start until end)
                         .run {
                             val destStart = destOffset + it * j * 2
                             val destEnd = destStart + j
                             copyInto(result, destStart until destEnd)
                         }
-                    other.value
-                        .slice(start until end)
+                    Backend.slice(x = other.value, indices = start until end)
                         .run {
                             val destStart = destOffset + it * j * 2 + j
                             val destEnd = destStart + j
@@ -61,11 +58,9 @@ fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOTyp
                 val end = start + j
                 val destStart = it * j * 2
                 val destEnd = destStart + j * 2
-                value
-                    .slice(start until end)
+                Backend.slice(x = value, indices = start until end)
                     .copyInto(result, destStart until destEnd step 2)
-                other.value
-                    .slice(start until end)
+                Backend.slice(x = other.value, indices = start until end)
                     .copyInto(result, destStart + 1 until destEnd step 2)
             }
             Batch(size = size, shape = listOf(i, j * 2), value = result)

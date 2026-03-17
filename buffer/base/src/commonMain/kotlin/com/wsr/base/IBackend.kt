@@ -402,6 +402,12 @@ interface IBackend {
         axisL: Int,
     ): DataBuffer
 
+    fun slice(x: DataBuffer, indices: IntProgression): DataBuffer
+
+    fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer
+
+    fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer
+
     fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer
 
     fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer
