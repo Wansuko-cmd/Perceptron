@@ -1,5 +1,6 @@
 package com.wsr.core.reshape.interleave
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.core.IOType
@@ -23,15 +24,13 @@ fun IOType.D2.interleave(other: IOType.D2, axis: Int): IOType.D2 {
             repeat(i) {
                 val start = it * j
                 val end = start + j
-                value
-                    .slice(start until end)
+                Backend.slice(x = value, indices = start until end)
                     .run {
                         val destStart = it * j * 2
                         val destEnd = destStart + j
                         copyInto(result, destStart until destEnd)
                     }
-                other.value
-                    .slice(start until end)
+                Backend.slice(x = other.value, indices = start until end)
                     .run {
                         val destStart = it * j * 2 + j
                         val destEnd = destStart + j
@@ -46,11 +45,9 @@ fun IOType.D2.interleave(other: IOType.D2, axis: Int): IOType.D2 {
                 val end = start + j
                 val destStart = it * j * 2
                 val destEnd = destStart + j * 2
-                value
-                    .slice(start until end)
+                Backend.slice(x = value, indices = start until end)
                     .copyInto(result, destStart until destEnd step 2)
-                other.value
-                    .slice(start until end)
+                Backend.slice(x = other.value, indices = start until end)
                     .copyInto(result, destStart + 1 until destEnd step 2)
             }
             IOType.D2(shape = listOf(i, j * 2), value = result)

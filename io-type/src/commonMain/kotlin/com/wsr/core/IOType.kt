@@ -1,5 +1,6 @@
 package com.wsr.core
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.create
 import kotlin.jvm.JvmName
@@ -237,21 +238,24 @@ operator fun IOType.D2.get(i: Int, j: Int) = value[i * shape[1] + j]
 
 operator fun IOType.D2.get(i: Int): IOType.D1 {
     val offset = i * shape[1]
-    return IOType.D1(value.slice(offset until offset + shape[1]))
+    val result = Backend.slice(x = value, indices = offset until offset + shape[1])
+    return IOType.D1(result)
 }
 
 operator fun IOType.D3.get(i: Int, j: Int, k: Int) = value[(i * shape[1] + j) * shape[2] + k]
 
 operator fun IOType.D3.get(i: Int, j: Int): IOType.D1 {
     val offset = (i * shape[1] + j) * shape[2]
-    return IOType.D1(value = value.slice(offset until offset + shape[2]))
+    val result = Backend.slice(x = value, indices = offset until offset + shape[2])
+    return IOType.D1(value = result)
 }
 
 operator fun IOType.D3.get(i: Int): IOType.D2 {
     val offset = i * shape[1] * shape[2]
+    val result = Backend.slice(x = value, indices = offset until offset + shape[1] * shape[2])
     return IOType.D2(
         shape = listOf(shape[1], shape[2]),
-        value = value.slice(offset until offset + shape[1] * shape[2]),
+        value = result,
     )
 }
 
@@ -259,22 +263,25 @@ operator fun IOType.D4.get(i: Int, j: Int, k: Int, l: Int) = value[((i * shape[1
 
 operator fun IOType.D4.get(i: Int, j: Int, k: Int): IOType.D1 {
     val offset = ((i * shape[1] + j) * shape[2] + k) * shape[3]
-    return IOType.D1(value = value.slice(offset until offset + shape[3]))
+    val result = Backend.slice(x = value, indices = offset until offset + shape[3])
+    return IOType.D1(value = result)
 }
 
 operator fun IOType.D4.get(i: Int, j: Int): IOType.D2 {
     val offset = (i * shape[1] + j) * shape[2] * shape[3]
+    val result = Backend.slice(x = value, indices = offset until offset + shape[2] * shape[3])
     return IOType.D2(
         shape = listOf(shape[2], shape[3]),
-        value = value.slice(offset until offset + shape[2] * shape[3]),
+        value = result,
     )
 }
 
 operator fun IOType.D4.get(i: Int): IOType.D3 {
     val offset = i * shape[1] * shape[2] * shape[3]
+    val result = Backend.slice(x = value, indices = offset until offset + shape[1] * shape[2] * shape[3])
     return IOType.D3(
         shape = listOf(shape[1], shape[2], shape[3]),
-        value = value.slice(offset until offset + shape[1] * shape[2] * shape[3]),
+        value = result,
     )
 }
 

@@ -1,5 +1,6 @@
 package com.wsr.batch
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.core.IOType
 import com.wsr.core.d0
@@ -72,25 +73,29 @@ operator fun Batch<IOType.D0>.get(i: Int): IOType.D0 {
 @JvmName("batchD1sGet")
 operator fun Batch<IOType.D1>.get(i: Int): IOType.D1 {
     val index = i * step
-    return IOType.D1(value.slice(index until index + step))
+    val result = Backend.slice(x = value, indices = index until index + step)
+    return IOType.D1(result)
 }
 
 @JvmName("batchD2sGet")
 operator fun Batch<IOType.D2>.get(i: Int): IOType.D2 {
     val index = i * step
-    return IOType.D2(shape = shape, value = value.slice(index until index + step))
+    val result = Backend.slice(x = value, indices = index until index + step)
+    return IOType.D2(shape = shape, value = result)
 }
 
 @JvmName("batchD3sGet")
 operator fun Batch<IOType.D3>.get(i: Int): IOType.D3 {
     val index = i * step
-    return IOType.D3(shape = shape, value = value.slice(index until index + step))
+    val result = Backend.slice(x = value, indices = index until index + step)
+    return IOType.D3(shape = shape, value = result)
 }
 
 @JvmName("batchD3sGet")
 operator fun Batch<IOType.D4>.get(i: Int): IOType.D4 {
     val index = i * step
-    return IOType.D4(shape = shape, value = value.slice(index until index + step))
+    val result = Backend.slice(x = value, indices = index until index + step)
+    return IOType.D4(shape = shape, value = result)
 }
 
 operator fun Batch<IOType.D0>.set(i: Int, element: IOType.D0) {
