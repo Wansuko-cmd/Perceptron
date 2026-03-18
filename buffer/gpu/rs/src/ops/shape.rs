@@ -43,3 +43,35 @@ pub fn transpose_d4(
     };
     runtime.dispatch(task);
 }
+
+pub fn slice_d1(x: &GPUBuffer, start: usize, end: usize, step: isize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let task = runtime.kernels.shape.slice_d1(x, start, step, result);
+    runtime.dispatch(task);
+}
+
+pub fn slice_d2(
+    x: &GPUBuffer, xi: usize, xj: usize, axis: usize,
+    start: usize, end: usize, step: isize,
+    result: &GPUBuffer,
+    runtime: &mut Runtime,
+) {
+    let task = match axis {
+        0 => runtime.kernels.shape.slice_d2_axis0(x, xi, xj, start, end, step, result),
+        _ => runtime.kernels.shape.slice_d2_axis1(x, xi, xj, start, end, step, result),
+    };
+    runtime.dispatch(task);
+}
+
+pub fn slice_d3(
+    x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize,
+    start: usize, end: usize, step: isize,
+    result: &GPUBuffer,
+    runtime: &mut Runtime,
+) {
+    let task = match axis {
+        0 => runtime.kernels.shape.slice_d2_axis0(x, xi, xj * xk, start, end, step, result),
+        1 => runtime.kernels.shape.slice_d3(x, xi, xj, xk, start, end, step, result),
+        _ => runtime.kernels.shape.slice_d2_axis1(x, xi * xj, xk, start, end, step, result),
+    };
+    runtime.dispatch(task);
+}
