@@ -8,6 +8,9 @@ pub struct Shape {
     copy_into_bgl: wgpu::BindGroupLayout,
 
     slice_d1: wgpu::ComputePipeline,
+    slice_d2_axis0: wgpu::ComputePipeline,
+    slice_d2_axis1: wgpu::ComputePipeline,
+    slice_d3: wgpu::ComputePipeline,
     slice_bgl: wgpu::BindGroupLayout,
 
     transpose_d2: wgpu::ComputePipeline,
@@ -63,6 +66,14 @@ impl Shape {
         let slice_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("slice_d1.wgsl").into()),
+        });
+        let slice_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d2.wgsl").into()),
+        });
+        let slice_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d3.wgsl").into()),
         });
 
         let slice_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -168,6 +179,30 @@ impl Shape {
                 layout: Some(&pipeline_layout),
                 module: &slice_d1_shader,
                 entry_point: Some("slice_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            slice_d2_axis0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("slice_d2"),
+                layout: Some(&pipeline_layout),
+                module: &slice_d2_shader,
+                entry_point: Some("slice_d2_axis0"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            slice_d2_axis1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("slice_d2"),
+                layout: Some(&pipeline_layout),
+                module: &slice_d2_shader,
+                entry_point: Some("slice_d2_axis1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            slice_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("slice_d3"),
+                layout: Some(&pipeline_layout),
+                module: &slice_d3_shader,
+                entry_point: Some("slice_d3"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
@@ -317,11 +352,186 @@ impl Shape {
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct SliceD2Params {
+    start: u32,
+    step: i32,
+    size: u32,
+    xi: u32,
+    xj: u32,
+    _pad1: u32,
+    _pad2: u32,
+    _pad3: u32,
+}
+
+impl Shape {
+    pub fn slice_d2_axis0<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        start: usize, end: usize, step: isize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.slice_d2(
+            "slice_d2_axis0",
+            &self.slice_d2_axis0,
+            x,
+            xi, xj,
+            start, end, step,
+            result,
+        )
+    }
+
+    pub fn slice_d2_axis1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        start: usize, end: usize, step: isize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.slice_d2(
+            "slice_d2_axis1",
+            &self.slice_d2_axis1,
+            x,
+            xi, xj,
+            start, end, step,
+            result,
+        )
+    }
+
+    fn slice_d2<'a>(
+        &'a self,
+        label: &'static str,
+        pipeline: &'a wgpu::ComputePipeline,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        start: usize, end: usize, step: isize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let device = &self.device;
+        let params = SliceD2Params {
+            start: start as u32,
+            step: step as i32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            xi: xi as u32,
+            xj: xj as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+            _pad3: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.slice_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: pipeline,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct SliceD3Params {
+    start: u32,
+    step: i32,
+    size: u32,
+    xi: u32,
+    xj: u32,
+    xk: u32,
+    _pad1: u32,
+    _pad2: u32,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct TransposeD2Params {
     oi: u32,
     oj: u32,
     _pad1: u32,
     _pad2: u32,
+}
+
+impl Shape {
+    pub fn slice_d3<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize, xk: usize,
+        start: usize, end: usize, step: isize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "slice_d3";
+        let device = &self.device;
+        let params = SliceD3Params {
+            start: start as u32,
+            step: step as i32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            xi: xi as u32,
+            xj: xj as u32,
+            xk: xk as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.slice_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.slice_d3,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
 }
 
 impl Shape {
