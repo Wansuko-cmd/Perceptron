@@ -1,6 +1,6 @@
 package com.wsr.gpu;
 
-class JTranspose {
+class JShape {
     public native void transposeD2(
             long x,
             int xi,

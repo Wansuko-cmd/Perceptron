@@ -25,7 +25,7 @@ class GPUBackend : IBackend by KotlinBackend {
     private val collection = JCollection()
     private val index = JIndex()
     private val operation = JOperation()
-    private val transpose = JTranspose()
+    private val shape = JShape()
     private val compare = JCompare()
 
     init {
@@ -1178,13 +1178,13 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        transpose.transposeD2(x.toGPUBuffer().ptr, xi, xj, result.ptr, runtime)
+        shape.transposeD2(x.toGPUBuffer().ptr, xi, xj, result.ptr, runtime)
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        transpose.transposeD3(x.toGPUBuffer().ptr, xi, xj, xk, axisI, axisJ, axisK, result.ptr, runtime)
+        shape.transposeD3(x.toGPUBuffer().ptr, xi, xj, xk, axisI, axisJ, axisK, result.ptr, runtime)
         return result
     }
 
@@ -1200,7 +1200,7 @@ class GPUBackend : IBackend by KotlinBackend {
         axisL: Int,
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        transpose.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, runtime)
+        shape.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, runtime)
         return result
     }
 
