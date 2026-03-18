@@ -33,4 +33,35 @@ class JShape {
             int axisL,
             ByteBuffer result
     );
+
+    public native void sliceD1(
+            ByteBuffer x,
+            int start,
+            int end,
+            int step,
+            ByteBuffer result
+    );
+
+    public native void sliceD2(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int axis,
+            int start,
+            int end,
+            int step,
+            ByteBuffer result
+    );
+
+    public native void sliceD3(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int axis,
+            int start,
+            int end,
+            int step,
+            ByteBuffer result
+    );
 }

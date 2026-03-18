@@ -16,4 +16,24 @@ void com_wsr_cpu_transpose_d4(
     int axis_i, int axis_j, int axis_k, int axis_l,
     float* result
 );
+
+void com_wsr_cpu_slice_d1(
+    const float* x, int x_size,
+    int start, int end, int step,
+    float* result, int result_size
+);
+
+void com_wsr_cpu_slice_d2(
+    const float* x,
+    int xi, int xj, int axis,
+    int start, int end, int step,
+    float* result, int result_size
+);
+
+void com_wsr_cpu_slice_d3(
+    const float* x,
+    int xi, int xj, int xk, int axis,
+    int start, int end, int step,
+    float* result, int result_size
+);
 #endif

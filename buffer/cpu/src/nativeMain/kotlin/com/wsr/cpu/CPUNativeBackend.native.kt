@@ -5,6 +5,7 @@ package com.wsr.cpu
 import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.size
 import com.wsr.cpu.rs.com_wsr_cpu_average_d1
 import com.wsr.cpu.rs.com_wsr_cpu_average_d2
 import com.wsr.cpu.rs.com_wsr_cpu_average_d3
@@ -69,6 +70,9 @@ import com.wsr.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_pow_d1
 import com.wsr.cpu.rs.com_wsr_cpu_scatter_add
 import com.wsr.cpu.rs.com_wsr_cpu_sigmoid_d1
+import com.wsr.cpu.rs.com_wsr_cpu_slice_d1
+import com.wsr.cpu.rs.com_wsr_cpu_slice_d2
+import com.wsr.cpu.rs.com_wsr_cpu_slice_d3
 import com.wsr.cpu.rs.com_wsr_cpu_sqrt_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d1
 import com.wsr.cpu.rs.com_wsr_cpu_sum_d2
@@ -93,6 +97,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d1
+import kotlin.math.min
 import kotlinx.cinterop.ExperimentalForeignApi
 
 actual fun loadCPUBackend(): IBackend? = CPUNativeBackend()
@@ -1340,6 +1345,64 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             axis_k = axisK,
             axis_l = axisL,
             result = result.buffer,
+        )
+        return result
+    }
+
+    override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
+        val result = CPUNativeBuffer.create(min(x.size, indices.size))
+        com_wsr_cpu_slice_d1(
+            x = x.toCPUBuffer().buffer,
+            x_size = x.size,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.toCPUBuffer().buffer,
+            result_size = result.size,
+        )
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> min(xi, indices.size) * xj
+                else -> xi * min(xj, indices.size)
+            },
+        )
+        com_wsr_cpu_slice_d2(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            axis = axis,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.toCPUBuffer().buffer,
+            result_size = result.size,
+        )
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> min(xi, indices.size) * xj * xk
+                1 -> xi * min(xj, indices.size) * xk
+                else -> xi * xj * min(xk, indices.size)
+            },
+        )
+        com_wsr_cpu_slice_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.toCPUBuffer().buffer,
+            result_size = result.size,
         )
         return result
     }

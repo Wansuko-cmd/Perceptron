@@ -3,7 +3,9 @@ package com.wsr.cpu
 import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.size
 import com.wsr.base.loadNativeLibrary
+import kotlin.math.min
 
 private const val LIB_PATH = "cpu"
 private const val LIB_NAME = "cpu"
@@ -1161,6 +1163,54 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         shape.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
+        return result
+    }
+
+    override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
+        val result = CPUJvmBuffer.create(min(x.size, indices.size))
+        shape.sliceD1(x.toCPUBuffer().byteBuffer, indices.first, indices.last, indices.step, result.byteBuffer)
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> min(xi, indices.size) * xj
+                else -> xi * min(xj, indices.size)
+            },
+        )
+        shape.sliceD2(
+            x.toCPUBuffer().byteBuffer,
+            xi,
+            xj,
+            axis,
+            indices.first,
+            indices.last,
+            indices.step,
+            result.byteBuffer,
+        )
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> min(xi, indices.size) * xj * xk
+                1 -> xi * min(xj, indices.size) * xk
+                else -> xi * xj * min(xk, indices.size)
+            },
+        )
+        shape.sliceD3(
+            x.toCPUBuffer().byteBuffer,
+            xi,
+            xj,
+            xk,
+            axis,
+            indices.first,
+            indices.last,
+            indices.step,
+            result.byteBuffer,
+        )
         return result
     }
 

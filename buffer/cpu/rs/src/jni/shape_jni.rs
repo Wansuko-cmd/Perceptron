@@ -55,3 +55,44 @@ pub extern "system" fn Java_com_wsr_cpu_JShape_transposeD4(
         result,
     );
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_sliceD1(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    start: jint, end: jint, step: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::slice_d1(x, start as usize, end as usize, step as isize, result);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_sliceD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::slice_d2(x, xi as usize, xj as usize, axis as usize, start as usize, end as usize, step as isize, result);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_sliceD3(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, xk: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result);
+}
