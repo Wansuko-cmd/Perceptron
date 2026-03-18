@@ -4,6 +4,7 @@ import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import com.wsr.base.data.size
 import com.wsr.base.loadNativeLibrary
 import java.lang.ref.Cleaner
 
@@ -1201,6 +1202,56 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         shape.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, runtime)
+        return result
+    }
+
+    override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
+        val result = GPUJvmBuffer.create(kotlin.math.min(x.size, indices.size))
+        shape.sliceD1(x.toGPUBuffer().ptr, indices.first, indices.last, indices.step, result.ptr, runtime)
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> kotlin.math.min(xi, indices.size) * xj
+                else -> xi * kotlin.math.min(xj, indices.size)
+            },
+        )
+        shape.sliceD2(
+            x.toGPUBuffer().ptr,
+            xi,
+            xj,
+            axis,
+            indices.first,
+            indices.last,
+            indices.step,
+            result.ptr,
+            runtime,
+        )
+        return result
+    }
+
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer {
+        val result = GPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> kotlin.math.min(xi, indices.size) * xj * xk
+                1 -> xi * kotlin.math.min(xj, indices.size) * xk
+                else -> xi * xj * kotlin.math.min(xk, indices.size)
+            },
+        )
+        shape.sliceD3(
+            x.toGPUBuffer().ptr,
+            xi,
+            xj,
+            xk,
+            axis,
+            indices.first,
+            indices.last,
+            indices.step,
+            result.ptr,
+            runtime,
+        )
         return result
     }
 

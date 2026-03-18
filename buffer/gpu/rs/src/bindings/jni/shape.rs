@@ -68,3 +68,53 @@ pub extern "system" fn Java_com_wsr_gpu_JShape_transposeD4(
         runtime,
     );
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_sliceD1(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    start: jint, end: jint, step: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::slice_d1(x, start as usize, end as usize, step as isize, result, runtime);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_sliceD2(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    xi: jint, xj: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::slice_d2(x, xi as usize, xj as usize, axis as usize, start as usize, end as usize, step as isize, result, runtime);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_sliceD3(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    xi: jint, xj: jint, xk: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result, runtime);
+}
