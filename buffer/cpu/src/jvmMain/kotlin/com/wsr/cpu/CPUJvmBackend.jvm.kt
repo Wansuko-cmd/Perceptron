@@ -20,7 +20,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     private val math = JMath()
     private val matMul = JMatMul()
     private val operation = JOperation()
-    private val transpose = JTranspose()
+    private val shape = JShape()
 
     override val generator = CPUJvmBuffer.generator
 
@@ -1138,13 +1138,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        transpose.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)
+        shape.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        transpose.transposeD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axisI, axisJ, axisK, result.byteBuffer)
+        shape.transposeD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axisI, axisJ, axisK, result.byteBuffer)
         return result
     }
 
@@ -1160,7 +1160,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axisL: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        transpose.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
+        shape.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
         return result
     }
 

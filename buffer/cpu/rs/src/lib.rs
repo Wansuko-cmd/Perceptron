@@ -4,7 +4,7 @@ mod index;
 mod mat_mul;
 mod math;
 mod operation;
-mod transpose;
+mod shape;
 
 #[cfg(feature = "jni")]
 mod jni;

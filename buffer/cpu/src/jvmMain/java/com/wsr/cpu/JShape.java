@@ -2,7 +2,7 @@ package com.wsr.cpu;
 
 import java.nio.ByteBuffer;
 
-class JTranspose {
+class JShape {
     public native void transposeD2(
             ByteBuffer x,
             int xi,
