@@ -10,19 +10,19 @@ fn bench_transpose(c: &mut Criterion) {
 
     for (xi, xj) in [(32, 32), (1000, 1000)] {
         bench(&mut group, "d2", xi * xj, &mut runtime, |x, res, rt| {
-            ops::transpose::transpose_d2(x, xi, xj, res, rt)
+            ops::shape::transpose_d2(x, xi, xj, res, rt)
         });
     }
 
     for (xi, xj, xk) in [(16, 16, 16), (256, 256, 256)] {
         bench(&mut group, "d3", xi * xj * xk, &mut runtime, |x, res, rt| {
-            ops::transpose::transpose_d3(x, xi, xj, xk, 2, 1, 0, res, rt)
+            ops::shape::transpose_d3(x, xi, xj, xk, 2, 1, 0, res, rt)
         });
     }
 
     for (xi, xj, xk, xl) in [(8, 8, 8, 8), (64, 64, 64, 64)] {
         bench(&mut group, "d4", xi * xj * xk * xl, &mut runtime, |x, res, rt| {
-            ops::transpose::transpose_d4(x, xi, xj, xk, xl, 3, 2, 1, 0, res, rt)
+            ops::shape::transpose_d4(x, xi, xj, xk, xl, 3, 2, 1, 0, res, rt)
         });
     }
 

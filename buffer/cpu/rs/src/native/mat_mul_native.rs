@@ -1,4 +1,4 @@
-use crate::mat_mul;
+use crate::core::mat_mul;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_inner(x: *const f32, y: *const f32, size: i32, b: i32, result: *mut f32) {

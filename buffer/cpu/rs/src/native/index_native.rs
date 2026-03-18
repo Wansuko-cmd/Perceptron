@@ -1,4 +1,4 @@
-use crate::index;
+use crate::core::index;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn com_wsr_cpu_gather(

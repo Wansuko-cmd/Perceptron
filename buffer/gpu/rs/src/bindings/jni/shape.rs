@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD2(
+pub extern "system" fn Java_com_wsr_gpu_JShape_transposeD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -20,11 +20,11 @@ pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD2(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::transpose::transpose_d2(x, xi as usize, xj as usize, result, runtime);
+    ops::shape::transpose_d2(x, xi as usize, xj as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD3(
+pub extern "system" fn Java_com_wsr_gpu_JShape_transposeD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -37,7 +37,7 @@ pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD3(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::transpose::transpose_d3(
+    ops::shape::transpose_d3(
         x,
         xi as usize, xj as usize, xk as usize,
         axis_i as usize, axis_j as usize, axis_k as usize,
@@ -47,7 +47,7 @@ pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD4(
+pub extern "system" fn Java_com_wsr_gpu_JShape_transposeD4(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -60,7 +60,7 @@ pub extern "system" fn Java_com_wsr_gpu_JTranspose_transposeD4(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::transpose::transpose_d4(
+    ops::shape::transpose_d4(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize,
         axis_i as usize, axis_j as usize, axis_k as usize, axis_l as usize,

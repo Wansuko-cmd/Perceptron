@@ -1,10 +1,4 @@
-mod collection;
-mod compare;
-mod index;
-mod mat_mul;
-mod math;
-mod operation;
-mod transpose;
+mod core;
 
 #[cfg(feature = "jni")]
 mod jni;

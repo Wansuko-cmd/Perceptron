@@ -2,11 +2,11 @@ use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
 use jni::sys::{jint};
 
-use crate::transpose;
+use crate::core::shape;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD2(
+pub extern "system" fn Java_com_wsr_cpu_JShape_transposeD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -15,11 +15,11 @@ pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD2(
 ) {
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
-    transpose::transpose_d2(x, xi as usize, xj as usize, result);
+    shape::transpose_d2(x, xi as usize, xj as usize, result);
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD3(
+pub extern "system" fn Java_com_wsr_cpu_JShape_transposeD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -29,7 +29,7 @@ pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD3(
 ) {
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
-    transpose::transpose_d3(
+    shape::transpose_d3(
         x,
         xi as usize, xj as usize, xk as usize,
         axis_i as usize, axis_j as usize, axis_k as usize,
@@ -38,7 +38,7 @@ pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD4(
+pub extern "system" fn Java_com_wsr_cpu_JShape_transposeD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -48,7 +48,7 @@ pub extern "system" fn Java_com_wsr_cpu_JTranspose_transposeD4(
 ) {
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
-    transpose::transpose_d4(
+    shape::transpose_d4(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize,
         axis_i as usize, axis_j as usize, axis_k as usize, axis_l as usize,

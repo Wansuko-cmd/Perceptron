@@ -1,4 +1,4 @@
-use crate::collection;
+use crate::core::collection;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_average_d1(x: *const f32, size: i32) -> f32 {

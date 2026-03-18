@@ -1,4 +1,4 @@
-use crate::compare;
+use crate::core::compare;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn com_wsr_cpu_greater_than_d1_to_d0(x: *const f32, size: i32, y: f32, result: *mut f32) {    

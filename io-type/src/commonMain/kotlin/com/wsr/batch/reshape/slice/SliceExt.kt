@@ -1,12 +1,9 @@
 package com.wsr.batch.reshape.slice
 
 import com.wsr.Backend
-import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
-import com.wsr.create
-import kotlin.math.min
 
 fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
     val result = Backend.slice(x = value, xi = size, xj = shape[0], axis = 1, indices = indices)

@@ -29,7 +29,7 @@ kotlin {
                     "$headersDir/mat_mul_native.h",
                     "$headersDir/math_native.h",
                     "$headersDir/operation_native.h",
-                    "$headersDir/transpose_native.h",
+                    "$headersDir/shape_native.h",
                 )
                 defFile(project.file("src/nativeMain/lib.def"))
             }
