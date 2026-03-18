@@ -68,3 +68,82 @@ pub fn transpose_d4(
         }
     }
 }
+
+pub fn slice_d1(x: &[f32], start: usize, end: usize, step: isize, result: &mut [f32]) {
+    match step {
+        0 => panic!("invalid parameter. [step: {}]", step),
+        1 => {
+            let size = end - start;
+            result[..size].copy_from_slice(&x[start..=end]);
+        }
+        _ => {
+            let indices = create_indices(start, end, step);
+            for (i, res) in indices.iter().zip(result.iter_mut()) {
+                *res = x[*i];
+            }
+        }
+    }
+}
+
+pub fn slice_d2(x: &[f32], xi: usize, xj: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut [f32]) {
+    match step {
+        0 => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
+        _ => {
+            match axis {
+                0 => {
+                    let indices = create_indices(start, end, step);
+                    for (r_i, x_i) in indices.iter().enumerate() {
+                        let x_offset = x_i * xj;
+                        let result_offset = r_i * xj;
+                        result[result_offset..result_offset + xj].copy_from_slice(&x[x_offset..x_offset + xj]);
+                    }
+                }
+                1 => {
+                    let indices = create_indices(start, end, step);
+                    let size = indices.len();
+                    for i in 0..xi {
+                        let x_offset = i * xj;
+                        let result_offset = i * size;
+                        for (r_j, x_j) in indices.iter().enumerate() {
+                            result[result_offset + r_j] = x[x_offset + x_j];
+                        }
+                    }
+                }
+                _ => panic!("invalid parameter. [axis: {}, step: {}]", axis, step)
+            }
+        }
+    }
+}
+
+pub fn slice_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut [f32]) {
+    match axis {
+        0 => slice_d2(x, xi, xj * xk, 0, start, end, step, result),
+        1 => {
+            let indices = create_indices(start, end, step);
+            let size = indices.len();
+            for i in 0..xi {
+                let xii = i * xj * xk;
+                let rii = i * size * xk;
+                for (r_i, x_i) in indices.iter().enumerate() {
+                    let x_offset = xii + x_i * xk;
+                    let result_offset = rii + r_i * xk;
+                    result[result_offset..result_offset + xk].copy_from_slice(&x[x_offset..x_offset + xk]);
+                }
+            }
+        }
+        2 => slice_d2(x, xi * xj, xk, 1, start, end, step, result),
+        _ => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
+    }
+}
+
+fn create_indices(start: usize, end: usize, step: isize) -> Vec<usize> {
+    match step {
+        step if step > 0 => {
+            (start..=end).step_by(step as usize).collect()
+        },
+        step if step < 0 => {
+            (end..=start).rev().step_by(step.unsigned_abs()).collect()
+        },
+        _ => panic!("invalid parameter. [step: {}]",step)
+    }
+}
