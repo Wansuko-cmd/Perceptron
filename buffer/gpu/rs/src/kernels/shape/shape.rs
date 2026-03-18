@@ -7,7 +7,7 @@ pub struct Shape {
     copy_into: wgpu::ComputePipeline,
     copy_into_bgl: wgpu::BindGroupLayout,
 
-    slice: wgpu::ComputePipeline,
+    slice_d1: wgpu::ComputePipeline,
     slice_bgl: wgpu::BindGroupLayout,
 
     transpose_d2: wgpu::ComputePipeline,
@@ -60,9 +60,9 @@ impl Shape {
             ],
         });
 
-        let slice_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        let slice_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("slice.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d1.wgsl").into()),
         });
 
         let slice_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -163,11 +163,11 @@ impl Shape {
                 cache: None,
             }),
             copy_into_bgl: copy_into_bgl,
-            slice: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-                label: Some("slice"),
+            slice_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("slice_d1"),
                 layout: Some(&pipeline_layout),
-                module: &slice_shader,
-                entry_point: Some("slice"),
+                module: &slice_d1_shader,
+                entry_point: Some("slice_d1"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
@@ -256,7 +256,7 @@ impl Shape {
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct SliceParams {
+struct SliceD1Params {
     start: u32,
     step: i32,
     _pad1: u32,
@@ -264,15 +264,15 @@ struct SliceParams {
 }
 
 impl Shape {
-    pub fn slice<'a>(
+    pub fn slice_d1<'a>(
         &'a self,
         x: &GPUBuffer,
         start: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
-        let label = "slice";
+        let label = "slice_d1";
         let device = &self.device;
-        let params = SliceParams {
+        let params = SliceD1Params {
             start: start as u32,
             step: step as i32,
             _pad1: 0u32,
@@ -308,7 +308,7 @@ impl Shape {
 
         ComputeTask {
             label: label,
-            pipeline: &self.slice,
+            pipeline: &self.slice_d1,
             bind_group: bind_group,
             workgroups: workgroups,
         }
