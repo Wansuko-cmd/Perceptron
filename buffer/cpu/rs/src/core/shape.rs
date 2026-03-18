@@ -73,8 +73,8 @@ pub fn slice_d1(x: &[f32], start: usize, end: usize, step: isize, result: &mut [
     match step {
         0 => panic!("invalid parameter. [step: {}]", step),
         1 => {
-            let size = end - start;
-            result[..size].copy_from_slice(&x[start..=end]);
+            let size = result.len().min(end - start + 1);
+            result[..size].copy_from_slice(&x[start..start + size]);
         }
         _ => {
             let indices = create_indices(start, end, step);
