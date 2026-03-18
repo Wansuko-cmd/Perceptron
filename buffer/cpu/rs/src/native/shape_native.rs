@@ -1,4 +1,4 @@
-use crate::shape;
+use crate::core::shape;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_transpose_d2(x: *const f32, xi: i32, xj: i32, result: *mut f32) {

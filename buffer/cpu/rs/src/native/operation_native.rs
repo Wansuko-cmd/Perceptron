@@ -1,4 +1,4 @@
-use crate::operation;
+use crate::core::operation;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_plus_d0_to_d1(x: f32, y: *const f32, y_size: i32, result: *mut f32) {

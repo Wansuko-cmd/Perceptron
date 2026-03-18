@@ -2,7 +2,7 @@ use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
 use jni::sys::{jboolean, jint};
 
-use crate::mat_mul;
+use crate::core::mat_mul;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]

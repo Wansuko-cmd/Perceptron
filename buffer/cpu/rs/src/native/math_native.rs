@@ -1,4 +1,4 @@
-use crate::math;
+use crate::core::math;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_exp_d1(x: *const f32, result: *mut f32, size: i32) {

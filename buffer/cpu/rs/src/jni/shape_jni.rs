@@ -2,7 +2,7 @@ use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
 use jni::sys::{jint};
 
-use crate::shape;
+use crate::core::shape;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]

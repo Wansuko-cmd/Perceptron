@@ -2,7 +2,7 @@ use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
 use jni::sys::{jfloat};
 
-use crate::compare;
+use crate::core::compare;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
