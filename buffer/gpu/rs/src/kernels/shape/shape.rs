@@ -4,7 +4,7 @@ use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Shape {
     device: Device,
-    copy_into: wgpu::ComputePipeline,
+    copy_into_d1: wgpu::ComputePipeline,
     copy_into_bgl: wgpu::BindGroupLayout,
 
     slice_d1: wgpu::ComputePipeline,
@@ -22,9 +22,9 @@ impl Shape {
     const WORKGROUP_SIZE: u32 = 256;
 
     pub fn new(device: &Device) -> Self {
-        let copy_into_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        let copy_into_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d1.wgsl").into()),
         });
 
         let copy_into_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -165,11 +165,11 @@ impl Shape {
 
         Shape {
             device: device.clone(),
-            copy_into: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-                label: Some("copy_into"),
+            copy_into_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into_d1"),
                 layout: Some(&pipeline_layout),
-                module: &copy_into_shader,
-                entry_point: Some("copy_into"),
+                module: &copy_into_d1_shader,
+                entry_point: Some("copy_into_d1"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
@@ -230,7 +230,7 @@ impl Shape {
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct CopyIntoParams {
+struct CopyIntoD1Params {
     start: u32,
     step: i32,
     count : u32,
@@ -238,15 +238,15 @@ struct CopyIntoParams {
 }
 
 impl Shape {
-    pub fn copy_into<'a>(
+    pub fn copy_into_d1<'a>(
         &'a self,
         x: &GPUBuffer,
         start: usize, step: isize, count: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
-        let label = "copy_into";
+        let label = "copy_into_d1";
         let device = &self.device;
-        let params = CopyIntoParams {
+        let params = CopyIntoD1Params {
             start: start as u32,
             step: step as i32,
             count: count as u32,
@@ -282,7 +282,7 @@ impl Shape {
 
         ComputeTask {
             label: label,
-            pipeline: &self.copy_into,
+            pipeline: &self.copy_into_d1,
             bind_group: bind_group,
             workgroups: workgroups,
         }

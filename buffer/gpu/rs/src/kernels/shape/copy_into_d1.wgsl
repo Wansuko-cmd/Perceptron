@@ -10,7 +10,7 @@ struct Params {
 @group(0) @binding(2) var<uniform> params: Params;
 
 @compute @workgroup_size(256, 1)
-fn slice_d1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
+fn copy_into_d1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
     let old_index = id.y * stride + id.x;
     if (old_index >= arrayLength(&x)) {
