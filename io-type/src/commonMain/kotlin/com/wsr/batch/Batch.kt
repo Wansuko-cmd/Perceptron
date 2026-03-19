@@ -35,11 +35,11 @@ class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: Lis
 inline fun <T : IOType> Batch(size: Int, init: (index: Int) -> T): Batch<T> {
     val first = init(0)
     val value = DataBuffer.create(size * first.value.size)
-    first.value.copyInto(value)
+    Backend.copyInto(first.value, value, first.value.indices)
     for (i in 1 until size) {
         val src = init(i).value
         val start = i * first.value.size
-        src.copyInto(value, start until start + src.size)
+        Backend.copyInto(src, value, start until start + src.size)
     }
     return Batch(
         value = value,
@@ -55,7 +55,7 @@ fun <T : IOType> batchOf(vararg elements: T): Batch<T> {
     val batchValue = DataBuffer.create(batchSize * step)
     elements.forEachIndexed { index, item ->
         val start = index * step
-        item.value.copyInto(batchValue, start until start + item.value.size)
+        Backend.copyInto(item.value, batchValue, start until start + item.value.size)
     }
     return Batch(
         value = batchValue,
@@ -104,20 +104,20 @@ operator fun Batch<IOType.D0>.set(i: Int, element: IOType.D0) {
 
 operator fun Batch<IOType.D1>.set(i: Int, element: IOType.D1) {
     val start = i * step
-    element.value.copyInto(value, start until start + element.value.size)
+    Backend.copyInto(element.value, value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D2>.set(i: Int, element: IOType.D2) {
     val start = i * step
-    element.value.copyInto(value, start until start + element.value.size)
+    Backend.copyInto(element.value, value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D3>.set(i: Int, element: IOType.D3) {
     val start = i * step
-    element.value.copyInto(value, start until start + element.value.size)
+    Backend.copyInto(element.value, value, start until start + element.value.size)
 }
 
 operator fun Batch<IOType.D4>.set(i: Int, element: IOType.D4) {
     val start = i * step
-    element.value.copyInto(value, start until start + element.value.size)
+    Backend.copyInto(element.value, value, start until start + element.value.size)
 }
