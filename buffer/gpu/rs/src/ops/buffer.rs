@@ -70,7 +70,7 @@ pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, start: usize, end: usize, st
             );
         }
         _ => {
-            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, start, end, step, dest));
+            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, dest, start, end, step));
         }
     }
 }

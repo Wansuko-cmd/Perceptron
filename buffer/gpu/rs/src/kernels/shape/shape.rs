@@ -276,8 +276,8 @@ impl Shape {
     pub fn copy_into_d1<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, end: usize, step: isize,
         result: &GPUBuffer,
+        start: usize, end: usize, step: isize,
     ) -> ComputeTask<'a> {
         let label = "copy_into_d1";
         let device = &self.device;
