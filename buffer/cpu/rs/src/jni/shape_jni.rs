@@ -96,3 +96,44 @@ pub extern "system" fn Java_com_wsr_cpu_JShape_sliceD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
     shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_copyIntoD1(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    result: JByteBuffer,
+    start: jint, end: jint, step: jint,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::copy_into_d1(x, result, start as usize, end as usize, step as isize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_copyIntoD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    result: JByteBuffer,
+    ri: jint, rj: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::copy_into_d2(x, result, ri as usize, rj as usize, axis as usize, start as usize, end as usize, step as isize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_JShape_copyIntoD3(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    result: JByteBuffer,
+    ri: jint, rj: jint, rk: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize);
+}

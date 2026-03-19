@@ -64,4 +64,35 @@ class JShape {
             int step,
             ByteBuffer result
     );
+
+    public native void copyIntoD1(
+            ByteBuffer x,
+            ByteBuffer result,
+            int start,
+            int end,
+            int step
+    );
+
+    public native void copyIntoD2(
+            ByteBuffer x,
+            ByteBuffer result,
+            int ri,
+            int rj,
+            int axis,
+            int start,
+            int end,
+            int step
+    );
+
+    public native void copyIntoD3(
+            ByteBuffer x,
+            ByteBuffer result,
+            int ri,
+            int rj,
+            int rk,
+            int axis,
+            int start,
+            int end,
+            int step
+    );
 }

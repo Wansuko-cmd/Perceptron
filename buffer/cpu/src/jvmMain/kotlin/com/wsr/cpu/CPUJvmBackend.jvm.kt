@@ -1214,6 +1214,58 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
+        when (y) {
+            is CPUJvmBuffer -> {
+                shape.copyIntoD1(
+                    x.toCPUBuffer().byteBuffer,
+                    y.byteBuffer,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is CPUJvmBuffer -> {
+                shape.copyIntoD2(
+                    x.toCPUBuffer().byteBuffer,
+                    y.byteBuffer,
+                    yi,
+                    yj,
+                    axis,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is CPUJvmBuffer -> {
+                shape.copyIntoD3(
+                    x.toCPUBuffer().byteBuffer,
+                    y.byteBuffer,
+                    yi,
+                    yj,
+                    yk,
+                    axis,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         val result = CPUJvmBuffer.create(i * x.size * k)
         index.gather(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
