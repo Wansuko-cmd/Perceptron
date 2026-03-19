@@ -2,6 +2,8 @@
 
 package mnist
 
+import com.wsr.Backend
+import com.wsr.gpu.gpu
 import com.wsr.network.Network
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.NetworkSerializer
@@ -32,6 +34,7 @@ private const val TEST_LABEL_PATH = "mnist/t10k-labels-idx1-ubyte.gz"
 class MnistTest {
     @Test
     fun `Mnistモデルの精度が落ちていないか確認`() {
+        Backend.set(gpu)
         NetworkSerializer.apply {
             register(PixelConverter::class)
             register(LabelConverter::class)

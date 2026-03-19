@@ -1,5 +1,6 @@
 package com.wsr.batch
 
+import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.core.IOType
 import com.wsr.create
@@ -12,7 +13,7 @@ fun <T : IOType> List<T>.toBatch(): Batch<T> {
     val batchValue = DataBuffer.create(batchSize * step)
     forEachIndexed { index, item ->
         val start = index * step
-        item.value.copyInto(batchValue, start until start + item.value.size)
+        Backend.copyInto(item.value, batchValue, start until start + item.value.size)
     }
     return Batch(
         value = batchValue,

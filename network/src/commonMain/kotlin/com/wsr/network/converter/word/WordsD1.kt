@@ -1,12 +1,10 @@
 package com.wsr.network.converter.word
 
-import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
 import com.wsr.batch.toBatch
 import com.wsr.batch.toList
 import com.wsr.core.IOType
 import com.wsr.core.d1
-import com.wsr.create
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.initializer.WeightInitializer
@@ -23,14 +21,14 @@ class WordsD1(
     val vocabSize = words.size
     private val wordToId = words.mapIndexed { index, word -> word to index.toFloat() }.toMap()
 
-    override fun encode(input: List<List<String>>): Batch<IOType.D1> = input.toList().map { sentence ->
+    override fun encode(input: List<List<String>>): Batch<IOType.D1> = input.map { sentence ->
         val tokenIds = sentence
             .take(outputSize)
             .map { wordToId[it] ?: unknownIndex.toFloat() }
 
-        IOType.d1(outputSize) { paddingIndex.toFloat() }.also {
-            DataBuffer.create(tokenIds.toFloatArray()).copyInto(it.value)
-        }
+        FloatArray(outputSize) { paddingIndex.toFloat() }
+            .apply { tokenIds.toFloatArray().copyInto(this) }
+            .let { IOType.d1(it) }
     }.toBatch()
 
     override fun decode(input: Batch<IOType.D1>): List<List<String>> = input.toList().map { input ->
