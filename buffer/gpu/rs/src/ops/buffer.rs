@@ -56,9 +56,9 @@ pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: isize, runtime:
 
 pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, start: usize, end: usize, step: isize, runtime: &mut Runtime) {
     let dest_size = (end as isize - start as isize) as isize / step + 1;
-    let size = min(src.count(), dest_size as usize);
     match step {
         0 => {
+            let size = min(src.count(), dest_size as usize);
             runtime.dispatch(
                 CopyTask {
                     src: src,
@@ -70,7 +70,7 @@ pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, start: usize, end: usize, st
             );
         }
         _ => {
-            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, start, step, size, dest));
+            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, start, step, dest));
         }
     }
 }
