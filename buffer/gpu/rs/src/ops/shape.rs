@@ -45,7 +45,7 @@ pub fn transpose_d4(
 }
 
 pub fn slice_d1(x: &GPUBuffer, start: usize, end: usize, step: isize, result: &GPUBuffer, runtime: &mut Runtime) {
-    let task = runtime.kernels.shape.slice_d1(x, start, step, result);
+    let task = runtime.kernels.shape.slice_d1(x, start, end, step, result);
     runtime.dispatch(task);
 }
 
@@ -72,6 +72,40 @@ pub fn slice_d3(
         0 => runtime.kernels.shape.slice_d2_axis0(x, xi, xj * xk, start, end, step, result),
         1 => runtime.kernels.shape.slice_d3(x, xi, xj, xk, start, end, step, result),
         _ => runtime.kernels.shape.slice_d2_axis1(x, xi * xj, xk, start, end, step, result),
+    };
+    runtime.dispatch(task);
+}
+
+pub fn copy_into_d1(x: &GPUBuffer, result: &GPUBuffer, start: usize, end: usize, step: isize, runtime: &mut Runtime) {
+    let task = runtime.kernels.shape.copy_into_d1(x, result, start, end, step);
+    runtime.dispatch(task);
+}
+
+pub fn copy_into_d2(
+    x: &GPUBuffer,
+    result: &GPUBuffer,
+    ri: usize, rj: usize, axis: usize,
+    start: usize, end: usize, step: isize,
+    runtime: &mut Runtime,
+) {
+    let task = match axis {
+        0 => runtime.kernels.shape.copy_into_d2_axis0(x, result, ri, rj, start, end, step),
+        _ => runtime.kernels.shape.copy_into_d2_axis1(x, result, ri, rj, start, end, step),
+    };
+    runtime.dispatch(task);
+}
+
+pub fn copy_into_d3(
+    x: &GPUBuffer,
+    result: &GPUBuffer,
+    ri: usize, rj: usize, rk: usize, axis: usize,
+    start: usize, end: usize, step: isize,
+    runtime: &mut Runtime,
+) {
+    let task = match axis {
+        0 => runtime.kernels.shape.copy_into_d2_axis0(x, result, ri, rj * rk, start, end, step),
+        1 => runtime.kernels.shape.copy_into_d3(x, result, ri, rj, rk, start, end, step),
+        _ => runtime.kernels.shape.copy_into_d2_axis1(x, result, ri * rj, rk, start, end, step),
     };
     runtime.dispatch(task);
 }

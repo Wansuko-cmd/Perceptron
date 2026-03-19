@@ -36,4 +36,24 @@ void com_wsr_cpu_slice_d3(
     int start, int end, int step,
     float* result, int result_size
 );
+
+void com_wsr_cpu_copy_into_d1(
+    const float* x, int x_size,
+    float* result, int result_size,
+    int start, int end, int step
+);
+
+void com_wsr_cpu_copy_into_d2(
+    const float* x, int x_size,
+    float* result,
+    int ri, int rj, int axis,
+    int start, int end, int step
+);
+
+void com_wsr_cpu_copy_into_d3(
+    const float* x, int x_size,
+    float* result,
+    int ri, int rj, int rk, int axis,
+    int start, int end, int step
+);
 #endif

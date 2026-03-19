@@ -1255,6 +1255,61 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
+        when (y) {
+            is GPUJvmBuffer -> {
+                shape.copyIntoD1(
+                    x.toGPUBuffer().ptr,
+                    y.ptr,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                    runtime,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is GPUJvmBuffer -> {
+                shape.copyIntoD2(
+                    x.toGPUBuffer().ptr,
+                    y.ptr,
+                    yi,
+                    yj,
+                    axis,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                    runtime,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is GPUJvmBuffer -> {
+                shape.copyIntoD3(
+                    x.toGPUBuffer().ptr,
+                    y.ptr,
+                    yi,
+                    yj,
+                    yk,
+                    axis,
+                    indices.first,
+                    indices.last,
+                    indices.step,
+                    runtime,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         val result = GPUJvmBuffer.create(i * x.size * k)
         index.gather(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, result.ptr, runtime)

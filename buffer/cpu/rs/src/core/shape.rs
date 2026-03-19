@@ -92,7 +92,7 @@ pub fn slice_d2(x: &[f32], xi: usize, xj: usize, axis: usize, start: usize, end:
             match axis {
                 0 => {
                     let indices = create_indices(start, end, step);
-                    for (r_i, x_i) in indices.iter().enumerate() {
+                    for (r_i, &x_i) in indices.iter().enumerate() {
                         let x_offset = x_i * xj;
                         let result_offset = r_i * xj;
                         result[result_offset..result_offset + xj].copy_from_slice(&x[x_offset..x_offset + xj]);
@@ -104,7 +104,7 @@ pub fn slice_d2(x: &[f32], xi: usize, xj: usize, axis: usize, start: usize, end:
                     for i in 0..xi {
                         let x_offset = i * xj;
                         let result_offset = i * size;
-                        for (r_j, x_j) in indices.iter().enumerate() {
+                        for (r_j, &x_j) in indices.iter().enumerate() {
                             result[result_offset + r_j] = x[x_offset + x_j];
                         }
                     }
@@ -124,7 +124,7 @@ pub fn slice_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, start: 
             for i in 0..xi {
                 let xii = i * xj * xk;
                 let rii = i * size * xk;
-                for (r_i, x_i) in indices.iter().enumerate() {
+                for (r_i, &x_i) in indices.iter().enumerate() {
                     let x_offset = xii + x_i * xk;
                     let result_offset = rii + r_i * xk;
                     result[result_offset..result_offset + xk].copy_from_slice(&x[x_offset..x_offset + xk]);
@@ -132,6 +132,73 @@ pub fn slice_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, start: 
             }
         }
         2 => slice_d2(x, xi * xj, xk, 1, start, end, step, result),
+        _ => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
+    }
+}
+
+pub fn copy_into_d1(x: &[f32], result: &mut [f32], start: usize, end: usize, step: isize) {
+    match step {
+        0 => panic!("invalid parameter. [step: {}]", step),
+        1 => {
+            let size = x.len().min(end - start + 1);
+            result[start..start + size].copy_from_slice(&x[..size]);
+        }
+        _ => {
+            let indices = create_indices(start, end, step);
+            for (&i, x_val) in indices.iter().zip(x.iter()) {
+                result[i] = *x_val;
+            }
+        }
+    }
+}
+
+pub fn copy_into_d2(x: &[f32], result: &mut [f32], ri: usize, rj: usize, axis: usize, start: usize, end: usize, step: isize) {
+    match step {
+        0 => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
+        _ => {
+            match axis {
+                0 => {
+                    let indices = create_indices(start, end, step);
+                    for (x_i, &r_i) in indices.iter().enumerate() {
+                        let x_offset = x_i * rj;
+                        let result_offset = r_i * rj;
+                        result[result_offset..result_offset + rj].copy_from_slice(&x[x_offset..x_offset + rj]);
+                    }
+                }
+                1 => {
+                    let indices = create_indices(start, end, step);
+                    let size = indices.len();
+                    for i in 0..ri {
+                        let x_offset = i * size;
+                        let result_offset = i * rj;
+                        for (x_j, &r_j) in indices.iter().enumerate() {
+                            result[result_offset + r_j] = x[x_offset + x_j];
+                        }
+                    }
+                }
+                _ => panic!("invalid parameter. [axis: {}, step: {}]", axis, step)
+            }
+        }
+    }
+}
+
+pub fn copy_into_d3(x: &[f32], result: &mut [f32], ri: usize, rj: usize, rk: usize, axis: usize, start: usize, end: usize, step: isize) {
+    match axis {
+        0 => copy_into_d2(x, result, ri, rj * rk, 0, start, end, step),
+        1 => {
+            let indices = create_indices(start, end, step);
+            let size = indices.len();
+            for i in 0..ri {
+                let xii = i * size * rk;
+                let rii = i * rj * rk;
+                for (x_i, &r_i) in indices.iter().enumerate() {
+                    let x_offset = xii + x_i * rk;
+                    let result_offset = rii + r_i * rk;
+                    result[result_offset..result_offset + rk].copy_from_slice(&x[x_offset..x_offset + rk]);
+                }
+            }
+        }
+        2 => copy_into_d2(x, result, ri * rj, rk, 1, start, end, step),
         _ => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
     }
 }

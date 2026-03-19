@@ -4,7 +4,10 @@ use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Shape {
     device: Device,
-    copy_into: wgpu::ComputePipeline,
+    copy_into_d1: wgpu::ComputePipeline,
+    copy_into_d2_axis0: wgpu::ComputePipeline,
+    copy_into_d2_axis1: wgpu::ComputePipeline,
+    copy_into_d3: wgpu::ComputePipeline,
     copy_into_bgl: wgpu::BindGroupLayout,
 
     slice_d1: wgpu::ComputePipeline,
@@ -22,9 +25,17 @@ impl Shape {
     const WORKGROUP_SIZE: u32 = 256;
 
     pub fn new(device: &Device) -> Self {
-        let copy_into_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        let copy_into_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d1.wgsl").into()),
+        });
+        let copy_into_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d2.wgsl").into()),
+        });
+        let copy_into_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d3.wgsl").into()),
         });
 
         let copy_into_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -165,11 +176,35 @@ impl Shape {
 
         Shape {
             device: device.clone(),
-            copy_into: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-                label: Some("copy_into"),
+            copy_into_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into_d1"),
                 layout: Some(&pipeline_layout),
-                module: &copy_into_shader,
-                entry_point: Some("copy_into"),
+                module: &copy_into_d1_shader,
+                entry_point: Some("copy_into_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            copy_into_d2_axis0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into_d2_axis0"),
+                layout: Some(&pipeline_layout),
+                module: &copy_into_d2_shader,
+                entry_point: Some("copy_into_d2_axis0"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            copy_into_d2_axis1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into_d2_axis1"),
+                layout: Some(&pipeline_layout),
+                module: &copy_into_d2_shader,
+                entry_point: Some("copy_into_d2_axis1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            copy_into_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("copy_into_d3"),
+                layout: Some(&pipeline_layout),
+                module: &copy_into_d3_shader,
+                entry_point: Some("copy_into_d3"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
@@ -230,26 +265,26 @@ impl Shape {
 
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct CopyIntoParams {
+struct CopyIntoD1Params {
     start: u32,
     step: i32,
-    count : u32,
-    _pad: u32,
+    size: u32,
+    _pad : u32,
 }
 
 impl Shape {
-    pub fn copy_into<'a>(
+    pub fn copy_into_d1<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, step: isize, count: usize,
         result: &GPUBuffer,
+        start: usize, end: usize, step: isize,
     ) -> ComputeTask<'a> {
-        let label = "copy_into";
+        let label = "copy_into_d1";
         let device = &self.device;
-        let params = CopyIntoParams {
+        let params = CopyIntoD1Params {
             start: start as u32,
             step: step as i32,
-            count: count as u32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
             _pad: 0u32,
         };
 
@@ -278,11 +313,184 @@ impl Shape {
             ]
         });
 
-        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,
-            pipeline: &self.copy_into,
+            pipeline: &self.copy_into_d1,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct CopyIntoD2Params {
+    start: u32,
+    step: i32,
+    size: u32,
+    ri: u32,
+    rj: u32,
+    _pad1: u32,
+    _pad2: u32,
+    _pad3: u32,
+}
+
+impl Shape {
+    pub fn copy_into_d2_axis0<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+        ri: usize, rj: usize,
+        start: usize, end: usize, step: isize,
+    ) -> ComputeTask<'a> {
+        self.copy_into_d2(
+            "copy_into_d2_axis0",
+            &self.copy_into_d2_axis0,
+            x,
+            result, ri, rj,
+            start, end, step,
+        )
+    }
+
+    pub fn copy_into_d2_axis1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+        ri: usize, rj: usize,
+        start: usize, end: usize, step: isize,
+    ) -> ComputeTask<'a> {
+        self.copy_into_d2(
+            "copy_into_d2_axis1",
+            &self.copy_into_d2_axis1,
+            x,
+            result, ri, rj,
+            start, end, step,
+        )
+    }
+
+    fn copy_into_d2<'a>(
+        &'a self,
+        label: &'static str,
+        pipeline: &'a wgpu::ComputePipeline,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+        ri: usize, rj: usize,
+        start: usize, end: usize, step: isize,
+    ) -> ComputeTask<'a> {
+        let device = &self.device;
+        let params = CopyIntoD2Params {
+            start: start as u32,
+            step: step as i32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            ri: ri as u32,
+            rj: rj as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+            _pad3: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.copy_into_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &pipeline,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct CopyIntoD3Params {
+    start: u32,
+    step: i32,
+    size: u32,
+    ri: u32,
+    rj: u32,
+    rk: u32,
+    _pad1: u32,
+    _pad2: u32,
+}
+
+impl Shape {
+    pub fn copy_into_d3<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        result: &GPUBuffer,
+        ri: usize, rj: usize, rk: usize,
+        start: usize, end: usize, step: isize,
+    ) -> ComputeTask<'a> {
+        let label = "copy_into_d3";
+        let device = &self.device;
+        let params = CopyIntoD3Params {
+            start: start as u32,
+            step: step as i32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            ri: ri as u32,
+            rj: rj as u32,
+            rk: rk as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.slice_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.copy_into_d3,
             bind_group: bind_group,
             workgroups: workgroups,
         }
@@ -294,15 +502,15 @@ impl Shape {
 struct SliceD1Params {
     start: u32,
     step: i32,
-    _pad1: u32,
-    _pad2: u32,
+    size: u32,
+    _pad: u32,
 }
 
 impl Shape {
     pub fn slice_d1<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, step: isize,
+        start: usize, end: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "slice_d1";
@@ -310,8 +518,8 @@ impl Shape {
         let params = SliceD1Params {
             start: start as u32,
             step: step as i32,
-            _pad1: 0u32,
-            _pad2: 0u32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            _pad: 0u32,
         };
 
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -468,15 +676,6 @@ struct SliceD3Params {
     _pad2: u32,
 }
 
-#[repr(C)]
-#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
-struct TransposeD2Params {
-    oi: u32,
-    oj: u32,
-    _pad1: u32,
-    _pad2: u32,
-}
-
 impl Shape {
     pub fn slice_d3<'a>(
         &'a self,
@@ -532,6 +731,15 @@ impl Shape {
             workgroups: workgroups,
         }
     }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct TransposeD2Params {
+    oi: u32,
+    oj: u32,
+    _pad1: u32,
+    _pad2: u32,
 }
 
 impl Shape {

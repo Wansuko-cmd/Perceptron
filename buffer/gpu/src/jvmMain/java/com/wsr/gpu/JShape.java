@@ -68,4 +68,38 @@ class JShape {
             long result,
             long runtime
     );
+
+    public native void copyIntoD1(
+            long x,
+            long result,
+            int start,
+            int end,
+            int step,
+            long runtime
+    );
+
+    public native void copyIntoD2(
+            long x,
+            long result,
+            int ri,
+            int rj,
+            int axis,
+            int start,
+            int end,
+            int step,
+            long runtime
+    );
+
+    public native void copyIntoD3(
+            long x,
+            long result,
+            int ri,
+            int rj,
+            int rk,
+            int axis,
+            int start,
+            int end,
+            int step,
+            long runtime
+    );
 }

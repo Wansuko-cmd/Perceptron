@@ -9,6 +9,9 @@ import com.wsr.base.data.size
 import com.wsr.cpu.rs.com_wsr_cpu_average_d1
 import com.wsr.cpu.rs.com_wsr_cpu_average_d2
 import com.wsr.cpu.rs.com_wsr_cpu_average_d3
+import com.wsr.cpu.rs.com_wsr_cpu_copy_into_d1
+import com.wsr.cpu.rs.com_wsr_cpu_copy_into_d2
+import com.wsr.cpu.rs.com_wsr_cpu_copy_into_d3
 import com.wsr.cpu.rs.com_wsr_cpu_div_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_div_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_div_d1_to_d1
@@ -1405,6 +1408,62 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             result_size = result.size,
         )
         return result
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
+        when (y) {
+            is CPUNativeBuffer -> {
+                com_wsr_cpu_copy_into_d1(
+                    x = x.toCPUBuffer().buffer,
+                    x_size = x.size,
+                    result = y.buffer,
+                    result_size = y.size,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is CPUNativeBuffer -> {
+                com_wsr_cpu_copy_into_d2(
+                    x = x.toCPUBuffer().buffer,
+                    x_size = x.size,
+                    result = y.buffer,
+                    ri = yi,
+                    rj = yj,
+                    axis = axis,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        when (y) {
+            is CPUNativeBuffer -> {
+                com_wsr_cpu_copy_into_d3(
+                    x = x.toCPUBuffer().buffer,
+                    x_size = x.size,
+                    result = y.buffer,
+                    ri = yi,
+                    rj = yj,
+                    rk = yk,
+                    axis = axis,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                )
+            }
+            else -> KotlinBackend.copyInto(x, y, indices)
+        }
     }
 
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
