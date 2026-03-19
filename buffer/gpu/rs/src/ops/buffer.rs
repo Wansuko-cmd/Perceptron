@@ -48,7 +48,7 @@ pub fn slice(buffer: &GPUBuffer, start: usize, end: usize, step: isize, runtime:
             },
         );
     } else {
-        runtime.dispatch(runtime.kernels.shape.slice_d1(buffer, start, step, &dest));
+        runtime.dispatch(runtime.kernels.shape.slice_d1(buffer, start, end, step, &dest));
     }
 
     return dest;
@@ -70,7 +70,7 @@ pub fn copy_into(src: &GPUBuffer, dest: &GPUBuffer, start: usize, end: usize, st
             );
         }
         _ => {
-            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, start, step, dest));
+            runtime.dispatch(runtime.kernels.shape.copy_into_d1(src, start, end, step, dest));
         }
     }
 }

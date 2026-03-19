@@ -268,15 +268,15 @@ impl Shape {
 struct CopyIntoD1Params {
     start: u32,
     step: i32,
-    _pad1 : u32,
-    _pad2: u32,
+    size: u32,
+    _pad : u32,
 }
 
 impl Shape {
     pub fn copy_into_d1<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, step: isize,
+        start: usize, end: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "copy_into_d1";
@@ -284,8 +284,8 @@ impl Shape {
         let params = CopyIntoD1Params {
             start: start as u32,
             step: step as i32,
-            _pad1: 0u32,
-            _pad2: 0u32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            _pad: 0u32,
         };
 
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -502,15 +502,15 @@ impl Shape {
 struct SliceD1Params {
     start: u32,
     step: i32,
-    _pad1: u32,
-    _pad2: u32,
+    size: u32,
+    _pad: u32,
 }
 
 impl Shape {
     pub fn slice_d1<'a>(
         &'a self,
         x: &GPUBuffer,
-        start: usize, step: isize,
+        start: usize, end: usize, step: isize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "slice_d1";
@@ -518,8 +518,8 @@ impl Shape {
         let params = SliceD1Params {
             start: start as u32,
             step: step as i32,
-            _pad1: 0u32,
-            _pad2: 0u32,
+            size: if step > 0 { (end - start) as u32 / step.unsigned_abs() as u32 + 1 } else { (start - end) as u32 / step.unsigned_abs() as u32 + 1 },
+            _pad: 0u32,
         };
 
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {

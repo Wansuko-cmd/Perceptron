@@ -45,7 +45,7 @@ pub fn transpose_d4(
 }
 
 pub fn slice_d1(x: &GPUBuffer, start: usize, end: usize, step: isize, result: &GPUBuffer, runtime: &mut Runtime) {
-    let task = runtime.kernels.shape.slice_d1(x, start, step, result);
+    let task = runtime.kernels.shape.slice_d1(x, start, end, step, result);
     runtime.dispatch(task);
 }
 
