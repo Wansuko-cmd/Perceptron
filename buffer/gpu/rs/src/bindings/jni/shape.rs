@@ -118,3 +118,53 @@ pub extern "system" fn Java_com_wsr_gpu_JShape_sliceD3(
 
     ops::shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result, runtime);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_copyIntoD1(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    result: jlong,
+    start: jint, end: jint, step: jint,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::copy_into_d1(x, result, start as usize, end as usize, step as isize, runtime);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_copyIntoD2(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    result: jlong,
+    ri: jint, rj: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::copy_into_d2(x, result, ri as usize, rj as usize, axis as usize, start as usize, end as usize, step as isize, runtime);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_gpu_JShape_copyIntoD3(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    result: jlong,
+    ri: jint, rj: jint, rk: jint, axis: jint,
+    start: jint, end: jint, step: jint,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize, runtime);
+}
