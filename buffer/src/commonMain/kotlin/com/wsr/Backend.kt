@@ -462,6 +462,18 @@ object Backend : IBackend {
     override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer =
         instance.slice(x, xi, xj, xk, axis, indices)
 
+    override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
+        instance.copyInto(x, y, indices)
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        instance.copyInto(x, y, yi, yj, axis, indices)
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        instance.copyInto(x, y, yi, yj, yk, axis, indices)
+    }
+
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
         instance.gather(x, y, i, j, k)
 

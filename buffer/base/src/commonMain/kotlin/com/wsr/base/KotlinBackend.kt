@@ -941,6 +941,77 @@ object KotlinBackend : IBackend {
             }
         }
 
+    override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
+        var xIndex = 0
+        for (i in indices) {
+            y[i] = x[xIndex++]
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        when (axis) {
+            0 -> {
+                var xIndex = 0
+                for (i in indices) {
+                    val yOffset = i * yj
+                    for (j in 0 until yj) {
+                        y[yOffset + j] = x[xIndex++]
+                    }
+                }
+            }
+
+            else -> {
+                val count = min(yj, indices.size)
+                for (i in 0 until yi) {
+                    val yOffset = i * yj
+                    var xIndex = i * count
+                    for (j in indices) {
+                        y[yOffset + j] = x[xIndex++]
+                    }
+                }
+            }
+        }
+    }
+
+    override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        when (axis) {
+            0 -> {
+                var xIndex = 0
+                for (i in indices) {
+                    val yOffset = i * yj * yk
+                    for (jk in 0 until yj * yk) {
+                        y[yOffset + jk] = x[xIndex++]
+                    }
+                }
+            }
+
+            1 -> {
+                val count = min(yj, indices.size)
+                for (i in 0 until yi) {
+                    val yii = i * yj * yk
+                    var xIndex = i * count * yk
+                    for (j in indices) {
+                        val yOffset = yii + j * yk
+                        for (k in 0 until yk) {
+                            y[yOffset + k] = x[xIndex++]
+                        }
+                    }
+                }
+            }
+
+            else -> {
+                val count = min(yk, indices.size)
+                for (ij in 0 until yi * yj) {
+                    val yOffset = ij * yk
+                    var xIndex = ij * count
+                    for (k in indices) {
+                        y[yOffset + k] = x[xIndex++]
+                    }
+                }
+            }
+        }
+    }
+
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         check(y.size == i * j * k)
         val n = x.size
