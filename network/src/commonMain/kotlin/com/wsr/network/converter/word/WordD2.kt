@@ -1,13 +1,13 @@
 package com.wsr.network.converter.word
 
+import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
 import com.wsr.batch.toList
 import com.wsr.core.IOType
 import com.wsr.core.collection.index.maxIndex
-import com.wsr.core.d1
-import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.core.set
+import com.wsr.create
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.initializer.WeightInitializer
@@ -21,19 +21,20 @@ class WordD2(private val words: List<String>, private val length: Int, private v
     override val outputY = words.size
     private val wordToId = words.mapIndexed { index, word -> word to index }.toMap()
 
-    override fun encode(input: List<List<String>>): Batch<IOType.D2> = input.let { input ->
-        Batch(input.size) {
-            val text = input[it]
-            val result = IOType.d2(outputX, outputY)
+    override fun encode(input: List<List<String>>): Batch<IOType.D2> {
+        val result = FloatArray(input.size * outputX * outputY)
+        repeat(input.size) { b ->
+            val offset = b * outputX * outputY
+            val text = input[b]
             text.forEachIndexed { index, word ->
                 val id = wordToId[word] ?: unknownIndex
-                result[index] = IOType.d1(outputY).also { it[id] = 1f }
+                result[offset + index * outputY + id] = 1f
             }
             for (index in text.size until outputX) {
-                result[index] = IOType.d1(outputY).also { it[0] = 1f }
+                result[offset + index * outputY] = 1f
             }
-            result
         }
+        return Batch(size = input.size, shape = listOf(outputX, outputY), value = DataBuffer.create(result))
     }
 
     override fun decode(input: Batch<IOType.D2>): List<List<String>> = input.toList().map { input ->
