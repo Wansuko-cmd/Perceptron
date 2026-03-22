@@ -10,8 +10,8 @@ struct Params {
 @group(0) @binding(2) var<storage, read_write> result: array<f32>;
 @group(0) @binding(3) var<uniform> params: Params;
 
-var<workgroup> tile_x: array<f32, 256>;
-var<workgroup> tile_y: array<f32, 256>;
+var<workgroup> tile_x: array<vec4<f32>, 256>;
+var<workgroup> tile_y: array<vec4<f32>, 256>;
 
 @compute @workgroup_size(16, 16, 1)
 fn mat_mul_nn(
@@ -19,44 +19,69 @@ fn mat_mul_nn(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y;
-    let col = global_id.x;
+    let row = global_id.y * 4u;
+    let col = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
-    let t_index = local_id.y * 16u + local_id.x;
+    let t_index = ty * 16u + tx;
 
-    let x_offset = batch * params.m * params.k;
-    let y_offset = batch * params.k * params.n;
+    let xb_offset = batch * params.m * params.k;
+    let yb_offset = batch * params.k * params.n;
 
-    var acc = 0f;
+    var acc0 = vec4<f32>(0f);
+    var acc1 = vec4<f32>(0f);
+    var acc2 = vec4<f32>(0f);
+    var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_index = x_offset + row * params.k + xi;
-        if (row < params.m && xi < params.k) {
-            tile_x[t_index] = x[x_index];
-        } else {
-            tile_x[t_index] = 0f;
+        let x_offset = xb_offset + row * params.k + xi;
+        var x_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (row + i < params.m && xi < params.k) {
+                let x_index = x_offset + i * params.k;
+                x_tmp[i] = x[x_index];
+            }
         }
+        tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_index = y_offset + yi * params.n + col;
-        if (yi < params.k && col < params.n) {
-            tile_y[t_index] = y[y_index];
-        } else {
-            tile_y[t_index] = 0f;
+        let y_offset = yb_offset + yi * params.n + col;
+        var y_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (yi < params.k && col + i < params.n) {
+                let y_index = y_offset + i;
+                y_tmp[i] = y[y_index];
+            }
         }
+        tile_y[t_index] = y_tmp;
         workgroupBarrier();
 
         for (var t = 0u; t < 16u; t++) {
-            acc += tile_x[ty * 16u + t] * tile_y[t * 16u + tx];
+            let x_val = tile_x[ty * 16u + t];
+            let y_val = tile_y[t * 16u + tx];
+            acc0 = fma(vec4<f32>(x_val[0u]), y_val, acc0);
+            acc1 = fma(vec4<f32>(x_val[1u]), y_val, acc1);
+            acc2 = fma(vec4<f32>(x_val[2u]), y_val, acc2);
+            acc3 = fma(vec4<f32>(x_val[3u]), y_val, acc3);
         }
         workgroupBarrier();
     }
 
-    let index = (batch * params.m + row) * params.n + col;
-    if (batch < params.b && row < params.m && col < params.n) {
-        result[index] = acc;
+    let offset_b = batch * params.m * params.n;
+    let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
+
+    for (var ri = 0u; ri < 4u; ri++) {
+        let row_t = row + ri;
+        if (batch < params.b && row_t < params.m) {
+            let offset = offset_b + row_t * params.n;
+            for (var ci = 0u; ci < 4u; ci++) {
+                let col_t = col + ci;
+                if (col_t < params.n) {
+                    result[offset + col_t] = acc[ri][ci];
+                }
+            }
+        }
     }
 }
 
@@ -64,46 +89,74 @@ fn mat_mul_nn(
 fn mat_mul_nt(
     @builtin(global_invocation_id) global_id: vec3<u32>,
     @builtin(local_invocation_id) local_id: vec3<u32>,
+    @builtin(workgroup_id) group_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y;
-    let col = global_id.x;
+    let row = global_id.y * 4u;
+    let col = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
-    let t_index = local_id.y * 16u + local_id.x;
+    let t_index = ty * 16u + tx;
 
-    let x_offset = batch * params.m * params.k;
-    let y_offset = batch * params.n * params.k;
+    let xb_offset = batch * params.m * params.k;
+    let yb_offset = batch * params.n * params.k;
 
-    var acc = 0f;
+    var acc0 = vec4<f32>(0f);
+    var acc1 = vec4<f32>(0f);
+    var acc2 = vec4<f32>(0f);
+    var acc3 = vec4<f32>(0f);
+
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_index = x_offset + row * params.k + xi;
-        if (row < params.m && xi < params.k) {
-            tile_x[t_index] = x[x_index];
-        } else {
-            tile_x[t_index] = 0f;
+        let x_offset = xb_offset + row * params.k + xi;
+        var x_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (row + i < params.m && xi < params.k) {
+                let x_index = x_offset + i * params.k;
+                x_tmp[i] = x[x_index];
+            }
         }
+        tile_x[t_index] = x_tmp;
 
-        let yi = step + ty;
-        let y_index = y_offset + col * params.k + yi;
-        if (yi < params.k && col < params.n) {
-            tile_y[t_index] = y[y_index];
-        } else {
-            tile_y[t_index] = 0f;
+        let n_offset = (group_id.x * 16u + ty) * 4u;
+        let k = step + tx;
+        var y_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            let n = n_offset + i;
+            if (n < params.n && k < params.k) {
+                y_tmp[i] = y[yb_offset + n * params.k + k];
+            }
         }
+        tile_y[tx * 16u + ty] = y_tmp;
+
         workgroupBarrier();
 
         for (var t = 0u; t < 16u; t++) {
-            acc += tile_x[ty * 16u + t] * tile_y[t * 16u + tx];
+            let x_val = tile_x[ty * 16u + t];
+            let y_val = tile_y[t * 16u + tx];
+            
+            acc0 = fma(vec4<f32>(x_val[0u]), y_val, acc0);
+            acc1 = fma(vec4<f32>(x_val[1u]), y_val, acc1);
+            acc2 = fma(vec4<f32>(x_val[2u]), y_val, acc2);
+            acc3 = fma(vec4<f32>(x_val[3u]), y_val, acc3);
         }
         workgroupBarrier();
     }
 
-    let index = (batch * params.m + row) * params.n + col;
-    if (batch < params.b && row < params.m && col < params.n) {
-        result[index] = acc;
+    let offset_b = batch * params.m * params.n;
+    let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
+    for (var ri = 0u; ri < 4u; ri++) {
+        let row_t = row + ri;
+        if (batch < params.b && row_t < params.m) {
+            let offset = offset_b + row_t * params.n;
+            for (var ci = 0u; ci < 4u; ci++) {
+                let col_t = col + ci;
+                if (col_t < params.n) {
+                    result[offset + col_t] = acc[ri][ci];
+                }
+            }
+        }
     }
 }
 
@@ -113,44 +166,69 @@ fn mat_mul_tn(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y;
-    let col = global_id.x;
+    let row = global_id.y * 4u;
+    let col = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
-    let t_index = local_id.y * 16u + local_id.x;
+    let t_index = ty * 16u + tx;
 
-    let x_offset = batch * params.k * params.m;
-    let y_offset = batch * params.k * params.n;
+    let xb_offset = batch * params.k * params.m;
+    let yb_offset = batch * params.k * params.n;
 
-    var acc = 0f;
+    var acc0 = vec4<f32>(0f);
+    var acc1 = vec4<f32>(0f);
+    var acc2 = vec4<f32>(0f);
+    var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_index = x_offset + xi * params.m + row;
-        if (row < params.m && xi < params.k) {
-            tile_x[t_index] = x[x_index];
-        } else {
-            tile_x[t_index] = 0f;
+        let x_offset = xb_offset + xi * params.m + row;
+        var x_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (row + i < params.m && xi < params.k) {
+                let x_index = x_offset + i;
+                x_tmp[i] = x[x_index];
+            }
         }
+        tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_index = y_offset + yi * params.n + col;
-        if (yi < params.k && col < params.n) {
-            tile_y[t_index] = y[y_index];
-        } else {
-            tile_y[t_index] = 0f;
+        let y_offset = yb_offset + yi * params.n + col;
+        var y_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (yi < params.k && col + i < params.n) {
+                let y_index = y_offset + i;
+                y_tmp[i] = y[y_index];
+            }
         }
+        tile_y[t_index] = y_tmp;
         workgroupBarrier();
 
         for (var t = 0u; t < 16u; t++) {
-            acc += tile_x[ty * 16u + t] * tile_y[t * 16u + tx];
+            let x_val = tile_x[ty * 16u + t];
+            let y_val = tile_y[t * 16u + tx];
+            acc0 = fma(vec4<f32>(x_val[0u]), y_val, acc0);
+            acc1 = fma(vec4<f32>(x_val[1u]), y_val, acc1);
+            acc2 = fma(vec4<f32>(x_val[2u]), y_val, acc2);
+            acc3 = fma(vec4<f32>(x_val[3u]), y_val, acc3);
         }
         workgroupBarrier();
     }
 
-    let index = (batch * params.m + row) * params.n + col;
-    if (batch < params.b && row < params.m && col < params.n) {
-        result[index] = acc;
+    let offset_b = batch * params.m * params.n;
+    let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
+
+    for (var ri = 0u; ri < 4u; ri++) {
+        let row_t = row + ri;
+        if (batch < params.b && row_t < params.m) {
+            let offset = offset_b + row_t * params.n;
+            for (var ci = 0u; ci < 4u; ci++) {
+                let col_t = col + ci;
+                if (col_t < params.n) {
+                    result[offset + col_t] = acc[ri][ci];
+                }
+            }
+        }
     }
 }
 
@@ -160,43 +238,68 @@ fn mat_mul_tt(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y;
-    let col = global_id.x;
+    let row = global_id.y * 4u;
+    let col = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
-    let t_index = local_id.y * 16u + local_id.x;
+    let t_index = ty * 16u + tx;
 
-    let x_offset = batch * params.k * params.m;
-    let y_offset = batch * params.n * params.k;
+    let xb_offset = batch * params.k * params.m;
+    let yb_offset = batch * params.n * params.k;
 
-    var acc = 0f;
+    var acc0 = vec4<f32>(0f);
+    var acc1 = vec4<f32>(0f);
+    var acc2 = vec4<f32>(0f);
+    var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_index = x_offset + xi * params.m + row;
-        if (row < params.m && xi < params.k) {
-            tile_x[t_index] = x[x_index];
-        } else {
-            tile_x[t_index] = 0f;
+        let x_offset = xb_offset + xi * params.m + row;
+        var x_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (row + i < params.m && xi < params.k) {
+                let x_index = x_offset + i;
+                x_tmp[i] = x[x_index];
+            }
         }
+        tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_index = y_offset + col * params.k + yi;
-        if (yi < params.k && col < params.n) {
-            tile_y[t_index] = y[y_index];
-        } else {
-            tile_y[t_index] = 0f;
+        let y_offset = yb_offset + col * params.k + yi;
+        var y_tmp = vec4<f32>(0f);
+        for (var i = 0u; i < 4u; i++) {
+            if (yi < params.k && col + i < params.n) {
+                let y_index = y_offset + i * params.k;
+                y_tmp[i] = y[y_index];
+            }
         }
+        tile_y[t_index] = y_tmp;
         workgroupBarrier();
 
         for (var t = 0u; t < 16u; t++) {
-            acc += tile_x[ty * 16u + t] * tile_y[t * 16u + tx];
+            let x_val = tile_x[ty * 16u + t];
+            let y_val = tile_y[t * 16u + tx];
+            acc0 = fma(vec4<f32>(x_val[0u]), y_val, acc0);
+            acc1 = fma(vec4<f32>(x_val[1u]), y_val, acc1);
+            acc2 = fma(vec4<f32>(x_val[2u]), y_val, acc2);
+            acc3 = fma(vec4<f32>(x_val[3u]), y_val, acc3);
         }
         workgroupBarrier();
     }
 
-    let index = (batch * params.m + row) * params.n + col;
-    if (batch < params.b && row < params.m && col < params.n) {
-        result[index] = acc;
+    let offset_b = batch * params.m * params.n;
+    let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
+
+    for (var ri = 0u; ri < 4u; ri++) {
+        let row_t = row + ri;
+        if (batch < params.b && row_t < params.m) {
+            let offset = offset_b + row_t * params.n;
+            for (var ci = 0u; ci < 4u; ci++) {
+                let col_t = col + ci;
+                if (col_t < params.n) {
+                    result[offset + col_t] = acc[ri][ci];
+                }
+            }
+        }
     }
 }
