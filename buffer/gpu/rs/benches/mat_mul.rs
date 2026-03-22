@@ -8,15 +8,15 @@ fn bench_mat_mul(c: &mut Criterion) {
     bench(&mut group, "nn", &mut runtime, |x, y, res, config, rt| {
         ops::mat_mul::mat_mul(x, false, y, false, config.m, config.n, config.k, config.b, res, rt)
     });
-    bench(&mut group, "nt", &mut runtime, |x, y, res, config, rt| {
-        ops::mat_mul::mat_mul(x, false, y, true, config.m, config.n, config.k, config.b, res, rt)
-    });
-    bench(&mut group, "tn", &mut runtime, |x, y, res, config, rt| {
-        ops::mat_mul::mat_mul(x, true, y, false, config.m, config.n, config.k, config.b, res, rt)
-    });
-    bench(&mut group, "tt", &mut runtime, |x, y, res, config, rt| {
-        ops::mat_mul::mat_mul(x, true, y, true, config.m, config.n, config.k, config.b, res, rt)
-    });
+    // bench(&mut group, "nt", &mut runtime, |x, y, res, config, rt| {
+    //     ops::mat_mul::mat_mul(x, false, y, true, config.m, config.n, config.k, config.b, res, rt)
+    // });
+    // bench(&mut group, "tn", &mut runtime, |x, y, res, config, rt| {
+    //     ops::mat_mul::mat_mul(x, true, y, false, config.m, config.n, config.k, config.b, res, rt)
+    // });
+    // bench(&mut group, "tt", &mut runtime, |x, y, res, config, rt| {
+    //     ops::mat_mul::mat_mul(x, true, y, true, config.m, config.n, config.k, config.b, res, rt)
+    // });
 
     group.finish();
 }
