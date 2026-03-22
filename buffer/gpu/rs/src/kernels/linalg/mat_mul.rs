@@ -229,7 +229,7 @@ impl MatMul {
             ]
         });
 
-        let workgroups = [((n + 15) / 16) as u32, ((m + 15) / 64) as u32, b as u32];
+        let workgroups = [((n + 15) / 16) as u32, ((m + 63) / 64) as u32, b as u32];
 
         ComputeTask {
             label: label,
