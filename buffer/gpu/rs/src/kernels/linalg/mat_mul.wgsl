@@ -17,39 +17,48 @@ var<workgroup> tile_y: array<vec4<f32>, 256>;
 fn mat_mul_nn(
     @builtin(global_invocation_id) global_id: vec3<u32>,
     @builtin(local_invocation_id) local_id: vec3<u32>,
+    @builtin(workgroup_id) workgroup_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y * 4u;
-    let col = global_id.x * 4u;
+    let row_vec_index = global_id.y * 4u;
+    let col_vec_index = global_id.x * 4u;
+
+    let xb_offset = batch * params.m * params.k;
+    let yb_offset = batch * params.k * params.n;
 
     let tx = local_id.x;
     let ty = local_id.y;
     let t_index = ty * 16u + tx;
 
-    let xb_offset = batch * params.m * params.k;
-    let yb_offset = batch * params.k * params.n;
+    // (64, 16)の領域をコピー
+    // 横方向に4つずつ取っていくため、X軸方向の割当は16/4=4
+    let xt_x_vec = (t_index % 4u) * 4u;
+    let xt_y = t_index / 4u;
+    let xt_row_index = workgroup_id.y * 64 + xt_y;
+    let xt_offset = xb_offset + xt_row_index * params.k;
 
     var acc0 = vec4<f32>(0f);
     var acc1 = vec4<f32>(0f);
     var acc2 = vec4<f32>(0f);
     var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
-        let xi = step + tx;
-        let x_offset = xb_offset + row * params.k + xi;
-        var x_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (row + i < params.m && xi < params.k) {
-                let x_index = x_offset + i * params.k;
-                x_tmp[i] = x[x_index];
+            let xt_x = xt_x_vec + i;
+            let xt_col_index = step + xt_x;
+            
+            var val = 0f;
+            if (xt_row_index < params.m && xt_col_index < params.k) {
+                val = x[xt_offset + xt_col_index];
             }
+
+            tile_x[ty * 16 + xt_x][xt_y % 4u] = val;
         }
-        tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_offset = yb_offset + yi * params.n + col;
+        let y_offset = yb_offset + yi * params.n + col_vec_index;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col + i < params.n) {
+            if (yi < params.k && col_vec_index + i < params.n) {
                 let y_index = y_offset + i;
                 y_tmp[i] = y[y_index];
             }
@@ -68,17 +77,17 @@ fn mat_mul_nn(
         workgroupBarrier();
     }
 
-    let offset_b = batch * params.m * params.n;
+    let rb_offset = batch * params.m * params.n;
     let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
 
     for (var ri = 0u; ri < 4u; ri++) {
-        let row_t = row + ri;
-        if (batch < params.b && row_t < params.m) {
-            let offset = offset_b + row_t * params.n;
+        let row_index = row_vec_index + ri;
+        if (batch < params.b && row_index < params.m) {
+            let offset = rb_offset + row_index * params.n;
             for (var ci = 0u; ci < 4u; ci++) {
-                let col_t = col + ci;
-                if (col_t < params.n) {
-                    result[offset + col_t] = acc[ri][ci];
+                let col_index = col_vec_index + ci;
+                if (col_index < params.n) {
+                    result[offset + col_index] = acc[ri][ci];
                 }
             }
         }
