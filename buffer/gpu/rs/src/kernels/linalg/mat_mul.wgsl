@@ -19,8 +19,8 @@ fn mat_mul_nn(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y * 4u;
-    let col = global_id.x * 4u;
+    let row_vec_index = global_id.y * 4u;
+    let col_vec_index = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
@@ -35,10 +35,10 @@ fn mat_mul_nn(
     var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_offset = xb_offset + row * params.k + xi;
+        let x_offset = xb_offset + row_vec_index * params.k + xi;
         var x_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (row + i < params.m && xi < params.k) {
+            if (row_vec_index + i < params.m && xi < params.k) {
                 let x_index = x_offset + i * params.k;
                 x_tmp[i] = x[x_index];
             }
@@ -46,10 +46,10 @@ fn mat_mul_nn(
         tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_offset = yb_offset + yi * params.n + col;
+        let y_offset = yb_offset + yi * params.n + col_vec_index;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col + i < params.n) {
+            if (yi < params.k && col_vec_index + i < params.n) {
                 let y_index = y_offset + i;
                 y_tmp[i] = y[y_index];
             }
@@ -68,17 +68,17 @@ fn mat_mul_nn(
         workgroupBarrier();
     }
 
-    let offset_b = batch * params.m * params.n;
+    let rb_offset = batch * params.m * params.n;
     let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
 
     for (var ri = 0u; ri < 4u; ri++) {
-        let row_t = row + ri;
-        if (batch < params.b && row_t < params.m) {
-            let offset = offset_b + row_t * params.n;
+        let row_index = row_vec_index + ri;
+        if (batch < params.b && row_index < params.m) {
+            let offset = rb_offset + row_index * params.n;
             for (var ci = 0u; ci < 4u; ci++) {
-                let col_t = col + ci;
-                if (col_t < params.n) {
-                    result[offset + col_t] = acc[ri][ci];
+                let col_index = col_vec_index + ci;
+                if (col_index < params.n) {
+                    result[offset + col_index] = acc[ri][ci];
                 }
             }
         }
@@ -91,8 +91,8 @@ fn mat_mul_nt(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y * 4u;
-    let col = global_id.x * 4u;
+    let row_vec_index = global_id.y * 4u;
+    let col_vec_index = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
@@ -107,10 +107,10 @@ fn mat_mul_nt(
     var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_offset = xb_offset + row * params.k + xi;
+        let x_offset = xb_offset + row_vec_index * params.k + xi;
         var x_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (row + i < params.m && xi < params.k) {
+            if (row_vec_index + i < params.m && xi < params.k) {
                 let x_index = x_offset + i * params.k;
                 x_tmp[i] = x[x_index];
             }
@@ -118,10 +118,10 @@ fn mat_mul_nt(
         tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_offset = yb_offset + col * params.k + yi;
+        let y_offset = yb_offset + col_vec_index * params.k + yi;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col + i < params.n) {
+            if (yi < params.k && col_vec_index + i < params.n) {
                 let y_index = y_offset + i * params.k;
                 y_tmp[i] = y[y_index];
             }
@@ -140,17 +140,17 @@ fn mat_mul_nt(
         workgroupBarrier();
     }
 
-    let offset_b = batch * params.m * params.n;
+    let rb_offset = batch * params.m * params.n;
     let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
 
     for (var ri = 0u; ri < 4u; ri++) {
-        let row_t = row + ri;
-        if (batch < params.b && row_t < params.m) {
-            let offset = offset_b + row_t * params.n;
+        let row_index = row_vec_index + ri;
+        if (batch < params.b && row_index < params.m) {
+            let offset = rb_offset + row_index * params.n;
             for (var ci = 0u; ci < 4u; ci++) {
-                let col_t = col + ci;
-                if (col_t < params.n) {
-                    result[offset + col_t] = acc[ri][ci];
+                let col_index = col_vec_index + ci;
+                if (col_index < params.n) {
+                    result[offset + col_index] = acc[ri][ci];
                 }
             }
         }
@@ -163,8 +163,8 @@ fn mat_mul_tn(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y * 4u;
-    let col = global_id.x * 4u;
+    let row_vec_index = global_id.y * 4u;
+    let col_vec_index = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
@@ -179,10 +179,10 @@ fn mat_mul_tn(
     var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_offset = xb_offset + xi * params.m + row;
+        let x_offset = xb_offset + xi * params.m + row_vec_index;
         var x_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (row + i < params.m && xi < params.k) {
+            if (row_vec_index + i < params.m && xi < params.k) {
                 let x_index = x_offset + i;
                 x_tmp[i] = x[x_index];
             }
@@ -190,10 +190,10 @@ fn mat_mul_tn(
         tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_offset = yb_offset + yi * params.n + col;
+        let y_offset = yb_offset + yi * params.n + col_vec_index;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col + i < params.n) {
+            if (yi < params.k && col_vec_index + i < params.n) {
                 let y_index = y_offset + i;
                 y_tmp[i] = y[y_index];
             }
@@ -212,17 +212,17 @@ fn mat_mul_tn(
         workgroupBarrier();
     }
 
-    let offset_b = batch * params.m * params.n;
+    let rb_offset = batch * params.m * params.n;
     let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
 
     for (var ri = 0u; ri < 4u; ri++) {
-        let row_t = row + ri;
-        if (batch < params.b && row_t < params.m) {
-            let offset = offset_b + row_t * params.n;
+        let row_index = row_vec_index + ri;
+        if (batch < params.b && row_index < params.m) {
+            let offset = rb_offset + row_index * params.n;
             for (var ci = 0u; ci < 4u; ci++) {
-                let col_t = col + ci;
-                if (col_t < params.n) {
-                    result[offset + col_t] = acc[ri][ci];
+                let col_index = col_vec_index + ci;
+                if (col_index < params.n) {
+                    result[offset + col_index] = acc[ri][ci];
                 }
             }
         }
@@ -235,8 +235,8 @@ fn mat_mul_tt(
     @builtin(local_invocation_id) local_id: vec3<u32>,
 ) {
     let batch = global_id.z;
-    let row = global_id.y * 4u;
-    let col = global_id.x * 4u;
+    let row_vec_index = global_id.y * 4u;
+    let col_vec_index = global_id.x * 4u;
 
     let tx = local_id.x;
     let ty = local_id.y;
@@ -251,10 +251,10 @@ fn mat_mul_tt(
     var acc3 = vec4<f32>(0f);
     for (var step = 0u; step < params.k; step += 16u) {
         let xi = step + tx;
-        let x_offset = xb_offset + xi * params.m + row;
+        let x_offset = xb_offset + xi * params.m + row_vec_index;
         var x_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (row + i < params.m && xi < params.k) {
+            if (row_vec_index + i < params.m && xi < params.k) {
                 let x_index = x_offset + i;
                 x_tmp[i] = x[x_index];
             }
@@ -262,10 +262,10 @@ fn mat_mul_tt(
         tile_x[t_index] = x_tmp;
 
         let yi = step + ty;
-        let y_offset = yb_offset + col * params.k + yi;
+        let y_offset = yb_offset + col_vec_index * params.k + yi;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col + i < params.n) {
+            if (yi < params.k && col_vec_index + i < params.n) {
                 let y_index = y_offset + i * params.k;
                 y_tmp[i] = y[y_index];
             }
@@ -284,17 +284,17 @@ fn mat_mul_tt(
         workgroupBarrier();
     }
 
-    let offset_b = batch * params.m * params.n;
+    let rb_offset = batch * params.m * params.n;
     let acc = array<vec4<f32>, 4>(acc0, acc1, acc2, acc3);
 
     for (var ri = 0u; ri < 4u; ri++) {
-        let row_t = row + ri;
-        if (batch < params.b && row_t < params.m) {
-            let offset = offset_b + row_t * params.n;
+        let row_index = row_vec_index + ri;
+        if (batch < params.b && row_index < params.m) {
+            let offset = rb_offset + row_index * params.n;
             for (var ci = 0u; ci < 4u; ci++) {
-                let col_t = col + ci;
-                if (col_t < params.n) {
-                    result[offset + col_t] = acc[ri][ci];
+                let col_index = col_vec_index + ci;
+                if (col_index < params.n) {
+                    result[offset + col_index] = acc[ri][ci];
                 }
             }
         }
