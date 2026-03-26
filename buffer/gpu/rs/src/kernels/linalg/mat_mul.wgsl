@@ -89,6 +89,7 @@ fn mat_mul_nn(
 fn mat_mul_nt(
     @builtin(global_invocation_id) global_id: vec3<u32>,
     @builtin(local_invocation_id) local_id: vec3<u32>,
+    @builtin(workgroup_id) workgroup_id: vec3<u32>,
 ) {
     let batch = global_id.z;
     let row_vec_index = global_id.y * 4u;
@@ -100,6 +101,12 @@ fn mat_mul_nt(
 
     let xb_offset = batch * params.m * params.k;
     let yb_offset = batch * params.n * params.k;
+
+    // (64, 16)の領域をコピー
+    // 縦方向に4つずつ取っていくため、Y軸方向の割当は64/4=16
+    let yt_x = tx;
+    let yt_y_vec = ty * 4u;
+    let yt_row_offset = workgroup_id.x * 64u + yt_y_vec;
 
     var acc0 = vec4<f32>(0f);
     var acc1 = vec4<f32>(0f);
@@ -117,16 +124,16 @@ fn mat_mul_nt(
         }
         tile_x[t_index] = x_tmp;
 
-        let yi = step + ty;
-        let y_offset = yb_offset + col_vec_index * params.k + yi;
+        let yt_col_index = step + yt_x;
+        let yt_offset = yb_offset + yt_row_offset * params.k + yt_col_index;
         var y_tmp = vec4<f32>(0f);
         for (var i = 0u; i < 4u; i++) {
-            if (yi < params.k && col_vec_index + i < params.n) {
-                let y_index = y_offset + i * params.k;
+            if (yt_row_offset + i < params.n && yt_col_index < params.k) {
+                let y_index = yt_offset + i * params.k;
                 y_tmp[i] = y[y_index];
             }
         }
-        tile_y[t_index] = y_tmp;
+        tile_y[tx * 16u + ty] = y_tmp;
         workgroupBarrier();
 
         for (var t = 0u; t < 16u; t++) {
