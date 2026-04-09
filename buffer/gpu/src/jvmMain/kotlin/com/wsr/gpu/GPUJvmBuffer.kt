@@ -44,23 +44,6 @@ class GPUJvmBuffer(
         native.write(ptr, i, value, runtime)
     }
 
-    override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
-        when (dest) {
-            is GPUJvmBuffer -> {
-                native.copyInto(ptr, dest.ptr, destIndices.first, destIndices.last, destIndices.step, runtime)
-            }
-
-            else -> {
-                val value = toFloatArray()
-                val count = minOf(size, destIndices.size)
-                val iterator = destIndices.iterator()
-                repeat(count) {
-                    if (iterator.hasNext()) dest[iterator.nextInt()] = value[it]
-                }
-            }
-        }
-    }
-
     override fun contentEquals(other: DataBuffer): Boolean {
         if (size != other.size) return false
         return when (other) {

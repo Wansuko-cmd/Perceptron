@@ -13,8 +13,6 @@ interface DataBuffer {
     operator fun get(i: Int): Float
     operator fun set(i: Int, value: Float)
 
-    fun copyInto(dest: DataBuffer, destIndices: IntProgression = dest.indices)
-
     fun contentEquals(other: DataBuffer): Boolean
 
     companion object
