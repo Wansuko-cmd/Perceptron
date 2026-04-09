@@ -20,3 +20,5 @@ fun DataBuffer.contentEquals(other: DataBuffer) = when {
     this.size != other.size -> false
     else -> this.toFloatArray().contentEquals(other.toFloatArray())
 }
+
+val IntProgression.size get() = (last - first) / step + 1

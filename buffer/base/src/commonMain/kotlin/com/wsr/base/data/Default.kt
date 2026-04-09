@@ -25,5 +25,3 @@ class Default(private val value: FloatArray) : DataBuffer {
         }
     }
 }
-
-val IntProgression.size get() = (last - first) / step + 1
