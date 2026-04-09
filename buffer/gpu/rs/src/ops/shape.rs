@@ -1,4 +1,4 @@
-use crate::{ops, resource::buffer::GPUBuffer, runtime::Runtime};
+use crate::{resource::buffer::GPUBuffer, runtime::Runtime};
 
 pub fn transpose_d2(x: &GPUBuffer, xi: usize, xj: usize, result: &GPUBuffer, runtime: &mut Runtime) {
     let task = runtime.kernels.shape.transpose_d2(x, xi, xj, result);
@@ -14,7 +14,7 @@ pub fn transpose_d3(
 ) {
     let task = match(axis_i, axis_j, axis_k) {
         (0, 1, 2) => {
-            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
+            copy_into_d1(x, &result, 0, x.count(), 1, runtime);
             return;
         },
         (1, 2, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk, result),
@@ -33,7 +33,7 @@ pub fn transpose_d4(
 ) {
     let task = match(axis_i, axis_j, axis_k, axis_l) {
         (0, 1, 2, 3) => {
-            ops::buffer::copy_into(x, &result, 0, x.count(), 1, runtime);
+            copy_into_d1(x, &result, 0, x.count(), 1, runtime);
             return;
         },
         (1, 2, 3, 0) => runtime.kernels.shape.transpose_d2(x, xi, xj * xk * xl, result),
