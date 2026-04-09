@@ -5,7 +5,6 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
-import kotlin.jvm.JvmName
 import kotlin.random.Random
 
 object Backend : IBackend {
@@ -503,10 +502,3 @@ object Backend : IBackend {
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
         instance.where(condition, x, y)
 }
-
-fun DataBuffer.Companion.create(size: Int) = DataBufferGenerator.create(size)
-
-fun DataBuffer.Companion.create(value: FloatArray) = DataBufferGenerator.create(value)
-
-@JvmName("createWithElements")
-fun DataBuffer.Companion.create(vararg elements: Float) = DataBufferGenerator.create(elements)

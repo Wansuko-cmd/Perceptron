@@ -1,5 +1,6 @@
 package com.wsr.base.data
 
+import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable
 
 @Serializable(with = DataBufferSerializable::class)
@@ -11,7 +12,14 @@ interface DataBuffer {
     fun toFloatArray(): FloatArray
     fun release()
 
-    companion object
+    companion object {
+        fun create(size: Int) = DataBufferGenerator.create(size)
+
+        fun create(value: FloatArray) = DataBufferGenerator.create(value)
+
+        @JvmName("createWithElements")
+        fun create(vararg elements: Float) = DataBufferGenerator.create(elements)
+    }
 }
 
 val DataBuffer.indices: IntRange get() = 0 until size

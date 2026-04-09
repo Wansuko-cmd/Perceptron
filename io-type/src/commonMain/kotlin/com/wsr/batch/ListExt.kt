@@ -3,7 +3,6 @@ package com.wsr.batch
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.core.IOType
-import com.wsr.create
 import kotlin.jvm.JvmName
 
 fun <T : IOType> List<T>.toBatch(): Batch<T> {

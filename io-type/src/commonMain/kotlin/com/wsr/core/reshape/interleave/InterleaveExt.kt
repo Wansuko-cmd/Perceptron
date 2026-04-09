@@ -4,7 +4,6 @@ import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.core.IOType
-import com.wsr.create
 
 fun IOType.D1.interleave(other: IOType.D1): IOType.D1 {
     check(size == other.size)

@@ -6,7 +6,6 @@ import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
 import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
-import com.wsr.create
 import kotlin.test.Test
 class MaxTest {
     @Test
