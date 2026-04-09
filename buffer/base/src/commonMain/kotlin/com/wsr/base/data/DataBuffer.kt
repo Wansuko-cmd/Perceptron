@@ -13,7 +13,10 @@ interface DataBuffer {
     operator fun get(i: Int): Float
     operator fun set(i: Int, value: Float)
 
-    fun contentEquals(other: DataBuffer): Boolean
-
     companion object
+}
+
+fun DataBuffer.contentEquals(other: DataBuffer) = when {
+    this.size != other.size -> false
+    else -> this.toFloatArray().contentEquals(other.toFloatArray())
 }

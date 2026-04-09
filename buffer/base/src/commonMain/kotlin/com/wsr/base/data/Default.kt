@@ -15,14 +15,6 @@ class Default(private val value: FloatArray) : DataBuffer {
         this.value[i] = value
     }
 
-    override fun contentEquals(other: DataBuffer): Boolean {
-        if (size != other.size) return false
-        return when (other) {
-            is Default -> value.contentEquals(other.value)
-            else -> value.contentEquals(other.toFloatArray())
-        }
-    }
-
     override fun toString(): String = toFloatArray().joinToString(prefix = "Default[", postfix = "]")
 
     companion object {

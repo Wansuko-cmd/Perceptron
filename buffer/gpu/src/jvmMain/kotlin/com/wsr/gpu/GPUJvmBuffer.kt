@@ -44,14 +44,6 @@ class GPUJvmBuffer(
         native.write(ptr, i, value, runtime)
     }
 
-    override fun contentEquals(other: DataBuffer): Boolean {
-        if (size != other.size) return false
-        return when (other) {
-            is GPUJvmBuffer -> native.contentEquals(ptr, other.ptr, runtime)
-            else -> toFloatArray().contentEquals(other.toFloatArray())
-        }
-    }
-
     override fun toString(): String = toFloatArray().joinToString(prefix = "GPUJvmBuffer[", postfix = "]")
 
     companion object {

@@ -27,14 +27,6 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         floatBuffer.put(i, value)
     }
 
-    override fun contentEquals(other: DataBuffer): Boolean {
-        if (size != other.size) return false
-        return when (other) {
-            is CPUJvmBuffer -> byteBuffer == other.byteBuffer
-            else -> this.toFloatArray().contentEquals(other.toFloatArray())
-        }
-    }
-
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
 
     companion object Companion {
