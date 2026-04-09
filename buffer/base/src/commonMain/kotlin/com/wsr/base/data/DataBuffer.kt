@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 interface DataBuffer {
     val size: Int
 
-    val indices: IntRange get() = 0 until size
-
     fun toFloatArray(): FloatArray
 
     operator fun get(i: Int): Float
@@ -15,6 +13,8 @@ interface DataBuffer {
 
     companion object
 }
+
+val DataBuffer.indices: IntRange get() = 0 until size
 
 fun DataBuffer.contentEquals(other: DataBuffer) = when {
     this.size != other.size -> false
