@@ -15,11 +15,6 @@ internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
 class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
     private val floatBuffer = byteBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
     override val size = floatBuffer.capacity()
-    override fun toFloatArray(): FloatArray {
-        val result = FloatArray(size)
-        floatBuffer.move(position = 0, limit = size) { get(result) }
-        return result
-    }
 
     override fun get(i: Int): Float = floatBuffer.get(i)
 
@@ -27,7 +22,17 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         floatBuffer.put(i, value)
     }
 
+    override fun toFloatArray(): FloatArray {
+        val result = FloatArray(size)
+        floatBuffer.move(position = 0, limit = size) { get(result) }
+        return result
+    }
+
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
+
+    override fun release() {
+        floatBuffer.clear()
+    }
 
     companion object Companion {
         fun create(size: Int): CPUJvmBuffer {

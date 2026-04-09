@@ -4,6 +4,8 @@ package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.ref.createCleaner
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
@@ -14,9 +16,8 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.set
 import kotlinx.cinterop.usePinned
+import platform.posix.free
 import platform.posix.memcpy
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.ref.createCleaner
 
 internal fun DataBuffer.toCPUBuffer(): CPUNativeBuffer = when (this) {
     is CPUNativeBuffer -> this
@@ -30,6 +31,12 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         nativeHeap.free(ptr)
     }
 
+    override fun get(i: Int): Float = buffer[i]
+
+    override fun set(i: Int, value: Float) {
+        buffer[i] = value
+    }
+
     override fun toFloatArray(): FloatArray = FloatArray(size).also { array ->
         array.usePinned { pinned ->
             val byteSize = (size * Float.SIZE_BYTES).toULong()
@@ -37,13 +44,11 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
         }
     }
 
-    override fun get(i: Int): Float = buffer[i]
-
-    override fun set(i: Int, value: Float) {
-        buffer[i] = value
-    }
-
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUNativeBuffer[", postfix = "]")
+
+    override fun release() {
+        free(buffer)
+    }
 
     companion object {
         fun create(size: Int) = CPUNativeBuffer(
