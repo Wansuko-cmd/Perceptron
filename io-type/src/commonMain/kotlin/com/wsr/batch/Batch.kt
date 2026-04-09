@@ -5,7 +5,6 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.indices
 import com.wsr.core.IOType
 import com.wsr.core.d0
-import com.wsr.create
 import kotlin.jvm.JvmName
 
 class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {

@@ -5,7 +5,6 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.size
 import com.wsr.batch.Batch
 import com.wsr.core.IOType
-import com.wsr.create
 
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
     check(size == other.size && shape[0] == other.shape[0])
