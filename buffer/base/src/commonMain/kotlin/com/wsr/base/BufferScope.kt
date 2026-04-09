@@ -2,12 +2,12 @@ package com.wsr.base
 
 import com.wsr.base.data.DataBuffer
 
-sealed interface BufferScope {
+sealed interface BufferScope : AutoCloseable {
     fun register(buffer: DataBuffer)
 
     fun remove(buffer: DataBuffer)
 
-    fun close()
+    override fun close()
 
     object Global : BufferScope {
         override fun register(buffer: DataBuffer) {
@@ -20,17 +20,17 @@ sealed interface BufferScope {
         }
     }
 
-    class Local(val buffers: ArrayList<DataBuffer> = arrayListOf()) : BufferScope, AutoCloseable {
+    class Local(val buffers: MutableSet<DataBuffer> = mutableSetOf()) : BufferScope {
         override fun register(buffer: DataBuffer) {
             buffers.add(buffer)
         }
 
         override fun remove(buffer: DataBuffer) {
-            buffers.add(buffer)
+            buffers.remove(buffer)
         }
 
         override fun close() {
-            for (i in buffers.indices) buffers[i].release()
+            buffers.forEach { it.release() }
         }
     }
 
