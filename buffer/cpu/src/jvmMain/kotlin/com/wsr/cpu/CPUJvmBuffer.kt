@@ -27,30 +27,6 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         floatBuffer.put(i, value)
     }
 
-    override fun slice(indices: IntProgression): DataBuffer {
-        val result = create(indices.size)
-
-        when (indices.step) {
-            1 -> {
-                val start = indices.first * Float.SIZE_BYTES
-                val length = indices.size * Float.SIZE_BYTES
-                byteBuffer.move(position = start, limit = start + length) {
-                    val src = slice().order(ByteOrder.nativeOrder())
-                    result.byteBuffer.clear()
-                    result.byteBuffer.put(src)
-                    result.byteBuffer.flip()
-                }
-            }
-            else -> {
-                var targetIndex = 0
-                for (i in indices) {
-                    result[targetIndex++] = this[i]
-                }
-            }
-        }
-        return result
-    }
-
     override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
         val count = minOf(size, destIndices.size)
         when {

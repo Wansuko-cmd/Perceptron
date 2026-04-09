@@ -15,15 +15,6 @@ class Default(private val value: FloatArray) : DataBuffer {
         this.value[i] = value
     }
 
-    override fun slice(indices: IntProgression): DataBuffer {
-        val result = FloatArray(indices.size)
-        var targetIndex = 0
-        for (sourceIndex in indices) {
-            result[targetIndex++] = this[sourceIndex]
-        }
-        return Default(result)
-    }
-
     override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
         val count = minOf(size, destIndices.size)
         when {
