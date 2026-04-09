@@ -1,5 +1,6 @@
 package com.wsr.base.data
 
+import com.wsr.base.BufferScope
 import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable
 
@@ -19,6 +20,13 @@ interface DataBuffer {
 
         @JvmName("createWithElements")
         fun create(vararg elements: Float) = DataBufferGenerator.create(elements)
+
+        fun BufferScope.create(size: Int) = DataBufferGenerator.create(size).also { this.register(it) }
+
+        fun BufferScope.create(value: FloatArray) = DataBufferGenerator.create(value).also { this.register(it) }
+
+        @JvmName("createWithElements")
+        fun BufferScope.create(vararg elements: Float) = DataBufferGenerator.create(elements).also { this.register(it) }
     }
 }
 
