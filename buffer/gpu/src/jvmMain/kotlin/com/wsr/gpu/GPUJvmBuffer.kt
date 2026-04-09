@@ -36,15 +36,19 @@ class GPUJvmBuffer(
         }
     }
 
-    override fun toFloatArray(): FloatArray = native.readAll(ptr, runtime)
-
     override fun get(i: Int): Float = native.readAll(ptr, runtime)[i]
 
     override fun set(i: Int, value: Float) {
         native.write(ptr, i, value, runtime)
     }
 
+    override fun toFloatArray(): FloatArray = native.readAll(ptr, runtime)
+
     override fun toString(): String = toFloatArray().joinToString(prefix = "GPUJvmBuffer[", postfix = "]")
+
+    override fun release() {
+        native.release(ptr, runtime)
+    }
 
     companion object {
         private val cleaner = Cleaner.create()

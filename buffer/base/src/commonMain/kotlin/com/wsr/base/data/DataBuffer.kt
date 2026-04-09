@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 @Serializable(with = DataBufferSerializable::class)
 interface DataBuffer {
     val size: Int
-
-    fun toFloatArray(): FloatArray
-
     operator fun get(i: Int): Float
     operator fun set(i: Int, value: Float)
+
+    fun toFloatArray(): FloatArray
+    fun release()
 
     companion object
 }
