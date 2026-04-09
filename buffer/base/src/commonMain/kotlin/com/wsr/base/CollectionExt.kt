@@ -2,6 +2,7 @@ package com.wsr.base
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.Default
+import com.wsr.base.data.indices
 
 internal inline fun DataBuffer.map(block: (Float) -> Float): DataBuffer {
     val result = Default(size)

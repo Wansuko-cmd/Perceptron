@@ -6,18 +6,19 @@ import kotlinx.serialization.Serializable
 interface DataBuffer {
     val size: Int
 
-    val indices: IntRange get() = 0 until size
-
     fun toFloatArray(): FloatArray
 
     operator fun get(i: Int): Float
     operator fun set(i: Int, value: Float)
 
-    fun slice(indices: IntProgression): DataBuffer
-
-    fun copyInto(dest: DataBuffer, destIndices: IntProgression = dest.indices)
-
-    fun contentEquals(other: DataBuffer): Boolean
-
     companion object
 }
+
+val DataBuffer.indices: IntRange get() = 0 until size
+
+fun DataBuffer.contentEquals(other: DataBuffer) = when {
+    this.size != other.size -> false
+    else -> this.toFloatArray().contentEquals(other.toFloatArray())
+}
+
+val IntProgression.size get() = (last - first) / step + 1

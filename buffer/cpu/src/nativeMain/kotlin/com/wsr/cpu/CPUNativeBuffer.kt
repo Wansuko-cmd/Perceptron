@@ -4,9 +4,6 @@ package com.wsr.cpu
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.IDataBufferGenerator
-import com.wsr.base.data.size
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.ref.createCleaner
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.FloatVar
@@ -15,11 +12,11 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.free
 import kotlinx.cinterop.get
 import kotlinx.cinterop.nativeHeap
-import kotlinx.cinterop.plus
 import kotlinx.cinterop.set
 import kotlinx.cinterop.usePinned
-import platform.posix.memcmp
 import platform.posix.memcpy
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.ref.createCleaner
 
 internal fun DataBuffer.toCPUBuffer(): CPUNativeBuffer = when (this) {
     is CPUNativeBuffer -> this
@@ -44,52 +41,6 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
 
     override fun set(i: Int, value: Float) {
         buffer[i] = value
-    }
-
-    override fun slice(indices: IntProgression): DataBuffer {
-        val size = indices.size
-        val buffer = nativeHeap.allocArray<FloatVar>(size)
-        when (indices.step) {
-            1 -> {
-                val byteSize = (size * Float.SIZE_BYTES).toULong()
-                memcpy(buffer, this.buffer + indices.first, byteSize)
-            }
-            else -> {
-                var targetIndex = 0
-                for (i in indices) {
-                    buffer[targetIndex++] = this[i]
-                }
-            }
-        }
-        return CPUNativeBuffer(buffer = buffer, size = size)
-    }
-
-    override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
-        val count = minOf(size, destIndices.size)
-        when {
-            dest is CPUNativeBuffer && destIndices.step == 1 -> {
-                val byteSize = (count * Float.SIZE_BYTES).toULong()
-                memcpy(dest.buffer + destIndices.first, buffer, byteSize)
-            }
-
-            else -> {
-                val iterator = destIndices.iterator()
-                repeat(count) {
-                    if (iterator.hasNext()) dest[iterator.nextInt()] = this[it]
-                }
-            }
-        }
-    }
-
-    override fun contentEquals(other: DataBuffer): Boolean {
-        if (size != other.size) return false
-        return when (other) {
-            is CPUNativeBuffer -> {
-                val byteSize = (size * Float.SIZE_BYTES).toULong()
-                memcmp(buffer, other.buffer, byteSize) == 0
-            }
-            else -> this.toFloatArray().contentEquals(other.toFloatArray())
-        }
     }
 
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUNativeBuffer[", postfix = "]")

@@ -27,60 +27,6 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
         floatBuffer.put(i, value)
     }
 
-    override fun slice(indices: IntProgression): DataBuffer {
-        val result = create(indices.size)
-
-        when (indices.step) {
-            1 -> {
-                val start = indices.first * Float.SIZE_BYTES
-                val length = indices.size * Float.SIZE_BYTES
-                byteBuffer.move(position = start, limit = start + length) {
-                    val src = slice().order(ByteOrder.nativeOrder())
-                    result.byteBuffer.clear()
-                    result.byteBuffer.put(src)
-                    result.byteBuffer.flip()
-                }
-            }
-            else -> {
-                var targetIndex = 0
-                for (i in indices) {
-                    result[targetIndex++] = this[i]
-                }
-            }
-        }
-        return result
-    }
-
-    override fun copyInto(dest: DataBuffer, destIndices: IntProgression) {
-        val count = minOf(size, destIndices.size)
-        when {
-            dest is CPUJvmBuffer && destIndices.step == 1 -> {
-                val byteCount = count * Float.SIZE_BYTES
-                val start = destIndices.first * Float.SIZE_BYTES
-                byteBuffer.move(position = 0, limit = byteCount) {
-                    val src = slice().order(ByteOrder.nativeOrder())
-                    dest.byteBuffer.move(position = start, limit = start + byteCount) {
-                        put(src)
-                    }
-                }
-            }
-            else -> {
-                val iterator = destIndices.iterator()
-                repeat(count) {
-                    if (iterator.hasNext()) dest[iterator.nextInt()] = this[it]
-                }
-            }
-        }
-    }
-
-    override fun contentEquals(other: DataBuffer): Boolean {
-        if (size != other.size) return false
-        return when (other) {
-            is CPUJvmBuffer -> byteBuffer == other.byteBuffer
-            else -> this.toFloatArray().contentEquals(other.toFloatArray())
-        }
-    }
-
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
 
     companion object Companion {
