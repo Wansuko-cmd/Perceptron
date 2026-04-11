@@ -5,6 +5,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
 import com.wsr.base.data.IDataBufferGenerator
 import com.wsr.cpu.cpu
+import kotlin.jvm.JvmName
 import kotlin.random.Random
 
 object Backend : IBackend {
@@ -501,4 +502,498 @@ object Backend : IBackend {
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
         instance.where(condition, x, y)
+
+    fun BufferScope.plus(x: Float, y: DataBuffer): DataBuffer = instance.plus(x, y).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, y: Float): DataBuffer = instance.plus(x, y).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, y: DataBuffer): DataBuffer = instance.plus(x, y).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
+        instance.plus(x, y, yi, yj, axis).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
+        instance.plus(x, y, yi, yj, yk, axis).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.plus(x, xi, xj, y, axis).also { this.register(it) }
+
+    fun BufferScope.plus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.plus(x, xi, xj, y, yi, yj, yk, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.plus(x, xi, xj, xk, y, axis).also { this.register(it) }
+
+    fun BufferScope.plus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.plus(x, xi, xj, xk, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.plus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        yl: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.plus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.plus(x, xi, xj, xk, xl, y, axis).also { this.register(it) }
+
+    fun BufferScope.plus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.plus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.plus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.plus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.minus(x: Float, y: DataBuffer): DataBuffer = instance.minus(x, y).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, y: Float): DataBuffer = instance.minus(x, y).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, y: DataBuffer): DataBuffer = instance.minus(x, y).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
+        instance.minus(x, y, yi, yj, axis).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
+        instance.minus(x, y, yi, yj, yk, axis).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.minus(x, xi, xj, y, axis).also { this.register(it) }
+
+    fun BufferScope.minus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.minus(x, xi, xj, y, yi, yj, yk, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.minus(x, xi, xj, xk, y, axis).also { this.register(it) }
+
+    fun BufferScope.minus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.minus(x, xi, xj, xk, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.minus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        yl: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.minus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.minus(x, xi, xj, xk, xl, y, axis).also { this.register(it) }
+
+    fun BufferScope.minus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.minus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.minus(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.minus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.times(x: Float, y: DataBuffer): DataBuffer = instance.times(x, y).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, y: Float): DataBuffer = instance.times(x, y).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, y: DataBuffer): DataBuffer = instance.times(x, y).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
+        instance.times(x, y, yi, yj, axis).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
+        instance.times(x, y, yi, yj, yk, axis).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.times(x, xi, xj, y, axis).also { this.register(it) }
+
+    fun BufferScope.times(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.times(x, xi, xj, y, yi, yj, yk, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.times(x, xi, xj, xk, y, axis).also { this.register(it) }
+
+    fun BufferScope.times(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.times(x, xi, xj, xk, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.times(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        yl: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.times(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.times(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.times(x, xi, xj, xk, xl, y, axis).also { this.register(it) }
+
+    fun BufferScope.times(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.times(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.times(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.times(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.div(x: Float, y: DataBuffer): DataBuffer = instance.div(x, y).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, y: Float): DataBuffer = instance.div(x, y).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, y: DataBuffer): DataBuffer = instance.div(x, y).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
+        instance.div(x, y, yi, yj, axis).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
+        instance.div(x, y, yi, yj, yk, axis).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.div(x, xi, xj, y, axis).also { this.register(it) }
+
+    fun BufferScope.div(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.div(x, xi, xj, y, yi, yj, yk, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.div(x, xi, xj, xk, y, axis).also { this.register(it) }
+
+    fun BufferScope.div(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.div(x, xi, xj, xk, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.div(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        yl: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.div(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.div(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
+        instance.div(x, xi, xj, xk, xl, y, axis).also { this.register(it) }
+
+    fun BufferScope.div(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        axis1: Int,
+        axis2: Int,
+    ): DataBuffer = instance.div(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2).also { this.register(it) }
+
+    fun BufferScope.div(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: DataBuffer,
+        yi: Int,
+        yj: Int,
+        yk: Int,
+        axis1: Int,
+        axis2: Int,
+        axis3: Int,
+    ): DataBuffer = instance.div(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3).also { this.register(it) }
+
+    fun BufferScope.inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer =
+        instance.inner(x, y, b).also { this.register(it) }
+
+    fun BufferScope.matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer =
+        instance.matMul(x, y, transY, n, k).also { this.register(it) }
+
+    fun BufferScope.matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer =
+        instance.matMul(x, transX, y, m, k).also { this.register(it) }
+
+    fun BufferScope.matMul(
+        x: DataBuffer,
+        transX: Boolean,
+        y: DataBuffer,
+        transY: Boolean,
+        m: Int,
+        n: Int,
+        k: Int,
+        b: Int,
+    ): DataBuffer = instance.matMul(x, transX, y, transY, m, n, k, b).also { this.register(it) }
+
+    fun BufferScope.exp(x: DataBuffer): DataBuffer = instance.exp(x).also { this.register(it) }
+
+    fun BufferScope.ln(x: DataBuffer, e: Float): DataBuffer = instance.ln(x, e).also { this.register(it) }
+
+    fun BufferScope.sigmoid(x: DataBuffer): DataBuffer = instance.sigmoid(x).also { this.register(it) }
+
+    fun BufferScope.pow(x: DataBuffer, n: Int): DataBuffer = instance.pow(x, n).also { this.register(it) }
+
+    fun BufferScope.sqrt(x: DataBuffer, e: Float): DataBuffer = instance.sqrt(x, e).also { this.register(it) }
+
+    fun BufferScope.average(x: DataBuffer): DataBuffer = instance.average(x).also { this.register(it) }
+
+    fun BufferScope.average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
+        instance.average(x, xi, xj, axis).also { this.register(it) }
+
+    fun BufferScope.average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        instance.average(x, xi, xj, xk, axis).also { this.register(it) }
+
+    fun BufferScope.max(x: DataBuffer): DataBuffer = instance.max(x).also { this.register(it) }
+
+    fun BufferScope.max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
+        instance.max(x, xi, xj, axis).also { this.register(it) }
+
+    fun BufferScope.max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        instance.max(x, xi, xj, xk, axis).also { this.register(it) }
+
+    fun BufferScope.min(x: DataBuffer): DataBuffer = instance.min(x).also { this.register(it) }
+
+    fun BufferScope.min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
+        instance.min(x, xi, xj, axis).also { this.register(it) }
+
+    fun BufferScope.min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        instance.min(x, xi, xj, xk, axis).also { this.register(it) }
+
+    fun BufferScope.sum(x: DataBuffer): DataBuffer = instance.sum(x).also { this.register(it) }
+
+    fun BufferScope.sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
+        instance.sum(x, xi, xj, axis).also { this.register(it) }
+
+    fun BufferScope.sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        instance.sum(x, xi, xj, xk, axis).also { this.register(it) }
+
+    fun BufferScope.transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer =
+        instance.transpose(x, xi, xj).also { this.register(it) }
+
+    fun BufferScope.transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+    ): DataBuffer = instance.transpose(x, xi, xj, xk, axisI, axisJ, axisK).also { this.register(it) }
+
+    fun BufferScope.transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+    ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL).also { this.register(it) }
+
+    fun BufferScope.slice(x: DataBuffer, indices: IntProgression): DataBuffer =
+        instance.slice(x, indices).also { this.register(it) }
+
+    fun BufferScope.slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer =
+        instance.slice(x, xi, xj, axis, indices).also { this.register(it) }
+
+    fun BufferScope.slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer =
+        instance.slice(x, xi, xj, xk, axis, indices).also { this.register(it) }
+
+    fun BufferScope.gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
+        instance.gather(x, y, i, j, k).also { this.register(it) }
+
+    fun BufferScope.scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer =
+        instance.scatterAdd(x, y, i, j, k, b).also { this.register(it) }
+
+    fun BufferScope.greaterThan(x: DataBuffer, y: Float): DataBuffer =
+        instance.greaterThan(x, y).also { this.register(it) }
+
+    fun BufferScope.greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer =
+        instance.greaterThan(x, y).also { this.register(it) }
+
+    fun BufferScope.lessThan(x: DataBuffer, y: Float): DataBuffer = instance.lessThan(x, y).also { this.register(it) }
+
+    fun BufferScope.lessThan(x: DataBuffer, y: DataBuffer): DataBuffer =
+        instance.lessThan(x, y).also { this.register(it) }
+
+    fun BufferScope.equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer =
+        instance.equals(x, y, absoluteTolerance, relativeTolerance).also { this.register(it) }
+
+    fun BufferScope.equals(
+        x: DataBuffer,
+        y: DataBuffer,
+        absoluteTolerance: Float,
+        relativeTolerance: Float,
+    ): DataBuffer = instance.equals(x, y, absoluteTolerance, relativeTolerance).also { this.register(it) }
+
+    fun BufferScope.where(condition: DataBuffer, x: Float, y: Float): DataBuffer =
+        instance.where(condition, x, y).also { this.register(it) }
+
+    fun BufferScope.where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer =
+        instance.where(condition, x, y).also { this.register(it) }
+
+    fun BufferScope.where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer =
+        instance.where(condition, x, y).also { this.register(it) }
+
+    fun BufferScope.where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
+        instance.where(condition, x, y).also { this.register(it) }
 }
+
+fun BufferScope.create(size: Int) = DataBufferGenerator.create(size).also { this.register(it) }
+
+fun BufferScope.create(value: FloatArray) = DataBufferGenerator.create(value).also { this.register(it) }
+
+@JvmName("createWithElements")
+fun BufferScope.create(vararg elements: Float) = DataBufferGenerator.create(elements).also { this.register(it) }
