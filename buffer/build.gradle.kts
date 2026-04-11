@@ -33,7 +33,14 @@ kotlin {
                 implementation(libs.kotlin.test)
             }
         }
+        all {
+            languageSettings.enableLanguageFeature("ContextParameters")
+        }
     }
+}
+
+ktlint {
+    version.set("1.8.0")
 }
 
 publishing {
