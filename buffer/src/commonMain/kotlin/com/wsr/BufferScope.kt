@@ -1,4 +1,4 @@
-package com.wsr.base
+package com.wsr
 
 import com.wsr.base.data.DataBuffer
 

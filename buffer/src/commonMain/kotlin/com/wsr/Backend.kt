@@ -1,6 +1,5 @@
 package com.wsr
 
-import com.wsr.base.BufferScope
 import com.wsr.base.IBackend
 import com.wsr.base.data.DataBuffer
 import com.wsr.base.data.DataBufferGenerator
