@@ -4,6 +4,7 @@ package com.wsr.buffer.compare
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.create
 import com.wsr.buffer.assertContentEquals
 import com.wsr.buffer.bufferTestRule
 import kotlin.test.Test
