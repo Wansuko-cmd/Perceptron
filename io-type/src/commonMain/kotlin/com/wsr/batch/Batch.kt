@@ -2,6 +2,7 @@ package com.wsr.batch
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.create
 import com.wsr.base.data.indices
 import com.wsr.core.IOType
 import com.wsr.core.d0

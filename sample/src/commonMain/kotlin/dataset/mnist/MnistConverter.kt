@@ -1,6 +1,7 @@
 package dataset.mnist
 
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.create
 import com.wsr.batch.Batch
 import com.wsr.batch.toList
 import com.wsr.core.IOType

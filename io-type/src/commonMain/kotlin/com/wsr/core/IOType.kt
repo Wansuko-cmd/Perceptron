@@ -2,6 +2,7 @@ package com.wsr.core
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.base.data.create
 import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable
 
