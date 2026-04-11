@@ -17,7 +17,9 @@ class DebugD2 internal constructor(override val outputX: Int, override val outpu
     @Transient
     var onDelta: (Batch<IOType.D2>) -> Unit = {}
 
-    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.also { onInput(it) }
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.also {
+        onInput(it)
+    }
 
     override fun IOScope.train(
         input: Batch<IOType.D2>,
