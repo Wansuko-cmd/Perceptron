@@ -9,6 +9,7 @@ import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,9 +18,9 @@ class BiasD1 internal constructor(
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1,
 ) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
         calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,

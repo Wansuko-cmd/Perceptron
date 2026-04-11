@@ -8,6 +8,7 @@ import com.wsr.network.NetworkBuilder
 import com.wsr.network.nextFloat
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlin.random.Random
 import kotlinx.serialization.Serializable
 
@@ -21,9 +22,9 @@ class DropoutD2 internal constructor(
     private val random by lazy { seed?.let { Random(it) } ?: Random }
     private val q = 1 / ratio
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

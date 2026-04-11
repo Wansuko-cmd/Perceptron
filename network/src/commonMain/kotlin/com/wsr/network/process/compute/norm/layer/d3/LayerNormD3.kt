@@ -13,6 +13,7 @@ import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,7 +25,7 @@ class LayerNormD3 internal constructor(
 ) : Compute.D3() {
     private val outputSize = outputX * outputY * outputZ
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val average = input.average()
         val numerator = input - average
 
@@ -34,7 +35,7 @@ class LayerNormD3 internal constructor(
         return numerator / denominator
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,

@@ -13,6 +13,7 @@ import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -36,9 +37,9 @@ class RoPED2 internal constructor(
         IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y]) }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.applyRoPE()
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.applyRoPE()
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

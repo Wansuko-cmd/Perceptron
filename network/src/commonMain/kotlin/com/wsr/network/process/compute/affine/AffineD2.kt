@@ -8,6 +8,7 @@ import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,9 +21,9 @@ class AffineD2 internal constructor(
     override val outputX = channel
     override val outputY = outputSize
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

@@ -19,6 +19,7 @@ import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -36,7 +37,7 @@ class ConvD2 internal constructor(
     override val outputX: Int = filter
     override val outputY: Int = (inputX - kernel + 2 * padding) / stride + 1
     override val outputZ: Int = (inputY - kernel + 2 * padding) / stride + 1
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
         return (weight.reshapeToD2(outputX, channel * kernel * kernel).matMul(col))
             .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
@@ -44,7 +45,7 @@ class ConvD2 internal constructor(
             .toBatch()
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,

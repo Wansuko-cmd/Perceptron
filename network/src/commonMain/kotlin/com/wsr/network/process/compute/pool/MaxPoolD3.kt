@@ -10,6 +10,7 @@ import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -32,9 +33,9 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
         }
     }
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.map(::forward)
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.map(::forward)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,

@@ -12,6 +12,7 @@ import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,7 +31,7 @@ class LayerNormAxisD2 internal constructor(
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val average = input.average(axis = axis)
         val numerator = input.minus(other = average, axis = basicOpAxis)
 
@@ -40,7 +41,7 @@ class LayerNormAxisD2 internal constructor(
         return numerator.div(other = denominator, axis = basicOpAxis)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

@@ -3,8 +3,8 @@ package com.wsr.core.compare.equals
 import com.wsr.Backend
 import com.wsr.core.IOType
 
-internal const val EQUALS_ABSOLUTE_TOLERANCE = 1e-4f
-internal const val EQUALS_RELATIVE_TOLERANCE = 1e-4f
+const val EQUALS_ABSOLUTE_TOLERANCE = 1e-4f
+const val EQUALS_RELATIVE_TOLERANCE = 1e-4f
 
 infix fun IOType.D0.eq(other: Float) = eq(
     other = other,

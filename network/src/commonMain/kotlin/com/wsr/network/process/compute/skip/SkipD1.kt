@@ -9,6 +9,7 @@ import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.Process
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 private typealias CALC_DELTA_D1 = (input: Batch<IOType.D1>, context: Context) -> Batch<IOType.D1>
@@ -19,7 +20,7 @@ class SkipD1 internal constructor(
     private val layers: List<Process> = emptyList(),
     override val outputSize: Int,
 ) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val main = layers.fold(input) { acc, layer -> layer._expect(acc, context) as Batch<IOType.D1> }
         return main + input
     }
@@ -36,7 +37,7 @@ class SkipD1 internal constructor(
         }
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
         calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,

@@ -10,6 +10,7 @@ import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,12 +30,12 @@ class RmsNormAxisD3 internal constructor(
         else -> 1
     }
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val deviation = input.pow(n = 2).average(axis = axis).sqrt(e = e)
         return input.div(other = deviation, axis1 = axis1, axis2 = axis2)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,

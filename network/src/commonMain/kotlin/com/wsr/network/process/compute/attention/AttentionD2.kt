@@ -22,6 +22,7 @@ import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.compute.Compute
+import com.wsr.scope.IOScope
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
 
@@ -43,7 +44,7 @@ class AttentionD2 internal constructor(
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
     private val causalMask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
@@ -67,7 +68,7 @@ class AttentionD2 internal constructor(
         return concat.matMul(weightO)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
