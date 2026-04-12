@@ -2601,31 +2601,27 @@ class IOScope(private val scope: BufferScope = BufferScope()) : AutoCloseable {
 
     @JvmName("3668")
     inline fun Batch<IOType.D1>.toD2(): IOType.D2 =
-        IOType.D2(shape = listOf(size, shape[0]), value = value).also { register(it.value) }
+        IOType.D2(shape = listOf(size, shape[0]), value = value)
 
     @JvmName("21932")
     inline fun IOType.D2.toD1(): Batch<IOType.D1> =
-        Batch<IOType.D1>(value = value, size = shape[0], shape = listOf(shape[1])).also { register(it.value) }
+        Batch<IOType.D1>(value = value, size = shape[0], shape = listOf(shape[1]))
 
     @JvmName("21951")
     inline fun Batch<IOType.D2>.toD3(): IOType.D3 =
-        IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value).also { register(it.value) }
+        IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value)
 
     @JvmName("23111")
     inline fun IOType.D3.toBatch(): Batch<IOType.D2> =
-        Batch<IOType.D2>(value = value, size = shape[0], shape = listOf(shape[1], shape[2])).also { register(it.value) }
+        Batch<IOType.D2>(value = value, size = shape[0], shape = listOf(shape[1], shape[2]))
 
     @JvmName("28718")
     inline fun Batch<IOType.D3>.toD4(): IOType.D4 =
-        IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value).also { register(it.value) }
+        IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
 
     @JvmName("2534")
     inline fun IOType.D4.toBatch(): Batch<IOType.D3> =
-        Batch<IOType.D3>(value = value, size = shape[0], shape = listOf(shape[1], shape[2], shape[3])).also {
-            register(
-                it.value,
-            )
-        }
+        Batch(value = value, size = shape[0], shape = listOf(shape[1], shape[2], shape[3]))
 
     @JvmName("18885")
     inline operator fun Batch<IOType.D2>.div(other: Float): Batch<IOType.D2> {

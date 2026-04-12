@@ -25,15 +25,15 @@ class GPUJvmBuffer(
     private val native: JBuffer,
 ) : DataBuffer {
     init {
-        val size = size
-        val ptr = ptr
-        val runtime = runtime
-        val native = native
-        if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
-        cleaner.register(this) {
-            native.release(ptr, runtime)
-            allocateSize.minusAssign(size)
-        }
+//        val size = size
+//        val ptr = ptr
+//        val runtime = runtime
+//        val native = native
+//        if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
+//        cleaner.register(this) {
+//            native.release(ptr, runtime)
+//            allocateSize.minusAssign(size)
+//        }
     }
 
     override fun get(i: Int): Float = native.readAll(ptr, runtime)[i]

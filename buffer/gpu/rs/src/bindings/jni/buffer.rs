@@ -36,7 +36,10 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_release(
     _: JNIEnv,
     _class: JClass,
     ptr: jlong,
+    runtime: jlong,
 ) {
+    let runtime = unsafe { &*(runtime as *const Runtime) };
+    runtime.wait();
     let _ = unsafe { Box::from_raw(ptr as *mut GPUBuffer) };
 }
 
