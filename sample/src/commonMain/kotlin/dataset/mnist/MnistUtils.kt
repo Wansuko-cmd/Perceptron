@@ -56,16 +56,16 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<Float>, Int> {
         }
     }
 
-    println("評価開始")
-    val accuracy = test
-        .let { data ->
-            data.map { it.pixels }.chunked(5064)
-                .flatMap { network.expect(it) }
-                .zip(data.map { it.label })
-                .count { (e, a) -> e == a }
-        }
-        .let { it.toFloat() / test.size.toFloat() }
-    println("${accuracy * 100}%")
+//    println("評価開始")
+//    val accuracy = test
+//        .let { data ->
+//            data.map { it.pixels }.chunked(5064)
+//                .flatMap { network.expect(it) }
+//                .zip(data.map { it.label })
+//                .count { (e, a) -> e == a }
+//        }
+//        .let { it.toFloat() / test.size.toFloat() }
+//    println("${accuracy * 100}%")
 
     return network
 }

@@ -8,15 +8,16 @@ import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal class GlobalAverageD2ToD1(private val inputX: Int, private val inputY: Int) : Reshape.D2ToD1() {
     override val outputSize: Int = inputX
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.average(axis = 1)
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.average(axis = 1)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,

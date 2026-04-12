@@ -12,6 +12,7 @@ import com.wsr.core.reshape.transpose.transpose
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,9 +21,9 @@ internal class GlobalAverageD3ToD2(private val inputX: Int, private val inputY: 
     override val outputX: Int = inputY
     override val outputY: Int = inputZ
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> = forward(input)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

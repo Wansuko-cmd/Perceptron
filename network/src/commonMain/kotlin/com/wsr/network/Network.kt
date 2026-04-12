@@ -8,11 +8,12 @@ import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output
 import com.wsr.network.process.Context
 import com.wsr.network.process.Process
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.BufferedSource
 
-private typealias TrainLambda = (input: Batch<IOType>, context: Context) -> Batch<IOType>
+private typealias TrainLambda = IOScope.(input: Batch<IOType>, context: Context) -> Batch<IOType>
 
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> internal constructor(
@@ -31,9 +32,11 @@ class Network<I, O> internal constructor(
     fun expect(input: List<I>): List<O> {
         val input = inputConverter._encode(input)
         val context = Context(input = input)
-        val output = layers
-            .fold(input) { acc, process -> process._expect(acc, context) }
-            .let { output._expect(it) }
+        val output = IOScope.launch<Batch<IOType>> {
+            layers
+                .fold(input) { acc, process -> with(process) { _expect(acc, context) } }
+                .let { output._expect(it) }
+        }
         return outputConverter._decode(output) as List<O>
     }
 
@@ -60,9 +63,11 @@ class Network<I, O> internal constructor(
     private inline fun _loss(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
         val input = inputConverter._encode(input)
         val context = Context(input = input)
+        val scope = IOScope()
         val output = layers
-            .fold(input) { acc, process -> process._expect(acc, context) }
+            .fold(input) { acc, process -> with(process) { scope._expect(acc, context) } }
             .let { output._train(it, { label(it) }) }
+        scope.close()
         return output.loss
     }
 
@@ -88,14 +93,16 @@ class Network<I, O> internal constructor(
     @Suppress("FunctionName")
     private inline fun _train(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
         var loss = 0f
-        val output: TrainLambda = { input: Batch<IOType>, context: Context ->
-            val output = output._train(input) { label(it) }
-            loss = output.loss
-            output.delta
+        IOScope().use { scope ->
+            val output: TrainLambda = { input: Batch<IOType>, context: Context ->
+                val output = output._train(input) { label(it) }
+                loss = output.loss
+                output.delta
+            }
+            val input = inputConverter._encode(input)
+            val context = Context(input = input)
+            trainLambda(output).invoke(scope, input, context)
         }
-        val input = inputConverter._encode(input)
-        val context = Context(input = input)
-        trainLambda(output).invoke(input, context)
         return loss
     }
 
@@ -104,7 +111,9 @@ class Network<I, O> internal constructor(
         layers.foldRight(initial) { layer: Process, acc: (TrainLambda) -> TrainLambda ->
             { final: TrainLambda ->
                 { input: Batch<IOType>, context: Context ->
-                    layer._train(input, context) { i -> acc(final)(i, context) }
+                    with(layer) {
+                        _train(input, context) { i -> acc(final)(i, context) }
+                    }
                 }
             }
         }

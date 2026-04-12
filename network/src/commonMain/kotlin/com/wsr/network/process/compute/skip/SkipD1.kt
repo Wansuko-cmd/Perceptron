@@ -21,17 +21,19 @@ class SkipD1 internal constructor(
     override val outputSize: Int,
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
-        val main = layers.fold(input) { acc, layer -> layer._expect(acc, context) as Batch<IOType.D1> }
+        val main = layers.fold(input) { acc, layer -> with(layer){_expect(acc, context) as Batch<IOType.D1> }}
         return main + input
     }
 
-    private val trainChain: (CALC_DELTA_D1) -> CALC_DELTA_D1 by lazy {
+    private val trainChain: IOScope.(CALC_DELTA_D1) -> CALC_DELTA_D1 by lazy {
         layers.foldRight(
             initial = { final: CALC_DELTA_D1 -> final },
         ) { layer, acc ->
             { final ->
                 { input, context ->
-                    layer._train(input, context) { acc(final)(it as Batch<IOType.D1>, context) } as Batch<IOType.D1>
+                    with(layer) {
+                        _train(input, context) { acc(final)(it as Batch<IOType.D1>, context) } as Batch<IOType.D1>
+                    }
                 }
             }
         }

@@ -7,14 +7,15 @@ import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal class ReshapeD3ToD2(override val outputX: Int, override val outputY: Int) : Reshape.D3ToD2() {
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> =
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> =
         input.reshapeToD2(i = outputX, j = outputY)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

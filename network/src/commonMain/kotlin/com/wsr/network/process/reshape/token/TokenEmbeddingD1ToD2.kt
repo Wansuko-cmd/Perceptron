@@ -16,6 +16,7 @@ import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape
+import com.wsr.scope.IOScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,9 +28,9 @@ class TokenEmbeddingD1ToD2 internal constructor(
     private var weight: IOType.D2,
 ) : Reshape.D1ToD2() {
 
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> = input.gather(other = weight)
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> = input.gather(other = weight)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,

@@ -23,17 +23,17 @@ class SkipD3 internal constructor(
     override val outputZ: Int,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
-        val main = layers.fold(input) { acc, layer -> layer._expect(acc, context) as Batch<IOType.D3> }
+        val main = layers.fold(input) { acc, layer -> with(layer) { _expect(acc, context) as Batch<IOType.D3> } }
         return main + input
     }
 
-    private val trainChain: (CALC_DELTA_D3) -> CALC_DELTA_D3 by lazy {
+    private val trainChain: IOScope.(CALC_DELTA_D3) -> CALC_DELTA_D3 by lazy {
         layers.foldRight(
             initial = { final: CALC_DELTA_D3 -> final },
         ) { layer, acc ->
             { final ->
                 { input, context ->
-                    layer._train(input, context) { acc(final)(it as Batch<IOType.D3>, context) } as Batch<IOType.D3>
+                    with(layer) { _train(input, context) { acc(final)(it as Batch<IOType.D3>, context) } as Batch<IOType.D3> }
                 }
             }
         }

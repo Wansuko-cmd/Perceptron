@@ -22,17 +22,17 @@ class SkipD2 internal constructor(
     override val outputY: Int,
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
-        val main = layers.fold(input) { acc, layer -> layer._expect(acc, context) as Batch<IOType.D2> }
+        val main = layers.fold(input) { acc, layer -> with(layer) { _expect(acc, context) as Batch<IOType.D2> } }
         return main + input
     }
 
-    private val trainChain: (CALC_DELTA_D2) -> CALC_DELTA_D2 by lazy {
+    private val trainChain: IOScope.(CALC_DELTA_D2) -> CALC_DELTA_D2 by lazy {
         layers.foldRight(
             initial = { final: CALC_DELTA_D2 -> final },
         ) { layer, acc ->
             { final ->
                 { input, context ->
-                    layer._train(input, context) { acc(final)(it as Batch<IOType.D2>, context) } as Batch<IOType.D2>
+                    with(layer) { _train(input, context) { acc(final)(it as Batch<IOType.D2>, context) } as Batch<IOType.D2> }
                 }
             }
         }
