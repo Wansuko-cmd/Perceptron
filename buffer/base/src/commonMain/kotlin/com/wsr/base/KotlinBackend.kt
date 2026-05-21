@@ -1115,4 +1115,8 @@ object KotlinBackend : IBackend {
         for (i in result.indices) result[i] = if (condition[i] > 0f) x[i] else y[i]
         return result
     }
+
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+        TODO()
+    }
 }

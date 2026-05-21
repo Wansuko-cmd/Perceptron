@@ -501,4 +501,7 @@ object Backend : IBackend {
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
         instance.where(condition, x, y)
+
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer =
+        instance.unfold(x, xi, xj, b, window, stride, padding)
 }
