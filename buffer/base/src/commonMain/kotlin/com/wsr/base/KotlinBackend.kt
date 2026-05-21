@@ -1117,6 +1117,22 @@ object KotlinBackend : IBackend {
     }
 
     override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
-        TODO()
+        val oj = (xj - window  + padding * 2) / stride + 1
+        val result = DataBufferGenerator.create(b * xi * oj * window)
+        for (xb in 0 until b) {
+            for (i in 0 until xi) {
+                for (j in 0 until oj) {
+                    for (w in 0 until window) {
+                        val index = j * stride + w - padding
+                        if (index in 0 until xj) {
+                            val resultIndex = ((xb * xi + i) * oj + j) * window + w
+                            val xIndex = (xb * xi + i) * xj + index
+                            result[resultIndex] = x[xIndex]
+                        }
+                    }
+                }
+            }
+        }
+        return result
     }
 }
