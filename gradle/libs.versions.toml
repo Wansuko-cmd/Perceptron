@@ -4,16 +4,16 @@ lib-group-id = "io.github.bugdog24"
 lib-version = "0.0.28-alpha15"
 
 # kotlin
-kotlin = "2.2.20"
+kotlin = "2.3.21"
 
 # serialization
-serialization = "1.9.0"
+serialization = "1.11.0"
 
 # okio
-okio = "3.16.2"
+okio = "3.17.0"
 
 # Ktlint
-ktlint = "13.0.0"
+ktlint = "14.2.0"
 
 [libraries]
 # serialization
@@ -27,5 +27,6 @@ okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
