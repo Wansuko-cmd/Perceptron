@@ -4,14 +4,13 @@ import com.wsr.batch.Batch
 import com.wsr.batch.reshape.convert.toBatch
 import com.wsr.batch.reshape.convert.toD3
 import com.wsr.batch.reshape.convert.toD4
-import com.wsr.batch.reshape.fold.fold2
-import com.wsr.batch.reshape.fold.unfold2
+import com.wsr.batch.reshape.fold.fold
+import com.wsr.batch.reshape.fold.unfold
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.get
 import com.wsr.core.operation.div.div
 import com.wsr.core.operation.matmul.matMul
-import com.wsr.core.operation.times.times
 import com.wsr.core.reshape.reshape.reshapeToD2
 import com.wsr.core.reshape.reshape.reshapeToD3
 import com.wsr.core.reshape.reshape.reshapeToD4
@@ -52,7 +51,7 @@ class ConvD1 internal constructor(
     }
 
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
-        val col = input.unfold2(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
             .reshapeToD2(i = kernel * channel, j = outputY * input.size)
@@ -67,7 +66,7 @@ class ConvD1 internal constructor(
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val col = input.unfold2(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
             .reshapeToD2(i = kernel * channel, j = outputY * input.size)
@@ -90,7 +89,7 @@ class ConvD1 internal constructor(
             .reshapeToD4(i = channel, j = kernel, k = input.size, l = outputY)
             .transpose(axisI = 2, axisJ = 0, axisK = 3, axisL = 1)
             .toBatch()
-            .fold2(stride = stride, padding = padding)
+            .fold(stride = stride, padding = padding)
 
         val dw = deltaCol.matMul(col.transpose())
             .reshapeToD3(i = filter, j = channel, k = kernel)
