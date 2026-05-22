@@ -1137,6 +1137,22 @@ object KotlinBackend : IBackend {
     }
 
     override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
-        TODO()
+        val oj = xk + (xj - 1) * stride - padding * 2
+        val result = DataBufferGenerator.create(b * xi * oj)
+        for (xb in 0 until b) {
+            for (i in 0 until xi) {
+                for (j in 0 until xj) {
+                    for (k in 0 until xk) {
+                        val index = j * stride + k - padding
+                        if (index in 0 until oj) {
+                            val xIndex = ((xb * xi + i) * xj + j) * xk + k
+                            val resultIndex = (xb * xi + i) * oj + index
+                            result[resultIndex] += x[xIndex]
+                        }
+                    }
+                }
+            }
+        }
+        return result
     }
 }
