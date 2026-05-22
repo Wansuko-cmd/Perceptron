@@ -504,4 +504,7 @@ object Backend : IBackend {
 
     override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer =
         instance.unfold(x, xi, xj, b, window, stride, padding)
+
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer =
+        instance.fold(x, xi, xj, xk, b, stride, padding)
 }

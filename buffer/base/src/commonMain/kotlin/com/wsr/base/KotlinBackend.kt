@@ -1135,4 +1135,8 @@ object KotlinBackend : IBackend {
         }
         return result
     }
+
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+        TODO()
+    }
 }
