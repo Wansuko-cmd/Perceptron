@@ -431,4 +431,7 @@ interface IBackend {
     fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer
     fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer
     fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer
+
+    fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer
+    fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer
 }
