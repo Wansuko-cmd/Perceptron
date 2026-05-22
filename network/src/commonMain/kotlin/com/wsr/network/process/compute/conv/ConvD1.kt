@@ -1,18 +1,20 @@
 package com.wsr.network.process.compute.conv
 
 import com.wsr.batch.Batch
-import com.wsr.batch.get
 import com.wsr.batch.reshape.convert.toBatch
 import com.wsr.batch.reshape.convert.toD3
-import com.wsr.batch.reshape.fold.fold
-import com.wsr.batch.reshape.fold.unfold
+import com.wsr.batch.reshape.convert.toD4
+import com.wsr.batch.reshape.fold.fold2
+import com.wsr.batch.reshape.fold.unfold2
 import com.wsr.core.IOType
 import com.wsr.core.d2
-import com.wsr.core.d3
 import com.wsr.core.get
+import com.wsr.core.operation.div.div
 import com.wsr.core.operation.matmul.matMul
+import com.wsr.core.operation.times.times
 import com.wsr.core.reshape.reshape.reshapeToD2
 import com.wsr.core.reshape.reshape.reshapeToD3
+import com.wsr.core.reshape.reshape.reshapeToD4
 import com.wsr.core.reshape.transpose.transpose
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
@@ -50,7 +52,10 @@ class ConvD1 internal constructor(
     }
 
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
-        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold2(windowSize = kernel, stride = stride, padding = padding)
+            .toD4()
+            .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
+            .reshapeToD2(i = kernel * channel, j = outputY * input.size)
         return (weight.reshapeToD2(outputX, channel * kernel).matMul(col))
             .reshapeToD3(i = filter, j = input.size, k = outputY)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
@@ -62,7 +67,10 @@ class ConvD1 internal constructor(
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold2(windowSize = kernel, stride = stride, padding = padding)
+            .toD4()
+            .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
+            .reshapeToD2(i = kernel * channel, j = outputY * input.size)
         val output = (weight.reshapeToD2(i = outputX, j = channel * kernel).matMul(col))
             .reshapeToD3(i = filter, j = input.size, k = outputY)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
@@ -78,30 +86,15 @@ class ConvD1 internal constructor(
         val deltaCol = delta.toD3()
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
             .reshapeToD2(i = filter, j = input.size * outputY)
-        val dx = (reversed.matMul(deltaCol)).fold(
-            channel = channel,
-            batchSize = input.size,
-            inputSize = inputSize,
-            stride = stride,
-            padding = padding,
-        )
+        val dx = (reversed.matMul(deltaCol))
+            .reshapeToD4(i = channel, j = kernel, k = input.size, l = outputY)
+            .transpose(axisI = 2, axisJ = 0, axisK = 3, axisL = 1)
+            .toBatch()
+            .fold2(stride = stride, padding = padding)
 
-        // dw (重み勾配)
-        val dw = Batch(input.size) { b ->
-            val delta = delta[b]
-            val input = input[b]
-            IOType.d3(filter, channel, kernel) { f, c, k ->
-                var sum = 0f
-                for (o in 0 until outputY) {
-                    val inputIdx = o * stride + k - padding
-                    if (inputIdx in 0 until inputSize) {
-                        sum += delta[f, o] * input[c, inputIdx]
-                    }
-                }
-                sum
-            }
-        }
-        weight = optimizer.adapt(weight = weight, dw = dw)
+        val dw = deltaCol.matMul(col.transpose())
+            .reshapeToD3(i = filter, j = channel, k = kernel)
+        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat())
 
         return dx
     }
@@ -116,20 +109,20 @@ fun <T> NetworkBuilder.D2<T>.convD1(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process =
-    ConvD1(
-        filter = filter,
-        channel = inputX,
-        kernel = kernel,
-        stride = stride,
-        padding = padding,
-        inputSize = inputY,
-        optimizer = optimizer.d3(filter, inputX, kernel),
-        weight = initializer.d3(
-            input = listOf(inputX, kernel),
-            output = listOf(filter, kernel),
-            x = filter,
-            y = inputX,
-            z = kernel,
+        ConvD1(
+            filter = filter,
+            channel = inputX,
+            kernel = kernel,
+            stride = stride,
+            padding = padding,
+            inputSize = inputY,
+            optimizer = optimizer.d3(filter, inputX, kernel),
+            weight = initializer.d3(
+                input = listOf(inputX, kernel),
+                output = listOf(filter, kernel),
+                x = filter,
+                y = inputX,
+                z = kernel,
+            ),
         ),
-    ),
 )
