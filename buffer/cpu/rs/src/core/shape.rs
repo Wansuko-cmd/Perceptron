@@ -214,3 +214,41 @@ fn create_indices(start: usize, end: usize, step: isize) -> Vec<usize> {
         _ => panic!("invalid parameter. [step: {}]",step)
     }
 }
+
+pub fn fold(x: &[f32], result: &mut [f32], xi: usize, xj: usize, xk: usize, b: usize, stride: usize, padding: usize) {
+    let oj = xk + (xj - 1) * stride - padding * 2;
+    for xb in 0..b {
+        for i in 0..xi {
+            for j in 0..xj {
+                for k in 0..xk {
+                    let index = j * stride + k;
+                    if padding <= index && index < oj + padding {
+                        let index = index - padding;
+                        let x_index = ((xb * xi + i) * xj + j) * xk + k;
+                        let result_index = (xb * xi + i) * oj + index;
+                        result[result_index] += x[x_index];
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub fn unfold(x: &[f32], result: &mut [f32], xi: usize, xj: usize, b: usize, window: usize, stride: usize, padding: usize) {
+    let oj = (xj + padding * 2 - window) / stride + 1;
+    for xb in 0..b {
+        for i in 0..xi {
+            for j in 0..oj {
+                for w in 0..window {
+                    let index = j * stride + w;
+                    if padding <= index && index < xj + padding {
+                        let index = index - padding;
+                        let result_index = ((xb * xi + i) * oj + j) * window + w;
+                        let x_index = (xb * xi + i) * xj + index;
+                        result[result_index] = x[x_index];
+                    }
+                }
+            }
+        }
+    }
+}

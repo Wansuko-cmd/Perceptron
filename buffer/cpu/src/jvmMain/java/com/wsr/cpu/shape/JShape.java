@@ -95,4 +95,26 @@ public class JShape {
             int end,
             int step
     );
+
+    public native void unfold(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int b,
+            int window,
+            int stride,
+            int padding,
+            ByteBuffer result
+    );
+
+    public native void fold(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int b,
+            int stride,
+            int padding,
+            ByteBuffer result
+    );
 }

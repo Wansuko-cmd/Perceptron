@@ -56,4 +56,20 @@ void com_wsr_cpu_copy_into_d3(
     int ri, int rj, int rk, int axis,
     int start, int end, int step
 );
+
+void com_wsr_cpu_unfold(
+    const float* x,
+    int xi, int xj,
+    int b,
+    int window, int stride, int padding,
+    float* result
+);
+
+void com_wsr_cpu_fold(
+    const float* x,
+    int xi, int xj, int xk,
+    int b,
+    int stride, int padding,
+    float* result
+);
 #endif

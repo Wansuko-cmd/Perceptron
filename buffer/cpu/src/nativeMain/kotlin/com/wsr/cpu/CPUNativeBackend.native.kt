@@ -96,6 +96,8 @@ import com.wsr.cpu.rs.com_wsr_cpu_times_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d2
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d4
+import com.wsr.cpu.rs.com_wsr_cpu_fold
+import com.wsr.cpu.rs.com_wsr_cpu_unfold
 import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_where_d1_to_d0
@@ -1610,6 +1612,38 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
             size = result.size,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+        val oj = (xj + padding * 2 - window) / stride + 1
+        val result = CPUNativeBuffer.create(b * xi * oj * window)
+        com_wsr_cpu_unfold(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            b = b,
+            window = window,
+            stride = stride,
+            padding = padding,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+        val oj = xk + (xj - 1) * stride - padding * 2
+        val result = CPUNativeBuffer.create(b * xi * oj)
+        com_wsr_cpu_fold(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            b = b,
+            stride = stride,
+            padding = padding,
             result = result.buffer,
         )
         return result

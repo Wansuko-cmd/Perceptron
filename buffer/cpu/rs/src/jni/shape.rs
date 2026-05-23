@@ -137,3 +137,33 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
     shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfold(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint,
+    b: jint,
+    window: jint, stride: jint, padding: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::unfold(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, padding as usize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_fold(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, xk: jint,
+    b: jint,
+    stride: jint, padding: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::fold(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, padding as usize);
+}
