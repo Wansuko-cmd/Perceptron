@@ -34,23 +34,23 @@ fun Batch<IOType.D2>.reshapeToD3(i: Int, j: Int, k: Int) = reshapeToD3(listOf(i,
 fun Batch<IOType.D2>.reshapeToD3(shape: List<Int>) = Batch<IOType.D3>(size = size, shape = shape, value = value)
 
 fun Batch<IOType.D2>.slice(indices: IntProgression, axis: Int): Batch<IOType.D2> {
-    val result = Backend.slice(x = value, xi = size, xj = shape[0], xk = j, axis = axis + 1, indices = indices)
+    val result = Backend.slice(x = value, xi = size, xj = i, xk = j, axis = axis + 1, indices = indices)
     return Batch(
         size = size,
         shape = when (axis) {
             0 -> listOf(indices.size, j)
-            else -> listOf(shape[0], indices.size)
+            else -> listOf(i, indices.size)
         },
         value = result,
     )
 }
 
 fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2> {
-    check(size == other.size && shape[0] == other.shape[0] && j == other.j)
+    check(size == other.size && i == other.i && j == other.j)
     val result = DataBuffer.create(value.size + other.value.size)
     val newShape = when (axis) {
-        0 -> listOf(shape[0] * 2, j)
-        else -> listOf(shape[0], j * 2)
+        0 -> listOf(i * 2, j)
+        else -> listOf(i, j * 2)
     }
     val (i, j) = newShape
     Backend.copyInto(
@@ -81,6 +81,6 @@ fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOTyp
 }
 
 fun Batch<IOType.D2>.transpose(): Batch<IOType.D2> {
-    val result = Backend.transpose(x = value, xi = size, xj = shape[0], xk = j, axisI = 0, axisJ = 2, axisK = 1)
+    val result = Backend.transpose(x = value, xi = size, xj = i, xk = j, axisI = 0, axisJ = 2, axisK = 1)
     return Batch(size = size, shape = shape.reversed(), value = result)
 }

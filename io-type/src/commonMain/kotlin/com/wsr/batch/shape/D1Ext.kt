@@ -34,8 +34,8 @@ fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
 }
 
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
-    check(size == other.size && i == other.shape[0])
-    val i = shape[0] * 2
+    check(size == other.size && i == other.i)
+    val i = i * 2
     val result = DataBuffer.create(value.size + other.value.size)
     Backend.copyInto(
         x = value,

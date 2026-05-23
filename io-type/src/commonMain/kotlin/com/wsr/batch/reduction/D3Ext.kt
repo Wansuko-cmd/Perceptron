@@ -29,7 +29,7 @@ fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2> = when (axis) {
     2 -> Batch(
         size = size,
         shape = listOf(i, j),
-        value = Backend.sum(x = value, xi = size, xj = shape[0] * j, xk = k, axis = 2),
+        value = Backend.sum(x = value, xi = size, xj = i * j, xk = k, axis = 2),
     )
     else -> throw IllegalArgumentException("axis is $axis, not 0, 1 or 2.")
 }
