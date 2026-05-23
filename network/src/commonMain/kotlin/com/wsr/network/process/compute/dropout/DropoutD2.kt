@@ -1,7 +1,7 @@
 package com.wsr.network.process.compute.dropout
 
 import com.wsr.batch.Batch
-import com.wsr.batch.operation.times.times
+import com.wsr.batch.elementwise.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.network.NetworkBuilder

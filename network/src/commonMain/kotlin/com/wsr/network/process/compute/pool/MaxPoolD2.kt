@@ -1,7 +1,7 @@
 package com.wsr.network.process.compute.pool
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.map.map
+import com.wsr.batch.elementwise.map.map
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d2

@@ -2,18 +2,18 @@ package com.wsr.network.process.compute.conv
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
-import com.wsr.batch.reshape.convert.toBatch
-import com.wsr.batch.reshape.convert.toD4
-import com.wsr.batch.reshape.fold.fold
-import com.wsr.batch.reshape.fold.unfold
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toD4
+import com.wsr.batch.shape.fold.fold
+import com.wsr.batch.shape.fold.unfold
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.d4
 import com.wsr.core.get
-import com.wsr.core.operation.matmul.matMul
-import com.wsr.core.reshape.reshape.reshapeToD2
-import com.wsr.core.reshape.reshape.reshapeToD4
-import com.wsr.core.reshape.transpose.transpose
+import com.wsr.core.linalg.matMul
+import com.wsr.core.shape.reshapeToD2
+import com.wsr.core.shape.reshapeToD4
+import com.wsr.core.shape.transpose
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer
 import com.wsr.network.optimizer.Optimizer

@@ -1,8 +1,8 @@
 package com.wsr.network.process.compute.bias.d3
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.sum.sum
-import com.wsr.batch.operation.plus.plus
+import com.wsr.batch.reduction.sum
+import com.wsr.batch.elementwise.operation.plus.plus
 import com.wsr.core.IOType
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

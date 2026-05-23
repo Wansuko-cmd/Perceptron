@@ -1,13 +1,13 @@
 package com.wsr.network.output.mean
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.average.batchAverage
-import com.wsr.batch.math.pow
-import com.wsr.batch.operation.minus.minus
+import com.wsr.batch.reduction.average.batchAverage
+import com.wsr.batch.elementwise.math.pow
+import com.wsr.batch.elementwise.operation.minus.minus
 import com.wsr.core.IOType
-import com.wsr.core.collection.average.average
+import com.wsr.core.reduction.average
 import com.wsr.core.get
-import com.wsr.core.operation.times.times
+import com.wsr.core.elementwise.operation.times.times
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.output.Output

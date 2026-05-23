@@ -4,7 +4,7 @@ import com.wsr.batch.Batch
 import com.wsr.batch.toBatch
 import com.wsr.batch.toList
 import com.wsr.core.IOType
-import com.wsr.core.collection.index.maxIndex
+import com.wsr.core.reduction.maxIndex
 import com.wsr.core.d1
 import com.wsr.core.set
 import com.wsr.network.NetworkBuilder
