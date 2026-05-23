@@ -34,7 +34,7 @@ fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3> {
     return Batch(size = size, shape = shape, value = result)
 }
 
-@JvmName("batchD3sPlusD1WithAxis")
+@JvmName("batchD3sPlusD1sWithAxis")
 fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3> {
     val result = Backend.plus(
         x = value,
