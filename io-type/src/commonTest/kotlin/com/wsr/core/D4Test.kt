@@ -1,21 +1,14 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr.access
+package com.wsr.core
 
 import com.wsr.assertContentEquals
-import com.wsr.core.IOType
-import com.wsr.core.d1
-import com.wsr.core.d2
-import com.wsr.core.d3
-import com.wsr.core.d4
-import com.wsr.core.get
-import com.wsr.core.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class D4Test {
     @Test
-    fun `D4のget_ijkl=各要素取得`() {
+    fun `get=4次元要素取得`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         assertEquals(expected = 0.0f, actual = d4[0, 0, 0, 0])
         assertEquals(expected = 8.0f, actual = d4[0, 0, 0, 1])
@@ -36,7 +29,7 @@ class D4Test {
     }
 
     @Test
-    fun `D4のget_ijk=各D1取得`() {
+    fun `get=4次元行取得`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         assertContentEquals(expected = IOType.d1(listOf(0.0f, 8.0f)), actual = d4[0, 0, 0])
         assertContentEquals(expected = IOType.d1(listOf(4.0f, 12.0f)), actual = d4[0, 0, 1])
@@ -49,40 +42,28 @@ class D4Test {
     }
 
     @Test
-    fun `D4のget_ij=各D2取得`() {
+    fun `get=4次元面取得`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         assertContentEquals(
-            expected = IOType.d2(
-                shape = listOf(2, 2),
-                value = listOf(0.0f, 8.0f, 4.0f, 12.0f),
-            ),
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(0.0f, 8.0f, 4.0f, 12.0f)),
             actual = d4[0, 0],
         )
         assertContentEquals(
-            expected = IOType.d2(
-                shape = listOf(2, 2),
-                value = listOf(2.0f, 10.0f, 6.0f, 14.0f),
-            ),
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(2.0f, 10.0f, 6.0f, 14.0f)),
             actual = d4[0, 1],
         )
         assertContentEquals(
-            expected = IOType.d2(
-                shape = listOf(2, 2),
-                value = listOf(1.0f, 9.0f, 5.0f, 13.0f),
-            ),
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(1.0f, 9.0f, 5.0f, 13.0f)),
             actual = d4[1, 0],
         )
         assertContentEquals(
-            expected = IOType.d2(
-                shape = listOf(2, 2),
-                value = listOf(3.0f, 11.0f, 7.0f, 15.0f),
-            ),
+            expected = IOType.d2(shape = listOf(2, 2), value = listOf(3.0f, 11.0f, 7.0f, 15.0f)),
             actual = d4[1, 1],
         )
     }
 
     @Test
-    fun `D4のget_i=各D3取得`() {
+    fun `get=4次元体取得`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         assertContentEquals(
             expected = IOType.d3(
@@ -101,7 +82,7 @@ class D4Test {
     }
 
     @Test
-    fun `D4のset=各要素設定`() {
+    fun `set=4次元要素設定`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         d4[0, 0, 0, 0] = 15.0f
         d4[0, 0, 0, 1] = 7.0f
@@ -119,7 +100,6 @@ class D4Test {
         d4[1, 1, 0, 1] = 4.0f
         d4[1, 1, 1, 0] = 8.0f
         d4[1, 1, 1, 1] = 0.0f
-
         assertEquals(expected = 15.0f, actual = d4[0, 0, 0, 0])
         assertEquals(expected = 7.0f, actual = d4[0, 0, 0, 1])
         assertEquals(expected = 11.0f, actual = d4[0, 0, 1, 0])

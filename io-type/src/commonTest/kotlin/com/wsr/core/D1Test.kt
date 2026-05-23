@@ -1,17 +1,13 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr.access
+package com.wsr.core
 
-import com.wsr.core.IOType
-import com.wsr.core.d1
-import com.wsr.core.get
-import com.wsr.core.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class D1Test {
     @Test
-    fun `D1のget=各要素取得`() {
+    fun `get=1次元要素取得`() {
         val d1 = IOType.d1(listOf(1.0f, 2.0f, 3.0f, 4.0f))
         assertEquals(expected = 1.0f, actual = d1[0])
         assertEquals(expected = 2.0f, actual = d1[1])
@@ -20,7 +16,7 @@ class D1Test {
     }
 
     @Test
-    fun `D1のset=各要素設定`() {
+    fun `set=1次元要素設定`() {
         val d1 = IOType.d1(listOf(1.0f, 2.0f, 3.0f, 4.0f))
         d1[0] = 4.0f
         d1[1] = 3.0f

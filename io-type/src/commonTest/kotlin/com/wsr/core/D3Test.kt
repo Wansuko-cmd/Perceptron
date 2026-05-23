@@ -1,20 +1,14 @@
 @file:Suppress("NonAsciiCharacters")
 
-package com.wsr.access
+package com.wsr.core
 
 import com.wsr.assertContentEquals
-import com.wsr.core.IOType
-import com.wsr.core.d1
-import com.wsr.core.d2
-import com.wsr.core.d3
-import com.wsr.core.get
-import com.wsr.core.set
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class D3Test {
     @Test
-    fun `D3のget_ijk=各要素取得`() {
+    fun `get=3次元要素取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         assertEquals(expected = 0.0f, actual = d3[0, 0, 0])
         assertEquals(expected = 4.0f, actual = d3[0, 0, 1])
@@ -27,7 +21,7 @@ class D3Test {
     }
 
     @Test
-    fun `D3のget_ij=各D1取得`() {
+    fun `get=3次元行取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         assertContentEquals(expected = IOType.d1(value = listOf(0.0f, 4.0f)), actual = d3[0, 0])
         assertContentEquals(expected = IOType.d1(value = listOf(2.0f, 6.0f)), actual = d3[0, 1])
@@ -36,7 +30,7 @@ class D3Test {
     }
 
     @Test
-    fun `D3のget_i=各D2取得`() {
+    fun `get=3次元面取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         assertContentEquals(
             expected = IOType.d2(shape = listOf(2, 2), value = listOf(0.0f, 4.0f, 2.0f, 6.0f)),
@@ -49,7 +43,7 @@ class D3Test {
     }
 
     @Test
-    fun `D3のset=各要素設定`() {
+    fun `set=3次元要素設定`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         d3[0, 0, 0] = 7.0f
         d3[0, 0, 1] = 3.0f
