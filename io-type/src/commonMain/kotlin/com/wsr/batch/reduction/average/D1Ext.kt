@@ -5,7 +5,7 @@ import com.wsr.batch.Batch
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
-@JvmName("batchD1sAverageBatch")
+@JvmName("batchD1sAverage")
 fun Batch<IOType.D1>.average(): Batch<IOType.D0> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
     return Batch(size = size, shape = listOf(1), value = result)

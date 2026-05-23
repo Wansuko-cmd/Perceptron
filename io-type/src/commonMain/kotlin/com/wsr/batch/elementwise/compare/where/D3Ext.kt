@@ -5,25 +5,25 @@ import com.wsr.batch.Batch
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
-@JvmName("WhereFloatToFloatAsD3")
+@JvmName("batchWhereFloatToFloatAsD3")
 fun where(condition: Batch<IOType.D3>, onTrue: Float, onFalse: Float): Batch<IOType.D3> {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return Batch(size = condition.size, shape = condition.shape, value = result)
 }
 
-@JvmName("WhereFloatToD3s")
+@JvmName("batchWhereFloatToD3s")
 fun where(condition: Batch<IOType.D3>, onTrue: Float, onFalse: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return Batch(size = condition.size, shape = condition.shape, value = result)
 }
 
-@JvmName("WhereD3sToFloat")
+@JvmName("batchWhereD3sToFloat")
 fun where(condition: Batch<IOType.D3>, onTrue: Batch<IOType.D3>, onFalse: Float): Batch<IOType.D3> {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return Batch(size = condition.size, shape = condition.shape, value = result)
 }
 
-@JvmName("WhereD3sToD3s")
+@JvmName("batchWhereD3sToD3s")
 fun where(condition: Batch<IOType.D3>, onTrue: Batch<IOType.D3>, onFalse: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch(size = condition.size, shape = condition.shape, value = result)

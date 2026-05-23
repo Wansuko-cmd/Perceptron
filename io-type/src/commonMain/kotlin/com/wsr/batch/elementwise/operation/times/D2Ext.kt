@@ -10,7 +10,7 @@ import com.wsr.core.IOType
 import com.wsr.core.get
 import kotlin.jvm.JvmName
 
-@JvmName("batchD3TimesD2s")
+@JvmName("batchD2TimesD2s")
 operator fun IOType.D2.times(other: Batch<IOType.D2>): Batch<IOType.D2> {
     val result = Backend.times(
         x = value,

@@ -25,7 +25,7 @@ fun IOType.D3.matMul(other: Batch<IOType.D3>, transA: Boolean = false, transB: B
     return Batch(value = result, size = size, shape = listOf(i, m, n))
 }
 
-@JvmName("matMulToD3s")
+@JvmName("batchD3sMatMulD3")
 fun Batch<IOType.D3>.matMul(other: IOType.D3, transA: Boolean = false, transB: Boolean = false): Batch<IOType.D3> {
     val m = if (transA) k else j
     val n = if (transB) other.j else other.k
@@ -43,7 +43,7 @@ fun Batch<IOType.D3>.matMul(other: IOType.D3, transA: Boolean = false, transB: B
     return Batch(value = result, size = size, shape = listOf(i, m, n))
 }
 
-@JvmName("matMulToD3s")
+@JvmName("batchD3sMatMulD3s")
 fun Batch<IOType.D3>.matMul(
     other: Batch<IOType.D3>,
     transA: Boolean = false,
