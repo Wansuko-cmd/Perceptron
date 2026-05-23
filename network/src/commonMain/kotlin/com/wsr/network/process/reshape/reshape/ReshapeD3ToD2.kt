@@ -1,8 +1,8 @@
 package com.wsr.network.process.reshape.reshape
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reshape.reshape.reshapeToD2
-import com.wsr.batch.reshape.reshape.reshapeToD3
+import com.wsr.batch.shape.reshapeToD2
+import com.wsr.batch.shape.reshapeToD3
 import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context

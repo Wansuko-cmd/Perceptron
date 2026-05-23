@@ -2,14 +2,14 @@ package com.wsr.network.process.reshape.token
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
-import com.wsr.batch.index.gather.gather
-import com.wsr.batch.index.scatter.add.scatterAdd
+import com.wsr.batch.index.gather
+import com.wsr.batch.index.scatterAdd
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
+import com.wsr.core.elementwise.operation.div.div
+import com.wsr.core.elementwise.operation.plus.plus
 import com.wsr.core.get
-import com.wsr.core.operation.div.div
-import com.wsr.core.operation.plus.plus
 import com.wsr.core.set
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer

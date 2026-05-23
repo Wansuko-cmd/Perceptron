@@ -1,10 +1,10 @@
 package com.wsr.network.process.compute.function.relu
 
 import com.wsr.batch.Batch
-import com.wsr.batch.math.sigmoid
-import com.wsr.batch.operation.minus.minus
-import com.wsr.batch.operation.plus.plus
-import com.wsr.batch.operation.times.times
+import com.wsr.batch.elementwise.math.sigmoid
+import com.wsr.batch.elementwise.operation.minus.minus
+import com.wsr.batch.elementwise.operation.plus.plus
+import com.wsr.batch.elementwise.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context

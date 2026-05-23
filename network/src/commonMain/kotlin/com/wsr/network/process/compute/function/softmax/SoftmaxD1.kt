@@ -1,9 +1,9 @@
 package com.wsr.network.process.compute.function.softmax
 
 import com.wsr.batch.Batch
-import com.wsr.batch.math.softmax
-import com.wsr.batch.operation.minus.minus
-import com.wsr.batch.operation.times.times
+import com.wsr.batch.elementwise.math.softmax
+import com.wsr.batch.elementwise.operation.minus.minus
+import com.wsr.batch.elementwise.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context

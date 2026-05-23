@@ -1,13 +1,13 @@
 package com.wsr.network.output.sigmoid
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.average.batchAverage
-import com.wsr.batch.collecction.sum.sum
-import com.wsr.batch.math.ln
-import com.wsr.batch.math.sigmoid
-import com.wsr.batch.operation.minus.minus
-import com.wsr.batch.operation.plus.plus
-import com.wsr.batch.operation.times.times
+import com.wsr.batch.elementwise.math.ln
+import com.wsr.batch.elementwise.math.sigmoid
+import com.wsr.batch.elementwise.operation.minus.minus
+import com.wsr.batch.elementwise.operation.plus.plus
+import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.reduction.average.batchAverage
+import com.wsr.batch.reduction.sum
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.get

@@ -1,13 +1,13 @@
 package com.wsr.network.optimizer
 
 import com.wsr.batch.Batch
-import com.wsr.batch.collecction.average.batchAverage
+import com.wsr.batch.reduction.average.batchAverage
 import com.wsr.core.IOType
-import com.wsr.core.collection.sum.sum
+import com.wsr.core.elementwise.math.pow
+import com.wsr.core.elementwise.math.sqrt
+import com.wsr.core.elementwise.operation.times.times
 import com.wsr.core.get
-import com.wsr.core.math.pow
-import com.wsr.core.math.sqrt
-import com.wsr.core.operation.times.times
+import com.wsr.core.reduction.sum
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
 

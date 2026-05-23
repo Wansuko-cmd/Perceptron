@@ -6,9 +6,9 @@ import com.wsr.batch.toList
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.d3
+import com.wsr.core.elementwise.operation.div.div
 import com.wsr.core.get
-import com.wsr.core.operation.div.div
-import com.wsr.core.reshape.transpose.transpose
+import com.wsr.core.shape.transpose
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context
 import com.wsr.network.process.reshape.Reshape

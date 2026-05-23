@@ -1,10 +1,10 @@
 package com.wsr.network.process.compute.function.relu
 
 import com.wsr.batch.Batch
-import com.wsr.batch.compare.greater.gt
-import com.wsr.batch.compare.where.where
+import com.wsr.batch.elementwise.compare.gt
+import com.wsr.batch.elementwise.compare.where.where
+import com.wsr.batch.elementwise.operation.times.times
 import com.wsr.batch.get
-import com.wsr.batch.operation.times.times
 import com.wsr.core.IOType
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder
