@@ -4,6 +4,14 @@ import com.wsr.Backend
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
+val Batch<IOType.D4>.i get() = shape[0]
+
+val Batch<IOType.D4>.j get() = shape[1]
+
+val Batch<IOType.D4>.k get() = shape[2]
+
+val Batch<IOType.D4>.l get() = shape[3]
+
 @JvmName("batchD4sGet")
 operator fun Batch<IOType.D4>.get(i: Int): IOType.D4 {
     val index = i * step
