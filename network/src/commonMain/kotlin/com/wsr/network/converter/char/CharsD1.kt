@@ -1,8 +1,8 @@
 package com.wsr.network.converter.char
 
 import com.wsr.batch.Batch
-import com.wsr.batch.toBatch
-import com.wsr.batch.toList
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toList
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.NetworkBuilder

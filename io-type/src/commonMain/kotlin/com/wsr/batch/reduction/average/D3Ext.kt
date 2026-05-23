@@ -2,6 +2,9 @@
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
@@ -15,18 +18,18 @@ fun Batch<IOType.D3>.average(): Batch<IOType.D0> {
 fun Batch<IOType.D3>.average(axis: Int): Batch<IOType.D2> = when (axis) {
     0 -> Batch(
         size = size,
-        shape = listOf(shape[1], shape[2]),
-        value = Backend.average(x = value, xi = size, xj = shape[0], xk = shape[1] * shape[2], axis = 1),
+        shape = listOf(j, k),
+        value = Backend.average(x = value, xi = size, xj = i, xk = j * k, axis = 1),
     )
     1 -> Batch(
         size = size,
-        shape = listOf(shape[0], shape[2]),
-        value = Backend.average(x = value, xi = size * shape[0], xj = shape[1], xk = shape[2], axis = 1),
+        shape = listOf(i, k),
+        value = Backend.average(x = value, xi = size * i, xj = j, xk = k, axis = 1),
     )
     2 -> Batch(
         size = size,
-        shape = listOf(shape[0], shape[1]),
-        value = Backend.average(x = value, xi = size, xj = shape[0] * shape[1], xk = shape[2], axis = 2),
+        shape = listOf(i, j),
+        value = Backend.average(x = value, xi = size, xj = i * j, xk = k, axis = 2),
     )
     else -> throw IllegalArgumentException("axis is $axis, not 0, 1 or 2.")
 }

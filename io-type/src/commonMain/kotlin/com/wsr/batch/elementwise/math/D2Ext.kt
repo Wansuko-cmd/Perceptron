@@ -2,9 +2,14 @@ package com.wsr.batch.elementwise.math
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
-import com.wsr.batch.elementwise.map.map
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toD3
 import com.wsr.core.IOType
 import com.wsr.core.elementwise.math.softmax
+import com.wsr.core.shape.reshapeToD2
+import com.wsr.core.shape.reshapeToD3
 import kotlin.jvm.JvmName
 
 @JvmName("batchD2sExp")
@@ -29,10 +34,16 @@ fun Batch<IOType.D2>.pow(n: Int): Batch<IOType.D2> {
 fun Batch<IOType.D2>.sigmoid(): Batch<IOType.D2> = Batch(size = size, shape = shape, value = Backend.sigmoid(value))
 
 @JvmName("batchD2sSoftmax")
-fun Batch<IOType.D2>.softmax(): Batch<IOType.D2> = map { it.softmax() }
+fun Batch<IOType.D2>.softmax(): Batch<IOType.D2> = toD3()
+    .reshapeToD2(i = size, j = step)
+    .softmax(axis = 1)
+    .reshapeToD3(i = size, j = i, k = j)
+    .toBatch()
 
 @JvmName("batchD2sSoftmaxWithAxis")
-fun Batch<IOType.D2>.softmax(axis: Int): Batch<IOType.D2> = map { it.softmax(axis = axis) }
+fun Batch<IOType.D2>.softmax(axis: Int): Batch<IOType.D2> = toD3()
+    .softmax(axis = axis + 1)
+    .toBatch()
 
 @JvmName("batchD2sSqrt")
 fun Batch<IOType.D2>.sqrt(e: Float = 1e-7f): Batch<IOType.D2> {

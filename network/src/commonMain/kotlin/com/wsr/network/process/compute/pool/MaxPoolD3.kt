@@ -1,9 +1,8 @@
 package com.wsr.network.process.compute.pool
 
 import com.wsr.batch.Batch
-import com.wsr.batch.elementwise.map.map
 import com.wsr.batch.get
-import com.wsr.batch.toBatch
+import com.wsr.batch.shape.toBatch
 import com.wsr.core.IOType
 import com.wsr.core.d3
 import com.wsr.core.get
@@ -32,14 +31,15 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
         }
     }
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.map(::forward)
+    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
+        Batch(input.size) { forward(input[it]) }
 
     override fun train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val output = input.map(::forward)
+        val output = Batch(input.size) { forward(input[it]) }
         val delta = calcDelta(output)
         return List(input.size) { index ->
             val input = input[index]

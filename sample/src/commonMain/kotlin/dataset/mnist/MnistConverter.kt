@@ -2,7 +2,7 @@ package dataset.mnist
 
 import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
-import com.wsr.batch.toList
+import com.wsr.batch.shape.toList
 import com.wsr.core.IOType
 import com.wsr.core.reduction.maxIndex
 import com.wsr.network.NetworkBuilder
