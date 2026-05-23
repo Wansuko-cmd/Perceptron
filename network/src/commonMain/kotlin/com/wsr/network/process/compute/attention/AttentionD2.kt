@@ -1,16 +1,16 @@
 package com.wsr.network.process.compute.attention
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reduction.sum
 import com.wsr.batch.elementwise.compare.eq
 import com.wsr.batch.elementwise.compare.where.where
-import com.wsr.batch.get
 import com.wsr.batch.elementwise.math.softmax
 import com.wsr.batch.elementwise.operation.div.div
-import com.wsr.batch.linalg.matMul
 import com.wsr.batch.elementwise.operation.minus.minus
 import com.wsr.batch.elementwise.operation.plus.plus
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.get
+import com.wsr.batch.linalg.matMul
+import com.wsr.batch.reduction.sum
 import com.wsr.batch.shape.reshapeToD2
 import com.wsr.batch.shape.reshapeToD3
 import com.wsr.batch.shape.transpose

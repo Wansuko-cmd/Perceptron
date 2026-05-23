@@ -7,9 +7,9 @@ import com.wsr.batch.index.scatterAdd
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
-import com.wsr.core.get
 import com.wsr.core.elementwise.operation.div.div
 import com.wsr.core.elementwise.operation.plus.plus
+import com.wsr.core.get
 import com.wsr.core.set
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.initializer.WeightInitializer

@@ -41,6 +41,6 @@ fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2> {
         shape = listOf(
             shape[0],
             shape[2] + (shape[1] - 1) * stride - padding * 2,
-        )
+        ),
     )
 }

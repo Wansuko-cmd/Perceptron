@@ -1,14 +1,14 @@
 package com.wsr.network.process.compute.norm.layer.d1
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reduction.average.average
-import com.wsr.batch.reduction.sum
 import com.wsr.batch.elementwise.math.pow
 import com.wsr.batch.elementwise.math.sqrt
 import com.wsr.batch.elementwise.operation.div.div
 import com.wsr.batch.elementwise.operation.minus.minus
 import com.wsr.batch.elementwise.operation.plus.plus
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.reduction.average.average
+import com.wsr.batch.reduction.sum
 import com.wsr.core.IOType
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.process.Context

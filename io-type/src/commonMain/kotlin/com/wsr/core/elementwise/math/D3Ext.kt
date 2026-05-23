@@ -2,11 +2,11 @@ package com.wsr.core.elementwise.math
 
 import com.wsr.Backend
 import com.wsr.core.IOType
+import com.wsr.core.elementwise.operation.div.div
+import com.wsr.core.elementwise.operation.minus.minus
 import com.wsr.core.get
 import com.wsr.core.reduction.max
 import com.wsr.core.reduction.sum
-import com.wsr.core.elementwise.operation.div.div
-import com.wsr.core.elementwise.operation.minus.minus
 import kotlin.math.pow
 
 fun IOType.D3.exp(): IOType.D3 {

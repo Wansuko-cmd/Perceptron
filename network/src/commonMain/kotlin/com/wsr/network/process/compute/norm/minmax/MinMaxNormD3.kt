@@ -1,14 +1,14 @@
 package com.wsr.network.process.compute.norm.minmax
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reduction.max
-import com.wsr.batch.reduction.min
-import com.wsr.batch.reduction.sum
-import com.wsr.batch.get
 import com.wsr.batch.elementwise.math.pow
 import com.wsr.batch.elementwise.operation.div.div
 import com.wsr.batch.elementwise.operation.minus.minus
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.get
+import com.wsr.batch.reduction.max
+import com.wsr.batch.reduction.min
+import com.wsr.batch.reduction.sum
 import com.wsr.core.IOType
 import com.wsr.core.d3
 import com.wsr.core.get

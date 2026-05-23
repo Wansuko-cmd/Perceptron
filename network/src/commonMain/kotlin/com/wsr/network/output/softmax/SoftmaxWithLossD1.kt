@@ -1,9 +1,6 @@
 package com.wsr.network.output.softmax
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reduction.average.batchAverage
-import com.wsr.batch.reduction.max
-import com.wsr.batch.reduction.sum
 import com.wsr.batch.elementwise.compare.eq
 import com.wsr.batch.elementwise.compare.where.where
 import com.wsr.batch.elementwise.math.exp
@@ -11,6 +8,9 @@ import com.wsr.batch.elementwise.math.ln
 import com.wsr.batch.elementwise.operation.div.div
 import com.wsr.batch.elementwise.operation.minus.minus
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.reduction.average.batchAverage
+import com.wsr.batch.reduction.max
+import com.wsr.batch.reduction.sum
 import com.wsr.core.IOType
 import com.wsr.core.get
 import com.wsr.network.NetworkBuilder

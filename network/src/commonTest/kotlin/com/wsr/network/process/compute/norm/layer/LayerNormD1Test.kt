@@ -4,8 +4,8 @@ package com.wsr.network.process.compute.norm.layer
 
 import com.wsr.batch.Batch
 import com.wsr.batch.batchOf
-import com.wsr.batch.get
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.network.assertContentEquals

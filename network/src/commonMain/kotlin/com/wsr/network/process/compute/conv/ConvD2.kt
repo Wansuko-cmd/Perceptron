@@ -2,10 +2,10 @@ package com.wsr.network.process.compute.conv
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
-import com.wsr.batch.shape.toBatch
-import com.wsr.batch.shape.toD4
 import com.wsr.batch.shape.fold.fold
 import com.wsr.batch.shape.fold.unfold
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toD4
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.d4

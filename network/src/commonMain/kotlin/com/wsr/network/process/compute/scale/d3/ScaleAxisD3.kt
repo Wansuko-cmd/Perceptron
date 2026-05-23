@@ -1,8 +1,8 @@
 package com.wsr.network.process.compute.scale.d3
 
 import com.wsr.batch.Batch
-import com.wsr.batch.reduction.sum
 import com.wsr.batch.elementwise.operation.times.times
+import com.wsr.batch.reduction.sum
 import com.wsr.core.IOType
 import com.wsr.network.optimizer.Optimizer
 import com.wsr.network.process.Context

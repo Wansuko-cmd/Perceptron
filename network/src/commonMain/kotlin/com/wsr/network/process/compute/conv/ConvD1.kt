@@ -1,15 +1,15 @@
 package com.wsr.network.process.compute.conv
 
 import com.wsr.batch.Batch
+import com.wsr.batch.shape.fold.fold
+import com.wsr.batch.shape.fold.unfold
 import com.wsr.batch.shape.toBatch
 import com.wsr.batch.shape.toD3
 import com.wsr.batch.shape.toD4
-import com.wsr.batch.shape.fold.fold
-import com.wsr.batch.shape.fold.unfold
 import com.wsr.core.IOType
 import com.wsr.core.d2
-import com.wsr.core.get
 import com.wsr.core.elementwise.operation.div.div
+import com.wsr.core.get
 import com.wsr.core.linalg.matMul
 import com.wsr.core.shape.reshapeToD2
 import com.wsr.core.shape.reshapeToD3
@@ -108,20 +108,20 @@ fun <T> NetworkBuilder.D2<T>.convD1(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process =
-        ConvD1(
-            filter = filter,
-            channel = inputX,
-            kernel = kernel,
-            stride = stride,
-            padding = padding,
-            inputSize = inputY,
-            optimizer = optimizer.d3(filter, inputX, kernel),
-            weight = initializer.d3(
-                input = listOf(inputX, kernel),
-                output = listOf(filter, kernel),
-                x = filter,
-                y = inputX,
-                z = kernel,
-            ),
+    ConvD1(
+        filter = filter,
+        channel = inputX,
+        kernel = kernel,
+        stride = stride,
+        padding = padding,
+        inputSize = inputY,
+        optimizer = optimizer.d3(filter, inputX, kernel),
+        weight = initializer.d3(
+            input = listOf(inputX, kernel),
+            output = listOf(filter, kernel),
+            x = filter,
+            y = inputX,
+            z = kernel,
         ),
+    ),
 )
