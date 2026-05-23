@@ -2,7 +2,8 @@ package com.wsr.batch.elementwise.math
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
-import com.wsr.batch.elementwise.map.map
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toD2
 import com.wsr.core.IOType
 import com.wsr.core.elementwise.math.softmax
 import kotlin.jvm.JvmName
@@ -29,7 +30,7 @@ fun Batch<IOType.D1>.pow(n: Int): Batch<IOType.D1> {
 fun Batch<IOType.D1>.sigmoid(): Batch<IOType.D1> = Batch(size = size, shape = shape, value = Backend.sigmoid(value))
 
 @JvmName("batchD1sSoftmax")
-fun Batch<IOType.D1>.softmax(): Batch<IOType.D1> = map { it.softmax() }
+fun Batch<IOType.D1>.softmax(): Batch<IOType.D1> = toD2().softmax(axis = 1).toBatch()
 
 @JvmName("batchD1sSqrt")
 fun Batch<IOType.D1>.sqrt(e: Float = 1e-7f): Batch<IOType.D1> {
