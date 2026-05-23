@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JIndex_gather(
+pub extern "system" fn Java_com_wsr_gpu_index_JIndex_gather(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -25,7 +25,7 @@ pub extern "system" fn Java_com_wsr_gpu_JIndex_gather(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JIndex_scatterAdd(
+pub extern "system" fn Java_com_wsr_gpu_index_JIndex_scatterAdd(
     _: JNIEnv,
     _class: JClass,
     x: jlong,

@@ -1,5 +1,5 @@
 use jni::JNIEnv;
-use jni::objects::{JClass};
+use jni::objects::JClass;
 use jni::sys::{jint, jlong};
 
 use crate::ops;
@@ -7,13 +7,13 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD1(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_averageD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
     result: jlong,
     runtime: jlong,
- ) {    
+) {
     let x = unsafe { &*(x as *const GPUBuffer) };
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
@@ -22,7 +22,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD2(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_averageD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -38,7 +38,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD3(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_averageD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -54,13 +54,13 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_averageD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD1(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_maxD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
     result: jlong,
     runtime: jlong,
- ) {    
+) {
     let x = unsafe { &*(x as *const GPUBuffer) };
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
@@ -69,7 +69,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD2(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_maxD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -85,7 +85,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD3(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_maxD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -101,13 +101,13 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_maxD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_minD1(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_minD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
     result: jlong,
     runtime: jlong,
- ) {    
+) {
     let x = unsafe { &*(x as *const GPUBuffer) };
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
@@ -116,7 +116,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_minD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_minD2(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_minD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -132,7 +132,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_minD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_minD3(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_minD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -148,13 +148,13 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_minD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_sumD1(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_sumD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
     result: jlong,
     runtime: jlong,
- ) {    
+) {
     let x = unsafe { &*(x as *const GPUBuffer) };
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
@@ -163,7 +163,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_sumD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_sumD2(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_sumD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -179,7 +179,7 @@ pub extern "system" fn Java_com_wsr_gpu_JCollection_sumD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JCollection_sumD3(
+pub extern "system" fn Java_com_wsr_gpu_reduction_JCollection_sumD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,

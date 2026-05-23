@@ -1,10 +1,8 @@
 pub mod runtime;
 pub mod buffer;
 
-pub mod collection;
-pub mod compare;
+pub mod elementwise;
 pub mod index;
-pub mod mat_mul;
-pub mod math;
-pub mod operation;
+pub mod linalg;
+pub mod reduction;
 pub mod shape;

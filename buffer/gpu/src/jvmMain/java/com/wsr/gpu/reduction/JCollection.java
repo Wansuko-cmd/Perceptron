@@ -1,6 +1,6 @@
-package com.wsr.gpu;
+package com.wsr.gpu.reduction;
 
-class JCollection {
+public class JCollection {
     public native void averageD1(long x, long result, long runtime);
     public native void averageD2(long x, int xi, int xj, int axis, long result, long runtime);
     public native void averageD3(long x, int xi, int xj, int xk, int axis, long result, long runtime);
