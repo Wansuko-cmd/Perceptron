@@ -107,3 +107,32 @@ pub extern "C" fn com_wsr_cpu_copy_into_d3(
     let result = unsafe { std::slice::from_raw_parts_mut(result, result_size as usize) };
     shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize);
 }
+
+#[unsafe(no_mangle)]
+pub extern "C" fn com_wsr_cpu_unfold(
+    x: *const f32,
+    xi: i32, xj: i32,
+    b: i32,
+    window: i32, stride: i32, padding: i32,
+    result: *mut f32,
+) {
+    let x = unsafe { std::slice::from_raw_parts(x, (b * xi * xj) as usize) };
+    let oj = (xj + padding * 2 - window) / stride + 1;
+    let result = unsafe { std::slice::from_raw_parts_mut(result, (b * xi * oj * window) as usize) };
+    shape::unfold(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, padding as usize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn com_wsr_cpu_fold(
+    x: *const f32,
+    xi: i32, xj: i32, xk: i32,
+    b: i32,
+    stride: i32, padding: i32,
+    result: *mut f32,
+) {
+    let x = unsafe { std::slice::from_raw_parts(x, (b * xi * xj * xk) as usize) };
+    let oj = xk + (xj - 1) * stride - padding * 2;
+    let result = unsafe { std::slice::from_raw_parts_mut(result, (b * xi * oj) as usize) };
+    result.fill(0.0);
+    shape::fold(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, padding as usize);
+}
