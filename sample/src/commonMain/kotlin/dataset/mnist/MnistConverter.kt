@@ -4,7 +4,7 @@ import com.wsr.base.data.DataBuffer
 import com.wsr.batch.Batch
 import com.wsr.batch.toList
 import com.wsr.core.IOType
-import com.wsr.core.collection.index.maxIndex
+import com.wsr.core.reduction.maxIndex
 import com.wsr.network.NetworkBuilder
 import com.wsr.network.converter.Converter
 import com.wsr.network.initializer.WeightInitializer
