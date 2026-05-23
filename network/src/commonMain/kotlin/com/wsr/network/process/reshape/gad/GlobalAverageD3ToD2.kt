@@ -1,8 +1,8 @@
 package com.wsr.network.process.reshape.gad
 
 import com.wsr.batch.Batch
-import com.wsr.batch.toBatch
-import com.wsr.batch.toList
+import com.wsr.batch.shape.toBatch
+import com.wsr.batch.shape.toList
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.d3

@@ -1,9 +1,9 @@
-package com.wsr.batch
+package com.wsr.batch.shape
 
 import com.wsr.Backend
 import com.wsr.base.data.DataBuffer
+import com.wsr.batch.Batch
 import com.wsr.core.IOType
-import kotlin.jvm.JvmName
 
 fun <T : IOType> List<T>.toBatch(): Batch<T> {
     val batchSize = size
@@ -20,12 +20,3 @@ fun <T : IOType> List<T>.toBatch(): Batch<T> {
         shape = shape,
     )
 }
-
-@JvmName("batchD1sToList")
-fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
-
-@JvmName("batchD2sToList")
-fun Batch<IOType.D2>.toList(): List<IOType.D2> = List(size) { get(it) }
-
-@JvmName("batchD3sToList")
-fun Batch<IOType.D3>.toList(): List<IOType.D3> = List(size) { get(it) }

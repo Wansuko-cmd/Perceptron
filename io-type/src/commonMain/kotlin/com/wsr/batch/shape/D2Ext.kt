@@ -15,6 +15,9 @@ fun Batch<IOType.D2>.toD3(): IOType.D3 = IOType.D3(shape = listOf(size, shape[0]
 
 fun IOType.D3.toBatch(): Batch<IOType.D2> = Batch(value = value, size = shape[0], shape = listOf(shape[1], shape[2]))
 
+@JvmName("batchD2sToList")
+fun Batch<IOType.D2>.toList(): List<IOType.D2> = List(size) { get(it) }
+
 @JvmName("batchD2sFlatten")
 fun Batch<IOType.D2>.flatten() = Batch<IOType.D1>(
     shape = listOf(step),

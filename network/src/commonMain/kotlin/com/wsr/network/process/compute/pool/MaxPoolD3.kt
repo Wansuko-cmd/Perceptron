@@ -2,7 +2,7 @@ package com.wsr.network.process.compute.pool
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
-import com.wsr.batch.toBatch
+import com.wsr.batch.shape.toBatch
 import com.wsr.core.IOType
 import com.wsr.core.d3
 import com.wsr.core.get

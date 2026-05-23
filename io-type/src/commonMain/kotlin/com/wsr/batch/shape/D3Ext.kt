@@ -2,6 +2,7 @@ package com.wsr.batch.shape
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.get
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
@@ -9,6 +10,9 @@ fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, shape[0]
 
 fun IOType.D4.toBatch(): Batch<IOType.D3> =
     Batch(value = value, size = shape[0], shape = listOf(shape[1], shape[2], shape[3]))
+
+@JvmName("batchD3sToList")
+fun Batch<IOType.D3>.toList(): List<IOType.D3> = List(size) { get(it) }
 
 @JvmName("batchD3sFlatten")
 fun Batch<IOType.D3>.flatten() = Batch<IOType.D1>(
