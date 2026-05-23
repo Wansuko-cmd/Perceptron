@@ -11,9 +11,9 @@ import kotlin.jvm.JvmName
 
 fun Batch<IOType.D2>.broadcastToD3(axis: Int, size: Int) = Batch(this.size) { this[it].broadcastToD3(axis, size) }
 
-fun IOType.D2.toD1(): Batch<IOType.D1> = Batch(value = value, size = shape[0], shape = listOf(shape[1]))
-
 fun Batch<IOType.D2>.toD3(): IOType.D3 = IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value)
+
+fun IOType.D3.toBatch(): Batch<IOType.D2> = Batch(value = value, size = shape[0], shape = listOf(shape[1], shape[2]))
 
 @JvmName("batchD2sFlatten")
 fun Batch<IOType.D2>.flatten() = Batch<IOType.D1>(

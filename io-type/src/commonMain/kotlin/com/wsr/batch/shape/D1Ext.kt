@@ -13,6 +13,8 @@ fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int) = Batch(this.size) { th
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, shape[0]), value = value)
 
+fun IOType.D2.toBatch(): Batch<IOType.D1> = Batch(size = i, shape = listOf(j), value = value)
+
 @JvmName("batchD1sReshapeToD2")
 fun Batch<IOType.D1>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
 
