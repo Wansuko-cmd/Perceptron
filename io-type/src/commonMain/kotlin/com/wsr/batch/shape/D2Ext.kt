@@ -52,29 +52,29 @@ fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOTyp
         0 -> listOf(i * 2, j)
         else -> listOf(i, j * 2)
     }
-    val (i, j) = newShape
+    val (newI, newJ) = newShape
     Backend.copyInto(
         x = value,
         y = result,
         yi = size,
-        yj = i,
-        yk = j,
+        yj = newI,
+        yk = newJ,
         axis = axis + 1,
         indices = when (axis) {
-            0 -> 0 until i step 2
-            else -> 0 until j step 2
+            0 -> 0 until newI step 2
+            else -> 0 until newJ step 2
         },
     )
     Backend.copyInto(
         x = other.value,
         y = result,
         yi = size,
-        yj = i,
-        yk = j,
+        yj = newI,
+        yk = newJ,
         axis = axis + 1,
         indices = when (axis) {
-            0 -> 1 until i step 2
-            else -> 1 until j step 2
+            0 -> 1 until newI step 2
+            else -> 1 until newJ step 2
         },
     )
     return Batch(size = size, shape = newShape, value = result)

@@ -49,9 +49,9 @@ fun Batch<IOType.D3>.matMul(
     transA: Boolean = false,
     transB: Boolean = false,
 ): Batch<IOType.D3> {
-    val m = if (transA) k else j
+    val m = if (transA) this.k else this.j
     val n = if (transB) other.j else other.k
-    val k = if (transA) j else k
+    val k = if (transA) this.j else this.k
     val result = Backend.matMul(
         x = value,
         transX = transA,

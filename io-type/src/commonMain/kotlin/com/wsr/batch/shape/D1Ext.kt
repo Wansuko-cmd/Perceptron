@@ -35,23 +35,23 @@ fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
 
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
     check(size == other.size && i == other.i)
-    val i = i * 2
+    val newI = i * 2
     val result = DataBuffer.create(value.size + other.value.size)
     Backend.copyInto(
         x = value,
         y = result,
         yi = size,
-        yj = i,
+        yj = newI,
         axis = 1,
-        indices = 0 until i step 2,
+        indices = 0 until newI step 2,
     )
     Backend.copyInto(
         x = other.value,
         y = result,
         yi = size,
-        yj = i,
+        yj = newI,
         axis = 1,
-        indices = 1 until i step 2,
+        indices = 1 until newI step 2,
     )
-    return Batch(size = size, shape = listOf(i), value = result)
+    return Batch(size = size, shape = listOf(newI), value = result)
 }
