@@ -3,6 +3,8 @@
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.batch.get
+import com.wsr.batch.i
+import com.wsr.batch.j
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
@@ -41,11 +43,11 @@ fun Batch<IOType.D1>.minus(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2>
     val result = Backend.minus(
         x = value,
         xi = size,
-        xj = shape[0],
+        xj = i,
         y = other.value,
         yi = other.size,
-        yj = other.shape[0],
-        yk = other.shape[1],
+        yj = other.i,
+        yk = other.j,
         axis1 = 0,
         axis2 = axis + 1,
     )

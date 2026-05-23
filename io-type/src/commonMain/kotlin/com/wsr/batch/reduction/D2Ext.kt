@@ -2,6 +2,8 @@ package com.wsr.batch.reduction
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.i
+import com.wsr.batch.j
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
@@ -13,8 +15,8 @@ fun Batch<IOType.D2>.sum(): Batch<IOType.D0> {
 
 @JvmName("batchD2sSumWithAxis")
 fun Batch<IOType.D2>.sum(axis: Int): Batch<IOType.D1> {
-    val result = Backend.sum(x = value, xi = size, xj = shape[0], xk = shape[1], axis = axis + 1)
-    return Batch(size = size, shape = listOf(if (axis == 0) shape[1] else shape[0]), value = result)
+    val result = Backend.sum(x = value, xi = size, xj = i, xk = j, axis = axis + 1)
+    return Batch(size = size, shape = listOf(if (axis == 0) j else i), value = result)
 }
 
 @JvmName("batchD2sMax")

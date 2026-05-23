@@ -3,6 +3,9 @@
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.batch.get
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 import com.wsr.core.get
 import kotlin.jvm.JvmName
@@ -36,9 +39,9 @@ fun Batch<IOType.D3>.times(other: IOType.D1, axis: Int): Batch<IOType.D3> {
     val result = Backend.times(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
-        xl = shape[2],
+        xj = i,
+        xk = j,
+        xl = k,
         y = other.value,
         axis = axis + 1,
     )
@@ -53,12 +56,12 @@ fun Batch<IOType.D3>.times(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOTy
     val result = Backend.times(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
-        xl = shape[2],
+        xj = i,
+        xk = j,
+        xl = k,
         y = other.value,
-        yi = other.shape[0],
-        yj = other.shape[1],
+        yi = other.i,
+        yj = other.j,
         axis1 = axis1 + 1,
         axis2 = axis2 + 1,
     )
@@ -73,13 +76,13 @@ fun Batch<IOType.D3>.times(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Bat
     val result = Backend.times(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
-        xl = shape[2],
+        xj = i,
+        xk = j,
+        xl = k,
         y = other.value,
         yi = other.size,
-        yj = other.shape[0],
-        yk = other.shape[1],
+        yj = other.i,
+        yk = other.j,
         axis1 = 0,
         axis2 = axis1 + 1,
         axis3 = axis2 + 1,

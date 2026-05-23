@@ -2,6 +2,9 @@
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
@@ -19,7 +22,7 @@ operator fun Batch<IOType.D2>.minus(other: Batch<IOType.D0>): Batch<IOType.D2> {
 
 @JvmName("batchD2sMinusD1WithAxis")
 fun Batch<IOType.D2>.minus(other: IOType.D1, axis: Int): Batch<IOType.D2> {
-    val result = Backend.minus(x = value, xi = size, xj = shape[0], xk = shape[1], y = other.value, axis = axis + 1)
+    val result = Backend.minus(x = value, xi = size, xj = i, xk = j, y = other.value, axis = axis + 1)
     return Batch(size = size, shape = shape, value = result)
 }
 
@@ -28,11 +31,11 @@ fun Batch<IOType.D2>.minus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2>
     val result = Backend.minus(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
+        xj = i,
+        xk = j,
         y = other.value,
         yi = other.size,
-        yj = other.shape[0],
+        yj = other.i,
         axis1 = 0,
         axis2 = axis + 1,
     )
@@ -62,13 +65,13 @@ fun Batch<IOType.D2>.minus(other: Batch<IOType.D3>, axis1: Int, axis2: Int): Bat
     val result = Backend.minus(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
+        xj = i,
+        xk = j,
         y = other.value,
         yi = other.size,
-        yj = other.shape[0],
-        yk = other.shape[1],
-        yl = other.shape[2],
+        yj = other.i,
+        yk = other.j,
+        yl = other.k,
         axis1 = 0,
         axis2 = axis1 + 1,
         axis3 = axis2 + 1,

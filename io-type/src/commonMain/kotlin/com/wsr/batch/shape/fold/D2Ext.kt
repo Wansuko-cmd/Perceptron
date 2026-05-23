@@ -2,13 +2,16 @@
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 
 fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D3> {
     val result = Backend.unfold(
         x = value,
-        xi = shape[0],
-        xj = shape[1],
+        xi = i,
+        xj = j,
         b = size,
         window = windowSize,
         stride = stride,
@@ -18,8 +21,8 @@ fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
         value = result,
         size = size,
         shape = listOf(
-            shape[0],
-            (shape[1] - windowSize + padding * 2) / stride + 1,
+            i,
+            (j - windowSize + padding * 2) / stride + 1,
             windowSize,
         ),
     )
@@ -28,9 +31,9 @@ fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
 fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2> {
     val result = Backend.fold(
         x = value,
-        xi = shape[0],
-        xj = shape[1],
-        xk = shape[2],
+        xi = i,
+        xj = j,
+        xk = k,
         b = size,
         stride = stride,
         padding = padding,
@@ -39,8 +42,8 @@ fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2> {
         value = result,
         size = size,
         shape = listOf(
-            shape[0],
-            shape[2] + (shape[1] - 1) * stride - padding * 2,
+            i,
+            k + (j - 1) * stride - padding * 2,
         ),
     )
 }

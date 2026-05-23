@@ -3,13 +3,16 @@ package com.wsr.batch.shape
 import com.wsr.Backend
 import com.wsr.batch.Batch
 import com.wsr.batch.get
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 import kotlin.jvm.JvmName
 
-fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
+fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, i, j, k), value = value)
 
 fun IOType.D4.toBatch(): Batch<IOType.D3> =
-    Batch(value = value, size = shape[0], shape = listOf(shape[1], shape[2], shape[3]))
+    Batch(value = value, size = i, shape = listOf(j, k, l))
 
 @JvmName("batchD3sToList")
 fun Batch<IOType.D3>.toList(): List<IOType.D3> = List(size) { get(it) }
@@ -31,9 +34,9 @@ fun Batch<IOType.D3>.transpose(axisI: Int, axisJ: Int, axisK: Int): Batch<IOType
     val result = Backend.transpose(
         x = value,
         xi = size,
-        xj = shape[0],
-        xk = shape[1],
-        xl = shape[2],
+        xj = i,
+        xk = j,
+        xl = k,
         axisI = 0,
         axisJ = axisI + 1,
         axisK = axisJ + 1,

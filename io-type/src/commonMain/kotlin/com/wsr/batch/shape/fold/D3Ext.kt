@@ -2,6 +2,9 @@
 
 import com.wsr.batch.Batch
 import com.wsr.batch.get
+import com.wsr.batch.i
+import com.wsr.batch.j
+import com.wsr.batch.k
 import com.wsr.core.IOType
 import com.wsr.core.d2
 import com.wsr.core.d3
@@ -14,9 +17,9 @@ import com.wsr.core.set
  * 出力: [windowSize * windowSize * channel, outputSizeX * outputSizeY * batchSize]
  */
 fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): IOType.D2 {
-    val channel = shape[0]
-    val inputX = shape[1]
-    val inputY = shape[2]
+    val channel = i
+    val inputX = j
+    val inputY = k
     val outputX = (inputX - windowSize + 2 * padding) / stride + 1
     val outputY = (inputY - windowSize + 2 * padding) / stride + 1
     val row = windowSize * windowSize * channel
@@ -60,8 +63,8 @@ fun IOType.D2.fold(
     stride: Int,
     padding: Int,
 ): Batch<IOType.D3> {
-    val windowSize = kotlin.math.sqrt((shape[0] / channel).toDouble()).toInt()
-    val outputSizeXY = shape[1] / batchSize
+    val windowSize = kotlin.math.sqrt((i / channel).toDouble()).toInt()
+    val outputSizeXY = j / batchSize
     val outputSizeX = kotlin.math.sqrt(outputSizeXY.toDouble()).toInt()
     val outputSizeY = outputSizeXY / outputSizeX
 

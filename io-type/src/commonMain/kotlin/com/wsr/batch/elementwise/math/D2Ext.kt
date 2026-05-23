@@ -2,6 +2,8 @@ package com.wsr.batch.elementwise.math
 
 import com.wsr.Backend
 import com.wsr.batch.Batch
+import com.wsr.batch.i
+import com.wsr.batch.j
 import com.wsr.batch.shape.toBatch
 import com.wsr.batch.shape.toD3
 import com.wsr.core.IOType
@@ -35,7 +37,7 @@ fun Batch<IOType.D2>.sigmoid(): Batch<IOType.D2> = Batch(size = size, shape = sh
 fun Batch<IOType.D2>.softmax(): Batch<IOType.D2> = toD3()
     .reshapeToD2(i = size, j = step)
     .softmax(axis = 1)
-    .reshapeToD3(i = size, j = shape[0], k = shape[1])
+    .reshapeToD3(i = size, j = i, k = j)
     .toBatch()
 
 @JvmName("batchD2sSoftmaxWithAxis")
