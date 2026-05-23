@@ -1,5 +1,5 @@
-use jni::{JNIEnv};
-use jni::objects::{JClass};
+use jni::JNIEnv;
+use jni::objects::JClass;
 use jni::sys::{jfloat, jint, jlong};
 
 use crate::ops;
@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JMath_exp(
+pub extern "system" fn Java_com_wsr_gpu_elementwise_math_JMath_exp(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -22,7 +22,7 @@ pub extern "system" fn Java_com_wsr_gpu_JMath_exp(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JMath_ln(
+pub extern "system" fn Java_com_wsr_gpu_elementwise_math_JMath_ln(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -38,7 +38,7 @@ pub extern "system" fn Java_com_wsr_gpu_JMath_ln(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JMath_sigmoid(
+pub extern "system" fn Java_com_wsr_gpu_elementwise_math_JMath_sigmoid(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -53,7 +53,7 @@ pub extern "system" fn Java_com_wsr_gpu_JMath_sigmoid(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JMath_pow(
+pub extern "system" fn Java_com_wsr_gpu_elementwise_math_JMath_pow(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -69,7 +69,7 @@ pub extern "system" fn Java_com_wsr_gpu_JMath_pow(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JMath_sqrt(
+pub extern "system" fn Java_com_wsr_gpu_elementwise_math_JMath_sqrt(
     _: JNIEnv,
     _class: JClass,
     x: jlong,

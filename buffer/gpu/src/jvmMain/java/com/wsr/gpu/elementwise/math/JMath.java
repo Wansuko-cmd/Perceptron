@@ -1,4 +1,4 @@
-package com.wsr.gpu;
+package com.wsr.gpu.elementwise.math;
 
 public class JMath {
     public native void exp(long x, long result, long runtime);

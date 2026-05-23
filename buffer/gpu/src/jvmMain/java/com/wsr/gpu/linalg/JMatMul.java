@@ -1,6 +1,6 @@
-package com.wsr.gpu;
+package com.wsr.gpu.linalg;
 
-class JMatMul {
+public class JMatMul {
     public native void matMul(
             long x,
             boolean transX,
