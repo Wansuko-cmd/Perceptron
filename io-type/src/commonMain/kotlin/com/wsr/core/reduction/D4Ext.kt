@@ -47,7 +47,7 @@ fun IOType.D4.max(axis: Int): IOType.D3 = when (axis) {
 
 fun IOType.D4.min() = IOType.D0(Backend.min(x = value))
 
-fun IOType.D4.min(axis: Int): IOType.D3  = when (axis) {
+fun IOType.D4.min(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),
         value = Backend.min(x = value, xi = i, xj = j, xk = k * l, axis = 0),

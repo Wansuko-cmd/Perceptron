@@ -11,8 +11,7 @@ import kotlin.jvm.JvmName
 
 fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, i, j, k), value = value)
 
-fun IOType.D4.toBatch(): Batch<IOType.D3> =
-    Batch(value = value, size = i, shape = listOf(j, k, l))
+fun IOType.D4.toBatch(): Batch<IOType.D3> = Batch(value = value, size = i, shape = listOf(j, k, l))
 
 @JvmName("batchD3sToList")
 fun Batch<IOType.D3>.toList(): List<IOType.D3> = List(size) { get(it) }

@@ -2,7 +2,6 @@ package com.wsr.core.shape
 
 import com.wsr.Backend
 import com.wsr.core.IOType
-import com.wsr.core.d4
 import com.wsr.core.get
 
 fun IOType.D4.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): IOType.D4 {

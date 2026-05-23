@@ -101,33 +101,32 @@ class FoldTest {
     @Test
     fun `fold_batch=複数_channel=複数_padding=1=複合ケース`() = bufferTestRule {
         val x = DataBuffer.create(
+            0f, 1f, 2f,
+            1f, 2f, 3f,
+            2f, 3f, 4f,
+            3f, 4f, 0f,
 
-            0f,  1f,  2f,
-            1f,  2f,  3f,
-            2f,  3f,  4f,
-            3f,  4f,  0f,
+            0f, 5f, 6f,
+            5f, 6f, 7f,
+            6f, 7f, 8f,
+            7f, 8f, 0f,
 
-            0f,  5f,  6f,
-            5f,  6f,  7f,
-            6f,  7f,  8f,
-            7f,  8f,  0f,
-
-            0f,  9f,  10f,
-            9f,  10f, 11f,
+            0f, 9f, 10f,
+            9f, 10f, 11f,
             10f, 11f, 12f,
             11f, 12f, 0f,
 
-            0f,  13f, 14f,
+            0f, 13f, 14f,
             13f, 14f, 15f,
             14f, 15f, 16f,
             15f, 16f, 0f,
 
-            0f,  17f, 18f,
+            0f, 17f, 18f,
             17f, 18f, 19f,
             18f, 19f, 20f,
             19f, 20f, 0f,
 
-            0f,  21f, 22f,
+            0f, 21f, 22f,
             21f, 22f, 23f,
             22f, 23f, 24f,
             23f, 24f, 0f,
@@ -137,7 +136,7 @@ class FoldTest {
 
         assertContentEquals(
             expected = DataBuffer.create(
-                2f,  6f,  9f,  8f,
+                2f, 6f, 9f, 8f,
                 10f, 18f, 21f, 16f,
                 18f, 30f, 33f, 24f,
                 26f, 42f, 45f, 32f,

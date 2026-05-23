@@ -40,7 +40,7 @@ fun IOType.D4.softmax(axis: Int): IOType.D4 {
         0, 1 -> 2
         else -> 1
     }
-    val axis3 = when(axis) {
+    val axis3 = when (axis) {
         0, 1, 2 -> 3
         else -> 2
     }
