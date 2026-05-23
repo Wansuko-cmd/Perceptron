@@ -152,7 +152,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     companion object {
         val modules = mutableListOf(buildInSerializersModule)
 
-        @JvmName("registerLayer")
+        @JvmName("registerProcess")
         inline fun <reified T : Process> register(clazz: KClass<T>) {
             val module = SerializersModule {
                 polymorphic(Process::class) {
