@@ -1363,4 +1363,18 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         )
         return result
     }
+
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+        val oj = (xj + padding * 2 - window) / stride + 1
+        val result = CPUJvmBuffer.create(b * xi * oj * window)
+        shape.unfold(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
+        return result
+    }
+
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+        val oj = xk + (xj - 1) * stride - padding * 2
+        val result = CPUJvmBuffer.create(b * xi * oj)
+        shape.fold(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
+        return result
+    }
 }
