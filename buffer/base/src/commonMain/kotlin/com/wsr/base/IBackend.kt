@@ -402,6 +402,20 @@ interface IBackend {
         axisL: Int,
     ): DataBuffer
 
+    fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        xm: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        axisM: Int,
+    ): DataBuffer
+
     fun slice(x: DataBuffer, indices: IntProgression): DataBuffer
 
     fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer
