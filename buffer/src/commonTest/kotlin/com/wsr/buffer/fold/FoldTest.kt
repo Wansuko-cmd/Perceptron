@@ -46,8 +46,12 @@ class FoldTest {
     @Test
     fun `fold_stride=2=ウィンドウが飛び幅分ずれる`() = bufferTestRule {
         val x = DataBuffer.create(
-            1f, 2f, 3f,
-            3f, 4f, 5f,
+            1f,
+            2f,
+            3f,
+            3f,
+            4f,
+            5f,
         )
 
         val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 3, b = 1, stride = 2, padding = 0)
@@ -61,18 +65,26 @@ class FoldTest {
     @Test
     fun `fold_channel=複数=チャンネルごとに独立して畳み込む`() = bufferTestRule {
         val x = DataBuffer.create(
-            1f, 2f,
-            2f, 3f,
-            4f, 5f,
-            5f, 6f,
+            1f,
+            2f,
+            2f,
+            3f,
+            4f,
+            5f,
+            5f,
+            6f,
         )
 
         val actual = Backend.fold(x = x, xi = 2, xj = 2, xk = 2, b = 1, stride = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(
-                1f, 4f, 3f,
-                4f, 10f, 6f,
+                1f,
+                4f,
+                3f,
+                4f,
+                10f,
+                6f,
             ),
             actual = actual,
         )
@@ -81,18 +93,26 @@ class FoldTest {
     @Test
     fun `fold_batch=複数=バッチごとに独立して畳み込む`() = bufferTestRule {
         val x = DataBuffer.create(
-            1f, 2f,
-            2f, 3f,
-            4f, 5f,
-            5f, 6f,
+            1f,
+            2f,
+            2f,
+            3f,
+            4f,
+            5f,
+            5f,
+            6f,
         )
 
         val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 2, b = 2, stride = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(
-                1f, 4f, 3f,
-                4f, 10f, 6f,
+                1f,
+                4f,
+                3f,
+                4f,
+                10f,
+                6f,
             ),
             actual = actual,
         )

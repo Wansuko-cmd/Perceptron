@@ -51,8 +51,12 @@ class UnfoldTest {
 
         assertContentEquals(
             expected = DataBuffer.create(
-                1f, 2f, 3f,
-                3f, 4f, 5f,
+                1f,
+                2f,
+                3f,
+                3f,
+                4f,
+                5f,
             ),
             actual = actual,
         )
@@ -66,10 +70,14 @@ class UnfoldTest {
 
         assertContentEquals(
             expected = DataBuffer.create(
-                1f, 2f,
-                2f, 3f,
-                4f, 5f,
-                5f, 6f,
+                1f,
+                2f,
+                2f,
+                3f,
+                4f,
+                5f,
+                5f,
+                6f,
             ),
             actual = actual,
         )
@@ -83,10 +91,14 @@ class UnfoldTest {
 
         assertContentEquals(
             expected = DataBuffer.create(
-                1f, 2f,
-                2f, 3f,
-                4f, 5f,
-                5f, 6f,
+                1f,
+                2f,
+                2f,
+                3f,
+                4f,
+                5f,
+                5f,
+                6f,
             ),
             actual = actual,
         )
