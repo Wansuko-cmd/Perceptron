@@ -7,10 +7,9 @@ import com.wsr.batch.shape.toBatch
 import com.wsr.batch.shape.toD3
 import com.wsr.batch.shape.toD4
 import com.wsr.core.IOType
-import com.wsr.core.d2
 import com.wsr.core.elementwise.operation.div.div
-import com.wsr.core.get
 import com.wsr.core.linalg.matMul
+import com.wsr.core.shape.flip
 import com.wsr.core.shape.reshapeToD2
 import com.wsr.core.shape.reshapeToD3
 import com.wsr.core.shape.reshapeToD4
@@ -77,11 +76,10 @@ class ConvD1 internal constructor(
 
         val delta = calcDelta(output)
 
-        val reversed = IOType.d2(i = channel * kernel, j = filter) { i, f ->
-            val c = i / kernel
-            val k = i % kernel
-            weight[f, c, kernel - k - 1]
-        }
+        val reversed = weight
+            .flip(axis = 2)
+            .reshapeToD2(i = filter, j = channel * kernel)
+            .transpose()
         val deltaCol = delta.toD3()
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
             .reshapeToD2(i = filter, j = input.size * outputY)
