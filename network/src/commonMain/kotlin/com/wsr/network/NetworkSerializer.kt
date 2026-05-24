@@ -48,6 +48,7 @@ import com.wsr.network.process.compute.bias.d2.BiasD2
 import com.wsr.network.process.compute.bias.d3.BiasAxisD3
 import com.wsr.network.process.compute.bias.d3.BiasD3
 import com.wsr.network.process.compute.conv.ConvD1
+import com.wsr.network.process.compute.conv.ConvD2
 import com.wsr.network.process.compute.debug.DebugD1
 import com.wsr.network.process.compute.debug.DebugD2
 import com.wsr.network.process.compute.debug.DebugD3
@@ -253,6 +254,7 @@ private val buildInSerializersModule = SerializersModule {
 
         // Conv
         subclass(ConvD1::class)
+        subclass(ConvD2::class)
 
         // Debug
         subclass(DebugD1::class)
