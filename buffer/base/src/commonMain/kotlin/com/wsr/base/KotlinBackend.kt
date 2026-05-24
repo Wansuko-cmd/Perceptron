@@ -1200,4 +1200,58 @@ object KotlinBackend : IBackend {
         }
         return result
     }
+
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+        val oj = (xj - window + padding * 2) / stride + 1
+        val ok = (xk - window + padding * 2) / stride + 1
+        val ww = window * window
+        val result = DataBufferGenerator.create(b * xi * oj * ok * ww)
+        for (xb in 0 until b) {
+            for (i in 0 until xi) {
+                for (ox in 0 until oj) {
+                    for (oy in 0 until ok) {
+                        for (wy in 0 until window) {
+                            for (wx in 0 until window) {
+                                val inputX = ox * stride + wx - padding
+                                val inputY = oy * stride + wy - padding
+                                if (inputX in 0 until xj && inputY in 0 until xk) {
+                                    val resultIndex = (((xb * xi + i) * oj + ox) * ok + oy) * ww + wy * window + wx
+                                    val xIndex = ((xb * xi + i) * xj + inputX) * xk + inputY
+                                    result[resultIndex] = x[xIndex]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+        val window = kotlin.math.sqrt(xl.toDouble()).toInt()
+        val oj = window + (xj - 1) * stride - padding * 2
+        val ok = window + (xk - 1) * stride - padding * 2
+        val result = DataBufferGenerator.create(b * xi * oj * ok)
+        for (xb in 0 until b) {
+            for (i in 0 until xi) {
+                for (ox in 0 until xj) {
+                    for (oy in 0 until xk) {
+                        for (wy in 0 until window) {
+                            for (wx in 0 until window) {
+                                val inputX = ox * stride + wx - padding
+                                val inputY = oy * stride + wy - padding
+                                if (inputX in 0 until oj && inputY in 0 until ok) {
+                                    val xIndex = (((xb * xi + i) * xj + ox) * xk + oy) * xl + wy * window + wx
+                                    val resultIndex = ((xb * xi + i) * oj + inputX) * ok + inputY
+                                    result[resultIndex] += x[xIndex]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
 }
