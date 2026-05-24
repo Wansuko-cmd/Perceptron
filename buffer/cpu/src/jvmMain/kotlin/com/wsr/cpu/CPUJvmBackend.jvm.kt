@@ -1181,6 +1181,24 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        xm: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        axisM: Int,
+    ): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        shape.transposeD5(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, xm, axisI, axisJ, axisK, axisL, axisM, result.byteBuffer)
+        return result
+    }
+
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
         val result = CPUJvmBuffer.create(min(x.size, indices.size))
         shape.sliceD1(x.toCPUBuffer().byteBuffer, indices.first, indices.last, indices.step, result.byteBuffer)

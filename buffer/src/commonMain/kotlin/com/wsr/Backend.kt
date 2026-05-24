@@ -453,6 +453,20 @@ object Backend : IBackend {
         axisL: Int,
     ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
 
+    override fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        xm: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        axisM: Int,
+    ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, xm, axisI, axisJ, axisK, axisL, axisM)
+
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer = instance.slice(x, indices)
 
     override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer =

@@ -860,6 +860,51 @@ object KotlinBackend : IBackend {
         return result
     }
 
+    override fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        xm: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        axisM: Int,
+    ): DataBuffer {
+        val oldShape = listOf(xi, xj, xk, xl, xm)
+        val newShape = listOf(oldShape[axisI], oldShape[axisJ], oldShape[axisK], oldShape[axisL], oldShape[axisM])
+        val result = DataBufferGenerator.create(x.size)
+        for (ni in 0 until newShape[0]) {
+            val nii = ni * newShape[1]
+            for (nj in 0 until newShape[1]) {
+                val nji = (nii + nj) * newShape[2]
+                for (nk in 0 until newShape[2]) {
+                    val nki = (nji + nk) * newShape[3]
+                    for (nl in 0 until newShape[3]) {
+                        val nli = (nki + nl) * newShape[4]
+                        for (nm in 0 until newShape[4]) {
+                            val newIndex = nli + nm
+
+                            val (oi, oj, ok, ol, om) = IntArray(5).apply {
+                                this[axisI] = ni
+                                this[axisJ] = nj
+                                this[axisK] = nk
+                                this[axisL] = nl
+                                this[axisM] = nm
+                            }
+                            val oldIndex = (((oi * xj + oj) * xk + ok) * xl + ol) * xm + om
+
+                            result[newIndex] = x[oldIndex]
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
         val result = DataBufferGenerator.create(indices.size)
         var resultIndex = 0

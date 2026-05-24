@@ -34,6 +34,21 @@ public class JShape {
             ByteBuffer result
     );
 
+    public native void transposeD5(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int xl,
+            int xm,
+            int axisI,
+            int axisJ,
+            int axisK,
+            int axisL,
+            int axisM,
+            ByteBuffer result
+    );
+
     public native void sliceD1(
             ByteBuffer x,
             int start,

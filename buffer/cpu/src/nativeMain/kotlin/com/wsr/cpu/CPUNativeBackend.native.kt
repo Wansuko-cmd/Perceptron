@@ -96,6 +96,7 @@ import com.wsr.cpu.rs.com_wsr_cpu_times_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d2
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d3
 import com.wsr.cpu.rs.com_wsr_cpu_transpose_d4
+import com.wsr.cpu.rs.com_wsr_cpu_transpose_d5
 import com.wsr.cpu.rs.com_wsr_cpu_fold
 import com.wsr.cpu.rs.com_wsr_cpu_unfold
 import com.wsr.cpu.rs.com_wsr_cpu_where_d0_to_d0
@@ -1349,6 +1350,37 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             axis_j = axisJ,
             axis_k = axisK,
             axis_l = axisL,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun transpose(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        xm: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        axisM: Int,
+    ): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_transpose_d5(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            xm = xm,
+            axis_i = axisI,
+            axis_j = axisJ,
+            axis_k = axisK,
+            axis_l = axisL,
+            axis_m = axisM,
             result = result.buffer,
         )
         return result

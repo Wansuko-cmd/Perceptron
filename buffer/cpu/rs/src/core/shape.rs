@@ -69,6 +69,40 @@ pub fn transpose_d4(
     }
 }
 
+pub fn transpose_d5(
+    x: &[f32],
+    xi: usize, xj: usize, xk: usize, xl: usize, xm: usize,
+    axis_i: usize, axis_j: usize, axis_k: usize, axis_l: usize, axis_m: usize,
+    result: &mut [f32],
+) {
+    let old_shape = [xi, xj, xk, xl, xm];
+    let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k], old_shape[axis_l], old_shape[axis_m]];
+
+    let old_strides = [xj * xk * xl * xm, xk * xl * xm, xl * xm, xm, 1];
+
+    let ni_stride = old_strides[axis_i];
+    let nj_stride = old_strides[axis_j];
+    let nk_stride = old_strides[axis_k];
+    let nl_stride = old_strides[axis_l];
+    let nm_stride = old_strides[axis_m];
+
+    let mut result_iter = result.iter_mut();
+
+    for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
+        for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
+            for n_k in (n_j..n_j + new_shape[2] * nk_stride).step_by(nk_stride) {
+                for n_l in (n_k..n_k + new_shape[3] * nl_stride).step_by(nl_stride) {
+                    for index in (n_l..n_l + new_shape[4] * nm_stride).step_by(nm_stride) {
+                        if let Some(result_value) = result_iter.next() {
+                            *result_value = x[index];
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub fn slice_d1(x: &[f32], start: usize, end: usize, step: isize, result: &mut [f32]) {
     match step {
         0 => panic!("invalid parameter. [step: {}]", step),
