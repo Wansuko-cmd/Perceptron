@@ -1,88 +1,53 @@
 ﻿package com.wsr.batch.shape.fold
 
+import com.wsr.Backend
 import com.wsr.batch.Batch
-import com.wsr.batch.get
 import com.wsr.batch.i
 import com.wsr.batch.j
 import com.wsr.batch.k
+import com.wsr.batch.l
 import com.wsr.core.IOType
-import com.wsr.core.d2
-import com.wsr.core.d3
-import com.wsr.core.get
-import com.wsr.core.set
+import kotlin.math.sqrt
 
-/**
- * Unfold: Batch<IOType.D3>を列形式に展開 (im2col)
- * 入力: [batchSize] x [channel, inputSizeX, inputSizeY]
- * 出力: [windowSize * windowSize * channel, outputSizeX * outputSizeY * batchSize]
- */
-fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): IOType.D2 {
-    val channel = i
-    val inputX = j
-    val inputY = k
-    val outputX = (inputX - windowSize + 2 * padding) / stride + 1
-    val outputY = (inputY - windowSize + 2 * padding) / stride + 1
-    val row = windowSize * windowSize * channel
-    val column = outputX * outputY * size
-    val result = IOType.d2(row, column)
-
-    for (batchIndex in 0 until size) {
-        val input = this[batchIndex]
-        for (c in 0 until channel) {
-            for (wy in 0 until windowSize) {
-                for (wx in 0 until windowSize) {
-                    val rowIdx = c * windowSize * windowSize + wy * windowSize + wx
-                    for (oy in 0 until outputY) {
-                        for (ox in 0 until outputX) {
-                            val columnIndex = batchIndex * outputX * outputY + oy * outputX + ox
-                            val inputIdxX = ox * stride + wx - padding
-                            val inputIdxY = oy * stride + wy - padding
-                            if (inputIdxX in 0 until inputX && inputIdxY in 0 until inputY) {
-                                result[rowIdx, columnIndex] = input[c, inputIdxX, inputIdxY]
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return result
+fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D4> {
+    val oj = (j - windowSize + padding * 2) / stride + 1
+    val ok = (k - windowSize + padding * 2) / stride + 1
+    val result = Backend.unfold(
+        x = value,
+        xi = i,
+        xj = j,
+        xk = k,
+        b = size,
+        window = windowSize,
+        stride = stride,
+        padding = padding,
+    )
+    return Batch(
+        value = result,
+        size = size,
+        shape = listOf(i, oj, ok, windowSize * windowSize),
+    )
 }
 
-/**
- * Fold: 列形式をBatch<IOType.D3>に戻す (col2im)
- * 入力: [windowSize * windowSize * channel, outputSizeX * outputSizeY * batchSize]
- * 出力: [batchSize] x [channel, inputSizeX, inputSizeY]
- * 注意: 重複部分は加算される
- */
-fun IOType.D2.fold(
-    batchSize: Int,
-    channel: Int,
-    inputX: Int,
-    inputY: Int,
-    stride: Int,
-    padding: Int,
-): Batch<IOType.D3> {
-    val windowSize = kotlin.math.sqrt((i / channel).toDouble()).toInt()
-    val outputSizeXY = j / batchSize
-    val outputSizeX = kotlin.math.sqrt(outputSizeXY.toDouble()).toInt()
-    val outputSizeY = outputSizeXY / outputSizeX
-
-    return Batch(batchSize) { b ->
-        IOType.d3(channel, inputX, inputY) { c, ix, iy ->
-            var sum = 0f
-            for (oy in 0 until outputSizeY) {
-                for (ox in 0 until outputSizeX) {
-                    val windowIdxX = ix - ox * stride + padding
-                    val windowIdxY = iy - oy * stride + padding
-                    if (windowIdxX in 0 until windowSize && windowIdxY in 0 until windowSize) {
-                        val row = c * windowSize * windowSize + windowIdxY * windowSize + windowIdxX
-                        val col = b * outputSizeX * outputSizeY + oy * outputSizeX + ox
-                        sum += this[row, col]
-                    }
-                }
-            }
-            sum
-        }
-    }
+fun Batch<IOType.D4>.fold(stride: Int, padding: Int): Batch<IOType.D3> {
+    val window = sqrt(l.toDouble()).toInt()
+    val result = Backend.fold(
+        x = value,
+        xi = i,
+        xj = j,
+        xk = k,
+        xl = l,
+        b = size,
+        stride = stride,
+        padding = padding,
+    )
+    return Batch(
+        value = result,
+        size = size,
+        shape = listOf(
+            i,
+            window + (j - 1) * stride - padding * 2,
+            window + (k - 1) * stride - padding * 2,
+        ),
+    )
 }

@@ -8,6 +8,9 @@ import com.wsr.batch.k
 import com.wsr.batch.l
 import com.wsr.core.IOType
 
+@JvmName("batchD4sReshapeToD3")
+fun Batch<IOType.D4>.reshapeToD3(i: Int, j: Int, k: Int) = Batch<IOType.D3>(size = size, shape = listOf(i, j, k), value = value)
+
 fun Batch<IOType.D4>.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): Batch<IOType.D4> {
     val result = Backend.transpose(
         x = value,
