@@ -57,6 +57,25 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD4(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD5(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, xk: jint, xl: jint, xm: jint,
+    axis_i: jint, axis_j: jint, axis_k: jint, axis_l: jint, axis_m: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::transpose_d5(
+        x,
+        xi as usize, xj as usize, xk as usize, xl as usize, xm as usize,
+        axis_i as usize, axis_j as usize, axis_k as usize, axis_l as usize, axis_m as usize,
+        result,
+    );
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD1(
     env: JNIEnv,
     _class: JClass,

@@ -35,6 +35,24 @@ pub extern "C" fn com_wsr_cpu_transpose_d4(
 }
 
 #[unsafe(no_mangle)]
+pub extern "C" fn com_wsr_cpu_transpose_d5(
+    x: *const f32,
+    xi: i32, xj: i32, xk: i32, xl: i32, xm: i32,
+    axis_i: i32, axis_j: i32, axis_k: i32, axis_l: i32, axis_m: i32,
+    result: *mut f32,
+) {
+    let size = xi * xj * xk * xl * xm;
+    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
+    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
+    shape::transpose_d5(
+        x,
+        xi as usize, xj as usize, xk as usize, xl as usize, xm as usize,
+        axis_i as usize, axis_j as usize, axis_k as usize, axis_l as usize, axis_m as usize,
+        result,
+    );
+}
+
+#[unsafe(no_mangle)]
 pub extern "C" fn com_wsr_cpu_slice_d1(
     x: *const f32, x_size: i32,
     start: i32, end: i32, step: i32,
