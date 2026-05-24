@@ -4,6 +4,8 @@ import com.wsr.batch.Batch
 import com.wsr.batch.get
 import com.wsr.batch.shape.fold.fold
 import com.wsr.batch.shape.fold.unfold
+import com.wsr.batch.shape.reshapeToD3
+import com.wsr.batch.shape.reshapeToD4
 import com.wsr.batch.shape.toBatch
 import com.wsr.batch.shape.toD4
 import com.wsr.core.IOType
@@ -38,6 +40,10 @@ class ConvD2 internal constructor(
     override val outputZ: Int = (inputY - kernel + 2 * padding) / stride + 1
     override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+            .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)
+            .toD4()
+            .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
+            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
         return (weight.reshapeToD2(outputX, channel * kernel * kernel).matMul(col))
             .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
             .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
@@ -50,6 +56,10 @@ class ConvD2 internal constructor(
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+            .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)
+            .toD4()
+            .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
+            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
         val output = (weight.reshapeToD2(i = outputX, j = channel * kernel * kernel).matMul(col))
             .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
             .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
@@ -66,14 +76,12 @@ class ConvD2 internal constructor(
         val deltaCol = delta.toD4()
             .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
             .reshapeToD2(i = filter, j = input.size * outputY * outputZ)
-        val dx = (reversed.matMul(deltaCol)).fold(
-            batchSize = input.size,
-            channel = channel,
-            inputX = inputX,
-            inputY = inputY,
-            stride = stride,
-            padding = padding,
-        )
+        val dx = (reversed.matMul(deltaCol))
+            .reshapeToD4(i = channel, j = kernel * kernel, k = input.size, l = outputY * outputZ)
+            .transpose(axisI = 2, axisJ = 0, axisK = 3, axisL = 1)
+            .toBatch()
+            .reshapeToD4(i = channel, j = outputY, k = outputZ, l = kernel * kernel)
+            .fold(stride = stride, padding = padding)
 
         // dw (重み勾配)
         val dw = Batch(input.size) { b ->
