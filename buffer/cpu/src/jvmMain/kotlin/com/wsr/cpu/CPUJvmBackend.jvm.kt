@@ -1195,7 +1195,20 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axisM: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.transposeD5(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, xm, axisI, axisJ, axisK, axisL, axisM, result.byteBuffer)
+        shape.transposeD5(
+            x.toCPUBuffer().byteBuffer,
+            xi,
+            xj,
+            xk,
+            xl,
+            xm,
+            axisI,
+            axisJ,
+            axisK,
+            axisL,
+            axisM,
+            result.byteBuffer,
+        )
         return result
     }
 

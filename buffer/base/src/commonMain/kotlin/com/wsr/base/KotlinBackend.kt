@@ -1162,7 +1162,7 @@ object KotlinBackend : IBackend {
     }
 
     override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = (xj - window  + padding * 2) / stride + 1
+        val oj = (xj - window + padding * 2) / stride + 1
         val result = DataBufferGenerator.create(b * xi * oj * window)
         for (xb in 0 until b) {
             for (i in 0 until xi) {
@@ -1201,7 +1201,16 @@ object KotlinBackend : IBackend {
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
         val oj = (xj - window + padding * 2) / stride + 1
         val ok = (xk - window + padding * 2) / stride + 1
         val ww = window * window
@@ -1228,7 +1237,16 @@ object KotlinBackend : IBackend {
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        b: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
         val oj = window + (xj - 1) * stride - padding * 2
         val ok = window + (xk - 1) * stride - padding * 2

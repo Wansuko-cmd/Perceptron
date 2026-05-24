@@ -28,7 +28,10 @@ class MathD2Test {
         val d2 = IOType.d2(2, 2) { i, j -> i * 2f + j + 2f }
         val actual = d2.pow(n = 2)
         assertContentEquals(
-            expected = IOType.d2(2, 2) { i, j -> val v = i * 2f + j + 2f; v * v },
+            expected = IOType.d2(2, 2) { i, j ->
+                val v = i * 2f + j + 2f
+                v * v
+            },
             actual = actual,
         )
     }

@@ -24,7 +24,8 @@ fun Batch<IOType.D3>.flatten() = Batch<IOType.D1>(
 )
 
 @JvmName("batchD3sReshapeToD4")
-fun Batch<IOType.D3>.reshapeToD4(i: Int, j: Int, k: Int, l: Int) = Batch<IOType.D4>(size = size, shape = listOf(i, j, k, l), value = value)
+fun Batch<IOType.D3>.reshapeToD4(i: Int, j: Int, k: Int, l: Int) =
+    Batch<IOType.D4>(size = size, shape = listOf(i, j, k, l), value = value)
 
 @JvmName("batchD3sReshapeToD2")
 fun Batch<IOType.D3>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
