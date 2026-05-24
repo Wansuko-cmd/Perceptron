@@ -7,6 +7,7 @@ import com.wsr.batch.j
 import com.wsr.batch.k
 import com.wsr.batch.l
 import com.wsr.core.IOType
+import kotlin.jvm.JvmName
 
 @JvmName("batchD4sReshapeToD3")
 fun Batch<IOType.D4>.reshapeToD3(i: Int, j: Int, k: Int) = Batch<IOType.D3>(size = size, shape = listOf(i, j, k), value = value)

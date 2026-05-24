@@ -46,7 +46,7 @@ class ConvD2 internal constructor(
             .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
         return (weight.reshapeToD2(outputX, channel * kernel * kernel).matMul(col))
             .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
-            .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
+            .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
             .toBatch()
     }
 
@@ -62,7 +62,7 @@ class ConvD2 internal constructor(
             .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
         val output = (weight.reshapeToD2(i = outputX, j = channel * kernel * kernel).matMul(col))
             .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
-            .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
+            .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
             .toBatch()
 
         val delta = calcDelta(output)
@@ -74,7 +74,7 @@ class ConvD2 internal constructor(
             weight[f, c, kernel - ky - 1, kernel - kx - 1]
         }
         val deltaCol = delta.toD4()
-            .transpose(axisI = 1, axisJ = 0, axisK = 2, axisL = 3)
+            .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
             .reshapeToD2(i = filter, j = input.size * outputY * outputZ)
         val dx = (reversed.matMul(deltaCol))
             .reshapeToD4(i = channel, j = kernel * kernel, k = input.size, l = outputY * outputZ)
