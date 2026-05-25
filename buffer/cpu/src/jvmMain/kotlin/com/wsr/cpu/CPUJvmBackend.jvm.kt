@@ -1395,7 +1395,16 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
         val oj = (xj + padding * 2 - window) / stride + 1
         val ok = (xk + padding * 2 - window) / stride + 1
         val ww = window * window
@@ -1404,7 +1413,16 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        b: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
         val oj = window + (xj - 1) * stride - padding * 2
         val ok = window + (xk - 1) * stride - padding * 2
