@@ -111,7 +111,7 @@ public class JShape {
             int step
     );
 
-    public native void unfold(
+    public native void unfoldD1(
             ByteBuffer x,
             int xi,
             int xj,
@@ -122,11 +122,35 @@ public class JShape {
             ByteBuffer result
     );
 
-    public native void fold(
+    public native void unfoldD2(
             ByteBuffer x,
             int xi,
             int xj,
             int xk,
+            int b,
+            int window,
+            int stride,
+            int padding,
+            ByteBuffer result
+    );
+
+    public native void foldD1(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int b,
+            int stride,
+            int padding,
+            ByteBuffer result
+    );
+
+    public native void foldD2(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int xl,
             int b,
             int stride,
             int padding,
