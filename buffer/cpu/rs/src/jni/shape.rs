@@ -158,7 +158,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfold(
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -169,11 +169,26 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfold(
 ) {
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
-    shape::unfold(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, padding as usize);
+    shape::unfold_d1(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_fold(
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, xk: jint,
+    b: jint,
+    window: jint, stride: jint, padding: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::unfold_d2(x, result, xi as usize, xj as usize, xk as usize, b as usize, window as usize, stride as usize, padding as usize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -184,7 +199,22 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_fold(
 ) {
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
-    shape::fold(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, padding as usize);
+    shape::fold_d1(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, padding as usize);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    xi: jint, xj: jint, xk: jint, xl: jint,
+    b: jint,
+    stride: jint, padding: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    shape::fold_d2(x, result, xi as usize, xj as usize, xk as usize, xl as usize, b as usize, stride as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]

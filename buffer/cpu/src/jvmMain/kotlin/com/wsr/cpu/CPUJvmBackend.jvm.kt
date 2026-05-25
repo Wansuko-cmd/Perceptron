@@ -1395,17 +1395,53 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
+        val oj = (xj + padding * 2 - window) / stride + 1
+        val ok = (xk + padding * 2 - window) / stride + 1
+        val ww = window * window
+        val result = CPUJvmBuffer.create(b * xi * oj * ok * ww)
+        shape.unfoldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, window, stride, padding, result.byteBuffer)
+        return result
+    }
+
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        b: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
+        val window = kotlin.math.sqrt(xl.toDouble()).toInt()
+        val oj = window + (xj - 1) * stride - padding * 2
+        val ok = window + (xk - 1) * stride - padding * 2
+        val result = CPUJvmBuffer.create(b * xi * oj * ok)
+        shape.foldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, b, stride, padding, result.byteBuffer)
+        return result
+    }
+
     override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
         val oj = (xj + padding * 2 - window) / stride + 1
         val result = CPUJvmBuffer.create(b * xi * oj * window)
-        shape.unfold(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
+        shape.unfoldD1(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
         return result
     }
 
     override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
         val oj = xk + (xj - 1) * stride - padding * 2
         val result = CPUJvmBuffer.create(b * xi * oj)
-        shape.fold(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
+        shape.foldD1(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
         return result
     }
 
