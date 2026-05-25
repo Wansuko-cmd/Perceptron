@@ -132,4 +132,23 @@ public class JShape {
             int padding,
             ByteBuffer result
     );
+
+    public native void flipD3(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int axis,
+            ByteBuffer result
+    );
+
+    public native void flipD4(
+            ByteBuffer x,
+            int xi,
+            int xj,
+            int xk,
+            int xl,
+            int axis,
+            ByteBuffer result
+    );
 }

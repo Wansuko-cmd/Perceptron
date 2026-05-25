@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalForeignApi::class)
+﻿@file:OptIn(ExperimentalForeignApi::class)
 
 package com.wsr.cpu
 
@@ -28,6 +28,8 @@ import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_exp_d1
+import com.wsr.cpu.rs.com_wsr_cpu_flip_d3
+import com.wsr.cpu.rs.com_wsr_cpu_flip_d4
 import com.wsr.cpu.rs.com_wsr_cpu_fold
 import com.wsr.cpu.rs.com_wsr_cpu_gather
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d0
@@ -1676,6 +1678,33 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             b = b,
             stride = stride,
             padding = padding,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_flip_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
+        val result = CPUNativeBuffer.create(x.size)
+        com_wsr_cpu_flip_d4(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axis = axis,
             result = result.buffer,
         )
         return result

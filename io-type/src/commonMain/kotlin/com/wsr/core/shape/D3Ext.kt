@@ -8,4 +8,9 @@ fun IOType.D3.transpose(axisI: Int, axisJ: Int, axisK: Int): IOType.D3 {
     return IOType.D3(shape = listOf(shape[axisI], shape[axisJ], shape[axisK]), value = result)
 }
 
+fun IOType.D3.flip(axis: Int): IOType.D3 {
+    val result = Backend.flip(x = value, xi = i, xj = j, xk = k, axis = axis)
+    return IOType.D3(shape = shape, value = result)
+}
+
 fun IOType.D3.reshapeToD2(i: Int, j: Int) = IOType.D2(shape = listOf(i, j), value = value)

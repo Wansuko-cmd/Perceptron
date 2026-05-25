@@ -1,4 +1,4 @@
-package com.wsr.cpu
+﻿package com.wsr.cpu
 
 import com.wsr.base.IBackend
 import com.wsr.base.KotlinBackend
@@ -1406,6 +1406,18 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         val oj = xk + (xj - 1) * stride - padding * 2
         val result = CPUJvmBuffer.create(b * xi * oj)
         shape.fold(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
+        return result
+    }
+
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        shape.flipD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        return result
+    }
+
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(x.size)
+        shape.flipD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axis, result.byteBuffer)
         return result
     }
 }

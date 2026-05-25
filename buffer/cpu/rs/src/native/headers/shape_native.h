@@ -79,4 +79,18 @@ void com_wsr_cpu_fold(
     int stride, int padding,
     float* result
 );
+
+void com_wsr_cpu_flip_d3(
+    const float* x,
+    int xi, int xj, int xk,
+    int axis,
+    float* result
+);
+
+void com_wsr_cpu_flip_d4(
+    const float* x,
+    int xi, int xj, int xk, int xl,
+    int axis,
+    float* result
+);
 #endif
