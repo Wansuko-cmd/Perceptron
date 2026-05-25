@@ -1409,7 +1409,6 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
-
     override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         shape.flipD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)

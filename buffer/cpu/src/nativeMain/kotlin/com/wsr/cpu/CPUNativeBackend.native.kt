@@ -28,9 +28,9 @@ import com.wsr.cpu.rs.com_wsr_cpu_div_d4_to_d3
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_equals_d1_to_d1
 import com.wsr.cpu.rs.com_wsr_cpu_exp_d1
-import com.wsr.cpu.rs.com_wsr_cpu_fold
 import com.wsr.cpu.rs.com_wsr_cpu_flip_d3
 import com.wsr.cpu.rs.com_wsr_cpu_flip_d4
+import com.wsr.cpu.rs.com_wsr_cpu_fold
 import com.wsr.cpu.rs.com_wsr_cpu_gather
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d0
 import com.wsr.cpu.rs.com_wsr_cpu_greater_than_d1_to_d1
