@@ -64,7 +64,7 @@ void com_wsr_cpu_copy_into_d3(
     int start, int end, int step
 );
 
-void com_wsr_cpu_unfold(
+void com_wsr_cpu_unfold_d1(
     const float* x,
     int xi, int xj,
     int b,
@@ -72,9 +72,25 @@ void com_wsr_cpu_unfold(
     float* result
 );
 
-void com_wsr_cpu_fold(
+void com_wsr_cpu_unfold_d2(
     const float* x,
     int xi, int xj, int xk,
+    int b,
+    int window, int stride, int padding,
+    float* result
+);
+
+void com_wsr_cpu_fold_d1(
+    const float* x,
+    int xi, int xj, int xk,
+    int b,
+    int stride, int padding,
+    float* result
+);
+
+void com_wsr_cpu_fold_d2(
+    const float* x,
+    int xi, int xj, int xk, int xl,
     int b,
     int stride, int padding,
     float* result
