@@ -19,6 +19,7 @@ ktlint = "14.2.0"
 # serialization
 serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 serialization-okio = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-okio", version.ref = "serialization" }
+serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "serialization" }
 
 # okio
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
