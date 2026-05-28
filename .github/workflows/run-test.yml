@@ -37,3 +37,10 @@ jobs:
           ./gradlew buffer:allTest
           ./gradlew io-type:allTest
           ./gradlew network:allTest
+
+      - name: Android テストを実行
+        if: runner.os == 'Linux'
+        run: |
+          ./gradlew buffer:testAndroidHostTest
+          ./gradlew io-type:testAndroidHostTest
+          ./gradlew network:testAndroidHostTest
