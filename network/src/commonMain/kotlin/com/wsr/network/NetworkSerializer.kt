@@ -110,10 +110,10 @@ import kotlin.reflect.KClass
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
@@ -152,38 +152,37 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
         }
     }
 
-    override fun deserialize(decoder: Decoder): Network<I, O> =
-        decoder.decodeStructure(descriptor) {
-            if (decodeSequentially()) {
-                Network(
-                    inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer),
-                    outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer),
-                    layers = decodeSerializableElement(descriptor, 2, layerSerializer),
-                    output = decodeSerializableElement(descriptor, 3, outputSerializer),
-                )
-            } else {
-                var inputConverter: Converter? = null
-                var outputConverter: Converter? = null
-                var layers: List<Process>? = null
-                var output: Output? = null
-                while (true) {
-                    when (val index = decodeElementIndex(descriptor)) {
-                        0 -> inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer)
-                        1 -> outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer)
-                        2 -> layers = decodeSerializableElement(descriptor, 2, layerSerializer)
-                        3 -> output = decodeSerializableElement(descriptor, 3, outputSerializer)
-                        CompositeDecoder.DECODE_DONE -> break
-                        else -> error("Unexpected index: $index")
-                    }
+    override fun deserialize(decoder: Decoder): Network<I, O> = decoder.decodeStructure(descriptor) {
+        if (decodeSequentially()) {
+            Network(
+                inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer),
+                outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer),
+                layers = decodeSerializableElement(descriptor, 2, layerSerializer),
+                output = decodeSerializableElement(descriptor, 3, outputSerializer),
+            )
+        } else {
+            var inputConverter: Converter? = null
+            var outputConverter: Converter? = null
+            var layers: List<Process>? = null
+            var output: Output? = null
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer)
+                    1 -> outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer)
+                    2 -> layers = decodeSerializableElement(descriptor, 2, layerSerializer)
+                    3 -> output = decodeSerializableElement(descriptor, 3, outputSerializer)
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
                 }
-                Network(
-                    inputConverter = checkNotNull(inputConverter),
-                    outputConverter = checkNotNull(outputConverter),
-                    layers = checkNotNull(layers),
-                    output = checkNotNull(output),
-                )
             }
+            Network(
+                inputConverter = checkNotNull(inputConverter),
+                outputConverter = checkNotNull(outputConverter),
+                layers = checkNotNull(layers),
+                output = checkNotNull(output),
+            )
         }
+    }
 
     companion object {
         val modules = mutableListOf(buildInSerializersModule)
@@ -259,8 +258,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             source = source,
         )
 
-        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray =
-            cbor.encodeToByteArray(NetworkSerializer(), value)
+        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray = cbor.encodeToByteArray(NetworkSerializer(), value)
 
         fun <I, O> encodeToCborSink(value: Network<I, O>, sink: BufferedSink) {
             sink.write(cbor.encodeToByteArray(NetworkSerializer<I, O>(), value))

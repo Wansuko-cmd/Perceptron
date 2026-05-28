@@ -16,15 +16,14 @@ import okio.Buffer
 
 class NetworkSerializerTest {
 
-    private fun createNetwork(): Network<IOType.D1, IOType.D1> =
-        NetworkBuilder.inputD1(
-            converter = LinearD1(3),
-            optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)),
-            initializer = Fixed(0.5f),
-        )
-            .affine(neuron = 4)
-            .affine(neuron = 2)
-            .meanSquare()
+    private fun createNetwork(): Network<IOType.D1, IOType.D1> = NetworkBuilder.inputD1(
+        converter = LinearD1(3),
+        optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)),
+        initializer = Fixed(0.5f),
+    )
+        .affine(neuron = 4)
+        .affine(neuron = 2)
+        .meanSquare()
 
     private val input = IOType.d1(1f, 2f, 3f)
 
