@@ -27,6 +27,7 @@ kotlin {
 
                 implementation(libs.serialization)
                 implementation(libs.serialization.okio)
+                implementation(libs.serialization.cbor)
 
                 implementation(libs.okio)
             }
