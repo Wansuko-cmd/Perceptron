@@ -15,6 +15,9 @@ okio = "3.17.0"
 # Ktlint
 ktlint = "14.2.0"
 
+# Android
+agp = "9.2.1"
+
 [libraries]
 # serialization
 serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
@@ -31,3 +34,4 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
