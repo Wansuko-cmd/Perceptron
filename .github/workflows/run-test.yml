@@ -3,6 +3,9 @@ name: 'テストを実行'
 on:
   workflow_dispatch:
   push:
+  workflow_run:
+    workflows: ['CPUのビルド', 'GPUのビルド']
+    types: [completed]
 
 jobs:
   test:
