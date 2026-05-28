@@ -12,6 +12,23 @@ val cargoJvmBuild by tasks.registering(Exec::class) {
 }
 
 /**
+ * Android
+ **/
+val cargoAndroidArm64Build by tasks.registering(Exec::class) {
+    group = "build"
+    description = "Android (arm64-v8a) 向けにビルド"
+    workingDir = sourceDir
+    commandLine = listOf("cargo", "build", "--release", "--target", "aarch64-linux-android", "--features", "jni")
+}
+
+val cargoAndroidX64Build by tasks.registering(Exec::class) {
+    group = "build"
+    description = "Android (x86_64) 向けにビルド"
+    workingDir = sourceDir
+    commandLine = listOf("cargo", "build", "--release", "--target", "x86_64-linux-android", "--features", "jni")
+}
+
+/**
  * Native
  **/
 val cargoNativeBuild by tasks.registering(Exec::class) {

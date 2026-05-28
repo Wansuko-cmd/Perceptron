@@ -2,11 +2,18 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     kotlin("multiplatform")
+    alias(libs.plugins.android.kmp.library)
 }
 
 kotlin {
     applyDefaultHierarchyTemplate()
     jvm()
+
+    android {
+        compileSdk = 35
+        minSdk = 28
+        namespace = "com.wsr.gpu"
+    }
 
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
     val hostArch = DefaultNativePlatform.getCurrentArchitecture()
@@ -30,6 +37,16 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.test)
             }
+        }
+
+        val jvmAndroidMain by creating {
+            dependsOn(commonMain)
+        }
+        jvmMain {
+            dependsOn(jvmAndroidMain)
+        }
+        androidMain {
+            dependsOn(jvmAndroidMain)
         }
     }
 

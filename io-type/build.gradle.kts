@@ -3,11 +3,19 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.serialization)
+    alias(libs.plugins.android.kmp.library)
 }
 
 kotlin {
     applyDefaultHierarchyTemplate()
     jvm()
+
+    android {
+        compileSdk = 35
+        minSdk = 28
+        namespace = "com.wsr.iotype"
+        withHostTestBuilder { sourceSetTreeName = "test" }
+    }
 
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
     val hostArch = DefaultNativePlatform.getCurrentArchitecture()
