@@ -54,7 +54,17 @@ class JTimes {
         runtime: Long,
     )
 
-    external fun timesD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long, runtime: Long)
+    external fun timesD4ToD1(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: Long,
+        axis: Int,
+        result: Long,
+        runtime: Long,
+    )
     external fun timesD4ToD2(
         x: Long,
         xi: Int,

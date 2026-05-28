@@ -53,7 +53,16 @@ class JPlus {
         result: ByteBuffer,
     )
 
-    external fun plusD4ToD1(x: ByteBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: ByteBuffer, axis: Int, result: ByteBuffer)
+    external fun plusD4ToD1(
+        x: ByteBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: ByteBuffer,
+        axis: Int,
+        result: ByteBuffer,
+    )
     external fun plusD4ToD2(
         x: ByteBuffer,
         xi: Int,

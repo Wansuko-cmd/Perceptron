@@ -54,7 +54,17 @@ class JPlus {
         runtime: Long,
     )
 
-    external fun plusD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long, runtime: Long)
+    external fun plusD4ToD1(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        y: Long,
+        axis: Int,
+        result: Long,
+        runtime: Long,
+    )
     external fun plusD4ToD2(
         x: Long,
         xi: Int,
