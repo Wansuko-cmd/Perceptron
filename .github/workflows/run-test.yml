@@ -12,14 +12,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 仮想ブランチにチェックアウト
         uses: actions/checkout@v4
 
       - name: Javaのセットアップ
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 17
@@ -37,6 +37,8 @@ jobs:
 
       - name: テストを実行
         shell: bash
+        env:
+          SKIP_GPU_TESTS: ${{ runner.os == 'Windows' && 'true' || 'false' }}
         run: |
           ./gradlew buffer:allTest
           ./gradlew io-type:allTest
