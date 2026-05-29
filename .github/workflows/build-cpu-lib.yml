@@ -127,7 +127,7 @@ jobs:
           - os: windows-latest
             os_name: mingw
             arch: X64
-            lib_extension: lib
+            lib_extension: a
 
     runs-on: ${{ matrix.os }}
     name: Build Native (${{ matrix.os_name }}/${{ matrix.arch }})
@@ -164,21 +164,20 @@ jobs:
         shell: bash
         run: ./gradlew buffer:cpu:rs:cargoNativeBuild
 
-      - name: vcvarsall.batへのパスを取得
+      - name: MinGWをPATHに追加 (Windows)
         if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $installPath = vswhere -latest -property installationPath
-          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+        shell: bash
+        run: echo "C:/Program Files/Git/mingw64/bin" >> $GITHUB_PATH
 
-          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+      - name: MinGW Rustターゲットを追加 (Windows)
+        if: runner.os == 'Windows'
+        run: rustup target add x86_64-pc-windows-gnu
 
       - name: ネイティブライブラリをビルド(Windows)
         if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          call "%VCVARSALL_PATH%" x64
-          call gradlew.bat buffer:cpu:rs:cargoNativeBuild
+        shell: bash
+        run: cargo build --release --features native --target x86_64-pc-windows-gnu
+        working-directory: buffer/cpu/rs
 
       - name: 成果物をアップロード (Windows以外)
         if: runner.os != 'Windows'
@@ -195,7 +194,7 @@ jobs:
         with:
           name: cpu-native-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
-            buffer/cpu/rs/target/release/cpu.${{ matrix.lib_extension }}
+            buffer/cpu/rs/target/x86_64-pc-windows-gnu/release/libcpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
   build-android:
@@ -318,7 +317,7 @@ jobs:
 
           # Windows/X64
           mkdir -p buffer/cpu/src/nativeMain/resources/cpu/mingwX64
-          find artifacts/cpu-native-mingw-X64 -name "cpu.lib" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
+          find artifacts/cpu-native-mingw-X64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
 
           echo "=== Native Resources structure ==="
           find buffer/cpu/src/nativeMain/resources -type f
