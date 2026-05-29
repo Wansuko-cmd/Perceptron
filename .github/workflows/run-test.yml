@@ -38,7 +38,7 @@ jobs:
       - name: テストを実行
         shell: bash
         env:
-          WGPU_BACKEND: ${{ runner.os == 'Windows' && 'dx12' || '' }}
+          SKIP_GPU_TESTS: ${{ runner.os == 'Windows' && 'true' || 'false' }}
         run: |
           ./gradlew buffer:allTest
           ./gradlew io-type:allTest

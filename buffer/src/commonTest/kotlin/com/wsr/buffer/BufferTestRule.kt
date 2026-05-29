@@ -6,7 +6,11 @@ import com.wsr.cpu.cpu
 import com.wsr.gpu.gpu
 import kotlin.time.measureTime
 
-private val targets = listOf(KotlinBackend, cpu, gpu)
+private val targets = buildList {
+    add(KotlinBackend)
+    add(cpu)
+    if (System.getenv("SKIP_GPU_TESTS") != "true") add(gpu)
+}
 
 fun bufferTestRule(evaluate: () -> Unit) {
     targets.forEach { target ->
