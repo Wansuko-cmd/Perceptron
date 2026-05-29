@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 仮想ブランチにチェックアウト
@@ -36,6 +36,7 @@ jobs:
           sudo apt-get install -y libvulkan1 mesa-vulkan-drivers xvfb vulkan-tools
 
       - name: テストを実行
+        shell: bash
         run: |
           ./gradlew buffer:allTest
           ./gradlew io-type:allTest
