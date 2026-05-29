@@ -1,0 +1,350 @@
+name: 'CPUのビルド'
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'buffer/cpu/rs/**'
+      - '.github/workflows/build-cpu-lib.yml'
+
+jobs:
+  build-jvm:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS
+          - os: macos-latest
+            os_name: macos
+            arch: Arm64
+            lib_extension: dylib
+          - os: macos-15
+            os_name: macos
+            arch: X64
+            lib_extension: dylib
+          # Linux
+          - os: ubuntu-latest
+            os_name: linux
+            arch: X64
+            lib_extension: so
+          - os: ubuntu-24.04-arm
+            os_name: linux
+            arch: Arm64
+            lib_extension: so
+          # Windows
+          - os: windows-latest
+            os_name: mingw
+            arch: X64
+            lib_extension: dll
+
+    runs-on: ${{ matrix.os }}
+    name: Build JVM (${{ matrix.os_name }}/${{ matrix.arch }})
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Javaのセットアップ
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: gradlewに権限を付与 (Unix)
+        if: runner.os != 'Windows'
+        run: chmod 777 ./gradlew
+
+      - name: キャッシュを復元
+        uses: actions/cache@v4
+        with:
+          path: buffer/cpu/cpp/rs/target
+          key: cpu-jvm-${{ hashFiles('buffer/cpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
+
+      - name: ネイティブライブラリをビルド(Windows以外)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./gradlew buffer:cpu:rs:cargoJvmBuild
+
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
+      - name: ネイティブライブラリをビルド(Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:cpu:rs:cargoJvmBuild
+
+      - name: 成果物をアップロード (Windows以外)
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-jvm-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: |
+            buffer/cpu/rs/target/release/libcpu.${{ matrix.lib_extension }}
+          if-no-files-found: error
+
+      - name: 成果物をアップロード (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-jvm-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: |
+            buffer/cpu/rs/target/release/cpu.${{ matrix.lib_extension }}
+          if-no-files-found: error
+
+  build-native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS
+          - os: macos-latest
+            os_name: macos
+            arch: Arm64
+            lib_extension: a
+          - os: macos-15
+            os_name: macos
+            arch: X64
+            lib_extension: a
+          # Linux
+          - os: ubuntu-latest
+            os_name: linux
+            arch: X64
+            lib_extension: a
+          - os: ubuntu-24.04-arm
+            os_name: linux
+            arch: Arm64
+            lib_extension: a
+          # Windows
+          - os: windows-latest
+            os_name: mingw
+            arch: X64
+            lib_extension: lib
+
+    runs-on: ${{ matrix.os }}
+    name: Build Native (${{ matrix.os_name }}/${{ matrix.arch }})
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Javaのセットアップ
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Fortranのセットアップ (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+
+      - name: gradlewに権限を付与 (Unix)
+        if: runner.os != 'Windows'
+        run: chmod 777 ./gradlew
+
+      - name: キャッシュを復元
+        uses: actions/cache@v4
+        with:
+          path: buffer/cpu/cpp/build/rs/target
+          key: cpu-native-${{ hashFiles('buffer/cpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
+
+      - name: ネイティブライブラリをビルド(Windows以外)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./gradlew buffer:cpu:rs:cargoNativeBuild
+
+      - name: vcvarsall.batへのパスを取得
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installPath = vswhere -latest -property installationPath
+          $vcvarsPath = Join-Path $installPath "VC\Auxiliary\Build\vcvarsall.bat"
+
+          echo "VCVARSALL_PATH=$vcvarsPath" >> $env:GITHUB_ENV
+
+      - name: ネイティブライブラリをビルド(Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call "%VCVARSALL_PATH%" x64
+          call gradlew.bat buffer:cpu:rs:cargoNativeBuild
+
+      - name: 成果物をアップロード (Windows以外)
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-native-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: |
+            buffer/cpu/rs/target/release/libcpu.${{ matrix.lib_extension }}
+          if-no-files-found: error
+
+      - name: 成果物をアップロード (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-native-${{ matrix.os_name }}-${{ matrix.arch }}
+          path: |
+            buffer/cpu/rs/target/release/cpu.${{ matrix.lib_extension }}
+          if-no-files-found: error
+
+  build-android:
+    runs-on: ubuntu-latest
+    name: Build Android
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Javaのセットアップ
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: gradlewに権限を付与
+        run: chmod 777 ./gradlew
+
+      - name: キャッシュを復元
+        uses: actions/cache@v4
+        with:
+          path: buffer/cpu/rs/target
+          key: cpu-android-${{ hashFiles('buffer/cpu/rs/Cargo.toml') }}
+
+      - name: Android NDK のセットアップ
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+          add-to-path: true
+
+      - name: Rust の Android ターゲットを追加
+        run: rustup target add aarch64-linux-android x86_64-linux-android
+
+      - name: NDK クロスコンパイラを PATH に追加
+        run: echo "$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: ネイティブライブラリをビルド (arm64-v8a)
+        run: ./gradlew buffer:cpu:rs:cargoAndroidArm64Build
+
+      - name: ネイティブライブラリをビルド (x86_64)
+        run: ./gradlew buffer:cpu:rs:cargoAndroidX64Build
+
+      - name: 成果物をアップロード (arm64-v8a)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-android-arm64-v8a
+          path: buffer/cpu/rs/target/aarch64-linux-android/release/libcpu.so
+          if-no-files-found: error
+
+      - name: 成果物をアップロード (x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpu-android-x86_64
+          path: buffer/cpu/rs/target/x86_64-linux-android/release/libcpu.so
+          if-no-files-found: error
+
+  commit:
+    needs: [build-jvm, build-native, build-android]
+    runs-on: ubuntu-latest
+    name: Commit native libraries
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: 全成果物をダウンロード
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: アーティファクト構造を確認
+        run: |
+          echo "=== Artifacts structure ==="
+          find artifacts -type f
+
+      - name: 成果物をresourcesに配置 (JVM)
+        run: |
+          # macOS/Arm64
+          mkdir -p buffer/cpu/src/jvmMain/resources/cpu/macos/Arm64
+          find artifacts/cpu-jvm-macos-Arm64 -name "libcpu.dylib" -exec cp {} buffer/cpu/src/jvmMain/resources/cpu/macos/Arm64/ \;
+
+          # macOS/X64
+          mkdir -p buffer/cpu/src/jvmMain/resources/cpu/macos/X64
+          find artifacts/cpu-jvm-macos-X64 -name "libcpu.dylib" -exec cp {} buffer/cpu/src/jvmMain/resources/cpu/macos/X64/ \;
+
+          # Linux/X64
+          mkdir -p buffer/cpu/src/jvmMain/resources/cpu/linux/X64
+          find artifacts/cpu-jvm-linux-X64 -name "libcpu.so" -exec cp {} buffer/cpu/src/jvmMain/resources/cpu/linux/X64/ \;
+
+          # Linux/Arm64
+          mkdir -p buffer/cpu/src/jvmMain/resources/cpu/linux/Arm64
+          find artifacts/cpu-jvm-linux-Arm64 -name "libcpu.so" -exec cp {} buffer/cpu/src/jvmMain/resources/cpu/linux/Arm64/ \;
+
+          # Windows/X64
+          mkdir -p buffer/cpu/src/jvmMain/resources/cpu/mingw/X64
+          find artifacts/cpu-jvm-mingw-X64 -name "cpu.dll" -exec cp {} buffer/cpu/src/jvmMain/resources/cpu/mingw/X64/ \;
+
+          echo "=== JVM Resources structure ==="
+          find buffer/cpu/src/jvmMain/resources -type f
+
+      - name: 成果物をresourcesに配置 (Native)
+        run: |
+          # macOS/Arm64
+          mkdir -p buffer/cpu/src/nativeMain/resources/cpu/macosArm64
+          find artifacts/cpu-native-macos-Arm64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/macosArm64/ \;
+
+          # macOS/X64
+          mkdir -p buffer/cpu/src/nativeMain/resources/cpu/macosX64
+          find artifacts/cpu-native-macos-X64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/macosX64/ \;
+
+          # Linux/X64
+          mkdir -p buffer/cpu/src/nativeMain/resources/cpu/linuxX64
+          find artifacts/cpu-native-linux-X64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/linuxX64/ \;
+
+          # Linux/Arm64
+          mkdir -p buffer/cpu/src/nativeMain/resources/cpu/linuxArm64
+          find artifacts/cpu-native-linux-Arm64 -name "libcpu.a" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/linuxArm64/ \;
+
+          # Windows/X64
+          mkdir -p buffer/cpu/src/nativeMain/resources/cpu/mingwX64
+          find artifacts/cpu-native-mingw-X64 -name "cpu.lib" -exec cp {} buffer/cpu/src/nativeMain/resources/cpu/mingwX64/ \;
+
+          echo "=== Native Resources structure ==="
+          find buffer/cpu/src/nativeMain/resources -type f
+
+      - name: 成果物をjniLibsに配置 (Android)
+        run: |
+          # arm64-v8a
+          mkdir -p buffer/cpu/src/androidMain/jniLibs/arm64-v8a
+          find artifacts/cpu-android-arm64-v8a -name "libcpu.so" -exec cp {} buffer/cpu/src/androidMain/jniLibs/arm64-v8a/ \;
+
+          # x86_64
+          mkdir -p buffer/cpu/src/androidMain/jniLibs/x86_64
+          find artifacts/cpu-android-x86_64 -name "libcpu.so" -exec cp {} buffer/cpu/src/androidMain/jniLibs/x86_64/ \;
+
+          echo "=== jniLibs structure ==="
+          find buffer/cpu/src/androidMain/jniLibs -type f
+
+      - name: 変更をコミット
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull
+          git add buffer/cpu/src/jvmMain/resources/ buffer/cpu/src/nativeMain/resources/ buffer/cpu/src/androidMain/jniLibs/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[CI] Update CPU libraries"
+            git push
+          fi

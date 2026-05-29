@@ -1,14 +1,14 @@
-name: 'GPUのビルド(JVM)'
+name: 'GPUのビルド'
 
 on:
   workflow_dispatch:
   push:
     paths:
       - 'buffer/gpu/rs/**'
-      - '.github/workflows/build-gpu-jvm-lib.yml'
+      - '.github/workflows/build-gpu-lib.yml'
 
 jobs:
-  build:
+  build-jvm:
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +38,7 @@ jobs:
             lib_extension: dll
 
     runs-on: ${{ matrix.os }}
-    name: Build (${{ matrix.os_name }}/${{ matrix.arch }})
+    name: Build JVM (${{ matrix.os_name }}/${{ matrix.arch }})
 
     steps:
       - name: チェックアウト
@@ -59,7 +59,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: buffer/gpu/cpp/rs/target
-          key: gpu-${{ hashFiles('buffer/gpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
+          key: gpu-jvm-${{ hashFiles('buffer/gpu/rs/Cargo.toml') }}-${{ matrix.os_name }}-${{ matrix.arch }}
 
       - name: ネイティブライブラリをビルド(Windows以外)
         if: runner.os != 'Windows'
@@ -86,7 +86,7 @@ jobs:
         if: runner.os != 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: gpu-${{ matrix.os_name }}-${{ matrix.arch }}
+          name: gpu-jvm-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
             buffer/gpu/rs/target/release/libgpu.${{ matrix.lib_extension }}
           if-no-files-found: error
@@ -95,13 +95,69 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
-          name: gpu-${{ matrix.os_name }}-${{ matrix.arch }}
+          name: gpu-jvm-${{ matrix.os_name }}-${{ matrix.arch }}
           path: |
             buffer/gpu/rs/target/release/gpu.${{ matrix.lib_extension }}
           if-no-files-found: error
 
+  build-android:
+    runs-on: ubuntu-latest
+    name: Build Android
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Javaのセットアップ
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: gradlewに権限を付与
+        run: chmod 777 ./gradlew
+
+      - name: キャッシュを復元
+        uses: actions/cache@v4
+        with:
+          path: buffer/gpu/rs/target
+          key: gpu-android-${{ hashFiles('buffer/gpu/rs/Cargo.toml') }}
+
+      - name: Android NDK のセットアップ
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+          add-to-path: true
+
+      - name: Rust の Android ターゲットを追加
+        run: rustup target add aarch64-linux-android x86_64-linux-android
+
+      - name: NDK クロスコンパイラを PATH に追加
+        run: echo "$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: ネイティブライブラリをビルド (arm64-v8a)
+        run: ./gradlew buffer:gpu:rs:cargoAndroidArm64Build
+
+      - name: ネイティブライブラリをビルド (x86_64)
+        run: ./gradlew buffer:gpu:rs:cargoAndroidX64Build
+
+      - name: 成果物をアップロード (arm64-v8a)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpu-android-arm64-v8a
+          path: buffer/gpu/rs/target/aarch64-linux-android/release/libgpu.so
+          if-no-files-found: error
+
+      - name: 成果物をアップロード (x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpu-android-x86_64
+          path: buffer/gpu/rs/target/x86_64-linux-android/release/libgpu.so
+          if-no-files-found: error
+
   commit:
-    needs: build
+    needs: [build-jvm, build-android]
     runs-on: ubuntu-latest
     name: Commit native libraries
 
@@ -119,40 +175,53 @@ jobs:
           echo "=== Artifacts structure ==="
           find artifacts -type f
 
-      - name: 成果物をresourcesに配置
+      - name: 成果物をresourcesに配置 (JVM)
         run: |
           # macOS/Arm64
           mkdir -p buffer/gpu/src/jvmMain/resources/gpu/macos/Arm64
-          find artifacts/gpu-macos-Arm64 -name "libgpu.dylib" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/macos/Arm64/ \;
+          find artifacts/gpu-jvm-macos-Arm64 -name "libgpu.dylib" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/macos/Arm64/ \;
 
           # macOS/X64
           mkdir -p buffer/gpu/src/jvmMain/resources/gpu/macos/X64
-          find artifacts/gpu-macos-X64 -name "libgpu.dylib" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/macos/X64/ \;
+          find artifacts/gpu-jvm-macos-X64 -name "libgpu.dylib" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/macos/X64/ \;
 
           # Linux/X64
           mkdir -p buffer/gpu/src/jvmMain/resources/gpu/linux/X64
-          find artifacts/gpu-linux-X64 -name "libgpu.so" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/linux/X64/ \;
+          find artifacts/gpu-jvm-linux-X64 -name "libgpu.so" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/linux/X64/ \;
 
           # Linux/Arm64
           mkdir -p buffer/gpu/src/jvmMain/resources/gpu/linux/Arm64
-          find artifacts/gpu-linux-Arm64 -name "libgpu.so" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/linux/Arm64/ \;
+          find artifacts/gpu-jvm-linux-Arm64 -name "libgpu.so" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/linux/Arm64/ \;
 
           # Windows/X64
           mkdir -p buffer/gpu/src/jvmMain/resources/gpu/mingw/X64
-          find artifacts/gpu-mingw-X64 -name "gpu.dll" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/mingw/X64/ \;
+          find artifacts/gpu-jvm-mingw-X64 -name "gpu.dll" -exec cp {} buffer/gpu/src/jvmMain/resources/gpu/mingw/X64/ \;
 
-          echo "=== Resources structure ==="
+          echo "=== JVM Resources structure ==="
           find buffer/gpu/src/jvmMain/resources -type f
+
+      - name: 成果物をjniLibsに配置 (Android)
+        run: |
+          # arm64-v8a
+          mkdir -p buffer/gpu/src/androidMain/jniLibs/arm64-v8a
+          find artifacts/gpu-android-arm64-v8a -name "libgpu.so" -exec cp {} buffer/gpu/src/androidMain/jniLibs/arm64-v8a/ \;
+
+          # x86_64
+          mkdir -p buffer/gpu/src/androidMain/jniLibs/x86_64
+          find artifacts/gpu-android-x86_64 -name "libgpu.so" -exec cp {} buffer/gpu/src/androidMain/jniLibs/x86_64/ \;
+
+          echo "=== jniLibs structure ==="
+          find buffer/gpu/src/androidMain/jniLibs -type f
 
       - name: 変更をコミット
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull
-          git add buffer/gpu/src/jvmMain/resources/
+          git add buffer/gpu/src/jvmMain/resources/ buffer/gpu/src/androidMain/jniLibs/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "[CI] Update GPU(JVM) libraries"
+            git commit -m "[CI] Update GPU libraries"
             git push
           fi
