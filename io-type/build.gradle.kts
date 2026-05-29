@@ -11,8 +11,8 @@ kotlin {
     jvm()
 
     android {
-        compileSdk = 35
-        minSdk = 28
+        compileSdk = libs.versions.android.compile.sdk.get().toInt()
+        minSdk = libs.versions.android.min.sdk.get().toInt()
         namespace = "com.wsr.iotype"
         withHostTestBuilder { sourceSetTreeName = "test" }
     }
