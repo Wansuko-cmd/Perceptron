@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ktlintを実行
-        uses: ScaCap/action-ktlint@master
+        uses: ScaCap/action-ktlint@v1.9.0
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
