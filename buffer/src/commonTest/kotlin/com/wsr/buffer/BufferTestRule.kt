@@ -9,8 +9,10 @@ import kotlin.time.measureTime
 private val targets = buildList {
     add(KotlinBackend)
     add(cpu)
-    if (System.getenv("SKIP_GPU_TESTS") != "true") add(gpu)
+    if (isGpuEnabled) add(gpu)
 }
+
+internal expect val isGpuEnabled: Boolean
 
 fun bufferTestRule(evaluate: () -> Unit) {
     targets.forEach { target ->
