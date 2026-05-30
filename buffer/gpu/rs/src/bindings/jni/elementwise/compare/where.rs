@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD0ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_where_JWhere_whereD0ToD0(
     _: JNIEnv,
     _class: JClass,
     condition: jlong,
@@ -24,7 +24,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_where_JWhere_whereD0ToD1(
     _: JNIEnv,
     _class: JClass,
     condition: jlong,
@@ -42,7 +42,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_where_JWhere_whereD1ToD0(
     _: JNIEnv,
     _class: JClass,
     condition: jlong,
@@ -60,7 +60,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_where_JWhere_whereD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_where_JWhere_whereD1ToD1(
     _: JNIEnv,
     _class: JClass,
     condition: jlong,

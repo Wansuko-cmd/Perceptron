@@ -6,7 +6,7 @@ use crate::core::elementwise::operation::plus;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD0ToD1(
     env: JNIEnv,
     _class: JClass,
     x: jfloat,
@@ -19,7 +19,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD0T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -32,7 +32,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -46,7 +46,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD1ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -61,7 +61,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD1ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -76,7 +76,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD2ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD2ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -91,7 +91,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD2T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD2ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD2ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -106,7 +106,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD2T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD3ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -121,7 +121,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD3ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -136,7 +136,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3ToD4(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD3ToD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -151,7 +151,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD3T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD4ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD4ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -166,7 +166,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD4T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD4ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD4ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -181,7 +181,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD4T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_plus_JPlus_plusD4ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_plus_JPlus_plusD4ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,

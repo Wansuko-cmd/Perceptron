@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JBuffer_allocate(
+pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_allocate(
     _: JNIEnv,
     _class: JClass,
     size: jint,
@@ -19,7 +19,7 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_allocate(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JBuffer_init(
+pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_init(
     mut env: JNIEnv,
     _class: JClass,
     value: JFloatArray,
@@ -32,7 +32,7 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_init(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JBuffer_release(
+pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_release(
     _: JNIEnv,
     _class: JClass,
     ptr: jlong,
@@ -41,7 +41,7 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_release(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JBuffer_readAll(
+pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_readAll(
     env: JNIEnv,
     _class: JClass,
     ptr: jlong,
@@ -58,7 +58,7 @@ pub extern "system" fn Java_com_wsr_gpu_JBuffer_readAll(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_JBuffer_write(
+pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_write(
     _: JNIEnv,
     _class: JClass,
     ptr: jlong,

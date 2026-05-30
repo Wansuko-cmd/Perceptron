@@ -9,7 +9,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_greaterThanD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_greaterThanD1ToD0(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -25,7 +25,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_greaterThan
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_greaterThanD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_greaterThanD1ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -42,7 +42,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_greaterThan
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_lessThanD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_lessThanD1ToD0(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -58,7 +58,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_lessThanD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_lessThanD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_lessThanD1ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -75,7 +75,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_lessThanD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_equalsD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_equalsD1ToD0(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -93,7 +93,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_equalsD1ToD
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_compare_JCompare_equalsD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_compare_JCompare_equalsD1ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,

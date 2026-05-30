@@ -6,7 +6,7 @@ use crate::core::reduction::collection;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_averageD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -16,7 +16,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_averageD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -29,7 +29,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_averageD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -42,7 +42,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_averageD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -52,7 +52,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -65,7 +65,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -78,7 +78,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_maxD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_minD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -88,7 +88,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_minD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -101,7 +101,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_minD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -114,7 +114,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_minD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_sumD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_sumD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -124,7 +124,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_sumD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_sumD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_sumD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -137,7 +137,7 @@ pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_sumD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_reduction_JCollection_sumD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_sumD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,

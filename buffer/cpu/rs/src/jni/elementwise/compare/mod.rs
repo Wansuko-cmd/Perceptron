@@ -8,7 +8,7 @@ use crate::core::elementwise::compare;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_greaterThanD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_greaterThanD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -21,7 +21,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_greaterThan
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_greaterThanD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_greaterThanD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -35,7 +35,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_greaterThan
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_lessThanD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_lessThanD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -48,7 +48,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_lessThanD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_lessThanD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_lessThanD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -62,7 +62,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_lessThanD1T
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_equalsD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_equalsD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -77,7 +77,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_equalsD1ToD
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_JCompare_equalsD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_JCompare_equalsD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
