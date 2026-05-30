@@ -27,4 +27,32 @@ class D1Test {
         assertEquals(expected = 2.0f, actual = d1[2])
         assertEquals(expected = 1.0f, actual = d1[3])
     }
+
+    @Test
+    fun `d1_init=ラムダでD1を作成`() {
+        val d1 = IOType.d1(3) { i -> (i + 1).toFloat() }
+        assertEquals(expected = 1.0f, actual = d1[0])
+        assertEquals(expected = 2.0f, actual = d1[1])
+        assertEquals(expected = 3.0f, actual = d1[2])
+    }
+
+    @Test
+    fun `d1_vararg=可変長引数でD1を作成`() {
+        val d1 = IOType.d1(1.0f, 2.0f, 3.0f)
+        assertEquals(expected = 1.0f, actual = d1[0])
+        assertEquals(expected = 2.0f, actual = d1[1])
+        assertEquals(expected = 3.0f, actual = d1[2])
+    }
+
+    @Test
+    fun `shape=D1の形状`() {
+        val d1 = IOType.d1(listOf(1.0f, 2.0f, 3.0f))
+        assertEquals(expected = listOf(3), actual = d1.shape)
+    }
+
+    @Test
+    fun `size=D1のサイズ`() {
+        val d1 = IOType.d1(listOf(1.0f, 2.0f, 3.0f))
+        assertEquals(expected = 3, actual = d1.size)
+    }
 }

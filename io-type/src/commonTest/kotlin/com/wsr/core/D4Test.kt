@@ -82,6 +82,27 @@ class D4Test {
     }
 
     @Test
+    fun `i_j_k_l=D4のijkl次元`() {
+        val d4 = IOType.d4(listOf(2, 3, 4, 5)) { _, _, _, _ -> 0.0f }
+        assertEquals(expected = 2, actual = d4.i)
+        assertEquals(expected = 3, actual = d4.j)
+        assertEquals(expected = 4, actual = d4.k)
+        assertEquals(expected = 5, actual = d4.l)
+    }
+
+    @Test
+    fun `shape=D4の形状`() {
+        val d4 = IOType.d4(listOf(2, 3, 4, 5)) { _, _, _, _ -> 0.0f }
+        assertEquals(expected = listOf(2, 3, 4, 5), actual = d4.shape)
+    }
+
+    @Test
+    fun `size=D4のサイズ`() {
+        val d4 = IOType.d4(listOf(2, 3, 4, 5)) { _, _, _, _ -> 0.0f }
+        assertEquals(expected = 120, actual = d4.size)
+    }
+
+    @Test
     fun `set=4次元要素設定`() {
         val d4 = IOType.d4(listOf(2, 2, 2, 2)) { i, j, k, l -> i + j * 2.0f + k * 4.0f + l * 8.0f }
         d4[0, 0, 0, 0] = 15.0f

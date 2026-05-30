@@ -43,6 +43,26 @@ class D3Test {
     }
 
     @Test
+    fun `i_j_k=D3のijk次元`() {
+        val d3 = IOType.d3(listOf(2, 3, 4)) { _, _, _ -> 0.0f }
+        assertEquals(expected = 2, actual = d3.i)
+        assertEquals(expected = 3, actual = d3.j)
+        assertEquals(expected = 4, actual = d3.k)
+    }
+
+    @Test
+    fun `shape=D3の形状`() {
+        val d3 = IOType.d3(listOf(2, 3, 4)) { _, _, _ -> 0.0f }
+        assertEquals(expected = listOf(2, 3, 4), actual = d3.shape)
+    }
+
+    @Test
+    fun `size=D3のサイズ`() {
+        val d3 = IOType.d3(listOf(2, 3, 4)) { _, _, _ -> 0.0f }
+        assertEquals(expected = 24, actual = d3.size)
+    }
+
+    @Test
     fun `set=3次元要素設定`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
         d3[0, 0, 0] = 7.0f
