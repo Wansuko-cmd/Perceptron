@@ -1,0 +1,66 @@
+@file:Suppress("NonAsciiCharacters")
+
+package com.wsr.batch.shape
+
+import com.wsr.assertContentEquals
+import com.wsr.batch.batchOf
+import com.wsr.batch.get
+import com.wsr.core.IOType
+import com.wsr.core.d1
+import com.wsr.core.d3
+import com.wsr.core.d4
+import com.wsr.ioTypeTestRule
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class D3ExtTest {
+    @Test
+    fun `toD4=D3バッチを4次元に変換`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
+        )
+        val result = batch.toD4()
+        assertContentEquals(
+            IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l },
+            result,
+        )
+    }
+
+    @Test
+    fun `D4toBatch=4次元をD3バッチに変換`() = ioTypeTestRule {
+        val d4 = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l }
+        val batch = d4.toBatch()
+        assertEquals(2, batch.size)
+        assertContentEquals(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
+            batch[0],
+        )
+        assertContentEquals(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
+            batch[1],
+        )
+    }
+
+    @Test
+    fun `toList=D3バッチをリストに変換`() = ioTypeTestRule {
+        val d3a = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }
+        val d3b = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f }
+        val batch = batchOf(d3a, d3b)
+        val list = batch.toList()
+        assertEquals(2, list.size)
+        assertContentEquals(d3a, list[0])
+        assertContentEquals(d3b, list[1])
+    }
+
+    @Test
+    fun `flatten=D3バッチをD1バッチにフラット化`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
+        )
+        val result = batch.flatten()
+        assertContentEquals(IOType.d1(listOf(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f)), result[0])
+        assertContentEquals(IOType.d1(listOf(8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f)), result[1])
+    }
+}
