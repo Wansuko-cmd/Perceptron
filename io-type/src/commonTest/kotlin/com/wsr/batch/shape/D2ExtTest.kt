@@ -11,6 +11,7 @@ import com.wsr.core.IOType
 import com.wsr.core.d1
 import com.wsr.core.d2
 import com.wsr.core.d3
+import kotlin.test.assertEquals
 import com.wsr.ioTypeTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -79,6 +80,19 @@ class D2ExtTest {
         val result = batch.slice(1..2, axis = 1)
         assertContentEquals(IOType.d2(2, 2) { i, j -> i * 3f + j + 1f }, result[0])
         assertContentEquals(IOType.d2(2, 2) { i, j -> i * 3f + j + 7f }, result[1])
+    }
+
+    @Test
+    fun `reshapeToD3=D2バッチをD3バッチに変形`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d2(2, 4) { i, j -> i * 4f + j },
+            IOType.d2(2, 4) { i, j -> i * 4f + j + 8f },
+        )
+        val result = batch.reshapeToD3(2, 2, 2)
+        assertEquals(2, result.size)
+        assertEquals(listOf(2, 2, 2), result.shape)
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }, result[0])
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f }, result[1])
     }
 
     @Test

@@ -7,9 +7,11 @@ import com.wsr.batch.batchOf
 import com.wsr.batch.get
 import com.wsr.core.IOType
 import com.wsr.core.d1
+import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.ioTypeTestRule
+import kotlin.test.assertEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -40,6 +42,32 @@ class D3ExtTest {
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
             batch[1],
         )
+    }
+
+    @Test
+    fun `reshapeToD4=D3バッチをD4バッチに変形`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
+        )
+        val result = batch.reshapeToD4(2, 2, 2, 1)
+        assertEquals(2, result.size)
+        assertEquals(listOf(2, 2, 2, 1), result.shape)
+        assertContentEquals(IOType.d4(2, 2, 2, 1) { i, j, k, _ -> i * 4f + j * 2f + k }, result[0])
+        assertContentEquals(IOType.d4(2, 2, 2, 1) { i, j, k, _ -> i * 4f + j * 2f + k + 8f }, result[1])
+    }
+
+    @Test
+    fun `reshapeToD2=D3バッチをD2バッチに変形`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
+            IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
+        )
+        val result = batch.reshapeToD2(2, 4)
+        assertEquals(2, result.size)
+        assertEquals(listOf(2, 4), result.shape)
+        assertContentEquals(IOType.d2(2, 4) { i, j -> i * 4f + j }, result[0])
+        assertContentEquals(IOType.d2(2, 4) { i, j -> i * 4f + j + 8f }, result[1])
     }
 
     @Test
