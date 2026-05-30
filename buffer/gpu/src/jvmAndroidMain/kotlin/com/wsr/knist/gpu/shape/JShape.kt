@@ -1,0 +1,85 @@
+package com.wsr.knist.gpu.shape
+
+class JShape {
+    external fun transposeD2(x: Long, xi: Int, xj: Int, result: Long, runtime: Long)
+
+    external fun transposeD3(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        result: Long,
+        runtime: Long,
+    )
+
+    external fun transposeD4(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        axisI: Int,
+        axisJ: Int,
+        axisK: Int,
+        axisL: Int,
+        result: Long,
+        runtime: Long,
+    )
+
+    external fun sliceD1(x: Long, start: Int, end: Int, step: Int, result: Long, runtime: Long)
+
+    external fun sliceD2(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        axis: Int,
+        start: Int,
+        end: Int,
+        step: Int,
+        result: Long,
+        runtime: Long,
+    )
+
+    external fun sliceD3(
+        x: Long,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        axis: Int,
+        start: Int,
+        end: Int,
+        step: Int,
+        result: Long,
+        runtime: Long,
+    )
+
+    external fun copyIntoD1(x: Long, result: Long, start: Int, end: Int, step: Int, runtime: Long)
+
+    external fun copyIntoD2(
+        x: Long,
+        result: Long,
+        ri: Int,
+        rj: Int,
+        axis: Int,
+        start: Int,
+        end: Int,
+        step: Int,
+        runtime: Long,
+    )
+
+    external fun copyIntoD3(
+        x: Long,
+        result: Long,
+        ri: Int,
+        rj: Int,
+        rk: Int,
+        axis: Int,
+        start: Int,
+        end: Int,
+        step: Int,
+        runtime: Long,
+    )
+}

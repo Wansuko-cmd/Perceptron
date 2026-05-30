@@ -13,7 +13,7 @@ kotlin {
     android {
         compileSdk = libs.versions.android.compile.sdk.get().toInt()
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        namespace = "com.wsr.iotype"
+        namespace = "com.wsr.knist.iotype"
         withHostTestBuilder { sourceSetTreeName = "test" }
     }
 

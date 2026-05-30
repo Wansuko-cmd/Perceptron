@@ -1,17 +1,17 @@
 package dataset.mnist
 
-import com.wsr.network.Network
-import com.wsr.network.NetworkBuilder
-import com.wsr.network.NetworkSerializer
-import com.wsr.network.initializer.He
-import com.wsr.network.optimizer.Scheduler
-import com.wsr.network.optimizer.adam.AdamW
-import com.wsr.network.output.softmax.softmaxWithLoss
-import com.wsr.network.process.compute.affine.affine
-import com.wsr.network.process.compute.bias.d1.bias
-import com.wsr.network.process.compute.function.relu.reLU
-import com.wsr.network.process.compute.norm.layer.d1.layerNorm
-import com.wsr.network.process.reshape.reshape.reshapeToD1
+import com.wsr.knist.network.Network
+import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.NetworkSerializer
+import com.wsr.knist.network.initializer.He
+import com.wsr.knist.network.optimizer.Scheduler
+import com.wsr.knist.network.optimizer.adam.AdamW
+import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.process.compute.affine.affine
+import com.wsr.knist.network.process.compute.bias.d1.bias
+import com.wsr.knist.network.process.compute.function.relu.reLU
+import com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm
+import com.wsr.knist.network.process.reshape.reshape.reshapeToD1
 
 private const val TRAIN_IMAGE_PATH = "mnist/train-images-idx3-ubyte.gz"
 private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
