@@ -1,0 +1,361 @@
+# knist
+
+> Kotlin製ニューラルネットワークライブラリ。DSLでレイヤーを積み上げてモデルを構築する。
+> 型がチェーン全体で追跡され、IO型の不整合はコンパイルエラーになる。
+
+KotlinのMultiplatformライブラリ。JitpackからGradle依存として導入できる。
+
+```kotlin
+repositories { maven("https://jitpack.io") }
+dependencies { implementation("com.github.Wansuko-cmd:knist:<version>") }
+```
+
+---
+
+## 基本的な使い方
+
+### モデル構築
+
+`NetworkBuilder` のDSLでレイヤーを積み上げる。最後に出力層（`softmaxWithLoss` 等）を呼ぶと `Network` オブジェクトが得られる。
+
+```kotlin
+val network: Network<List<Float>, Int> = NetworkBuilder
+    .inputD2(converter = PixelConverter(28, 28), optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
+    .reshapeToD1()
+    .layerNorm()
+    .affine(neuron = 256).bias().reLU()
+    .affine(neuron = 10)
+    .softmaxWithLoss(converter = { LabelConverter(inputSize) })
+```
+
+### 学習
+
+```kotlin
+val loss: Float = network.train(
+    input = batchInputs,   // List<InputType>
+    label = batchLabels,   // List<LabelType>
+)
+```
+
+### 推論
+
+```kotlin
+val result: OutputType = network.expect(input = data)
+val results: List<OutputType> = network.expect(inputs = listOf(data1, data2))
+```
+
+---
+
+## NetworkBuilder ファクトリ関数
+
+モデルの先頭で呼び出す。
+
+| 関数 | import | 入力型 | 最初のIO型 |
+|------|--------|--------|-----------|
+| `inputD1(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D1 |
+| `inputD2(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D2 |
+| `inputD3(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D3 |
+| `wordsD1(maxLength, words, unknownIndex, paddingIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordsD1` | `List<String>` | D1(maxLength) |
+
+> `inputPx` はライブラリには存在しない。サンプルプロジェクト内で `inputD2` + `PixelConverter` のラッパーとして定義されているもの。
+
+---
+
+## IOType 定義
+
+| 型 | 形状 | 意味 |
+|----|------|------|
+| `D1(size)` | [size] | ベクトル |
+| `D2(X, Y)` | [X, Y] | 行列 |
+| `D3(X, Y, Z)` | [X, Y, Z] | 3次元テンソル |
+
+---
+
+## 全層一覧（import パス付き）
+
+### 畳み込み・プーリング
+
+| 関数 | import | 入力 | 出力 | デフォルト値 |
+|------|--------|------|------|-------------|
+| `convD1(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(X, Y) | D2(filter, outY) | stride=1, padding=0 |
+| `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(X, Y) | D2(X, Y/size) | — |
+| `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(X, Y, Z) | D3(X, Y/size, Z/size) | — |
+
+convD1のoutY計算式: `(Y - kernel + 2 * padding) / stride + 1`
+制約: `(Y - kernel + 2 * padding) % stride == 0` でなければコンパイル時エラー
+制約: maxPool は Y（D2）または Y・Z（D3）が size の倍数でなければならない
+
+### 全結合・変換系
+
+| 関数 | import | 入力 | 出力 |
+|------|--------|------|------|
+| `affine(neuron)` | `com.wsr.knist.network.process.compute.affine.affine` | D1(n) | D1(neuron) |
+| `affine(neuron)` | `com.wsr.knist.network.process.compute.affine.affine` | D2(X, Y) | D2(X, neuron) |
+| `bias()` | `com.wsr.knist.network.process.compute.bias.d1.bias` | D1(n) | D1(n) |
+| `bias(axis?)` | `com.wsr.knist.network.process.compute.bias.d2.bias` | D2(X, Y) | D2(X, Y) |
+| `bias(axis?)` | `com.wsr.knist.network.process.compute.bias.d3.bias` | D3(X, Y, Z) | D3(X, Y, Z) |
+| `scale()` | `com.wsr.knist.network.process.compute.scale.d1.scale` | D1(n) | D1(n) |
+| `scale(axis?)` | `com.wsr.knist.network.process.compute.scale.d2.scale` | D2(X, Y) | D2(X, Y) |
+| `scale(axis?)` | `com.wsr.knist.network.process.compute.scale.d3.scale` | D3(X, Y, Z) | D3(X, Y, Z) |
+
+D2 の `bias` / `scale` の `axis`: null=全体, 0=行(X)方向, 1=列(Y)方向
+Transformerでは axis=1 が一般的（seq×dim の dim 方向に適用）
+
+D1とD2で同名関数を両方 import する場合、Kotlin はレシーバー型で自動解決する:
+```kotlin
+import com.wsr.knist.network.process.compute.bias.d1.bias
+import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合しない
+```
+
+### Attention
+
+| 関数 | import | 入力 | 出力 |
+|------|--------|------|------|
+| `attention(numOfHeads, dim?, isCausal?, maskValue?)` | `com.wsr.knist.network.process.compute.attention.attention` | D2(X, Y) | D2(X, Y) |
+
+デフォルト値: `dim = inputY / numOfHeads`, `isCausal = false`, `maskValue = null`
+制約: Y が numOfHeads で割り切れること
+
+### 活性化関数
+
+すべて形状変化なし（D1→D1, D2→D2, D3→D3）。
+
+| 関数 | import |
+|------|--------|
+| `reLU()` | `com.wsr.knist.network.process.compute.function.relu.reLU` |
+| `leakyReLU()` | `com.wsr.knist.network.process.compute.function.relu.leakyReLU` |
+| `swish()` | `com.wsr.knist.network.process.compute.function.relu.swish` |
+| `sigmoid()` | `com.wsr.knist.network.process.compute.function.sigmoid.sigmoid` |
+| `softmax()` | `com.wsr.knist.network.process.compute.function.softmax.softmax` |
+
+同パッケージに D1/D2/D3 版が共存するため、import 1行で全次元に対応する。
+
+### 正規化
+
+| 関数 | import | デフォルト値 |
+|------|--------|-------------|
+| `layerNorm(e?)` | `com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm` | e=1e-6f |
+| `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d2.layerNorm` | axis=null, e=1e-6f |
+| `rmsNorm(e?)` | `com.wsr.knist.network.process.compute.norm.rms.d1.rmsNorm` | e=1e-6f |
+| `rmsNorm(e?)` | `com.wsr.knist.network.process.compute.norm.rms.d2.rmsNorm` | e=1e-6f |
+| `minMaxNorm()` | `com.wsr.knist.network.process.compute.norm.minmax.minMaxNorm` | — |
+
+### 位置エンコーディング
+
+| 関数 | import | 入力 | 出力 | デフォルト値 |
+|------|--------|------|------|-------------|
+| `roPE(waveLength?)` | `com.wsr.knist.network.process.compute.position.roPE` | D2(X, Y) | D2(X, Y) | waveLength=10000f |
+| `positionEncode(waveLength?)` | `com.wsr.knist.network.process.compute.position.positionEncode` | D2(X, Y) | D2(X, Y) | waveLength=10000f |
+| `positionEmbedding()` | `com.wsr.knist.network.process.compute.position.positionEmbedding` | D2(X, Y) | D2(X, Y) | — |
+
+注意: `positionEmbedding` はサイズを変えない学習可能な位置バイアスを加算するだけ。
+
+### Dropout
+
+| 関数 | import | デフォルト値 |
+|------|--------|-------------|
+| `dropout(ratio, seed?)` | `com.wsr.knist.network.process.compute.dropout.dropout` | seed=null |
+
+`ratio` は**保持確率**（0〜1）。推論時はパススルー。
+
+### スキップ接続
+
+| 関数 | import | 制約 |
+|------|--------|------|
+| `skip { ... }` | `com.wsr.knist.network.process.compute.skip.skip` | ブロック内の出力が入力と同サイズであること |
+
+### Reshape
+
+| 関数 | import | 入力 | 出力 |
+|------|--------|------|------|
+| `reshapeToD1()` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD1` | D2(X, Y) | D1(X×Y) |
+| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D2(X, Y) | D1(X) |
+| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D3(X, Y, Z) | D1(X) |
+| `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(X, Y, Z) | D2(Y, Z) |
+| `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(X) | D2(X, tokenSize) |
+
+### 出力層
+
+| 関数 | import | 入力 | 出力型 |
+|------|--------|------|--------|
+| `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Label>` |
+| `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D2(X, Y) | `Network<I, Label>` |
+| `sigmoidWithLoss(converter?)` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, D1>` |
+| `meanSquare(converter?)` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, D1>` |
+
+`softmaxWithLoss` デフォルト値: `temperature=1f`, `maskValue=null`
+
+---
+
+## Converter（入出力変換器）
+
+ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数に渡す。
+
+### 組み込みConverter
+
+| クラス | import | 入力型 | 次元 |
+|--------|--------|--------|------|
+| `LinearD1(outputSize)` | `com.wsr.knist.network.converter.linear.LinearD1` | `IOType.D1` | D1 |
+| `LinearD2(outputX, outputY)` | `com.wsr.knist.network.converter.linear.LinearD2` | `IOType.D2` | D2 |
+| `WordD1(words, unknownIndex)` | `com.wsr.knist.network.converter.word.WordD1` | `String` | D1 |
+| `WordD2(words, length, unknownIndex)` | `com.wsr.knist.network.converter.word.WordD2` | `List<String>` | D2 |
+| `WordsD1(outputSize, words, unknownIndex, paddingIndex)` | `com.wsr.knist.network.converter.word.WordsD1` | `List<String>` | D1 |
+| `CharD1()` | `com.wsr.knist.network.converter.char.CharD1` | `Char` | D1(34) |
+| `CharsD1(outputSize)` | `com.wsr.knist.network.converter.char.CharsD1` | `String` | D1 |
+
+### カスタムConverter実装に必要な import
+
+```kotlin
+import com.wsr.knist.batch.Batch                  // Batch<T>
+import com.wsr.knist.batch.shape.toList           // Batch.toList()
+import com.wsr.knist.core.IOType                  // IOType.D1 / D2 / D3
+import com.wsr.knist.core.reduction.maxIndex      // IOType.D1.maxIndex()
+import com.wsr.knist.base.data.DataBuffer         // DataBuffer.create(floatArray)
+import com.wsr.knist.network.converter.Converter  // Converter.D1<T> / D2<T>
+```
+
+### カスタムConverter実装例
+
+**出力ラベル用（Int → One-hot）**
+
+```kotlin
+@Serializable
+data class LabelConverter(override val outputSize: Int) : Converter.D1<Int>() {
+    override fun encode(input: List<Int>): Batch<IOType.D1> {
+        val value = FloatArray(input.size * outputSize)
+        input.forEachIndexed { batchIndex, label ->
+            value[batchIndex * outputSize + label] = 1f
+        }
+        return Batch(size = input.size, shape = listOf(outputSize), value = DataBuffer.create(value))
+    }
+    override fun decode(input: Batch<IOType.D1>): List<Int> =
+        input.toList().map { it.maxIndex() }
+}
+```
+
+**入力特徴量用（List<Float> → D1）**
+
+```kotlin
+@Serializable
+data class FloatListConverter(override val outputSize: Int) : Converter.D1<List<Float>>() {
+    override fun encode(input: List<List<Float>>): Batch<IOType.D1> {
+        val value = input.flatten().toFloatArray()
+        return Batch(size = input.size, shape = listOf(outputSize), value = DataBuffer.create(value))
+    }
+    override fun decode(input: Batch<IOType.D1>): List<List<Float>> =
+        input.value.toFloatArray().toList().chunked(outputSize)
+}
+```
+
+保存・読み込みを使う場合は `@Serializable` を付けて登録する:
+```kotlin
+NetworkSerializer.apply { register(LabelConverter::class) }
+```
+
+---
+
+## Optimizer
+
+| クラス | import | 追加パラメータ |
+|--------|--------|--------------|
+| `Sgd(scheduler)` | `com.wsr.knist.network.optimizer.sgd.Sgd` | — |
+| `Momentum(scheduler, momentum?)` | `com.wsr.knist.network.optimizer.momentum.Momentum` | momentum=0.9f |
+| `RmsProp(scheduler, rms?)` | `com.wsr.knist.network.optimizer.rms.RmsProp` | rms=0.9f |
+| `Adam(scheduler, momentum?, rms?)` | `com.wsr.knist.network.optimizer.adam.Adam` | momentum=0.9f, rms=0.999f |
+| `AdamW(scheduler, momentum?, rms?, decay?)` | `com.wsr.knist.network.optimizer.adam.AdamW` | momentum=0.9f, rms=0.999f, decay=0.01f |
+
+共通オプション: `maxNorm`（勾配クリッピング）、`stepUnit`（更新頻度）
+
+### Scheduler
+
+| クラス | import | 説明 |
+|--------|--------|------|
+| `Scheduler.Fix(rate)` | `com.wsr.knist.network.optimizer.Scheduler` | 固定学習率 |
+| `Scheduler.Step(rate, gamma, stepCount)` | 同上 | Nステップごとに rate *= gamma |
+| `Scheduler.MultiStep(rate, gamma, milestones)` | 同上 | 指定ステップで rate *= gamma |
+| `Scheduler.CosineAnnealing(minRate, maxRate, stepSize, warmUp, initialRate)` | 同上 | 線形ウォームアップ→コサインアニーリング |
+
+---
+
+## Initializer
+
+| クラス | import | 用途 |
+|--------|--------|------|
+| `He(seed?)` | `com.wsr.knist.network.initializer.He` | ReLU系 |
+| `Xavier(seed?)` | `com.wsr.knist.network.initializer.Xavier` | Sigmoid・Tanh系 |
+| `Random(seed?, from, until)` | `com.wsr.knist.network.initializer.Random` | 汎用 |
+| `Fixed(value)` | `com.wsr.knist.network.initializer.Fixed` | バイアス初期化等 |
+
+---
+
+## repeat / skip
+
+```kotlin
+// 同じブロックをN回繰り返す
+builder.repeat(4) {
+    this.affine(neuron = 256).bias().reLU()
+}
+
+// スキップ接続（入出力サイズが同一であること）
+builder.skip {
+    this.layerNorm().affine(neuron = 256).bias().reLU()
+}
+```
+
+---
+
+## 典型的な構成パターンとIOの流れ
+
+### MLP（全結合分類）
+
+```
+inputD1(converter, optimizer, initializer)  → D1(n)
+  → affine(256) → bias() → reLU()          → D1(256)
+  → affine(10)                              → D1(10)
+  → softmaxWithLoss(converter = { ... })   → Network<Input, Label>
+```
+
+### 画像分類（CNN）
+
+```
+inputD2(PixelConverter(28,28), ...)         → D2(28, 28)
+  → convD1(32, kernel=3, padding=1)         → D2(32, 28)   // outY=(28-3+2)/1+1=28
+  → bias() → reLU()
+  → maxPool(size=2)                         → D2(32, 14)   // 28/2=14
+  → convD1(64, kernel=3, padding=1)         → D2(64, 14)
+  → bias() → reLU()
+  → maxPool(size=2)                         → D2(64,  7)
+  → reshapeToD1()                           → D1(448)      // 64*7=448
+  → layerNorm() → affine(128) → bias() → reLU()
+  → affine(10)
+  → softmaxWithLoss(converter = { ... })   → Network<List<Float>, Int>
+```
+
+### Transformer言語モデル
+
+```
+wordsD1(maxLength=128, words=..., ...)      → D1(128)
+  → tokenEmbedding(vocabSize=3000, 256)     → D2(128, 256)
+  → roPE()
+  → repeat(4) {
+      skip { layerNorm(1).scale(1).bias(1).attention(4, isCausal=true).dropout(0.9f) }
+      skip { layerNorm(1).scale(1).bias(1).affine(1024).bias(1).swish().affine(256).bias(1).dropout(0.9f) }
+    }
+  → layerNorm(1).scale(1).bias(1)
+  → affine(3000)
+  → softmaxWithLoss(converter = { WordD2(words, 128, 1) }, maskValue=0)
+```
+
+---
+
+## 注意事項
+
+- `convD1` の `stride`・`padding` のデフォルトは `stride=1`, `padding=0`
+- `maxPool` は Y（またはY・Z）が size の倍数でなければ実行時エラー（initブロックでチェックされる）
+- D1/D2 の同名関数（bias, scale, layerNorm）を両方 import してもKotlinがレシーバー型で解決する
+- `softmaxWithLoss` の `converter` ラムダ内では `inputSize` が参照可能
+- `wordsD1` の `unknownIndex`・`paddingIndex` は `words` の範囲内でなければならない
+- `attention` の `dim` は `inputY / numOfHeads` がデフォルト。Y が numOfHeads で割り切れること
+- `dropout` の `ratio` は**保持確率**（一般的なdrop rateとは逆）
+- `positionEmbedding` はサイズを変えない。`D2(X, Y) → D2(X, Y)` のまま
+- `globalAverage()` という関数は存在しない。正しくは `globalAverageToD1()` / `globalAverageToD2()`
