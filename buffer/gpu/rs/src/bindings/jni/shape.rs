@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_transposeD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -24,7 +24,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_transposeD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -47,7 +47,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD4(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_transposeD4(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -70,7 +70,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_transposeD4(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_sliceD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -86,7 +86,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_sliceD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -103,7 +103,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_sliceD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -120,7 +120,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_sliceD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_copyIntoD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_copyIntoD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -136,7 +136,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_copyIntoD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_copyIntoD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_copyIntoD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -153,7 +153,7 @@ pub extern "system" fn Java_com_wsr_gpu_shape_JShape_copyIntoD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_shape_JShape_copyIntoD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_copyIntoD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong,

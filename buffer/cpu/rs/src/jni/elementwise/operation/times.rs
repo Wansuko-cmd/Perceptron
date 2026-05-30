@@ -6,7 +6,7 @@ use crate::core::elementwise::operation::times;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD0ToD1(
     env: JNIEnv,
     _class: JClass,
     x: jfloat,
@@ -19,7 +19,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -32,7 +32,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -46,7 +46,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD1ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD1ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -61,7 +61,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD1ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD1ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -76,7 +76,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD2ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD2ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -91,7 +91,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD2ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD2ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -106,7 +106,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD3ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD3ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -121,7 +121,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD3ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD3ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -136,7 +136,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD3ToD4(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD3ToD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -151,7 +151,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD4ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD4ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -166,7 +166,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD4ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD4ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -181,7 +181,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_times
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_times_JTimes_timesD4ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD4ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,

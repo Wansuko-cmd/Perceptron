@@ -6,7 +6,7 @@ use crate::core::elementwise::math;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_exp(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_exp(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -18,7 +18,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_exp(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_ln(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_ln(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -31,7 +31,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_ln(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_sigmoid(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_sigmoid(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -43,7 +43,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_sigmoid(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_pow(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_pow(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -56,7 +56,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_pow(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_math_JMath_sqrt(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_sqrt(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,

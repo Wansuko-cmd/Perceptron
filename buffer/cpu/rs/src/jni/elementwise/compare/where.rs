@@ -6,7 +6,7 @@ use crate::core::elementwise::compare::r#where;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD0ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD0ToD0(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,
@@ -20,7 +20,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD0ToD1(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,
@@ -35,7 +35,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD1ToD0(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,
@@ -50,7 +50,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_compare_where_JWhere_whereD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD1ToD1(
     env: JNIEnv,
     _class: JClass,
     condition: JByteBuffer,

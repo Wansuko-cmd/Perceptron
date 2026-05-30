@@ -6,7 +6,7 @@ use crate::core::shape;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -19,7 +19,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -38,7 +38,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD4(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -57,7 +57,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD4(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD5(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD5(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -76,7 +76,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_transposeD5(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -89,7 +89,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -103,7 +103,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -117,7 +117,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_sliceD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -130,7 +130,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -144,7 +144,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -158,7 +158,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_copyIntoD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -173,7 +173,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -188,7 +188,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_unfoldD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -203,7 +203,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -218,7 +218,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_foldD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_flipD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -232,7 +232,7 @@ pub extern "system" fn Java_com_wsr_cpu_shape_JShape_flipD3(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_shape_JShape_flipD4(
+pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
