@@ -12,7 +12,7 @@ kotlin {
     android {
         compileSdk = libs.versions.android.compile.sdk.get().toInt()
         minSdk = libs.versions.android.min.sdk.get().toInt()
-        namespace = "com.wsr.cpu"
+        namespace = "com.wsr.knist.cpu"
     }
 
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()

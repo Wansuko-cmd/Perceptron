@@ -1,4 +1,4 @@
-package = com.wsr.cpu.rs
+package = com.wsr.knist.cpu.rs
 
 libraryPaths.linux_x64 = src/nativeMain/resources/cpu/linuxX64
 libraryPaths.linux_arm64 = src/nativeMain/resources/cpu/linuxX64

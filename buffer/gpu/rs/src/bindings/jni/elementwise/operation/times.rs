@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD0ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jfloat,
@@ -23,7 +23,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD0ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD1ToD0(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -39,7 +39,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD1ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -56,7 +56,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD1ToD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -80,7 +80,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD1ToD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong,
@@ -104,7 +104,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD1ToD3
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD2ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD2ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -127,7 +127,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD2ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD2ToD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD2ToD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint,
@@ -151,7 +151,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD2ToD3
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD3ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -175,7 +175,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD3ToD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -199,7 +199,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD4(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD3ToD4(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint,
@@ -223,7 +223,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD3ToD4
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD4ToD1(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD4ToD1(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -247,7 +247,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD4ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD4ToD2(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD4ToD2(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -271,7 +271,7 @@ pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD4ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_elementwise_operation_JTimes_timesD4ToD3(
+pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_operation_JTimes_timesD4ToD3(
     _: JNIEnv,
     _class: JClass,
     x: jlong, xi: jint, xj: jint, xk: jint, xl: jint,

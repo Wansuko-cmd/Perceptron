@@ -1,14 +1,14 @@
 package dataset.mnist
 
-import com.wsr.base.data.DataBuffer
-import com.wsr.batch.Batch
-import com.wsr.batch.shape.toList
-import com.wsr.core.IOType
-import com.wsr.core.reduction.maxIndex
-import com.wsr.network.NetworkBuilder
-import com.wsr.network.converter.Converter
-import com.wsr.network.initializer.WeightInitializer
-import com.wsr.network.optimizer.Optimizer
+import com.wsr.knist.base.data.DataBuffer
+import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.shape.toList
+import com.wsr.knist.core.IOType
+import com.wsr.knist.core.reduction.maxIndex
+import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable

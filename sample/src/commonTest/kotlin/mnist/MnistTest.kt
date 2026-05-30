@@ -2,20 +2,20 @@
 
 package mnist
 
-import com.wsr.network.Network
-import com.wsr.network.NetworkBuilder
-import com.wsr.network.NetworkSerializer
-import com.wsr.network.initializer.He
-import com.wsr.network.optimizer.Scheduler
-import com.wsr.network.optimizer.adam.AdamW
-import com.wsr.network.output.softmax.softmaxWithLoss
-import com.wsr.network.process.compute.affine.affine
-import com.wsr.network.process.compute.bias.d1.bias
-import com.wsr.network.process.compute.function.relu.reLU
-import com.wsr.network.process.compute.function.relu.swish
-import com.wsr.network.process.compute.norm.layer.d1.layerNorm
-import com.wsr.network.process.compute.skip.skip
-import com.wsr.network.process.reshape.reshape.reshapeToD1
+import com.wsr.knist.network.Network
+import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.NetworkSerializer
+import com.wsr.knist.network.initializer.He
+import com.wsr.knist.network.optimizer.Scheduler
+import com.wsr.knist.network.optimizer.adam.AdamW
+import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.process.compute.affine.affine
+import com.wsr.knist.network.process.compute.bias.d1.bias
+import com.wsr.knist.network.process.compute.function.relu.reLU
+import com.wsr.knist.network.process.compute.function.relu.swish
+import com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm
+import com.wsr.knist.network.process.compute.skip.skip
+import com.wsr.knist.network.process.reshape.reshape.reshapeToD1
 import dataset.mnist.LabelConverter
 import dataset.mnist.MnistDataset
 import dataset.mnist.PixelConverter

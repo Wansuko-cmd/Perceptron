@@ -7,7 +7,7 @@ use crate::resource::buffer::GPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_gpu_linalg_JMatMul_matMul(
+pub extern "system" fn Java_com_wsr_knist_gpu_linalg_JMatMul_matMul(
     _: JNIEnv,
     _class: JClass,
     x: jlong, trans_x: jboolean,

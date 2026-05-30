@@ -6,7 +6,7 @@ use crate::core::index;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_index_JIndex_gather(
+pub extern "system" fn Java_com_wsr_knist_cpu_index_JIndex_gather(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -22,7 +22,7 @@ pub extern "system" fn Java_com_wsr_cpu_index_JIndex_gather(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_index_JIndex_scatterAdd(
+pub extern "system" fn Java_com_wsr_knist_cpu_index_JIndex_scatterAdd(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,

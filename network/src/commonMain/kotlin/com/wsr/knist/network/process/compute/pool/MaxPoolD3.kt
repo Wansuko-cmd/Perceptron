@@ -1,0 +1,74 @@
+package com.wsr.knist.network.process.compute.pool
+
+import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.get
+import com.wsr.knist.batch.shape.toBatch
+import com.wsr.knist.core.IOType
+import com.wsr.knist.core.d3
+import com.wsr.knist.core.get
+import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.compute.Compute
+import kotlinx.serialization.Serializable
+
+@Serializable
+class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val inputX: Int, val inputY: Int) :
+    Compute.D3() {
+    override val outputX: Int = channel
+    override val outputY: Int = inputX / poolSize
+    override val outputZ: Int = inputY / poolSize
+
+    init {
+        check(inputX % poolSize == 0 && inputY % poolSize == 0) {
+            """
+            invalid parameter.
+            inputX: $inputX
+            inputY: $inputY
+            poolSize: $poolSize
+            outputX: ${inputX / poolSize.toFloat()}
+            outputY: ${inputY / poolSize.toFloat()}
+            """.trimIndent()
+        }
+    }
+
+    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
+        Batch(input.size) { forward(input[it]) }
+
+    override fun train(
+        input: Batch<IOType.D3>,
+        context: Context,
+        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+    ): Batch<IOType.D3> {
+        val output = Batch(input.size) { forward(input[it]) }
+        val delta = calcDelta(output)
+        return List(input.size) { index ->
+            val input = input[index]
+            val output = output[index]
+            val delta = delta[index]
+            IOType.d3(i = channel, j = inputX, k = inputY) { c, x, y ->
+                val xo = x / poolSize
+                val yo = y / poolSize
+                if (input[c, x, y] == output[c, xo, yo]) delta[c, xo, yo] else 0f
+            }
+        }.toBatch()
+    }
+
+    private fun forward(input: IOType.D3): IOType.D3 = IOType.d3(outputX, outputY, outputZ) { x, y, z ->
+        var max = input[x, y, z]
+        for (i in 0 until poolSize) {
+            for (j in 0 until poolSize) {
+                max = maxOf(max, input[x, y + i, z + j])
+            }
+        }
+        max
+    }
+}
+
+fun <T> NetworkBuilder.D3<T>.maxPool(size: Int) = addProcess(
+    process = MaxPoolD3(
+        poolSize = size,
+        channel = inputX,
+        inputX = inputY,
+        inputY = inputZ,
+    ),
+)

@@ -1,0 +1,12 @@
+package com.wsr.knist.gpu
+
+import com.wsr.knist.base.IBackend
+import com.wsr.knist.base.loadNativeLibrary
+
+private const val LIB_PATH = "gpu"
+private const val LIB_NAME = "gpu"
+
+actual fun loadGPUBackend(): IBackend? {
+    val isSuccess = loadNativeLibrary(path = LIB_PATH, name = LIB_NAME)
+    return if (isSuccess) GPUBackend() else null
+}

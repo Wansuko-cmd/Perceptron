@@ -6,7 +6,7 @@ use crate::core::linalg::mat_mul;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_inner(
+pub extern "system" fn Java_com_wsr_knist_cpu_linalg_JMatMul_inner(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -21,7 +21,7 @@ pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_inner(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_matMulD1ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_linalg_JMatMul_matMulD1ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -38,7 +38,7 @@ pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_matMulD1ToD2(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_matMulD2ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_linalg_JMatMul_matMulD2ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -55,7 +55,7 @@ pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_matMulD2ToD1(
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_linalg_JMatMul_matMulD2ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_linalg_JMatMul_matMulD2ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,

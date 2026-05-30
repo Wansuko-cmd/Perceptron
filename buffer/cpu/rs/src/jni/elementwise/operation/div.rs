@@ -6,7 +6,7 @@ use crate::core::elementwise::operation::div;
 use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD0ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD0ToD1(
     env: JNIEnv,
     _class: JClass,
     x: jfloat,
@@ -19,7 +19,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD0ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD0(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD1ToD0(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -32,7 +32,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD0
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD1ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -46,7 +46,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD1ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -61,7 +61,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD1ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
@@ -76,7 +76,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD1ToD3
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD2ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD2ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -91,7 +91,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD2ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD2ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD2ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint,
@@ -106,7 +106,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD2ToD3
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD3ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -121,7 +121,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD3ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -136,7 +136,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD4(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD3ToD4(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint,
@@ -151,7 +151,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD3ToD4
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD4ToD1(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD4ToD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -166,7 +166,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD4ToD1
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD4ToD2(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD4ToD2(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
@@ -181,7 +181,7 @@ pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD4ToD2
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_cpu_elementwise_operation_div_JDiv_divD4ToD3(
+pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_div_JDiv_divD4ToD3(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer, xi: jint, xj: jint, xk: jint, xl: jint,
