@@ -11,7 +11,6 @@ import com.wsr.core.d2
 import com.wsr.core.d3
 import com.wsr.core.d4
 import com.wsr.ioTypeTestRule
-import kotlin.test.assertEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
