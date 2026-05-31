@@ -57,6 +57,18 @@ val results: List<OutputType> = network.expect(inputs = listOf(data1, data2))
 | `inputD3(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D3 |
 | `wordsD1(maxLength, words, unknownIndex, paddingIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordsD1` | `List<String>` | D1(maxLength) |
 
+converter を省略できる省略形（IOType をそのまま入力する場合）:
+
+| 関数 | import | 入力型 | 最初のIO型 |
+|------|--------|--------|-----------|
+| `inputD1(inputSize, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD1` | `IOType.D1` | D1(inputSize) |
+| `inputD2(x, y, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD2` | `IOType.D2` | D2(x, y) |
+| `inputD3(x, y, z, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD3` | `IOType.D3` | D3(x, y, z) |
+| `wordD1(words, unknownIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordD1` | `String` | D1(vocabSize) |
+| `wordD2(words, length, unknownIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordD2` | `List<String>` | D2(length, vocabSize) |
+| `charD1(optimizer, initializer)` | `com.wsr.knist.network.converter.char.charD1` | `Char` | D1(34) |
+| `charsD1(maxLength, optimizer, initializer)` | `com.wsr.knist.network.converter.char.charsD1` | `String` | D1(maxLength) |
+
 > `inputPx` はライブラリには存在しない。サンプルプロジェクト内で `inputD2` + `PixelConverter` のラッパーとして定義されているもの。
 
 ---
@@ -78,11 +90,13 @@ val results: List<OutputType> = network.expect(inputs = listOf(data1, data2))
 | 関数 | import | 入力 | 出力 | デフォルト値 |
 |------|--------|------|------|-------------|
 | `convD1(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(X, Y) | D2(filter, outY) | stride=1, padding=0 |
+| `convD2(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD2` | D3(X, Y, Z) | D3(filter, outY, outZ) | stride=1, padding=0 |
 | `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(X, Y) | D2(X, Y/size) | — |
 | `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(X, Y, Z) | D3(X, Y/size, Z/size) | — |
 
 convD1のoutY計算式: `(Y - kernel + 2 * padding) / stride + 1`
-制約: `(Y - kernel + 2 * padding) % stride == 0` でなければコンパイル時エラー
+convD2のoutY・outZ計算式: `(Y - kernel + 2 * padding) / stride + 1`（Y・Z両方に適用）
+制約: `(size - kernel + 2 * padding) % stride == 0` でなければ実行時エラー
 制約: maxPool は Y（D2）または Y・Z（D3）が size の倍数でなければならない
 
 ### 全結合・変換系
@@ -169,10 +183,13 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 | 関数 | import | 入力 | 出力 |
 |------|--------|------|------|
 | `reshapeToD1()` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD1` | D2(X, Y) | D1(X×Y) |
+| `reshapeToD2(outputX, outputY)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD2` | D3(X, Y, Z) | D2(outputX, outputY) |
 | `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D2(X, Y) | D1(X) |
 | `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D3(X, Y, Z) | D1(X) |
 | `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(X, Y, Z) | D2(Y, Z) |
 | `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(X) | D2(X, tokenSize) |
+
+reshapeToD2 の制約: `inputX * inputY * inputZ == outputX * outputY` でなければ実行時エラー
 
 ### 出力層
 
