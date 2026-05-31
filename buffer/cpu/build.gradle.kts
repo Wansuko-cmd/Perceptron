@@ -72,12 +72,13 @@ kotlin {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>(project.name) {
-            groupId = libs.versions.lib.group.id.get()
-            artifactId = "knist"
-            version = libs.versions.lib.version.get()
+afterEvaluate {
+    publishing {
+        publications {
+            withType<MavenPublication>().configureEach {
+                groupId = libs.versions.lib.group.id.get()
+                version = libs.versions.lib.version.get()
+            }
         }
     }
 }
