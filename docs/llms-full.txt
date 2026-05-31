@@ -288,6 +288,52 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 ---
 
+## モデルの保存・読み込み
+
+`import com.wsr.knist.network.NetworkSerializer`
+
+カスタムConverterを使っている場合は保存前に登録が必要。
+
+```kotlin
+NetworkSerializer.apply {
+    register(MyConverter::class)  // カスタムConverterのみ登録。組み込みは不要
+}
+```
+
+### JSON形式（テキスト）
+
+```kotlin
+// 保存
+val json: String = NetworkSerializer.encodeToString(network)
+
+// 読み込み
+val network: Network<I, O> = NetworkSerializer.decodeFromString(json)
+```
+
+### JSON形式（okio BufferedSink/Source）
+
+```kotlin
+// 保存
+NetworkSerializer.encodeToBufferedSink(network, sink)
+
+// 読み込み
+val network: Network<I, O> = NetworkSerializer.decodeFromBufferedSource(source)
+```
+
+### CBOR形式（バイナリ）
+
+```kotlin
+// 保存
+val bytes: ByteArray = NetworkSerializer.encodeToCbor(network)
+NetworkSerializer.encodeToCborSink(network, sink)  // Sink版
+
+// 読み込み
+val network: Network<I, O> = NetworkSerializer.decodeFromCbor(bytes)
+val network: Network<I, O> = NetworkSerializer.decodeFromCborSource(source)  // Source版
+```
+
+---
+
 ## repeat / skip
 
 ```kotlin
