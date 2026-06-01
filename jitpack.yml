@@ -3,8 +3,8 @@ jdk:
 install:
   - chmod 777 ./gradlew
   - ./gradlew buffer:base:publishToMavenLocal
-  - ./gradlew buffer:cpu:publishToMavenLocal
   - ./gradlew buffer:gpu:publishToMavenLocal
-  - ./gradlew buffer:publishToMavenLocal
-  - ./gradlew io-type:publishToMavenLocal
-  - ./gradlew network:publishToMavenLocal
+  - ./gradlew buffer:cpu:publishJvmPublicationToMavenLocal buffer:cpu:publishAndroidPublicationToMavenLocal buffer:cpu:publishKotlinMultiplatformPublicationToMavenLocal
+  - ./gradlew buffer:publishJvmPublicationToMavenLocal buffer:publishAndroidPublicationToMavenLocal buffer:publishKotlinMultiplatformPublicationToMavenLocal
+  - ./gradlew io-type:publishJvmPublicationToMavenLocal io-type:publishAndroidPublicationToMavenLocal io-type:publishKotlinMultiplatformPublicationToMavenLocal
+  - ./gradlew network:publishJvmPublicationToMavenLocal network:publishAndroidPublicationToMavenLocal network:publishKotlinMultiplatformPublicationToMavenLocal
