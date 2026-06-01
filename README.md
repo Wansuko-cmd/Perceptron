@@ -74,8 +74,28 @@ sampleにてMNIST(3層NN)とTinyStories(Transformer)の例を載せています
 
 1次元配列でのデータ保持、および計算処理を定義
 
-## 試したい場合
+## 導入方法
 
-[Jitpack](https://jitpack.io/#Wansuko-cmd/knist/)より導入可能です
+[JitPack](https://jitpack.io/#Wansuko-cmd/knist/) から導入できます。
 
-※ 現在開発中のため、予告なく破壊的変更が加わる可能性が非常に高いです。あらかじめご了承ください
+**settings.gradle.kts** にリポジトリを追加:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+```
+
+**build.gradle.kts** に依存を追加:
+
+```kotlin
+dependencies {
+    implementation("com.github.Wansuko-cmd.knist:network:<version>")
+}
+```
+
+> **注意**: `com.github.Wansuko-cmd:knist` ではなく `com.github.Wansuko-cmd.knist:network` を使ってください。
+
+※ 現在開発中のため、予告なく破壊的変更が加わる可能性が非常に高いです。あらかじめご了承ください。

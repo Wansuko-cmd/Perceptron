@@ -6,9 +6,20 @@
 KotlinのMultiplatformライブラリ。JitpackからGradle依存として導入できる。
 
 ```kotlin
-repositories { maven("https://jitpack.io") }
-dependencies { implementation("com.github.Wansuko-cmd:knist:<version>") }
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// build.gradle.kts
+dependencies {
+    implementation("com.github.Wansuko-cmd.knist:network:<version>")
+}
 ```
+
+注意: `com.github.Wansuko-cmd:knist` ではなく `com.github.Wansuko-cmd.knist:network` を使うこと。前者はJitPackのラッパーPOMであり、KMPのvariant選択が効かない。
 
 ---
 
@@ -30,18 +41,38 @@ val network: Network<List<Float>, Int> = NetworkBuilder
 
 ### 学習
 
+4つのオーバーロードがある。
+
 ```kotlin
-val loss: Float = network.train(
-    input = batchInputs,   // List<InputType>
-    label = batchLabels,   // List<LabelType>
-)
+// 単件
+network.train(input = data, label = label)
+
+// 単件 + ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
+network.train(input = data) { currentOutput -> modifiedLabel }
+
+// バッチ（戻り値は loss）
+val loss: Float = network.train(input = batchInputs, label = batchLabels)
+
+// バッチ + ラベルジェネレータ
+val loss: Float = network.train(input = batchInputs) { currentOutputs -> modifiedLabels }
+```
+
+### loss計算（逆伝播なし）
+
+`train()` と同じ4バリアントがある。検証用途等、重みを更新せずに損失だけ得たい場合に使う。
+
+```kotlin
+network.loss(input = data, label = label)
+network.loss(input = data) { currentOutput -> modifiedLabel }
+val loss: Float = network.loss(input = batchInputs, label = batchLabels)
+val loss: Float = network.loss(input = batchInputs) { currentOutputs -> modifiedLabels }
 ```
 
 ### 推論
 
 ```kotlin
 val result: OutputType = network.expect(input = data)
-val results: List<OutputType> = network.expect(inputs = listOf(data1, data2))
+val results: List<OutputType> = network.expect(input = listOf(data1, data2))
 ```
 
 ---
@@ -197,8 +228,10 @@ reshapeToD2 の制約: `inputX * inputY * inputZ == outputX * outputY` でなけ
 |------|--------|------|--------|
 | `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Label>` |
 | `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D2(X, Y) | `Network<I, Label>` |
-| `sigmoidWithLoss(converter?)` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, D1>` |
-| `meanSquare(converter?)` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, D1>` |
+| `sigmoidWithLoss()` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, IOType.D1>` |
+| `sigmoidWithLoss(converter)` | 同上 | D1(n) | `Network<I, O>` |
+| `meanSquare()` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, IOType.D1>` |
+| `meanSquare(converter)` | 同上 | D1(n) | `Network<I, O>` |
 
 `softmaxWithLoss` デフォルト値: `temperature=1f`, `maskValue=null`
 
@@ -307,11 +340,11 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 ## モデルの保存・読み込み
 
-`import com.wsr.knist.network.NetworkSerializer`
-
 カスタムConverterを使っている場合は保存前に登録が必要。
 
 ```kotlin
+import com.wsr.knist.network.NetworkSerializer
+
 NetworkSerializer.apply {
     register(MyConverter::class)  // カスタムConverterのみ登録。組み込みは不要
 }
@@ -321,32 +354,32 @@ NetworkSerializer.apply {
 
 ```kotlin
 // 保存
-val json: String = NetworkSerializer.encodeToString(network)
+val json: String = network.toJson()
 
 // 読み込み
-val network: Network<I, O> = NetworkSerializer.decodeFromString(json)
+val network: Network<I, O> = Network.fromJson(json)
 ```
 
 ### JSON形式（okio BufferedSink/Source）
 
 ```kotlin
 // 保存
-NetworkSerializer.encodeToBufferedSink(network, sink)
+network.toJson(sink)
 
 // 読み込み
-val network: Network<I, O> = NetworkSerializer.decodeFromBufferedSource(source)
+val network: Network<I, O> = Network.fromJson(source)
 ```
 
 ### CBOR形式（バイナリ）
 
 ```kotlin
 // 保存
-val bytes: ByteArray = NetworkSerializer.encodeToCbor(network)
-NetworkSerializer.encodeToCborSink(network, sink)  // Sink版
+val bytes: ByteArray = network.toCbor()
+network.toCbor(sink)  // Sink版
 
 // 読み込み
-val network: Network<I, O> = NetworkSerializer.decodeFromCbor(bytes)
-val network: Network<I, O> = NetworkSerializer.decodeFromCborSource(source)  // Source版
+val network: Network<I, O> = Network.fromCbor(bytes)
+val network: Network<I, O> = Network.fromCbor(source)  // Source版
 ```
 
 ---
