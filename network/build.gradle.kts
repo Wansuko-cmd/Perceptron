@@ -55,7 +55,7 @@ afterEvaluate {
             withType<MavenPublication>().configureEach {
                 groupId = libs.versions.lib.group.id.get()
                 version = libs.versions.lib.version.get()
-                if (name == "kotlinMultiplatform") artifactId = "knist"
+                artifactId = if (name == "kotlinMultiplatform") "knist" else "knist-$name"
             }
         }
     }
