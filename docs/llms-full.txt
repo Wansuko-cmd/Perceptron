@@ -203,6 +203,19 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 `ratio` は**保持確率**（0〜1）。推論時はパススルー。
 
+### デバッグ
+
+| 関数 | import |
+|------|--------|
+| `debug(onInput?, onDelta?)` | `com.wsr.knist.network.process.compute.debug.debug` |
+
+値・形状を変えないパススルー層（D1→D1, D2→D2, D3→D3）。import 1行で全次元に対応する。コールバックで途中のテンソルを観察できる。
+
+- `onInput`：順伝播時（`expect` / `train` 両方）に入力テンソルを受け取る
+- `onDelta`：`train` 時に勾配（delta）を受け取る
+
+注意: JSON / CBOR でシリアライズするとラムダはリセットされる（`@Transient`）。
+
 ### スキップ接続
 
 | 関数 | import | 制約 |
@@ -297,7 +310,7 @@ data class FloatListConverter(override val outputSize: Int) : Converter.D1<List<
 }
 ```
 
-保存・読み込みを使う場合は `@Serializable` を付けて登録する:
+保存・読み込みを使う場合は `@Serializable` を付けて登録する（ビルド設定は「モデルの保存・読み込み」節を参照）:
 ```kotlin
 NetworkSerializer.apply { register(LabelConverter::class) }
 ```
@@ -340,7 +353,26 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 ## モデルの保存・読み込み
 
+`toJson()` / `toCbor()` は `Network` のメンバー関数、`fromJson()` / `fromCbor()` は `Network.Companion` のコンパニオン関数。いずれも import 不要。
+
 カスタムConverterを使っている場合は保存前に登録が必要。
+
+### カスタムConverterを保存する場合のビルド設定
+
+組み込みConverter（`LinearD1` 等）のみ使う場合は不要。カスタムConverterを保存・読み込みする場合のみ、以下の設定が必要。
+
+```kotlin
+// build.gradle.kts
+plugins {
+    kotlin("plugin.serialization")
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:<version>")
+}
+```
+
+設定後、カスタムConverter に `@Serializable` を付けて登録する：
 
 ```kotlin
 import com.wsr.knist.network.NetworkSerializer
