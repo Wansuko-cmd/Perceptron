@@ -1287,22 +1287,4 @@ object KotlinBackend : IBackend {
         }
         return result
     }
-
-    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = DataBufferGenerator.create(x.size)
-        for (i in 0 until xi) {
-            for (j in 0 until xj) {
-                for (k in 0 until xk) {
-                    for (l in 0 until xl) {
-                        val si = if (axis == 0) xi - 1 - i else i
-                        val sj = if (axis == 1) xj - 1 - j else j
-                        val sk = if (axis == 2) xk - 1 - k else k
-                        val sl = if (axis == 3) xl - 1 - l else l
-                        result[((i * xj + j) * xk + k) * xl + l] = x[((si * xj + sj) * xk + sk) * xl + sl]
-                    }
-                }
-            }
-        }
-        return result
-    }
 }
