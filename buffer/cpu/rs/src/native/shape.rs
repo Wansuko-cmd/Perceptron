@@ -200,16 +200,3 @@ pub extern "C" fn com_wsr_cpu_flip_d3(
     let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
     shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
-
-#[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_flip_d4(
-    x: *const f32,
-    xi: i32, xj: i32, xk: i32, xl: i32,
-    axis: i32,
-    result: *mut f32,
-) {
-    let size = xi * xj * xk * xl;
-    let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    let result = unsafe { std::slice::from_raw_parts_mut(result, size as usize) };
-    shape::flip_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
-}

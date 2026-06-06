@@ -367,21 +367,3 @@ pub fn flip_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, result: 
         }
     }
 }
-
-pub fn flip_d4(x: &[f32], xi: usize, xj: usize, xk: usize, xl: usize, axis: usize, result: &mut [f32]) {
-    for i in 0..xi {
-        for j in 0..xj {
-            for k in 0..xk {
-                for l in 0..xl {
-                    let si = if axis == 0 { xi - 1 - i } else { i };
-                    let sj = if axis == 1 { xj - 1 - j } else { j };
-                    let sk = if axis == 2 { xk - 1 - k } else { k };
-                    let sl = if axis == 3 { xl - 1 - l } else { l };
-                    let result_index = ((i * xj + j) * xk + k) * xl + l;
-                    let x_index = ((si * xj + sj) * xk + sk) * xl + sl;
-                    result[result_index] = x[x_index];
-                }
-            }
-        }
-    }
-}
