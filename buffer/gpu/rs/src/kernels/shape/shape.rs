@@ -19,6 +19,11 @@ pub struct Shape {
     transpose_d2: wgpu::ComputePipeline,
     transpose_d4: wgpu::ComputePipeline,
     transpose_bgl: wgpu::BindGroupLayout,
+
+    flip_d2_axis0: wgpu::ComputePipeline,
+    flip_d2_axis1: wgpu::ComputePipeline,
+    flip_d3: wgpu::ComputePipeline,
+    flip_bgl: wgpu::BindGroupLayout,
 }
 
 impl Shape {
@@ -168,6 +173,51 @@ impl Shape {
             ],
         });
 
+        let flip_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d2.wgsl").into()),
+        });
+        let flip_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d3.wgsl").into()),
+        });
+
+        let flip_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("Shape::new"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+            ],
+        });
+
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Shape::new"),
             bind_group_layouts: &[&transpose_bgl],
@@ -259,6 +309,31 @@ impl Shape {
                 cache: None,
             }),
             transpose_bgl: transpose_bgl,
+            flip_d2_axis0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("flip_d2"),
+                layout: Some(&pipeline_layout),
+                module: &flip_d2_shader,
+                entry_point: Some("flip_d2_axis0"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            flip_d2_axis1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("flip_d2"),
+                layout: Some(&pipeline_layout),
+                module: &flip_d2_shader,
+                entry_point: Some("flip_d2_axis1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            flip_d3: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("flip_d3"),
+                layout: Some(&pipeline_layout),
+                module: &flip_d3_shader,
+                entry_point: Some("flip_d3"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            flip_bgl: flip_bgl,
         }
     }
 }
@@ -882,6 +957,159 @@ impl Shape {
         ComputeTask {
             label: label,
             pipeline: &self.transpose_d4,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct FlipD2Params {
+    xi: u32,
+    xj: u32,
+    _pad1: u32,
+    _pad2: u32,
+}
+
+impl Shape {
+    pub fn flip_d2_axis0<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.flip_d2(
+            "flip_d2_axis0",
+            &self.flip_d2_axis0,
+            x,
+            xi, xj,
+            result,
+        )
+    }
+
+    pub fn flip_d2_axis1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        self.flip_d2(
+            "flip_d2_axis1",
+            &self.flip_d2_axis1,
+            x,
+            xi, xj,
+            result,
+        )
+    }
+
+    fn flip_d2<'a>(
+        &'a self,
+        label: &'static str,
+        pipeline: &'a wgpu::ComputePipeline,
+        x: &GPUBuffer,
+        xi: usize, xj: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let device = &self.device;
+        let params = FlipD2Params {
+            xi: xi as u32,
+            xj: xj as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.flip_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: pipeline,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct FlipD3Params {
+    xi: u32,
+    xj: u32,
+    xk: u32,
+    _pad: u32,
+}
+
+impl Shape {
+    pub fn flip_d3<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize, xk: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "flip_d3";
+        let device = &self.device;
+        let params = FlipD3Params {
+            xi: xi as u32,
+            xj: xj as u32,
+            xk: xk as u32,
+            _pad: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.flip_bgl,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.flip_d3,
             bind_group: bind_group,
             workgroups: workgroups,
         }
