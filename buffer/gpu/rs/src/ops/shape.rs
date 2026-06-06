@@ -109,3 +109,12 @@ pub fn copy_into_d3(
     };
     runtime.dispatch(task);
 }
+
+pub fn flip_d3(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let task = match axis {
+        0 => runtime.kernels.shape.flip_d2_axis0(x, xi, xj * xk, result),
+        1 => runtime.kernels.shape.flip_d3(x, xi, xj, xk, result),
+        _ => runtime.kernels.shape.flip_d2_axis1(x, xi * xj, xk, result),
+    };
+    runtime.dispatch(task);
+}
