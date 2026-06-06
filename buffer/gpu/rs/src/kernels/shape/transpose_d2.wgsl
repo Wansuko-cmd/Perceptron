@@ -1,6 +1,6 @@
 struct Params {
-    oi: u32,
-    oj: u32,
+    xi: u32,
+    xj: u32,
     _pad1: u32,
     _pad2: u32,
 }
@@ -12,14 +12,14 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn transpose_d2(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let new_index = id.y * stride + id.x;
-    if (new_index >= arrayLength(&result)) {
+    let result_index = id.y * stride + id.x;
+    if (result_index >= arrayLength(&result)) {
         return;
     }
 
-    let ni = new_index / params.oi;
-    let nj = new_index % params.oi;
+    let ni = result_index / params.xi;
+    let nj = result_index % params.xi;
 
-    let old_index = nj * params.oj + ni;
-    result[new_index] = x[old_index];
+    let x_index = nj * params.xj + ni;
+    result[result_index] = x[x_index];
 }

@@ -12,11 +12,11 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn copy_into_d1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x) || old_index >= params.size) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x) || x_index >= params.size) {
         return;
     }
 
-    let new_index = i32(params.start) + i32(old_index) * params.step;
-    result[new_index] = x[old_index];
+    let result_index = i32(params.start) + i32(x_index) * params.step;
+    result[result_index] = x[x_index];
 }

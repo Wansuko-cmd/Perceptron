@@ -9,37 +9,37 @@ fn bench_compare(c: &mut Criterion) {
     let mut group = c.benchmark_group("compare");
 
     bench_d1_to_d0(&mut group, "gt_d1_to_d0", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::gt_d1_to_d0(x, y, res, rt);
+        ops::elementwise::compare::gt_d1_to_d0(x, y, res, rt);
     });
     bench_d1_to_d1(&mut group, "gt_d1_to_d1", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::gt_d1_to_d1(x, y, res, rt);
+        ops::elementwise::compare::gt_d1_to_d1(x, y, res, rt);
     });
 
     bench_d1_to_d0(&mut group, "lt_d1_to_d0", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::lt_d1_to_d0(x, y, res, rt);
+        ops::elementwise::compare::lt_d1_to_d0(x, y, res, rt);
     });
     bench_d1_to_d1(&mut group, "lt_d1_to_d1", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::lt_d1_to_d1(x, y, res, rt);
+        ops::elementwise::compare::lt_d1_to_d1(x, y, res, rt);
     });
 
     bench_d1_to_d0(&mut group, "eq_d1_to_d0", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::eq_d1_to_d0(x, y, 0f32, 0f32, res, rt);
+        ops::elementwise::compare::eq_d1_to_d0(x, y, 0f32, 0f32, res, rt);
     });
     bench_d1_to_d1(&mut group, "eq_d1_to_d1", &mut runtime, |_, x, y, res, rt| {
-        ops::compare::eq_d1_to_d1(x, y, 0f32, 0f32,res, rt);
+        ops::elementwise::compare::eq_d1_to_d1(x, y, 0f32, 0f32,res, rt);
     });
 
     bench_d0_to_d0(&mut group, "where_d0_to_d0", &mut runtime, |condition, x, y, res, rt| {
-        ops::compare::where_d0_to_d0(condition, x, y, res, rt);
+        ops::elementwise::compare::where_d0_to_d0(condition, x, y, res, rt);
     });
     bench_d0_to_d1(&mut group, "where_d0_to_d1", &mut runtime, |condition, x, y, res, rt| {
-        ops::compare::where_d0_to_d1(condition, x, y, res, rt);
+        ops::elementwise::compare::where_d0_to_d1(condition, x, y, res, rt);
     });
     bench_d1_to_d0(&mut group, "where_d1_to_d0", &mut runtime, |condition, x, y, res, rt| {
-        ops::compare::where_d1_to_d0(condition, x, y, res, rt);
+        ops::elementwise::compare::where_d1_to_d0(condition, x, y, res, rt);
     });
     bench_d1_to_d1(&mut group, "where_d1_to_d1", &mut runtime, |condition, x, y, res, rt| {
-        ops::compare::where_d1_to_d1(condition, x, y,res, rt);
+        ops::elementwise::compare::where_d1_to_d1(condition, x, y,res, rt);
     });
 
     group.finish();

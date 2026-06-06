@@ -1,6 +1,6 @@
 use jni::{JNIEnv};
 use jni::objects::{JClass, JFloatArray, ReleaseMode};
-use jni::sys::{jboolean, jfloat, jfloatArray, jint, jlong};
+use jni::sys::{jfloat, jfloatArray, jint, jlong};
 
 use crate::ops;
 use crate::resource::buffer::GPUBuffer;

@@ -21,7 +21,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_linalg_JMatMul_matMul(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::mat_mul::mat_mul(
+    ops::linalg::mat_mul::mat_mul(
         x, trans_x != 0,
         y, trans_y != 0,
         m as usize, n as usize, k as usize, b as usize,

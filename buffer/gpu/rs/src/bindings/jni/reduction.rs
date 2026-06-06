@@ -18,7 +18,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_averageD1(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::average_d1(x, result, runtime);
+    ops::reduction::average_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -34,7 +34,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_averageD2(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::average_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
+    ops::reduction::average_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -50,7 +50,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_averageD3(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::average_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
+    ops::reduction::average_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -65,7 +65,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_maxD1(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::max_d1(x, result, runtime);
+    ops::reduction::max_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -81,7 +81,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_maxD2(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::max_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
+    ops::reduction::max_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -97,7 +97,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_maxD3(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::max_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
+    ops::reduction::max_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -112,7 +112,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_minD1(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::min_d1(x, result, runtime);
+    ops::reduction::min_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -128,7 +128,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_minD2(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::min_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
+    ops::reduction::min_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -144,7 +144,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_minD3(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::min_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
+    ops::reduction::min_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -159,7 +159,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_sumD1(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::sum_d1(x, result, runtime);
+    ops::reduction::sum_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -175,7 +175,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_sumD2(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::sum_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
+    ops::reduction::sum_d2(x, xi as usize, xj as usize, axis as usize, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -191,5 +191,5 @@ pub extern "system" fn Java_com_wsr_knist_gpu_reduction_JCollection_sumD3(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::collection::sum_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
+    ops::reduction::sum_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
 }

@@ -4,7 +4,7 @@ use crate::kernels::{
     elementwise::{compare::Compare, math::Math, operation::Operation},
     index::index::Index,
     linalg::mat_mul::MatMul,
-    reduction::collection::Collection,
+    reduction::Reduction,
     shape::shape::Shape,
 };
 
@@ -16,7 +16,7 @@ pub mod shape;
 pub mod task;
 
 pub struct Kernels {
-    pub collection: Collection,
+    pub reduction: Reduction,
     pub compare: Compare,
     pub index: Index,
     pub mat_mul: MatMul,
@@ -28,7 +28,7 @@ pub struct Kernels {
 impl Kernels {
     pub fn new(device: &Device) -> Self {
         Kernels {
-            collection: Collection::new(device),
+            reduction: Reduction::new(device),
             compare: Compare::new(device),
             index: Index::new(device),
             mat_mul: MatMul::new(device),

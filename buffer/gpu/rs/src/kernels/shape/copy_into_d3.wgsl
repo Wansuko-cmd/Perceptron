@@ -16,12 +16,12 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn copy_into_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x)) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x)) {
         return;
     }
 
-    var tmp = old_index;
+    var tmp = x_index;
     let ok = tmp % params.rk; tmp = tmp / params.rk;
     let oj = tmp % params.size; tmp = tmp / params.size;
     let oi = tmp % params.ri;
@@ -29,5 +29,5 @@ fn copy_into_d3(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workg
     let rii = i32(oi * params.rj * params.rk);
     let result_offset = rii + (i32(params.start) + i32(oj) * params.step) * i32(params.rk);
     let result_index = result_offset + i32(ok);
-    result[result_index] = x[old_index];
+    result[result_index] = x[x_index];
 }

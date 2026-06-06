@@ -8,11 +8,11 @@ fn bench_math(c: &mut Criterion) {
     let mut runtime = ops::runtime::allocate();
     let mut group = c.benchmark_group("math");
 
-    bench_d1(&mut group, "exp_d1", &mut runtime, |x, res, rt| ops::math::exp_d1(x, res, rt));
-    bench_d1(&mut group, "ln_d1", &mut runtime, |x, res, rt| ops::math::ln_d1(x, 0f32, res, rt));
-    bench_d1(&mut group, "sigmoid_d1", &mut runtime, |x, res, rt| ops::math::sigmoid_d1(x, res, rt));
-    bench_d1(&mut group, "pow_d1", &mut runtime, |x, res, rt| ops::math::pow_d1(x, 2, res, rt));
-    bench_d1(&mut group, "sqrt_d1", &mut runtime, |x, res, rt| ops::math::sqrt_d1(x, 0f32, res, rt));
+    bench_d1(&mut group, "exp_d1", &mut runtime, |x, res, rt| ops::elementwise::math::exp_d1(x, res, rt));
+    bench_d1(&mut group, "ln_d1", &mut runtime, |x, res, rt| ops::elementwise::math::ln_d1(x, 0f32, res, rt));
+    bench_d1(&mut group, "sigmoid_d1", &mut runtime, |x, res, rt| ops::elementwise::math::sigmoid_d1(x, res, rt));
+    bench_d1(&mut group, "pow_d1", &mut runtime, |x, res, rt| ops::elementwise::math::pow_d1(x, 2, res, rt));
+    bench_d1(&mut group, "sqrt_d1", &mut runtime, |x, res, rt| ops::elementwise::math::sqrt_d1(x, 0f32, res, rt));
 
     group.finish();
 }
