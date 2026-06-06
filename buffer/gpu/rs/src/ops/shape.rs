@@ -118,3 +118,8 @@ pub fn flip_d3(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, resu
     };
     runtime.dispatch(task);
 }
+
+pub fn unfold_d1(x: &GPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let task = runtime.kernels.shape.unfold_d1(x, xi, xj, b, window, stride, padding, result);
+    runtime.dispatch(task);
+}
