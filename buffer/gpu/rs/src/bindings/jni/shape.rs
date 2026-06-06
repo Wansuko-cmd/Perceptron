@@ -184,3 +184,37 @@ pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_flipD3(
 
     ops::shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_unfoldD1(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    xi: jint, xj: jint, b: jint,
+    window: jint, stride: jint, padding: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::unfold_d1(x, xi as usize, xj as usize, b as usize, window as usize, stride as usize, padding as usize, result, runtime);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_unfoldD2(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    xi: jint, xj: jint, xk: jint, b: jint,
+    window: jint, stride: jint, padding: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::unfold_d2(x, xi as usize, xj as usize,  xk as usize, b as usize, window as usize, stride as usize, padding as usize, result, runtime);
+}
