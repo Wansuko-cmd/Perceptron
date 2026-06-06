@@ -1617,6 +1617,23 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+        val rj = (xj - window + padding * 2) / stride + 1
+        val result = GPUJvmBuffer.create(b * xi * rj * window)
+        shape.unfoldD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            b = b,
+            window = window,
+            stride = stride,
+            padding = padding,
+            result = result.ptr,
+            runtime = runtime,
+        )
+        return result
+    }
+
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
         size = size,
         runtime = runtime,
