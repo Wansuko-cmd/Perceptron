@@ -86,4 +86,6 @@ class JShape {
     external fun flipD3(x: Long, xi: Int, xj: Int, xk: Int, axis: Int, result: Long, runtime: Long)
 
     external fun unfoldD1(x: Long, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int, result: Long, runtime: Long)
+
+    external fun unfoldD2(x: Long, xi: Int, xj: Int, xk: Int, b: Int, window: Int, stride: Int, padding: Int, result: Long, runtime: Long)
 }
