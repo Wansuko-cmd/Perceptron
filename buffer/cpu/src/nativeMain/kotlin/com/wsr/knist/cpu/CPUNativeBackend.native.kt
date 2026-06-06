@@ -29,7 +29,6 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_equals_d1_to_d0
 import com.wsr.knist.cpu.rs.com_wsr_cpu_equals_d1_to_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_exp_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_flip_d3
-import com.wsr.knist.cpu.rs.com_wsr_cpu_flip_d4
 import com.wsr.knist.cpu.rs.com_wsr_cpu_fold_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_fold_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_gather
@@ -1748,20 +1747,6 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             xi = xi,
             xj = xj,
             xk = xk,
-            axis = axis,
-            result = result.buffer,
-        )
-        return result
-    }
-
-    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer {
-        val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_flip_d4(
-            x = x.toCPUBuffer().buffer,
-            xi = xi,
-            xj = xj,
-            xk = xk,
-            xl = xl,
             axis = axis,
             result = result.buffer,
         )

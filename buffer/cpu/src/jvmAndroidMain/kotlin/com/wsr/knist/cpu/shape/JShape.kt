@@ -132,6 +132,4 @@ class JShape {
     )
 
     external fun flipD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, axis: Int, result: ByteBuffer)
-
-    external fun flipD4(x: ByteBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int, result: ByteBuffer)
 }

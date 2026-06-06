@@ -230,17 +230,3 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
     shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
-
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD4(
-    env: JNIEnv,
-    _class: JClass,
-    x: JByteBuffer,
-    xi: jint, xj: jint, xk: jint, xl: jint,
-    axis: jint,
-    result: JByteBuffer,
-) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
-    shape::flip_d4(x, xi as usize, xj as usize, xk as usize, xl as usize, axis as usize, result);
-}

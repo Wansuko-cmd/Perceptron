@@ -453,5 +453,4 @@ interface IBackend {
     fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, b: Int, stride: Int, padding: Int): DataBuffer
 
     fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
-    fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer
 }

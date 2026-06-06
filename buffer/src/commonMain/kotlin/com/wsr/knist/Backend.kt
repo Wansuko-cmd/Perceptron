@@ -546,7 +546,4 @@ object Backend : IBackend {
 
     override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.flip(x, xi, xj, xk, axis)
-
-    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int): DataBuffer =
-        instance.flip(x, xi, xj, xk, xl, axis)
 }
