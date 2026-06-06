@@ -1401,6 +1401,20 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = GPUJvmBuffer.create(x.size)
+        shape.flipD3(
+            x.toGPUBuffer().ptr,
+            xi,
+            xj,
+            xk,
+            axis,
+            result.ptr,
+            runtime,
+        )
+        return result
+    }
+
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(size, runtime, buffer)
 
     private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime, buffer)
