@@ -21,7 +21,7 @@ import java.lang.ref.Cleaner
 class GPUBackend : IBackend by KotlinBackend {
     private val runtime = JRuntime().allocate()
     private val buffer = JBuffer()
-    override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime, buffer)
+    override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime, buffer)
 
     private val math = JMath()
     private val matMul = JMatMul()
@@ -43,40 +43,48 @@ class GPUBackend : IBackend by KotlinBackend {
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        plus.plusD0ToD1(x, y.toGPUBuffer().ptr, result.ptr, runtime)
+        plus.plusD0ToD1(x = x, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     // 1次元
     override fun plus(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        plus.plusD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        plus.plusD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        plus.plusD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        plus.plusD1ToD1(x = x.toGPUBuffer().ptr, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        plus.plusD1ToD2(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, yi, yj, axis, result.ptr, runtime)
+        plus.plusD1ToD2(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         plus.plusD1ToD3(
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -84,7 +92,15 @@ class GPUBackend : IBackend by KotlinBackend {
     // 2次元
     override fun plus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        plus.plusD2ToD1(x.toGPUBuffer().ptr, xi, xj, y.toGPUBuffer().ptr, axis, result.ptr, runtime)
+        plus.plusD2ToD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -101,17 +117,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         plus.plusD2ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -120,14 +136,14 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         plus.plusD3ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -145,17 +161,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         plus.plusD3ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -176,20 +192,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         plus.plusD3ToD4(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            yl,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            yl = yl,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -198,15 +214,15 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         plus.plusD4ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -225,18 +241,18 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         plus.plusD4ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -257,20 +273,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         plus.plusD4ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -278,40 +294,48 @@ class GPUBackend : IBackend by KotlinBackend {
     // 0次元
     override fun minus(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        minus.minusD0ToD1(x, y.toGPUBuffer().ptr, result.ptr, runtime)
+        minus.minusD0ToD1(x = x, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     // 1次元
     override fun minus(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        minus.minusD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        minus.minusD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        minus.minusD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        minus.minusD1ToD1(x = x.toGPUBuffer().ptr, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        minus.minusD1ToD2(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, yi, yj, axis, result.ptr, runtime)
+        minus.minusD1ToD2(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         minus.minusD1ToD3(
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -319,7 +343,15 @@ class GPUBackend : IBackend by KotlinBackend {
     // 2次元
     override fun minus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        minus.minusD2ToD1(x.toGPUBuffer().ptr, xi, xj, y.toGPUBuffer().ptr, axis, result.ptr, runtime)
+        minus.minusD2ToD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -336,17 +368,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         minus.minusD2ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -355,14 +387,14 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         minus.minusD3ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -380,17 +412,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         minus.minusD3ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -411,20 +443,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         minus.minusD3ToD4(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            yl,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            yl = yl,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -433,15 +465,15 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         minus.minusD4ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -460,18 +492,18 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         minus.minusD4ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -492,20 +524,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         minus.minusD4ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -513,40 +545,48 @@ class GPUBackend : IBackend by KotlinBackend {
     // 0次元
     override fun times(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        times.timesD0ToD1(x, y.toGPUBuffer().ptr, result.ptr, runtime)
+        times.timesD0ToD1(x = x, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     // 1次元
     override fun times(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        times.timesD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        times.timesD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        times.timesD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        times.timesD1ToD1(x = x.toGPUBuffer().ptr, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        times.timesD1ToD2(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, yi, yj, axis, result.ptr, runtime)
+        times.timesD1ToD2(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         times.timesD1ToD3(
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -554,7 +594,15 @@ class GPUBackend : IBackend by KotlinBackend {
     // 2次元
     override fun times(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        times.timesD2ToD1(x.toGPUBuffer().ptr, xi, xj, y.toGPUBuffer().ptr, axis, result.ptr, runtime)
+        times.timesD2ToD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -571,17 +619,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         times.timesD2ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -590,14 +638,14 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         times.timesD3ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -615,17 +663,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         times.timesD3ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -646,20 +694,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         times.timesD3ToD4(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            yl,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            yl = yl,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -668,15 +716,15 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         times.timesD4ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -695,18 +743,18 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         times.timesD4ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -727,20 +775,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         times.timesD4ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -748,40 +796,48 @@ class GPUBackend : IBackend by KotlinBackend {
     // 0次元
     override fun div(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        div.divD0ToD1(x, y.toGPUBuffer().ptr, result.ptr, runtime)
+        div.divD0ToD1(x = x, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     // 1次元
     override fun div(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        div.divD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        div.divD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        div.divD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        div.divD1ToD1(x = x.toGPUBuffer().ptr, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        div.divD1ToD2(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, yi, yj, axis, result.ptr, runtime)
+        div.divD1ToD2(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         div.divD1ToD3(
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -789,7 +845,15 @@ class GPUBackend : IBackend by KotlinBackend {
     // 2次元
     override fun div(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        div.divD2ToD1(x.toGPUBuffer().ptr, xi, xj, y.toGPUBuffer().ptr, axis, result.ptr, runtime)
+        div.divD2ToD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -806,17 +870,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         div.divD2ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -825,14 +889,14 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         div.divD3ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -850,17 +914,17 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         div.divD3ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -881,20 +945,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
         div.divD3ToD4(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            yl,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            yl = yl,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -903,15 +967,15 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         div.divD4ToD1(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -930,18 +994,18 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         div.divD4ToD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            axis1,
-            axis2,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            axis1 = axis1,
+            axis2 = axis2,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -962,20 +1026,20 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         div.divD4ToD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            xl,
-            y.toGPUBuffer().ptr,
-            yi,
-            yj,
-            yk,
-            axis1,
-            axis2,
-            axis3,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            y = y.toGPUBuffer().ptr,
+            yi = yi,
+            yj = yj,
+            yk = yk,
+            axis1 = axis1,
+            axis2 = axis2,
+            axis3 = axis3,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -983,11 +1047,16 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
         val result = GPUJvmBuffer.create(b)
         matMul.matMul(
-            x.toGPUBuffer().ptr, false,
-            y.toGPUBuffer().ptr, false,
-            1, 1, x.size / b, b,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            transX = false,
+            y = y.toGPUBuffer().ptr,
+            transY = false,
+            m = 1,
+            n = 1,
+            k = x.size / b,
+            b = b,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -995,11 +1064,16 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer {
         val result = GPUJvmBuffer.create(n)
         matMul.matMul(
-            x.toGPUBuffer().ptr, false,
-            y.toGPUBuffer().ptr, transY,
-            1, n, k, 1,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            transX = false,
+            y = y.toGPUBuffer().ptr,
+            transY = transY,
+            m = 1,
+            n = n,
+            k = k,
+            b = 1,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -1007,11 +1081,16 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer {
         val result = GPUJvmBuffer.create(m)
         matMul.matMul(
-            x.toGPUBuffer().ptr, transX,
-            y.toGPUBuffer().ptr, false,
-            m, 1, k, 1,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            transX = transX,
+            y = y.toGPUBuffer().ptr,
+            transY = false,
+            m = m,
+            n = 1,
+            k = k,
+            b = 1,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -1028,48 +1107,53 @@ class GPUBackend : IBackend by KotlinBackend {
     ): DataBuffer {
         val result = GPUJvmBuffer.create(b * m * n)
         matMul.matMul(
-            x.toGPUBuffer().ptr, transX,
-            y.toGPUBuffer().ptr, transY,
-            m, n, k, b,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            transX = transX,
+            y = y.toGPUBuffer().ptr,
+            transY = transY,
+            m = m,
+            n = n,
+            k = k,
+            b = b,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
 
     override fun exp(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        math.exp(x.toGPUBuffer().ptr, result.ptr, runtime)
+        math.exp(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        math.ln(x.toGPUBuffer().ptr, e, result.ptr, runtime)
+        math.ln(x = x.toGPUBuffer().ptr, e = e, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun sigmoid(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        math.sigmoid(x.toGPUBuffer().ptr, result.ptr, runtime)
+        math.sigmoid(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        math.pow(x.toGPUBuffer().ptr, n, result.ptr, runtime)
+        math.pow(x = x.toGPUBuffer().ptr, n = n, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        math.sqrt(x.toGPUBuffer().ptr, e, result.ptr, runtime)
+        math.sqrt(x = x.toGPUBuffer().ptr, e = e, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun average(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.averageD1(x.toGPUBuffer().ptr, result.ptr, runtime)
+        collection.averageD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1080,7 +1164,14 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.averageD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, runtime)
+        collection.averageD2(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -1092,13 +1183,21 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.averageD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, runtime)
+        collection.averageD3(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun max(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.maxD1(x.toGPUBuffer().ptr, result.ptr, runtime)
+        collection.maxD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1109,7 +1208,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, runtime)
+        collection.maxD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1121,13 +1220,21 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, runtime)
+        collection.maxD3(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun min(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.minD1(x.toGPUBuffer().ptr, result.ptr, runtime)
+        collection.minD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1138,7 +1245,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.minD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, runtime)
+        collection.minD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1150,13 +1257,21 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.minD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, runtime)
+        collection.minD3(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun sum(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.sumD1(x.toGPUBuffer().ptr, result.ptr, runtime)
+        collection.sumD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1167,7 +1282,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.sumD2(x.toGPUBuffer().ptr, xi, xj, axis, result.ptr, runtime)
+        collection.sumD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1179,19 +1294,37 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.sumD3(x.toGPUBuffer().ptr, xi, xj, xk, axis, result.ptr, runtime)
+        collection.sumD3(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        shape.transposeD2(x.toGPUBuffer().ptr, xi, xj, result.ptr, runtime)
+        shape.transposeD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        shape.transposeD3(x.toGPUBuffer().ptr, xi, xj, xk, axisI, axisJ, axisK, result.ptr, runtime)
+        shape.transposeD3(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axisI = axisI,
+            axisJ = axisJ,
+            axisK = axisK,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -1207,13 +1340,32 @@ class GPUBackend : IBackend by KotlinBackend {
         axisL: Int,
     ): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        shape.transposeD4(x.toGPUBuffer().ptr, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.ptr, runtime)
+        shape.transposeD4(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            axisI = axisI,
+            axisJ = axisJ,
+            axisK = axisK,
+            axisL = axisL,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
         val result = GPUJvmBuffer.create(kotlin.math.min(x.size, indices.size))
-        shape.sliceD1(x.toGPUBuffer().ptr, indices.first, indices.last, indices.step, result.ptr, runtime)
+        shape.sliceD1(
+            x = x.toGPUBuffer().ptr,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
@@ -1225,15 +1377,15 @@ class GPUBackend : IBackend by KotlinBackend {
             },
         )
         shape.sliceD2(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            axis,
-            indices.first,
-            indices.last,
-            indices.step,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            axis = axis,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -1247,16 +1399,16 @@ class GPUBackend : IBackend by KotlinBackend {
             },
         )
         shape.sliceD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            axis,
-            indices.first,
-            indices.last,
-            indices.step,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            start = indices.first,
+            end = indices.last,
+            step = indices.step,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -1265,15 +1417,16 @@ class GPUBackend : IBackend by KotlinBackend {
         when (y) {
             is GPUJvmBuffer -> {
                 shape.copyIntoD1(
-                    x.toGPUBuffer().ptr,
-                    y.ptr,
-                    indices.first,
-                    indices.last,
-                    indices.step,
-                    runtime,
+                    x = x.toGPUBuffer().ptr,
+                    result = y.ptr,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                    runtime = runtime,
                 )
             }
-            else -> KotlinBackend.copyInto(x, y, indices)
+
+            else -> KotlinBackend.copyInto(x = x, y = y, indices = indices)
         }
     }
 
@@ -1281,18 +1434,19 @@ class GPUBackend : IBackend by KotlinBackend {
         when (y) {
             is GPUJvmBuffer -> {
                 shape.copyIntoD2(
-                    x.toGPUBuffer().ptr,
-                    y.ptr,
-                    yi,
-                    yj,
-                    axis,
-                    indices.first,
-                    indices.last,
-                    indices.step,
-                    runtime,
+                    x = x.toGPUBuffer().ptr,
+                    result = y.ptr,
+                    ri = yi,
+                    rj = yj,
+                    axis = axis,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                    runtime = runtime,
                 )
             }
-            else -> KotlinBackend.copyInto(x, y, indices)
+
+            else -> KotlinBackend.copyInto(x = x, y, indices)
         }
     }
 
@@ -1300,103 +1454,151 @@ class GPUBackend : IBackend by KotlinBackend {
         when (y) {
             is GPUJvmBuffer -> {
                 shape.copyIntoD3(
-                    x.toGPUBuffer().ptr,
-                    y.ptr,
-                    yi,
-                    yj,
-                    yk,
-                    axis,
-                    indices.first,
-                    indices.last,
-                    indices.step,
-                    runtime,
+                    x = x.toGPUBuffer().ptr,
+                    result = y.ptr,
+                    ri = yi,
+                    rj = yj,
+                    rk = yk,
+                    axis = axis,
+                    start = indices.first,
+                    end = indices.last,
+                    step = indices.step,
+                    runtime = runtime,
                 )
             }
-            else -> KotlinBackend.copyInto(x, y, indices)
+
+            else -> KotlinBackend.copyInto(x = x, y, indices)
         }
     }
 
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         val result = GPUJvmBuffer.create(i * x.size * k)
-        index.gather(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, result.ptr, runtime)
+        index.gather(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            i = i,
+            j = j,
+            k = k,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
         val result = GPUJvmBuffer.create(i * j * k)
-        index.scatterAdd(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, i, j, k, b, result.ptr, runtime)
+        index.scatterAdd(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            i = i,
+            j = j,
+            k = k,
+            b = b,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        compare.greaterThanD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        compare.greaterThanD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        compare.greaterThanD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        compare.greaterThanD1ToD1(
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        compare.lessThanD1ToD0(x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        compare.lessThanD1ToD0(x = x.toGPUBuffer().ptr, y = y, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        compare.lessThanD1ToD1(x.toGPUBuffer().ptr, y.toGPUBuffer().ptr, result.ptr, runtime)
+        compare.lessThanD1ToD1(x = x.toGPUBuffer().ptr, y = y.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
     override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        compare.equalsD1ToD0(x.toGPUBuffer().ptr, y, absoluteTolerance, relativeTolerance, result.ptr, runtime)
+        compare.equalsD1ToD0(
+            x = x.toGPUBuffer().ptr,
+            y = y,
+            absoluteTolerance = absoluteTolerance,
+            relativeTolerance = relativeTolerance,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         compare.equalsD1ToD1(
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            absoluteTolerance,
-            relativeTolerance,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            absoluteTolerance = absoluteTolerance,
+            relativeTolerance = relativeTolerance,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
 
     override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(condition.size)
-        jWhere.whereD0ToD0(condition.toGPUBuffer().ptr, x, y, result.ptr, runtime)
+        jWhere.whereD0ToD0(
+            condition = condition.toGPUBuffer().ptr,
+            x = x,
+            y = y,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)
-        jWhere.whereD0ToD1(condition.toGPUBuffer().ptr, x, y.toGPUBuffer().ptr, result.ptr, runtime)
+        jWhere.whereD0ToD1(
+            condition = condition.toGPUBuffer().ptr,
+            x = x,
+            y = y.toGPUBuffer().ptr,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
-        jWhere.whereD1ToD0(condition.toGPUBuffer().ptr, x.toGPUBuffer().ptr, y, result.ptr, runtime)
+        jWhere.whereD1ToD0(
+            condition = condition.toGPUBuffer().ptr,
+            x = x.toGPUBuffer().ptr,
+            y = y,
+            result = result.ptr,
+            runtime = runtime,
+        )
         return result
     }
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         jWhere.whereD1ToD1(
-            condition.toGPUBuffer().ptr,
-            x.toGPUBuffer().ptr,
-            y.toGPUBuffer().ptr,
-            result.ptr,
-            runtime,
+            condition = condition.toGPUBuffer().ptr,
+            x = x.toGPUBuffer().ptr,
+            y = y.toGPUBuffer().ptr,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
@@ -1404,20 +1606,24 @@ class GPUBackend : IBackend by KotlinBackend {
     override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         shape.flipD3(
-            x.toGPUBuffer().ptr,
-            xi,
-            xj,
-            xk,
-            axis,
-            result.ptr,
-            runtime,
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.ptr,
+            runtime = runtime,
         )
         return result
     }
 
-    private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(size, runtime, buffer)
+    private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
+        size = size,
+        runtime = runtime,
+        native = buffer,
+    )
 
-    private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime, buffer)
+    private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime = runtime, native = buffer)
 
     companion object {
         private val cleaner = Cleaner.create()
