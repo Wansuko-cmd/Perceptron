@@ -16,28 +16,28 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn copy_into_d2_axis0(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x)) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x)) {
         return;
     }
-    let oi = old_index / params.rj;
-    let oj = old_index % params.rj;
-    
+    let oi = x_index / params.rj;
+    let oj = x_index % params.rj;
+
     let result_offset = (i32(params.start) + i32(oi) * params.step) * i32(params.rj);
-    result[result_offset + i32(oj)] = x[old_index];
+    result[result_offset + i32(oj)] = x[x_index];
 }
 
 @compute @workgroup_size(256, 1)
 fn copy_into_d2_axis1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x)) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x)) {
         return;
     }
-    let oi = old_index / params.size;
-    let oj = old_index % params.size;
-    
+    let oi = x_index / params.size;
+    let oj = x_index % params.size;
+
     let result_offset = i32(oi * params.rj);
     let result_index = result_offset + i32(params.start) + i32(oj) * params.step;
-    result[result_index] = x[old_index];
+    result[result_index] = x[x_index];
 }

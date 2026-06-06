@@ -12,11 +12,11 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn slice_d1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let new_index = id.y * stride + id.x;
-    if (new_index >= arrayLength(&result) || new_index >= params.size) {
+    let result_index = id.y * stride + id.x;
+    if (result_index >= arrayLength(&result) || result_index >= params.size) {
         return;
     }
 
-    let old_index = i32(params.start) + i32(new_index) * params.step;
-    result[new_index] = x[old_index];
+    let x_index = i32(params.start) + i32(result_index) * params.step;
+    result[result_index] = x[x_index];
 }

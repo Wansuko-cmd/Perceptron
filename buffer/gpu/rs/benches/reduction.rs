@@ -4,48 +4,48 @@ use gpu::ops;
 use gpu::resource::buffer::GPUBuffer;
 use gpu::runtime::Runtime;
 
-fn bench_collection(c: &mut Criterion) {
+fn bench_reduction(c: &mut Criterion) {
     let mut runtime = ops::runtime::allocate();
-    let mut group = c.benchmark_group("collection");
+    let mut group = c.benchmark_group("reduction");
 
     bench_d1(&mut group, "average_d1", &mut runtime, |x, res, rt| {
-        ops::collection::average_d1(x, res, rt)
+        ops::reduction::average_d1(x, res, rt)
     });
     bench_d2(&mut group, "average_d2", &mut runtime, |x, i, j, a, res, rt| {
-        ops::collection::average_d2(x, i, j, a, res, rt)
+        ops::reduction::average_d2(x, i, j, a, res, rt)
     });
     bench_d3(&mut group, "average_d3", &mut runtime, |x, i, j, k, a, res, rt| {
-        ops::collection::average_d3(x, i, j, k, a, res, rt)
+        ops::reduction::average_d3(x, i, j, k, a, res, rt)
     });
 
     bench_d1(&mut group, "max_d1", &mut runtime, |x, res, rt| {
-        ops::collection::max_d1(x, res, rt)
+        ops::reduction::max_d1(x, res, rt)
     });
     bench_d2(&mut group, "max_d2", &mut runtime, |x, i, j, a, res, rt| {
-        ops::collection::max_d2(x, i, j, a, res, rt)
+        ops::reduction::max_d2(x, i, j, a, res, rt)
     });
     bench_d3(&mut group, "max_d3", &mut runtime, |x, i, j, k, a, res, rt| {
-        ops::collection::max_d3(x, i, j, k, a, res, rt)
+        ops::reduction::max_d3(x, i, j, k, a, res, rt)
     });
 
     bench_d1(&mut group, "min_d1", &mut runtime, |x, res, rt| {
-        ops::collection::min_d1(x, res, rt)
+        ops::reduction::min_d1(x, res, rt)
     });
     bench_d2(&mut group, "min_d2", &mut runtime, |x, i, j, a, res, rt| {
-        ops::collection::min_d2(x, i, j, a, res, rt)
+        ops::reduction::min_d2(x, i, j, a, res, rt)
     });
     bench_d3(&mut group, "min_d3", &mut runtime, |x, i, j, k, a, res, rt| {
-        ops::collection::min_d3(x, i, j, k, a, res, rt)
+        ops::reduction::min_d3(x, i, j, k, a, res, rt)
     });
 
     bench_d1(&mut group, "sum_d1", &mut runtime, |x, res, rt| {
-        ops::collection::sum_d1(x, res, rt)
+        ops::reduction::sum_d1(x, res, rt)
     });
     bench_d2(&mut group, "sum_d2", &mut runtime, |x, i, j, a, res, rt| {
-        ops::collection::sum_d2(x, i, j, a, res, rt)
+        ops::reduction::sum_d2(x, i, j, a, res, rt)
     });
     bench_d3(&mut group, "sum_d3", &mut runtime, |x, i, j, k, a, res, rt| {
-        ops::collection::sum_d3(x, i, j, k, a, res, rt)
+        ops::reduction::sum_d3(x, i, j, k, a, res, rt)
     });
 
     group.finish();
@@ -127,5 +127,5 @@ where
     }
 }
 
-criterion_group!(benches, bench_collection);
+criterion_group!(benches, bench_reduction);
 criterion_main!(benches);

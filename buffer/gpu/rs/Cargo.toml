@@ -7,7 +7,7 @@ edition = "2024"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [[bench]]
-name = "collection"
+name = "reduction"
 harness = false
 
 [[bench]]

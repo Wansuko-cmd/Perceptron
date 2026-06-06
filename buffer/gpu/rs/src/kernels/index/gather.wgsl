@@ -20,11 +20,11 @@ fn gather(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups)
 
     let n = arrayLength(&x);
     var tmp = index;
-    let rk = tmp % params.k; tmp = tmp / params.k;
-    let rj = tmp % n; tmp = tmp / n;
-    let ri = tmp;
+    let nk = tmp % params.k; tmp = tmp / params.k;
+    let nj = tmp % n; tmp = tmp / n;
+    let ni = tmp;
 
-    let x_val = u32(x[rj]);
-    let y_index = (ri * params.j + x_val) * params.k + rk;
+    let x_val = u32(x[nj]);
+    let y_index = (ni * params.j + x_val) * params.k + nk;
     result[index] = y[y_index];
 }

@@ -18,7 +18,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_math_JMath_exp(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::math::exp_d1(x, result, runtime);
+    ops::elementwise::math::exp_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -34,7 +34,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_math_JMath_ln(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::math::ln_d1(x, e as f32, result, runtime);
+    ops::elementwise::math::ln_d1(x, e as f32, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -49,7 +49,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_math_JMath_sigmoid(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::math::sigmoid_d1(x, result, runtime);
+    ops::elementwise::math::sigmoid_d1(x, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -65,7 +65,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_math_JMath_pow(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::math::pow_d1(x, n as i32, result, runtime);
+    ops::elementwise::math::pow_d1(x, n as i32, result, runtime);
 }
 
 #[unsafe(no_mangle)]
@@ -81,5 +81,5 @@ pub extern "system" fn Java_com_wsr_knist_gpu_elementwise_math_JMath_sqrt(
     let result = unsafe { &*(result as *const GPUBuffer) };
     let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
-    ops::math::sqrt_d1(x, e as f32, result, runtime);
+    ops::elementwise::math::sqrt_d1(x, e as f32, result, runtime);
 }

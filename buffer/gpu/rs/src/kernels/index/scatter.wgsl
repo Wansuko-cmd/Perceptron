@@ -20,13 +20,13 @@ fn scatter_add(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgr
 
     let n = arrayLength(&y) / params.b;
     var tmp = index;
-    let xk = tmp % params.k; tmp = tmp / params.k;
-    let xj = tmp % n; tmp = tmp / n;
-    let xi = tmp % params.i; tmp = tmp / params.i;
-    let xb = tmp;
+    let ok = tmp % params.k; tmp = tmp / params.k;
+    let oj = tmp % n; tmp = tmp / n;
+    let oi = tmp % params.i; tmp = tmp / params.i;
+    let ob = tmp;
 
-    let y_val = u32(y[xb * n + xj]);
-    let result_index = (xi * params.j + y_val) * params.k + xk;
+    let y_val = u32(y[ob * n + oj]);
+    let result_index = (oi * params.j + y_val) * params.k + ok;
     atomicAdd(result_index, x[index]);
 }
 

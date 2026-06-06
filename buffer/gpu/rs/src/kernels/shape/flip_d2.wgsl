@@ -12,31 +12,31 @@ struct Params {
 @compute @workgroup_size(256, 1)
 fn flip_d2_axis0(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x)) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x)) {
         return;
     }
 
-    var tmp = old_index;
+    var tmp = x_index;
     let oj = tmp % params.xj; tmp = tmp / params.xj;
     let oi = tmp;
 
     let result_index = (params.xi - oi - 1) * params.xj + oj;
-    result[result_index] = x[old_index];
+    result[result_index] = x[x_index];
 }
 
 @compute @workgroup_size(256, 1)
 fn flip_d2_axis1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
     let stride = num_groups.x * 256;
-    let old_index = id.y * stride + id.x;
-    if (old_index >= arrayLength(&x)) {
+    let x_index = id.y * stride + id.x;
+    if (x_index >= arrayLength(&x)) {
         return;
     }
 
-    var tmp = old_index;
+    var tmp = x_index;
     let oj = tmp % params.xj; tmp = tmp / params.xj;
     let oi = tmp;
 
     let result_index = oi * params.xj + (params.xj - oj - 1);
-    result[result_index] = x[old_index];
+    result[result_index] = x[x_index];
 }

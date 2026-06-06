@@ -4,185 +4,30 @@ use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
 pub struct Shape {
     device: Device,
+    binding_group_layout: wgpu::BindGroupLayout,
     copy_into_d1: wgpu::ComputePipeline,
     copy_into_d2_axis0: wgpu::ComputePipeline,
     copy_into_d2_axis1: wgpu::ComputePipeline,
     copy_into_d3: wgpu::ComputePipeline,
-    copy_into_bgl: wgpu::BindGroupLayout,
 
     slice_d1: wgpu::ComputePipeline,
     slice_d2_axis0: wgpu::ComputePipeline,
     slice_d2_axis1: wgpu::ComputePipeline,
     slice_d3: wgpu::ComputePipeline,
-    slice_bgl: wgpu::BindGroupLayout,
 
     transpose_d2: wgpu::ComputePipeline,
     transpose_d4: wgpu::ComputePipeline,
-    transpose_bgl: wgpu::BindGroupLayout,
 
     flip_d2_axis0: wgpu::ComputePipeline,
     flip_d2_axis1: wgpu::ComputePipeline,
     flip_d3: wgpu::ComputePipeline,
-    flip_bgl: wgpu::BindGroupLayout,
 }
 
 impl Shape {
     const WORKGROUP_SIZE: u32 = 256;
 
     pub fn new(device: &Device) -> Self {
-        let copy_into_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d1.wgsl").into()),
-        });
-        let copy_into_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d2.wgsl").into()),
-        });
-        let copy_into_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d3.wgsl").into()),
-        });
-
-        let copy_into_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Shape::new"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
-
-        let slice_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d1.wgsl").into()),
-        });
-        let slice_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d2.wgsl").into()),
-        });
-        let slice_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d3.wgsl").into()),
-        });
-
-        let slice_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Shape::new"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
-
-        let transpose_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d2.wgsl").into()),
-        });
-        let transpose_d4_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d4.wgsl").into()),
-        });
-
-        let transpose_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Shape::new"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: true },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Storage { read_only: false },
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
-            ],
-        });
-
-        let flip_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d2.wgsl").into()),
-        });
-        let flip_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("Shape::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d3.wgsl").into()),
-        });
-
-        let flip_bgl = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        let binding_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("Shape::new"),
             entries: &[
                 wgpu::BindGroupLayoutEntry {
@@ -220,12 +65,54 @@ impl Shape {
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Shape::new"),
-            bind_group_layouts: &[&transpose_bgl],
+            bind_group_layouts: &[&binding_group_layout],
             immediate_size: 0,
+        });
+
+        let copy_into_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d1.wgsl").into()),
+        });
+        let copy_into_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d2.wgsl").into()),
+        });
+        let copy_into_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("copy_into_d3.wgsl").into()),
+        });
+        let slice_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d1.wgsl").into()),
+        });
+        let slice_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d2.wgsl").into()),
+        });
+        let slice_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("slice_d3.wgsl").into()),
+        });
+        let transpose_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d2.wgsl").into()),
+        });
+        let transpose_d4_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("transpose_d4.wgsl").into()),
+        });
+        let flip_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d2.wgsl").into()),
+        });
+        let flip_d3_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("flip_d3.wgsl").into()),
         });
 
         Shape {
             device: device.clone(),
+            binding_group_layout,
             copy_into_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("copy_into_d1"),
                 layout: Some(&pipeline_layout),
@@ -258,7 +145,6 @@ impl Shape {
                 compilation_options: Default::default(),
                 cache: None,
             }),
-            copy_into_bgl: copy_into_bgl,
             slice_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("slice_d1"),
                 layout: Some(&pipeline_layout),
@@ -291,7 +177,6 @@ impl Shape {
                 compilation_options: Default::default(),
                 cache: None,
             }),
-            slice_bgl: slice_bgl,
             transpose_d2: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("transpose_d2"),
                 layout: Some(&pipeline_layout),
@@ -308,7 +193,6 @@ impl Shape {
                 compilation_options: Default::default(),
                 cache: None,
             }),
-            transpose_bgl: transpose_bgl,
             flip_d2_axis0: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: Some("flip_d2"),
                 layout: Some(&pipeline_layout),
@@ -333,7 +217,6 @@ impl Shape {
                 compilation_options: Default::default(),
                 cache: None,
             }),
-            flip_bgl: flip_bgl,
         }
     }
 }
@@ -371,7 +254,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.copy_into_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -474,7 +357,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.copy_into_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -544,7 +427,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.slice_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -605,7 +488,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.slice_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -710,7 +593,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.slice_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -780,7 +663,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.slice_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -811,8 +694,8 @@ impl Shape {
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct TransposeD2Params {
-    oi: u32,
-    oj: u32,
+    xi: u32,
+    xj: u32,
     _pad1: u32,
     _pad2: u32,
 }
@@ -827,8 +710,8 @@ impl Shape {
         let label = "transpose_d2";
         let device = &self.device;
         let params = TransposeD2Params {
-            oi: xi as u32,
-            oj: xj as u32,
+            xi: xi as u32,
+            xj: xj as u32,
             _pad1: 0u32,
             _pad2: 0u32,
         };
@@ -841,7 +724,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.transpose_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -935,7 +818,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.transpose_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -1027,7 +910,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.flip_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,
@@ -1058,26 +941,26 @@ impl Shape {
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct FlipD3Params {
-    xi: u32,
+    _pad1: u32,
     xj: u32,
     xk: u32,
-    _pad: u32,
+    _pad2: u32,
 }
 
 impl Shape {
     pub fn flip_d3<'a>(
         &'a self,
         x: &GPUBuffer,
-        xi: usize, xj: usize, xk: usize,
+        _xi: usize, xj: usize, xk: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "flip_d3";
         let device = &self.device;
         let params = FlipD3Params {
-            xi: xi as u32,
+            _pad1: 0u32,
             xj: xj as u32,
             xk: xk as u32,
-            _pad: 0u32,
+            _pad2: 0u32,
         };
 
         let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1088,7 +971,7 @@ impl Shape {
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
-            layout: &self.flip_bgl,
+            layout: &self.binding_group_layout,
             entries: &[
                 wgpu::BindGroupEntry {
                     binding: 0,

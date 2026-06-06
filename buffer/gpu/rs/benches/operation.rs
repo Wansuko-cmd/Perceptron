@@ -12,196 +12,196 @@ fn bench_operation(c: &mut Criterion) {
 
     for config in OperationConfig::d0_to_d1() {
         bench(&mut group, "plus_with_d0_to_d1", &config, &mut runtime, |_, y, res, _, rt| {
-            ops::operation::plus_with_d0_to_d1(1f32, y, res, rt);
+            ops::elementwise::operation::plus_with_d0_to_d1(1f32, y, res, rt);
         });
         bench(&mut group, "minus_with_d0_to_d1", &config, &mut runtime, |_, y, res, _, rt| {
-            ops::operation::minus_with_d0_to_d1(1f32, y, res, rt);
+            ops::elementwise::operation::minus_with_d0_to_d1(1f32, y, res, rt);
         });
         bench(&mut group, "times_with_d0_to_d1", &config, &mut runtime, |_, y, res, _, rt| {
-            ops::operation::times_with_d0_to_d1(1f32, y, res, rt);
+            ops::elementwise::operation::times_with_d0_to_d1(1f32, y, res, rt);
         });
         bench(&mut group, "div_with_d0_to_d1", &config, &mut runtime, |_, y, res, _, rt| {
-            ops::operation::div_with_d0_to_d1(1f32, y, res, rt);
+            ops::elementwise::operation::div_with_d0_to_d1(1f32, y, res, rt);
         });
     }
 
     for config in OperationConfig::d1_to_d0() {
         bench(&mut group, "plus_with_d1_to_d0", &config, &mut runtime, |x, _, res, _, rt| {
-            ops::operation::plus_with_d1_to_d0(x, 1f32, res, rt);
+            ops::elementwise::operation::plus_with_d1_to_d0(x, 1f32, res, rt);
         });
         bench(&mut group, "minus_with_d1_to_d0", &config, &mut runtime, |x, _, res, _, rt| {
-            ops::operation::minus_with_d1_to_d0(x, 1f32, res, rt);
+            ops::elementwise::operation::minus_with_d1_to_d0(x, 1f32, res, rt);
         });
         bench(&mut group, "times_with_d1_to_d0", &config, &mut runtime, |x, _, res, _, rt| {
-            ops::operation::times_with_d1_to_d0(x, 1f32, res, rt);
+            ops::elementwise::operation::times_with_d1_to_d0(x, 1f32, res, rt);
         });
         bench(&mut group, "div_with_d1_to_d0", &config, &mut runtime, |x, _, res, _, rt| {
-            ops::operation::div_with_d1_to_d0(x, 1f32, res, rt);
+            ops::elementwise::operation::div_with_d1_to_d0(x, 1f32, res, rt);
         });
     }
 
     for config in OperationConfig::d1_to_d1() {
         bench(&mut group, "plus_with_d1_to_d1", &config, &mut runtime, |x, y, res, _, rt| {
-            ops::operation::plus_with_d1_to_d1(x, y, res, rt);
+            ops::elementwise::operation::plus_with_d1_to_d1(x, y, res, rt);
         });
         bench(&mut group, "minus_with_d1_to_d1", &config, &mut runtime, |x, y, res, _, rt| {
-            ops::operation::minus_with_d1_to_d1(x, y, res, rt);
+            ops::elementwise::operation::minus_with_d1_to_d1(x, y, res, rt);
         });
         bench(&mut group, "times_with_d1_to_d1", &config, &mut runtime, |x, y, res, _, rt| {
-            ops::operation::times_with_d1_to_d1(x, y, res, rt);
+            ops::elementwise::operation::times_with_d1_to_d1(x, y, res, rt);
         });
         bench(&mut group, "div_with_d1_to_d1", &config, &mut runtime, |x, y, res, _, rt| {
-            ops::operation::div_with_d1_to_d1(x, y, res, rt);
+            ops::elementwise::operation::div_with_d1_to_d1(x, y, res, rt);
         });
     }
 
     for config in OperationConfig::d1_to_d2() {
         bench(&mut group, "plus_with_d1_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
+            ops::elementwise::operation::plus_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
         });
         bench(&mut group, "minus_with_d1_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
+            ops::elementwise::operation::minus_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
         });
         bench(&mut group, "times_with_d1_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
+            ops::elementwise::operation::times_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
         });
         bench(&mut group, "div_with_d1_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
+            ops::elementwise::operation::div_with_d1_to_d2(x, y, config.yi, config.yj, 0, res, rt);
         });
     }
 
     for config in OperationConfig::d1_to_d3() {
         bench(&mut group, "plus_with_d1_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
+            ops::elementwise::operation::plus_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
         });
         bench(&mut group, "minus_with_d1_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
+            ops::elementwise::operation::minus_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
         });
         bench(&mut group, "times_with_d1_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
+            ops::elementwise::operation::times_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
         });
         bench(&mut group, "div_with_d1_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
+            ops::elementwise::operation::div_with_d1_to_d3(x, y, config.yi, config.yj, config.yk, 0, res, rt);
         });
     }
 
     for config in OperationConfig::d2_to_d1() {
         bench(&mut group, "plus_with_d2_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
+            ops::elementwise::operation::plus_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
         });
         bench(&mut group, "minus_with_d2_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
+            ops::elementwise::operation::minus_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
         });
         bench(&mut group, "times_with_d2_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
+            ops::elementwise::operation::times_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
         });
         bench(&mut group, "div_with_d2_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
+            ops::elementwise::operation::div_with_d2_to_d1(x, config.xi, config.xj, y, 0, res, rt);
         });
     }
 
     for config in OperationConfig::d2_to_d3() {
         bench(&mut group, "plus_with_d2_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
+            ops::elementwise::operation::plus_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
         });
         bench(&mut group, "minus_with_d2_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
+            ops::elementwise::operation::minus_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
         });
         bench(&mut group, "times_with_d2_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
+            ops::elementwise::operation::times_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
         });
         bench(&mut group, "div_with_d2_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
+            ops::elementwise::operation::div_with_d2_to_d3(x, config.xi, config.xj, y, config.yi, config.yj, config.yk, 0, 1, res, rt);
         });
     }
 
     for config in OperationConfig::d3_to_d1() {
         bench(&mut group, "plus_with_d3_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
+            ops::elementwise::operation::plus_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
         });
         bench(&mut group, "minus_with_d3_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
+            ops::elementwise::operation::minus_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
         });
         bench(&mut group, "times_with_d3_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
+            ops::elementwise::operation::times_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
         });
         bench(&mut group, "div_with_d3_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
+            ops::elementwise::operation::div_with_d3_to_d1(x, config.xi, config.xj, config.xk, y, 0, res, rt);
         });
     }
 
     for config in OperationConfig::d3_to_d2() {
         bench(&mut group, "plus_with_d3_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::plus_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "minus_with_d3_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::minus_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "times_with_d3_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::times_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "div_with_d3_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::div_with_d3_to_d2(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, 0, 1, res, rt);
         });
     }
 
     for config in OperationConfig::d3_to_d4() {
         bench(&mut group, "plus_with_d3_to_d4", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
+            ops::elementwise::operation::plus_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
         });
         bench(&mut group, "minus_with_d3_to_d4", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
+            ops::elementwise::operation::minus_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
         });
         bench(&mut group, "times_with_d3_to_d4", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
+            ops::elementwise::operation::times_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
         });
         bench(&mut group, "div_with_d3_to_d4", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
+            ops::elementwise::operation::div_with_d3_to_d4(x, config.xi, config.xj, config.xk, y, config.yi, config.yj, config.yk, config.yl, 0, 1, 2, res, rt);
         });
     }
 
     for config in OperationConfig::d4_to_d1() {
         bench(&mut group, "plus_with_d4_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
+            ops::elementwise::operation::plus_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
         });
         bench(&mut group, "minus_with_d4_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
+            ops::elementwise::operation::minus_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
         });
         bench(&mut group, "times_with_d4_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
+            ops::elementwise::operation::times_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
         });
         bench(&mut group, "div_with_d4_to_d1", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
+            ops::elementwise::operation::div_with_d4_to_d1(x, config.xi, config.xj, config.xk, config.xl, y, 0, res, rt);
         });
     }
 
     for config in OperationConfig::d4_to_d2() {
         bench(&mut group, "plus_with_d4_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::plus_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "minus_with_d4_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::minus_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "times_with_d4_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::times_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
         });
         bench(&mut group, "div_with_d4_to_d2", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
+            ops::elementwise::operation::div_with_d4_to_d2(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, 0, 1, res, rt);
         });
     }
 
     for config in OperationConfig::d4_to_d3() {
         bench(&mut group, "plus_with_d4_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::plus_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
+            ops::elementwise::operation::plus_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
         });
         bench(&mut group, "minus_with_d4_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::minus_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
+            ops::elementwise::operation::minus_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
         });
         bench(&mut group, "times_with_d4_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::times_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
+            ops::elementwise::operation::times_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
         });
         bench(&mut group, "div_with_d4_to_d3", &config, &mut runtime, |x, y, res, config, rt| {
-            ops::operation::div_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
+            ops::elementwise::operation::div_with_d4_to_d3(x, config.xi, config.xj, config.xk, config.xl, y, config.yi, config.yj, config.yk, 0, 1, 2, res, rt);
         });
     }
 

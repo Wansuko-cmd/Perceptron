@@ -102,7 +102,7 @@ pub fn plus_with_d2_to_d1(
 }
 
 pub fn plus_with_d2_to_d3(
-    x: &GPUBuffer, xi: usize, xj: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
@@ -141,7 +141,7 @@ pub fn plus_with_d3_to_d1(
 
 pub fn plus_with_d3_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -159,7 +159,7 @@ pub fn plus_with_d3_to_d2(
 }
 
 pub fn plus_with_d3_to_d4(
-    x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize, xk: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize, yl: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
@@ -200,7 +200,7 @@ pub fn plus_with_d4_to_d1(
 
 pub fn plus_with_d4_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -222,7 +222,7 @@ pub fn plus_with_d4_to_d2(
 
 pub fn plus_with_d4_to_d3(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -342,7 +342,7 @@ pub fn minus_with_d2_to_d1(
 }
 
 pub fn minus_with_d2_to_d3(
-    x: &GPUBuffer, xi: usize, xj: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
@@ -381,7 +381,7 @@ pub fn minus_with_d3_to_d1(
 
 pub fn minus_with_d3_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -399,7 +399,7 @@ pub fn minus_with_d3_to_d2(
 }
 
 pub fn minus_with_d3_to_d4(
-    x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize, xk: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize, yl: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
@@ -440,7 +440,7 @@ pub fn minus_with_d4_to_d1(
 
 pub fn minus_with_d4_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -462,7 +462,7 @@ pub fn minus_with_d4_to_d2(
 
 pub fn minus_with_d4_to_d3(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -582,7 +582,7 @@ pub fn times_with_d2_to_d1(
 }
 
 pub fn times_with_d2_to_d3(
-    x: &GPUBuffer, xi: usize, xj: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
@@ -621,7 +621,7 @@ pub fn times_with_d3_to_d1(
 
 pub fn times_with_d3_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -639,7 +639,7 @@ pub fn times_with_d3_to_d2(
 }
 
 pub fn times_with_d3_to_d4(
-    x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize, xk: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize, yl: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
@@ -680,7 +680,7 @@ pub fn times_with_d4_to_d1(
 
 pub fn times_with_d4_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -702,7 +702,7 @@ pub fn times_with_d4_to_d2(
 
 pub fn times_with_d4_to_d3(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -822,7 +822,7 @@ pub fn div_with_d2_to_d1(
 }
 
 pub fn div_with_d2_to_d3(
-    x: &GPUBuffer, xi: usize, xj: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
@@ -861,7 +861,7 @@ pub fn div_with_d3_to_d1(
 
 pub fn div_with_d3_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -879,7 +879,7 @@ pub fn div_with_d3_to_d2(
 }
 
 pub fn div_with_d3_to_d4(
-    x: &GPUBuffer, xi: usize, xj: usize, xk: usize,
+    x: &GPUBuffer, _xi: usize, xj: usize, xk: usize,
     y: &GPUBuffer, yi: usize, yj: usize, yk: usize, yl: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
@@ -920,7 +920,7 @@ pub fn div_with_d4_to_d1(
 
 pub fn div_with_d4_to_d2(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize,
     axis1: usize, axis2: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
@@ -942,7 +942,7 @@ pub fn div_with_d4_to_d2(
 
 pub fn div_with_d4_to_d3(
     x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &GPUBuffer, yi: usize, yj: usize, yk: usize,
+    y: &GPUBuffer, _yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize, axis3: usize,
     result: &GPUBuffer,
     runtime: &mut Runtime,
