@@ -168,3 +168,19 @@ pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_copyIntoD3(
 
     ops::shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize, runtime);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_gpu_shape_JShape_flipD3(
+    _: JNIEnv,
+    _class: JClass,
+    x: jlong,
+    xi: jint, xj: jint, xk: jint, axis: jint,
+    result: jlong,
+    runtime: jlong,
+) {
+    let x = unsafe { &*(x as *const GPUBuffer) };
+    let result = unsafe { &*(result as *const GPUBuffer) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
+
+    ops::shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result, runtime);
+}

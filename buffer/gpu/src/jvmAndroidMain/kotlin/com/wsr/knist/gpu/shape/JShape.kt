@@ -82,4 +82,6 @@ class JShape {
         step: Int,
         runtime: Long,
     )
+
+    external fun flipD3(x: Long, xi: Int, xj: Int, xk: Int, axis: Int, result: Long, runtime: Long)
 }
