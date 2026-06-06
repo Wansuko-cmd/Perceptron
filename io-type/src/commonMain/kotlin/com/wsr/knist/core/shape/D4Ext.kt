@@ -20,7 +20,12 @@ fun IOType.D4.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): IOType.
 }
 
 fun IOType.D4.flip(axis: Int): IOType.D4 {
-    val result = Backend.flip(x = value, xi = i, xj = j, xk = k, xl = l, axis = axis)
+    val result = when (axis) {
+        0 -> Backend.flip(x = value, xi = i, xj = j, xk = k * l, axis = 0)
+        1 -> Backend.flip(x = value, xi = i, xj = j, xk = k * l, axis = 1)
+        2 -> Backend.flip(x = value, xi = i * j, xj = k, xk = l, axis = 1)
+        else -> Backend.flip(x = value, xi = i, xj = j * k, xk = l, axis = 2)
+    }
     return IOType.D4(shape = shape, value = result)
 }
 
