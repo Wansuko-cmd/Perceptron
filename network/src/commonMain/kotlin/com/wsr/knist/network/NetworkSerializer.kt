@@ -101,7 +101,10 @@ import com.wsr.knist.network.process.compute.skip.SkipD3
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD2ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD2
+import com.wsr.knist.network.process.reshape.reshape.ReshapeD1ToD2
+import com.wsr.knist.network.process.reshape.reshape.ReshapeD1ToD3
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD2ToD1
+import com.wsr.knist.network.process.reshape.reshape.ReshapeD2ToD3
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD1
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD2
 import com.wsr.knist.network.process.reshape.token.TokenEmbeddingD1ToD2
@@ -385,7 +388,10 @@ private val buildInSerializersModule = SerializersModule {
         subclass(GlobalAverageD3ToD2::class)
 
         // Reshape
+        subclass(ReshapeD1ToD2::class)
+        subclass(ReshapeD1ToD3::class)
         subclass(ReshapeD2ToD1::class)
+        subclass(ReshapeD2ToD3::class)
         subclass(ReshapeD3ToD1::class)
         subclass(ReshapeD3ToD2::class)
 

@@ -53,6 +53,16 @@ sealed interface NetworkBuilder<I, O> {
             initializer = initializer,
         )
 
+        fun addReshape(reshape: Reshape.D1ToD3): D3<I> = D3(
+            input = input,
+            layers = layers + reshape,
+            inputX = reshape.outputX,
+            inputY = reshape.outputY,
+            inputZ = reshape.outputZ,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+
         fun repeat(times: Int, builder: D1<I>.(index: Int) -> D1<I>): D1<I> =
             (0 until times).fold(this) { acc, i -> acc.builder(i) }
     }
@@ -90,6 +100,16 @@ sealed interface NetworkBuilder<I, O> {
             input = input,
             layers = layers + reshape,
             inputSize = reshape.outputSize,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+
+        fun addReshape(reshape: Reshape.D2ToD3): D3<I> = D3(
+            input = input,
+            layers = layers + reshape,
+            inputX = reshape.outputX,
+            inputY = reshape.outputY,
+            inputZ = reshape.outputZ,
             optimizer = optimizer,
             initializer = initializer,
         )
