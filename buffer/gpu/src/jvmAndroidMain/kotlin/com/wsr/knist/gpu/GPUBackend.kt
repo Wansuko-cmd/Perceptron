@@ -1662,6 +1662,52 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+        val nj = xk + (xj - 1) * stride - padding * 2
+        val result = GPUJvmBuffer.create(b * xi * nj)
+        shape.foldD1(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            b = b,
+            stride = stride,
+            padding = padding,
+            result = result.ptr,
+            runtime = runtime,
+        )
+        return result
+    }
+
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        b: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
+        val window = kotlin.math.sqrt(xl.toDouble()).toInt()
+        val nj = window + (xj - 1) * stride - padding * 2
+        val nk = window + (xk - 1) * stride - padding * 2
+        val result = GPUJvmBuffer.create(b * xi * nj * nk)
+        shape.foldD2(
+            x = x.toGPUBuffer().ptr,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            xl = xl,
+            b = b,
+            stride = stride,
+            padding = padding,
+            result = result.ptr,
+            runtime = runtime,
+        )
+        return result
+    }
+
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
         size = size,
         runtime = runtime,

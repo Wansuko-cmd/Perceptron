@@ -128,3 +128,13 @@ pub fn unfold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, windo
     let task = runtime.kernels.shape.unfold_d2(x, xi, xj, xk, b, window, stride, padding, result);
     runtime.dispatch(task);
 }
+
+pub fn fold_d1(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let task = runtime.kernels.shape.fold_d1(x, xi, xj, xk, b, stride, padding, result);
+    runtime.dispatch(task);
+}
+
+pub fn fold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let task = runtime.kernels.shape.fold_d2(x, xi, xj, xk, xl, b, stride, padding, result);
+    runtime.dispatch(task);
+}

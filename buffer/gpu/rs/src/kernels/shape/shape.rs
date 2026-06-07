@@ -24,6 +24,9 @@ pub struct Shape {
 
     unfold_d1: wgpu::ComputePipeline,
     unfold_d2: wgpu::ComputePipeline,
+
+    fold_d1: wgpu::ComputePipeline,
+    fold_d2: wgpu::ComputePipeline,
 }
 
 impl Shape {
@@ -119,6 +122,14 @@ impl Shape {
         let unfold_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Shape::new"),
             source: wgpu::ShaderSource::Wgsl(include_str!("unfold_d2.wgsl").into()),
+        });
+        let fold_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("fold_d1.wgsl").into()),
+        });
+        let fold_d2_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("Shape::new"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("fold_d2.wgsl").into()),
         });
 
         Shape {
@@ -241,6 +252,22 @@ impl Shape {
                 layout: Some(&pipeline_layout),
                 module: &unfold_d2_shader,
                 entry_point: Some("unfold_d2"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            fold_d1: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("fold_d1"),
+                layout: Some(&pipeline_layout),
+                module: &fold_d1_shader,
+                entry_point: Some("fold_d1"),
+                compilation_options: Default::default(),
+                cache: None,
+            }),
+            fold_d2: device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("fold_d2"),
+                layout: Some(&pipeline_layout),
+                module: &fold_d2_shader,
+                entry_point: Some("fold_d2"),
                 compilation_options: Default::default(),
                 cache: None,
             }),
@@ -1160,6 +1187,146 @@ impl Shape {
         ComputeTask {
             label: label,
             pipeline: &self.unfold_d2,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct FoldD1Params {
+    xi: u32,
+    xj: u32,
+    xk: u32,
+    b: u32,
+    stride: u32,
+    padding: u32,
+    _pad1: u32,
+    _pad2: u32,
+}
+
+impl Shape {
+    pub fn fold_d1<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize, xk: usize, b: usize,
+        stride: usize, padding: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "fold_d1";
+        let device = &self.device;
+        let params = FoldD1Params {
+            xi: xi as u32,
+            xj: xj as u32,
+            xk: xk as u32,
+            b: b as u32,
+            padding: padding as u32,
+            stride: stride as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.binding_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.fold_d1,
+            bind_group: bind_group,
+            workgroups: workgroups,
+        }
+    }
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
+struct FoldD2Params {
+    xi: u32,
+    xj: u32,
+    xk: u32,
+    xl: u32,
+    b: u32,
+    window: u32,
+    stride: u32,
+    padding: u32,
+}
+
+impl Shape {
+    pub fn fold_d2<'a>(
+        &'a self,
+        x: &GPUBuffer,
+        xi: usize, xj: usize, xk: usize, xl: usize, b: usize,
+        stride: usize, padding: usize,
+        result: &GPUBuffer,
+    ) -> ComputeTask<'a> {
+        let label = "fold_d2";
+        let device = &self.device;
+        let params = FoldD2Params {
+            xi: xi as u32,
+            xj: xj as u32,
+            xk: xk as u32,
+            xl: xl as u32,
+            b: b as u32,
+            window: xl.isqrt() as u32,
+            padding: padding as u32,
+            stride: stride as u32,
+        };
+
+        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some(label),
+            contents: bytemuck::bytes_of(&params),
+            usage: wgpu::BufferUsages::UNIFORM,
+        });
+
+        let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some(label),
+            layout: &self.binding_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: x.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: result.buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: params_buffer.as_entire_binding(),
+                },
+            ]
+        });
+
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
+
+        ComputeTask {
+            label: label,
+            pipeline: &self.fold_d2,
             bind_group: bind_group,
             workgroups: workgroups,
         }
