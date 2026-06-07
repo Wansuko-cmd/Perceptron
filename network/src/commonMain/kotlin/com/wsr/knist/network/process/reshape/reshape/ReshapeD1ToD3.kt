@@ -10,8 +10,10 @@ import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD1ToD3(override val outputX: Int, override val outputY: Int, override val outputZ: Int) : Reshape.D1ToD3() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D3> = input.reshapeToD3(i = outputX, j = outputY, k = outputZ)
+internal class ReshapeD1ToD3(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
+    Reshape.D1ToD3() {
+    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D3> =
+        input.reshapeToD3(i = outputX, j = outputY, k = outputZ)
 
     override fun train(
         input: Batch<IOType.D1>,
