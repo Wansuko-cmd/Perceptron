@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.compute.conv
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.shape.fold.fold
 import com.wsr.knist.batch.shape.fold.unfold
 import com.wsr.knist.batch.shape.reshapeToD3
@@ -9,8 +8,7 @@ import com.wsr.knist.batch.shape.reshapeToD4
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toD4
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d4
-import com.wsr.knist.core.get
+import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.core.linalg.matMul
 import com.wsr.knist.core.shape.flip
 import com.wsr.knist.core.shape.reshapeToD2
@@ -82,25 +80,9 @@ class ConvD2 internal constructor(
             .reshapeToD4(i = channel, j = outputY, k = outputZ, l = kernel * kernel)
             .fold(stride = stride, padding = padding)
 
-        // dw (重み勾配)
-        val dw = Batch(input.size) { b ->
-            val delta = delta[b]
-            val input = input[b]
-            IOType.d4(filter, channel, kernel, kernel) { f, c, ky, kx ->
-                var sum = 0f
-                for (oy in 0 until outputY) {
-                    for (ox in 0 until outputZ) {
-                        val inputIdxX = ox * stride + kx - padding
-                        val inputIdxY = oy * stride + ky - padding
-                        if (inputIdxX in 0 until inputX && inputIdxY in 0 until inputY) {
-                            sum += delta[f, oy, ox] * input[c, inputIdxX, inputIdxY]
-                        }
-                    }
-                }
-                sum
-            }
-        }
-        weight = optimizer.adapt(weight = weight, dw = dw)
+        val dw = deltaCol.matMul(col.transpose())
+            .reshapeToD4(i = filter, j = channel, k = kernel, l = kernel)
+        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat())
 
         return dx
     }
