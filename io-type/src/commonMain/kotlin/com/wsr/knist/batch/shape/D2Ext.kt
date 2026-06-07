@@ -8,10 +8,23 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.shape.broadcastToD3
 import kotlin.jvm.JvmName
 
-fun Batch<IOType.D2>.broadcastToD3(axis: Int, size: Int) = Batch(this.size) { this[it].broadcastToD3(axis, size) }
+fun Batch<IOType.D2>.broadcastToD3(axis: Int, size: Int): Batch<IOType.D3> = when (axis) {
+    0 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i * j)
+        Batch(size = this.size, shape = listOf(size, i, j), value = result)
+    }
+    1 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i, j = 1, k = j)
+        Batch(size = this.size, shape = listOf(i, size, j), value = result)
+    }
+    2 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i * j, j = 1, k = 1)
+        Batch(size = this.size, shape = listOf(i, j, size), value = result)
+    }
+    else -> throw IllegalArgumentException("Batch<IOType.D2>.broadcastToD3 axis is $axis not 0, 1 or 2.")
+}
 
 fun Batch<IOType.D2>.toD3(): IOType.D3 = IOType.D3(shape = listOf(size, i, j), value = value)
 

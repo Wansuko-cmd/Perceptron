@@ -1,10 +1,13 @@
 package com.wsr.knist.network.process.reshape.gad
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.reduction.average.average
+import com.wsr.knist.batch.shape.broadcastToD2
+import com.wsr.knist.batch.shape.broadcastToD3
+import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d3
 import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
@@ -17,21 +20,23 @@ internal class GlobalAverageD3ToD1(private val inputX: Int, private val inputY: 
     Reshape.D3ToD1() {
     override val outputSize: Int = inputX
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1> =
-        input.average(axis = 2).average(axis = 1)
+    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1> = forward(input = input)
 
     override fun train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D3> {
-        val output = input.average(axis = 2).average(axis = 1)
+        val output = forward(input = input)
         val delta = calcDelta(output)
-        return Batch(input.size) {
-            val delta = delta[it] / (inputY * inputZ).toFloat()
-            IOType.d3(inputX, inputY, inputZ) { x, _, _ -> delta[x] }
-        }
+        return (delta / (inputY * inputZ).toFloat())
+            .broadcastToD2(axis = 1, size = inputY)
+            .broadcastToD3(axis = 2, size = inputZ)
     }
+
+    private fun forward(input: Batch<IOType.D3>) = input
+        .reshapeToD2(i = inputX, j = inputY * inputZ)
+        .average(axis = 1)
 }
 
 fun <T> NetworkBuilder.D3<T>.globalAverageToD1() = addReshape(
