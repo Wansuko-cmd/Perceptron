@@ -24,7 +24,7 @@ internal class ReshapeD1ToD2(override val outputX: Int, override val outputY: In
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.reshapeToD1(i: Int = 1, j: Int = inputSize): NetworkBuilder.D2<T> {
+fun <T> NetworkBuilder.D1<T>.reshapeToD2(i: Int = 1, j: Int = inputSize): NetworkBuilder.D2<T> {
     check(i * j == inputSize) {
         """
             invalid parameter.
