@@ -10,7 +10,17 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.shape.broadcastToD2
 import kotlin.jvm.JvmName
 
-fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int) = Batch(this.size) { this[it].broadcastToD2(axis, size) }
+fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = when (axis) {
+    0 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i)
+        Batch(size = this.size, shape = listOf(size, i), value = result)
+    }
+    1 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i, j = 1, k = 1)
+        Batch(size = this.size, shape = listOf(i, size), value = result)
+    }
+    else -> throw IllegalArgumentException("IOType.D1.broadcastToD2 axis is $axis not 0 or 1.")
+}
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
 
