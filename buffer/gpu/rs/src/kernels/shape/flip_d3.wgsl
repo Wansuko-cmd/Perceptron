@@ -1,7 +1,7 @@
 struct Params {
-    _pad1: u32,
     xj: u32,
     xk: u32,
+    _pad1: u32,
     _pad2: u32,
 }
 
