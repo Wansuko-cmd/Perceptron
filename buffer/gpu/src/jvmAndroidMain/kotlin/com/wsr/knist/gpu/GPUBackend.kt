@@ -1679,7 +1679,16 @@ class GPUBackend : IBackend by KotlinBackend {
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        xl: Int,
+        b: Int,
+        stride: Int,
+        padding: Int,
+    ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
         val nj = window + (xj - 1) * stride - padding * 2
         val nk = window + (xk - 1) * stride - padding * 2
