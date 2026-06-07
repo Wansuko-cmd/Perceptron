@@ -26,7 +26,7 @@ internal class ReshapeD2ToD3(override val outputX: Int, override val outputY: In
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.reshapeToD3(i: Int = 1, j: Int = inputX, k: Int = inputY) {
+fun <T> NetworkBuilder.D2<T>.reshapeToD3(i: Int = 1, j: Int = inputX, k: Int = inputY): NetworkBuilder.D3<T> {
     check(i * j * k == inputX * inputY) {
         """
             invalid parameter.
@@ -35,5 +35,5 @@ fun <T> NetworkBuilder.D2<T>.reshapeToD3(i: Int = 1, j: Int = inputX, k: Int = i
             k: $k
         """.trimIndent()
     }
-    addReshape(reshape = ReshapeD2ToD3(outputX = i, outputY = j, outputZ = k))
+    return addReshape(reshape = ReshapeD2ToD3(outputX = i, outputY = j, outputZ = k))
 }
