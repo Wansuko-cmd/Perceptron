@@ -1252,7 +1252,7 @@ impl Shape {
             ]
         });
 
-        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,
@@ -1322,7 +1322,7 @@ impl Shape {
             ]
         });
 
-        let workgroups = result.workgroup_count(Shape::WORKGROUP_SIZE);
+        let workgroups = x.workgroup_count(Shape::WORKGROUP_SIZE);
 
         ComputeTask {
             label: label,

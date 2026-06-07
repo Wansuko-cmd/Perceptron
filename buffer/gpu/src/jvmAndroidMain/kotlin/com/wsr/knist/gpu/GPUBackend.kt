@@ -1693,11 +1693,12 @@ class GPUBackend : IBackend by KotlinBackend {
         val nj = window + (xj - 1) * stride - padding * 2
         val nk = window + (xk - 1) * stride - padding * 2
         val result = GPUJvmBuffer.create(b * xi * nj * nk)
-        shape.foldD1(
+        shape.foldD2(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,
             xk = xk,
+            xl = xl,
             b = b,
             stride = stride,
             padding = padding,

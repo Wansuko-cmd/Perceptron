@@ -122,7 +122,7 @@ class JShape {
         runtime: Long,
     )
 
-    external fun foldD12(
+    external fun foldD2(
         x: Long,
         xi: Int,
         xj: Int,
