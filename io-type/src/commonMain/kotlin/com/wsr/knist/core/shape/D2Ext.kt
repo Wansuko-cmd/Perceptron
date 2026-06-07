@@ -8,9 +8,18 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 
 fun IOType.D2.broadcastToD3(axis: Int, size: Int) = when (axis) {
-    0 -> IOType.d3(size, shape[0], shape[1]) { i, j, k -> this[j, k] }
-    1 -> IOType.d3(shape[0], size, shape[1]) { i, j, k -> this[i, k] }
-    2 -> IOType.d3(shape[0], shape[1], size) { i, j, k -> this[i, j] }
+    0 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = 1, j = 1, k = i * j)
+        IOType.D3(shape = listOf(size, i, j), value = result)
+    }
+    1 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = i, j = 1, k = j)
+        IOType.D3(shape = listOf(i, size, j), value = result)
+    }
+    2 -> {
+        val result = Backend.gather(x = DataBuffer.create(size), y = value, i = i * j, j = 1, k = 1)
+        IOType.D3(shape = listOf(i, j, size), value = result)
+    }
     else -> throw IllegalArgumentException("IOType.D2.broadcastToD3 axis is $axis not 0, 1 or 2.")
 }
 

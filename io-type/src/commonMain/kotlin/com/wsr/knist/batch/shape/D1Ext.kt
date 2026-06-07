@@ -19,7 +19,7 @@ fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = whe
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i, j = 1, k = 1)
         Batch(size = this.size, shape = listOf(i, size), value = result)
     }
-    else -> throw IllegalArgumentException("IOType.D1.broadcastToD2 axis is $axis not 0 or 1.")
+    else -> throw IllegalArgumentException("Batch<IOType.D1>.broadcastToD2 axis is $axis not 0 or 1.")
 }
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
