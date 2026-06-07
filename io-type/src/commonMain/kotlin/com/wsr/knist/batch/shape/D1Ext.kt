@@ -4,10 +4,8 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.shape.broadcastToD2
 import kotlin.jvm.JvmName
 
 fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = when (axis) {

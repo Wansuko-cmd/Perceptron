@@ -8,7 +8,6 @@ import com.wsr.knist.batch.shape.broadcastToD2
 import com.wsr.knist.batch.shape.broadcastToD3
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d3
 import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder

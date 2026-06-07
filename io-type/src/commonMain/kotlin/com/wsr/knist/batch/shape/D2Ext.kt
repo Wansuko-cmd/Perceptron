@@ -8,7 +8,6 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.shape.broadcastToD3
 import kotlin.jvm.JvmName
 
 fun Batch<IOType.D2>.broadcastToD3(axis: Int, size: Int): Batch<IOType.D3> = when (axis) {
