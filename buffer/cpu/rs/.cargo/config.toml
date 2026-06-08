@@ -1,5 +1,6 @@
 [target.aarch64-linux-android]
 linker = "aarch64-linux-android28-clang"
+rustflags = ["-C", "link-arg=-Wl,-z,max-page-size=16384"]
 
 [target.x86_64-linux-android]
 linker = "x86_64-linux-android28-clang"
