@@ -23,6 +23,30 @@ dependencies {
 
 ---
 
+## バックエンド設定
+
+演算の実行バックエンドを切り替えられる。デフォルトは CPU（Rust ネイティブ）。追加の Gradle 依存は不要（`network` 依存が `io-type` → `buffer` を経由してすべてのバックエンドを含む）。
+
+| バックエンド | import | 説明 | フォールバック |
+|------------|--------|------|--------------|
+| `cpu` | `com.wsr.knist.cpu.cpu` | Rust ネイティブ CPU 実装 | KotlinBackend |
+| `gpu` | `com.wsr.knist.gpu.gpu` | WebGPU（wgpu）GPU 実装 | KotlinBackend |
+| `KotlinBackend` | `com.wsr.knist.base.KotlinBackend` | 純 Kotlin 実装 | — |
+
+切り替えは学習・推論の前に一度 `Backend.set()` を呼び出す。
+
+```kotlin
+import com.wsr.knist.Backend
+import com.wsr.knist.gpu.gpu
+
+Backend.set(gpu)
+```
+
+`cpu` / `gpu` はネイティブライブラリが利用不可の環境では自動的に `KotlinBackend` にフォールバックする。
+※ GPUは不安定で、稀に実行速度が非常に遅くなることがある。その際にはCPUに書き換える。
+
+---
+
 ## 基本的な使い方
 
 ### モデル構築
@@ -224,16 +248,23 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 ### Reshape
 
-| 関数 | import | 入力 | 出力 |
-|------|--------|------|------|
-| `reshapeToD1()` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD1` | D2(X, Y) | D1(X×Y) |
-| `reshapeToD2(outputX, outputY)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD2` | D3(X, Y, Z) | D2(outputX, outputY) |
-| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D2(X, Y) | D1(X) |
-| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D3(X, Y, Z) | D1(X) |
-| `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(X, Y, Z) | D2(Y, Z) |
-| `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(X) | D2(X, tokenSize) |
+| 関数 | import | 入力 | 出力 | デフォルト値 |
+|------|--------|------|------|-------------|
+| `reshapeToD1()` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD1` | D2(X, Y) | D1(X×Y) | — |
+| `reshapeToD1()` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD1` | D3(X, Y, Z) | D1(X×Y×Z) | — |
+| `reshapeToD2(i?, j?)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD2` | D1(n) | D2(i, j) | i=1, j=inputSize |
+| `reshapeToD2(i, j)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD2` | D3(X, Y, Z) | D2(i, j) | — |
+| `reshapeToD3(i?, j?, k?)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD3` | D1(n) | D3(i, j, k) | i=1, j=1, k=inputSize |
+| `reshapeToD3(i?, j?, k?)` | `com.wsr.knist.network.process.reshape.reshape.reshapeToD3` | D2(X, Y) | D3(i, j, k) | i=1, j=inputX, k=inputY |
+| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D2(X, Y) | D1(X) | — |
+| `globalAverageToD1()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD1` | D3(X, Y, Z) | D1(X) | — |
+| `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(X, Y, Z) | D2(Y, Z) | — |
+| `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(X) | D2(X, tokenSize) | — |
 
-reshapeToD2 の制約: `inputX * inputY * inputZ == outputX * outputY` でなければ実行時エラー
+reshapeToD2 (D1→D2) の制約: `i * j == inputSize` でなければ実行時エラー
+reshapeToD2 (D3→D2) の制約: `inputX * inputY * inputZ == i * j` でなければ実行時エラー
+reshapeToD3 (D1→D3) の制約: `i * j * k == inputSize` でなければ実行時エラー
+reshapeToD3 (D2→D3) の制約: `i * j * k == inputX * inputY` でなければ実行時エラー
 
 ### 出力層
 
