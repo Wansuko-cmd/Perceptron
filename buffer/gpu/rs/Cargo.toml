@@ -11,27 +11,31 @@ name = "reduction"
 harness = false
 
 [[bench]]
-name = "compare"
-harness = false
-
-[[bench]]
 name = "index"
 harness = false
 
 [[bench]]
-name = "math"
+name = "shape"
 harness = false
 
 [[bench]]
-name = "mat_mul"
+name = "compare"
+path = "benches/elementwise/compare.rs"
+harness = false
+
+[[bench]]
+name = "math"
+path = "benches/elementwise/math.rs"
 harness = false
 
 [[bench]]
 name = "operation"
+path = "benches/elementwise/operation.rs"
 harness = false
 
 [[bench]]
-name = "transpose"
+name = "mat_mul"
+path = "benches/linalg/mat_mul.rs"
 harness = false
 
 [dependencies]
