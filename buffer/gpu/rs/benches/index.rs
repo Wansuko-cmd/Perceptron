@@ -2,7 +2,7 @@ use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use gpu::ops;
 
 fn bench_index(c: &mut Criterion) {
-    let mut runtime = ops::runtime::allocate();
+    let runtime = ops::runtime::allocate();
     let mut group = c.benchmark_group("index");
 
     let configs = [
@@ -27,7 +27,8 @@ fn bench_index(c: &mut Criterion) {
             |bencher, _| {
                 bencher.iter(|| {
                     for _ in 0..config.repeat {
-                        ops::index::gather(&x, &y, i, j, k, &result, &mut runtime);
+                        let task = runtime.kernels.index.gather(&x, &y, i, j, k, &result);
+                        runtime.dispatch(task);
                     }
                     runtime.submit();
                     runtime.wait();
@@ -45,7 +46,8 @@ fn bench_index(c: &mut Criterion) {
             |bencher, _| {
                 bencher.iter(|| {
                     for _ in 0..config.repeat {
-                        ops::index::scatter_add(&x, &y, i, j, k, b, &result, &mut runtime);
+                        let task = runtime.kernels.index.scatter_add(&x, &y, i, j, k, b, &result);
+                        runtime.dispatch(task);
                     }
                     runtime.submit();
                     runtime.wait();
