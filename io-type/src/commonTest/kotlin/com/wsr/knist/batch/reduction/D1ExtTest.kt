@@ -44,4 +44,15 @@ class D1ExtTest {
         assertContentEquals(IOType.d0(1f), result[0])
         assertContentEquals(IOType.d0(4f), result[1])
     }
+
+    @Test
+    fun `maxIndex=D1バッチの最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d1(listOf(1f, 4f, 2f, 3f)),
+            IOType.d1(listOf(3f, 1f, 4f, 2f)),
+        )
+        val result = batch.maxIndex()
+        assertContentEquals(IOType.d0(1f), result[0])
+        assertContentEquals(IOType.d0(2f), result[1])
+    }
 }

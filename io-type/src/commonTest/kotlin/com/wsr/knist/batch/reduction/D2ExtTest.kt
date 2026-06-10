@@ -67,4 +67,26 @@ class D2ExtTest {
         assertContentEquals(IOType.d0(0f), result[0])
         assertContentEquals(IOType.d0(4f), result[1])
     }
+
+    @Test
+    fun `maxIndex_axis0=D2バッチのaxis0最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d2(shape = listOf(2, 3), value = listOf(3f, 1f, 4f, 1f, 5f, 2f)),
+            IOType.d2(shape = listOf(2, 3), value = listOf(2f, 7f, 1f, 6f, 0f, 3f)),
+        )
+        val result = batch.maxIndex(axis = 0)
+        assertContentEquals(IOType.d1(listOf(0f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d1(listOf(1f, 0f, 1f)), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis1=D2バッチのaxis1最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(
+            IOType.d2(shape = listOf(2, 3), value = listOf(3f, 1f, 4f, 1f, 5f, 2f)),
+            IOType.d2(shape = listOf(2, 3), value = listOf(2f, 7f, 1f, 6f, 0f, 3f)),
+        )
+        val result = batch.maxIndex(axis = 1)
+        assertContentEquals(IOType.d1(listOf(2f, 1f)), result[0])
+        assertContentEquals(IOType.d1(listOf(1f, 0f)), result[1])
+    }
 }
