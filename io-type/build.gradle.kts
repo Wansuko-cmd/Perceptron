@@ -36,7 +36,7 @@ kotlin {
                 api(projects.buffer)
 
                 implementation(libs.serialization)
-                implementation(projects.scopeAnnotation)
+                implementation(projects.ioType.scopeAnnotation)
             }
         }
 
@@ -53,7 +53,7 @@ kotlin {
 }
 
 dependencies {
-    add("kspCommonMainMetadata", projects.scopeProcessor)
+    add("kspCommonMainMetadata", projects.ioType.scopeProcessor)
 }
 
 afterEvaluate {

@@ -18,8 +18,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "knist"
 
-include(":scope-annotation")
-include(":scope-processor")
+include(":io-type:scope-annotation")
+include(":io-type:scope-processor")
 
 include(":sample")
 

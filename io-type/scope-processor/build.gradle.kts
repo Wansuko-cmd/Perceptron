@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     compileOnly(libs.ksp.api)
-    implementation(projects.scopeAnnotation)
+    implementation(projects.ioType.scopeAnnotation)
 }
