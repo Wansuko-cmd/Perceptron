@@ -30,3 +30,8 @@ fun IOType.D2.sum(axis: Int): IOType.D1 {
     val result = Backend.sum(x = value, xi = i, xj = j, axis = axis)
     return IOType.D1(result)
 }
+
+fun IOType.D2.maxIndex(axis: Int): IOType.D1 {
+    val result = Backend.maxIndex(x = value, xi = i, xj = j, axis = axis)
+    return IOType.D1(result)
+}
