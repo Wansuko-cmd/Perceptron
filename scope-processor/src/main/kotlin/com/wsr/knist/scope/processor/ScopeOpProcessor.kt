@@ -45,27 +45,35 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
     }
 
     private fun buildIOScopeContent(functions: List<KSFunctionDeclaration>): String {
+        val indexed = functions.mapIndexedNotNull { i, func ->
+            generateMember(func, i)?.let { i to it }
+        }
+
         val sb = StringBuilder()
         sb.appendLine("package com.wsr.knist.core")
         sb.appendLine()
         sb.appendLine("import com.wsr.knist.base.BufferScope")
+        // Import alias per function — avoids calling extension functions via FQN (not valid Kotlin)
+        // and avoids infinite recursion from IOScope member shadowing top-level extension
+        indexed.forEach { (i, data) ->
+            sb.appendLine("import ${data.fqn} as _impl$i")
+        }
         sb.appendLine()
         sb.appendLine("@Suppress(\"NOTHING_TO_INLINE\")")
         sb.appendLine("class IOScope(val bufferScope: BufferScope) {")
         sb.appendLine()
 
-        for (func in functions) {
-            val member = generateMember(func)
-            if (member != null) {
-                sb.appendLine(member)
-            }
+        indexed.forEach { (_, data) ->
+            sb.appendLine(data.member)
         }
 
         sb.appendLine("}")
         return sb.toString()
     }
 
-    private fun generateMember(func: KSFunctionDeclaration): String? {
+    private data class MemberData(val fqn: String, val member: String)
+
+    private fun generateMember(func: KSFunctionDeclaration, index: Int): MemberData? {
         val receiver = func.extensionReceiver ?: run {
             logger.warn("@ScopeOp on ${func.qualifiedName?.asString()} has no extension receiver, skipping")
             return null
@@ -95,16 +103,17 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         }
 
         val paramCall = params.joinToString(", ") { p ->
-            "${p.name!!.asString()} = ${p.name!!.asString()}"
+            p.name!!.asString()
         }
 
-        return buildString {
+        val member = buildString {
             appendLine("    $modifiers fun $receiverTypeName.$funcName($paramsDecl): $returnTypeName {")
-            appendLine("        val result = $fqn(this, $paramCall)")
+            appendLine("        val result = this._impl$index($paramCall)")
             appendLine("        bufferScope.register(result.value)")
             appendLine("        return result")
             append("    }")
         }
+        return MemberData(fqn = fqn, member = member)
     }
 
     private fun buildModifiers(func: KSFunctionDeclaration): String {
