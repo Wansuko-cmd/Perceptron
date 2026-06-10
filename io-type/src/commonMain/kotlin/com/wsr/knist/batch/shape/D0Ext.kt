@@ -7,5 +7,5 @@ import kotlin.jvm.JvmName
 
 fun IOType.D1.toBatch(): Batch<IOType.D0> = Batch(size = size, shape = listOf(1), value = value)
 
-@JvmName("batchD1sToList")
-fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
+@JvmName("batchD0sToList")
+fun Batch<IOType.D0>.toList(): List<IOType.D0> = List(size) { get(it) }

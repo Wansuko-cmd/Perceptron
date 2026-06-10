@@ -21,7 +21,7 @@ class ReductionD3Test {
             4f, 0f,
             2f, 4f,
             3f, 1f,
-        )
+        ),
     )
 
     @Test

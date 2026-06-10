@@ -138,10 +138,17 @@ class ReductionD2Test {
 
     @Test
     fun `2次元最大値インデックス_axis=0`() = ioTypeTestRule {
-        val d2 = IOType.d2(shape = listOf(2, 3), value = listOf(
-            3f, 1f, 4f,
-            1f, 5f, 2f,
-        ))
+        val d2 = IOType.d2(
+            shape = listOf(2, 3),
+            value = listOf(
+                3f,
+                1f,
+                4f,
+                1f,
+                5f,
+                2f,
+            ),
+        )
         val actual = d2.maxIndex(axis = 0)
         assertContentEquals(
             expected = IOType.d1(listOf(0f, 1f, 0f)),
@@ -151,10 +158,17 @@ class ReductionD2Test {
 
     @Test
     fun `2次元最大値インデックス_axis=1`() = ioTypeTestRule {
-        val d2 = IOType.d2(shape = listOf(2, 3), value = listOf(
-            3f, 1f, 4f,
-            1f, 5f, 2f,
-        ))
+        val d2 = IOType.d2(
+            shape = listOf(2, 3),
+            value = listOf(
+                3f,
+                1f,
+                4f,
+                1f,
+                5f,
+                2f,
+            ),
+        )
         val actual = d2.maxIndex(axis = 1)
         assertContentEquals(
             expected = IOType.d1(listOf(2f, 1f)),

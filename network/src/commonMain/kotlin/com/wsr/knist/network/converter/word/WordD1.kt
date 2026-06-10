@@ -1,6 +1,7 @@
 package com.wsr.knist.network.converter.word
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
@@ -25,8 +26,10 @@ class WordD1(private val words: List<String>, private val unknownIndex: Int) : C
     }.toBatch()
 
     override fun decode(input: Batch<IOType.D1>): List<String> = input
-        .toList()
-        .map { input -> words[input.maxIndex().get().toInt()] }
+        .maxIndex()
+        .value
+        .toFloatArray()
+        .map { words[it.toInt()] }
 }
 
 fun NetworkBuilder.Companion.wordD1(

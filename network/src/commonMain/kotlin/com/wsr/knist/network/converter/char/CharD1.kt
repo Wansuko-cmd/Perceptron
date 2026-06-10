@@ -1,6 +1,7 @@
 package com.wsr.knist.network.converter.char
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
@@ -25,8 +26,10 @@ class CharD1 : Converter.D1<Char>() {
         }.toBatch()
 
     override fun decode(input: Batch<IOType.D1>): List<Char> = input
-        .toList()
-        .map { input -> chars[input.maxIndex().get().toInt()] }
+        .maxIndex()
+        .value
+        .toFloatArray()
+        .map { chars[it.toInt()] }
 
     companion object Companion {
         private val chars = " abcdefghijklmnopqrstuvwxyz.,!?".toList()

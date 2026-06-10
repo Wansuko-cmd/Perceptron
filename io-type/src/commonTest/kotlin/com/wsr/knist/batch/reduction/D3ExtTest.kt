@@ -57,25 +57,31 @@ class D3ExtTest {
         assertContentEquals(IOType.d0(8f), result[1])
     }
 
-    private val d3v0 = IOType.d3(shape = listOf(2, 3, 2), value = listOf(
-        1f, 2f,
-        5f, 1f,
-        0f, 3f,
+    private val d3v0 = IOType.d3(
+        shape = listOf(2, 3, 2),
+        value = listOf(
+            1f, 2f,
+            5f, 1f,
+            0f, 3f,
 
-        4f, 0f,
-        2f, 4f,
-        3f, 1f,
-    ))
+            4f, 0f,
+            2f, 4f,
+            3f, 1f,
+        ),
+    )
 
-    private val d3v1 = IOType.d3(shape = listOf(2, 3, 2), value = listOf(
-        0f, 4f,
-        3f, 2f,
-        6f, 1f,
+    private val d3v1 = IOType.d3(
+        shape = listOf(2, 3, 2),
+        value = listOf(
+            0f, 4f,
+            3f, 2f,
+            6f, 1f,
 
-        5f, 0f,
-        1f, 3f,
-        2f, 4f,
-    ))
+            5f, 0f,
+            1f, 3f,
+            2f, 4f,
+        ),
+    )
 
     @Test
     fun `maxIndex_axis0=D3バッチのaxis0最大値インデックス`() = ioTypeTestRule {

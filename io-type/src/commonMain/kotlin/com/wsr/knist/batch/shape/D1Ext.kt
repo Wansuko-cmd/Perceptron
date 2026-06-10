@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
@@ -23,6 +24,9 @@ fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = whe
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
 
 fun IOType.D2.toBatch(): Batch<IOType.D1> = Batch(size = i, shape = listOf(j), value = value)
+
+@JvmName("batchD1sToList")
+fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
 
 @JvmName("batchD1sReshapeToD2")
 fun Batch<IOType.D1>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
