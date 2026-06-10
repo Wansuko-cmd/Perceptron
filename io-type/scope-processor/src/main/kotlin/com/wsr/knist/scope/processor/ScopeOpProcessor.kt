@@ -14,31 +14,34 @@ import com.google.devtools.ksp.validate
 
 class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
 
-    private var invoked = false
+    private val collectedFunctions = mutableListOf<KSFunctionDeclaration>()
+    private var generated = false
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        if (invoked) return emptyList()
-        invoked = true
-
-        val functions = resolver
+        val (valid, deferred) = resolver
             .getSymbolsWithAnnotation("com.wsr.knist.scope.ScopeOp")
             .filterIsInstance<KSFunctionDeclaration>()
-            .filter { it.validate() }
             .toList()
+            .partition { it.validate() }
 
-        if (functions.isEmpty()) return emptyList()
+        collectedFunctions.addAll(valid)
 
-        val file = codeGenerator.createNewFile(
-            dependencies = Dependencies(
-                aggregating = true,
-                *functions.mapNotNull { it.containingFile }.toTypedArray(),
-            ),
-            packageName = "com.wsr.knist.core",
-            fileName = "IOScope",
-        )
+        // Deferred symbols will be re-presented in the next round; wait until all are resolved.
+        if (deferred.isNotEmpty()) return deferred
 
-        file.bufferedWriter().use { writer ->
-            writer.write(buildIOScopeContent(functions))
+        if (!generated && collectedFunctions.isNotEmpty()) {
+            generated = true
+            val file = codeGenerator.createNewFile(
+                dependencies = Dependencies(
+                    aggregating = true,
+                    *collectedFunctions.mapNotNull { it.containingFile }.toTypedArray(),
+                ),
+                packageName = "com.wsr.knist.core",
+                fileName = "IOScope",
+            )
+            file.bufferedWriter().use { writer ->
+                writer.write(buildIOScopeContent(collectedFunctions))
+            }
         }
 
         return emptyList()

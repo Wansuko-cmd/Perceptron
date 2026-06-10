@@ -56,10 +56,15 @@ dependencies {
     add("kspCommonMainMetadata", projects.ioType.scopeProcessor)
 }
 
+
 ktlint {
     filter {
         exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
     }
+}
+
+tasks.matching { it.name == "compileCommonMainKotlinMetadata" }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
 }
 
 afterEvaluate {
