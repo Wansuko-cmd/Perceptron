@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.android.kmp.library)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -30,10 +31,12 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 api(projects.buffer)
 
                 implementation(libs.serialization)
+                implementation(projects.scopeAnnotation)
             }
         }
 
@@ -47,6 +50,10 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
+}
+
+dependencies {
+    add("kspCommonMainMetadata", projects.scopeProcessor)
 }
 
 afterEvaluate {

@@ -18,6 +18,9 @@ dependencyResolutionManagement {
 }
 rootProject.name = "knist"
 
+include(":scope-annotation")
+include(":scope-processor")
+
 include(":sample")
 
 include(":network")
