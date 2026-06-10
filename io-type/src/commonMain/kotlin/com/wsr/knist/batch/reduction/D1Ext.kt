@@ -22,3 +22,9 @@ fun Batch<IOType.D1>.min(): Batch<IOType.D0> {
     val result = Backend.min(x = value, xi = size, xj = step, axis = 1)
     return Batch(shape = listOf(1), size = size, value = result)
 }
+
+@JvmName("batchD1sMaxIndex")
+fun Batch<IOType.D1>.maxIndex(): Batch<IOType.D0> {
+    val result = Backend.maxIndex(x = value, xi = size, xj = step, axis = 1)
+    return Batch(shape = listOf(1), size = size, value = result)
+}

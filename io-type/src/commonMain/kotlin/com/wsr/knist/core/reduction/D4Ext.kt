@@ -86,3 +86,22 @@ fun IOType.D4.sum(axis: Int): IOType.D3 = when (axis) {
         value = Backend.sum(x = value, xi = i * j, xj = k, xk = l, axis = 2),
     )
 }
+
+fun IOType.D4.maxIndex(axis: Int): IOType.D3 = when (axis) {
+    0 -> IOType.D3(
+        shape = listOf(j, k, l),
+        value = Backend.maxIndex(x = value, xi = i, xj = j, xk = k * l, axis = 0),
+    )
+    1 -> IOType.D3(
+        shape = listOf(i, k, l),
+        value = Backend.maxIndex(x = value, xi = i, xj = j, xk = k * l, axis = 1),
+    )
+    2 -> IOType.D3(
+        shape = listOf(i, j, l),
+        value = Backend.maxIndex(x = value, xi = i * j, xj = k, xk = l, axis = 1),
+    )
+    else -> IOType.D3(
+        shape = listOf(i, j, k),
+        value = Backend.maxIndex(x = value, xi = i * j, xj = k, xk = l, axis = 2),
+    )
+}

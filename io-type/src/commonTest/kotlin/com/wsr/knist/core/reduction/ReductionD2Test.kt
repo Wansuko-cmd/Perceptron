@@ -9,6 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.reduction.average
 import com.wsr.knist.core.reduction.max
+import com.wsr.knist.core.reduction.maxIndex
 import com.wsr.knist.core.reduction.min
 import com.wsr.knist.core.reduction.sum
 import com.wsr.knist.ioTypeTestRule
@@ -131,6 +132,46 @@ class ReductionD2Test {
         val actual = d2.sum(axis = 1)
         assertContentEquals(
             expected = IOType.d1(listOf(3f, 12f)),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `2次元最大値インデックス_axis=0`() = ioTypeTestRule {
+        val d2 = IOType.d2(
+            shape = listOf(2, 3),
+            value = listOf(
+                3f,
+                1f,
+                4f,
+                1f,
+                5f,
+                2f,
+            ),
+        )
+        val actual = d2.maxIndex(axis = 0)
+        assertContentEquals(
+            expected = IOType.d1(listOf(0f, 1f, 0f)),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `2次元最大値インデックス_axis=1`() = ioTypeTestRule {
+        val d2 = IOType.d2(
+            shape = listOf(2, 3),
+            value = listOf(
+                3f,
+                1f,
+                4f,
+                1f,
+                5f,
+                2f,
+            ),
+        )
+        val actual = d2.maxIndex(axis = 1)
+        assertContentEquals(
+            expected = IOType.d1(listOf(2f, 1f)),
             actual = actual,
         )
     }

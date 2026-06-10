@@ -2,8 +2,10 @@ package dataset.mnist
 
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.maxIndex
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
@@ -44,5 +46,8 @@ data class LabelConverter(override val outputSize: Int) : Converter.D1<Int>() {
         return Batch(size = input.size, shape = listOf(outputSize), value = DataBuffer.create(value))
     }
 
-    override fun decode(input: Batch<IOType.D1>): List<Int> = input.toList().map { it.maxIndex() }
+    override fun decode(input: Batch<IOType.D1>): List<Int> = input.maxIndex()
+        .value
+        .toFloatArray()
+        .map { it.toInt() }
 }

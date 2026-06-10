@@ -56,4 +56,54 @@ class D3ExtTest {
         assertContentEquals(IOType.d0(0f), result[0])
         assertContentEquals(IOType.d0(8f), result[1])
     }
+
+    private val d3v0 = IOType.d3(
+        shape = listOf(2, 3, 2),
+        value = listOf(
+            1f, 2f,
+            5f, 1f,
+            0f, 3f,
+
+            4f, 0f,
+            2f, 4f,
+            3f, 1f,
+        ),
+    )
+
+    private val d3v1 = IOType.d3(
+        shape = listOf(2, 3, 2),
+        value = listOf(
+            0f, 4f,
+            3f, 2f,
+            6f, 1f,
+
+            5f, 0f,
+            1f, 3f,
+            2f, 4f,
+        ),
+    )
+
+    @Test
+    fun `maxIndex_axis0=D3バッチのaxis0最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(d3v0, d3v1)
+        val result = batch.maxIndex(axis = 0)
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 0f, 1f)), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis1=D3バッチのaxis1最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(d3v0, d3v1)
+        val result = batch.maxIndex(axis = 1)
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(1f, 2f, 0f, 1f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(2f, 0f, 0f, 2f)), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis2=D3バッチのaxis2最大値インデックス`() = ioTypeTestRule {
+        val batch = batchOf(d3v0, d3v1)
+        val result = batch.maxIndex(axis = 2)
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 1f, 0f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 0f, 0f, 1f, 1f)), result[1])
+    }
 }

@@ -58,3 +58,15 @@ fun IOType.D3.sum(axis: Int): IOType.D2 {
         value = result,
     )
 }
+
+fun IOType.D3.maxIndex(axis: Int): IOType.D2 {
+    val result = Backend.maxIndex(x = value, xi = i, xj = j, xk = k, axis = axis)
+    return IOType.D2(
+        shape = when (axis) {
+            0 -> listOf(j, k)
+            1 -> listOf(i, k)
+            else -> listOf(i, j)
+        },
+        value = result,
+    )
+}
