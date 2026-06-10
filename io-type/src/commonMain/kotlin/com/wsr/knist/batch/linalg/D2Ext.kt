@@ -5,8 +5,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 fun IOType.D2.matMul(other: Batch<IOType.D1>, trans: Boolean = false): Batch<IOType.D1> {
     val n = if (trans) j else i

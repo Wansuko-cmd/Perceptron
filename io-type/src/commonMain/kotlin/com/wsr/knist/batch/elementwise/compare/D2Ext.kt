@@ -5,8 +5,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.compare.EQUALS_ABSOLUTE_TOLERANCE
 import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 @JvmName("infixBatchD2sEqFloat")
 @ScopeOp

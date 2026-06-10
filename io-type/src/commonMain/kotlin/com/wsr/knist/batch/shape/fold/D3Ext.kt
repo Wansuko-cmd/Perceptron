@@ -7,8 +7,8 @@ import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.batch.l
 import com.wsr.knist.core.IOType
-import kotlin.math.sqrt
 import com.wsr.knist.scope.ScopeOp
+import kotlin.math.sqrt
 
 @ScopeOp
 fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D4> {

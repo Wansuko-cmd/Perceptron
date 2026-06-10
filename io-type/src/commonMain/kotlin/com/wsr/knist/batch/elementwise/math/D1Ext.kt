@@ -6,8 +6,8 @@ import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toD2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.math.softmax
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 @JvmName("batchD1sExp")
 @ScopeOp

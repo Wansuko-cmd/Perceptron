@@ -4,7 +4,6 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
-import com.wsr.knist.scope.ScopeOp
 
 fun <T : IOType> List<T>.toBatch(): Batch<T> {
     val batchSize = size

@@ -3,8 +3,8 @@
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 @JvmName("batchFloatPlusD0s")
 operator fun Float.plus(other: Batch<IOType.D0>): Batch<IOType.D0> {

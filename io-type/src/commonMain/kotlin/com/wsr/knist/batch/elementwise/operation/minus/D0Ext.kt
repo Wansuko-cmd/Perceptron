@@ -4,8 +4,8 @@ import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 @JvmName("batchFloatMinusD0s")
 operator fun Float.minus(other: Batch<IOType.D0>): Batch<IOType.D0> {

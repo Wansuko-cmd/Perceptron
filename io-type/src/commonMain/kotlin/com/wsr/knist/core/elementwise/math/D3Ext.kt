@@ -7,8 +7,8 @@ import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.max
 import com.wsr.knist.core.reduction.sum
-import kotlin.math.pow
 import com.wsr.knist.scope.ScopeOp
+import kotlin.math.pow
 
 @ScopeOp
 fun IOType.D3.exp(): IOType.D3 {

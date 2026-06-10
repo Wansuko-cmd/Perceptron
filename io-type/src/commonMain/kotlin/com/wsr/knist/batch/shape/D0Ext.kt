@@ -4,7 +4,6 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
-import com.wsr.knist.scope.ScopeOp
 
 fun IOType.D1.toBatch(): Batch<IOType.D0> = Batch(size = size, shape = listOf(1), value = value)
 

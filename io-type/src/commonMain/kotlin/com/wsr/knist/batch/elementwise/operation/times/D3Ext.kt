@@ -8,8 +8,8 @@ import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
-import kotlin.jvm.JvmName
 import com.wsr.knist.scope.ScopeOp
+import kotlin.jvm.JvmName
 
 @JvmName("batchD3TimesD3s")
 operator fun IOType.D3.times(other: Batch<IOType.D3>): Batch<IOType.D3> {

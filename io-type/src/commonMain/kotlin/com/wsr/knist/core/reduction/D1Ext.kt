@@ -2,8 +2,8 @@ package com.wsr.knist.core.reduction
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import kotlin.random.Random
 import com.wsr.knist.scope.ScopeOp
+import kotlin.random.Random
 
 @ScopeOp
 fun IOType.D1.average(): IOType.D0 = IOType.D0(Backend.average(value))

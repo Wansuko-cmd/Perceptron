@@ -3,8 +3,8 @@ package com.wsr.knist.core.elementwise.math
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
-import kotlin.math.pow
 import com.wsr.knist.scope.ScopeOp
+import kotlin.math.pow
 
 @ScopeOp
 fun IOType.D0.pow(n: Int): IOType.D0 {
