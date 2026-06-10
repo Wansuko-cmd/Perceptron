@@ -5,6 +5,7 @@ import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
+import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.maxIndex
 import com.wsr.knist.core.set
 import com.wsr.knist.network.NetworkBuilder
@@ -23,7 +24,9 @@ class WordD1(private val words: List<String>, private val unknownIndex: Int) : C
         IOType.d1(outputSize).also { it[id] = 1f }
     }.toBatch()
 
-    override fun decode(input: Batch<IOType.D1>): List<String> = input.toList().map { input -> words[input.maxIndex()] }
+    override fun decode(input: Batch<IOType.D1>): List<String> = input
+        .toList()
+        .map { input -> words[input.maxIndex().get().toInt()] }
 }
 
 fun NetworkBuilder.Companion.wordD1(

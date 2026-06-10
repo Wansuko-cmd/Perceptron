@@ -743,7 +743,7 @@ object KotlinBackend : IBackend {
     override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         x.reduce(xi = xi, xj = xj, xk = xk, axis = axis) { acc, i -> acc + i }
 
-    override fun maxIndex(x: DataBuffer): Int {
+    override fun maxIndex(x: DataBuffer): DataBuffer {
         var index = 0
         var max = x[0]
         for (i in 1 until x.size) {
@@ -752,26 +752,31 @@ object KotlinBackend : IBackend {
                 max = x[i]
             }
         }
-        return index
+        return Default(1).apply { this[0] = index.toFloat() }
     }
 
-    override fun topK(x: DataBuffer, k: Int, random: Random): Int {
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
         val total = Array(x.size) { x[it] to it }
             .apply { sortWith(compareByDescending { (value, _) -> value }) }
-        return total.sliceArray(0 until minOf(k, x.size)).randomIndex(random)
+        val index = total
+            .sliceArray(0 until minOf(k, x.size))
+            .randomIndex(random)
+        return Default(1).apply { this[0] = index.toFloat() }
     }
 
-    override fun topP(x: DataBuffer, p: Float, random: Random): Int {
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
         val total = Array(x.size) { x[it] to it }
             .apply { sortWith(compareByDescending { (value, _) -> value }) }
         var sum = 0.0f
         for (i in 0 until total.size) {
             sum += total[i].first
             if (sum > p) {
-                return total.sliceArray(0..i).randomIndex(random)
+                val index = total.sliceArray(0..i).randomIndex(random)
+                return Default(1).apply { this[0] = index.toFloat() }
             }
         }
-        return total.randomIndex(random)
+        val index = total.randomIndex(random)
+        return Default(1).apply { this[0] = index.toFloat() }
     }
 
     private fun Array<Pair<Float, Int>>.randomIndex(random: Random): Int {

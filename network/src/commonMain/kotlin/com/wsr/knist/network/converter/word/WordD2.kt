@@ -36,7 +36,7 @@ class WordD2(private val words: List<String>, private val length: Int, private v
     }
 
     override fun decode(input: Batch<IOType.D2>): List<List<String>> = input.toList().map { input ->
-        (0 until length).map { words[input[it].maxIndex()] }
+        (0 until length).map { words[input[it].maxIndex().get().toInt()] }
     }
 }
 

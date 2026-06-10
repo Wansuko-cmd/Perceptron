@@ -60,6 +60,6 @@ class ReductionD1Test {
     fun `1次元最大値インデックス`() = ioTypeTestRule {
         val d1 = IOType.d1(listOf(1f, 4f, 2f, 3f))
         val actual = d1.maxIndex()
-        assertEquals(expected = 1, actual = actual)
+        assertEquals(expected = IOType.d0(1f), actual = actual)
     }
 }

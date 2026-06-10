@@ -12,8 +12,8 @@ fun IOType.D1.min() = IOType.D0(Backend.min(x = value))
 
 fun IOType.D1.sum(): IOType.D0 = IOType.D0(Backend.sum(x = value))
 
-fun IOType.D1.topK(k: Int, random: Random = Random): Int = Backend.topK(x = value, k = k, random = random)
+fun IOType.D1.topK(k: Int, random: Random = Random): IOType.D0 = IOType.D0(Backend.topK(x = value, k = k, random = random))
 
-fun IOType.D1.topP(p: Float, random: Random = Random): Int = Backend.topP(x = value, p = p, random = random)
+fun IOType.D1.topP(p: Float, random: Random = Random): IOType.D0 = IOType.D0(Backend.topP(x = value, p = p, random = random))
 
-fun IOType.D1.maxIndex(): Int = Backend.maxIndex(x = value)
+fun IOType.D1.maxIndex(): IOType.D0 = IOType.D0(Backend.maxIndex(x = value))

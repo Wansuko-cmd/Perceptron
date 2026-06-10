@@ -430,11 +430,11 @@ object Backend : IBackend {
     override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.sum(x, xi, xj, xk, axis)
 
-    override fun maxIndex(x: DataBuffer): Int = instance.maxIndex(x)
+    override fun maxIndex(x: DataBuffer): DataBuffer = instance.maxIndex(x)
 
-    override fun topK(x: DataBuffer, k: Int, random: Random): Int = instance.topK(x, k, random)
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer = instance.topK(x, k, random)
 
-    override fun topP(x: DataBuffer, p: Float, random: Random): Int = instance.topP(x, p, random)
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer = instance.topP(x, p, random)
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer = instance.transpose(x, xi, xj)
 
