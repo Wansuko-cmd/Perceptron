@@ -7,14 +7,17 @@ import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
 @JvmName("batchD3sAverage")
+@ScopeOp
 fun Batch<IOType.D3>.average(): Batch<IOType.D0> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
     return Batch(size = size, shape = listOf(1), value = result)
 }
 
 @JvmName("batchD3sAverageWithAxis")
+@ScopeOp
 fun Batch<IOType.D3>.average(axis: Int): Batch<IOType.D2> = when (axis) {
     0 -> Batch(
         size = size,
@@ -35,6 +38,7 @@ fun Batch<IOType.D3>.average(axis: Int): Batch<IOType.D2> = when (axis) {
 }
 
 @JvmName("batchD3sBatchAverage")
+@ScopeOp
 fun Batch<IOType.D3>.batchAverage(): IOType.D3 {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 0)
     return IOType.D3(shape = shape, value = result)

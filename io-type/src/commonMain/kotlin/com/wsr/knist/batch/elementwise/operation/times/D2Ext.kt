@@ -9,6 +9,7 @@ import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
 @JvmName("batchD2TimesD2s")
 operator fun IOType.D2.times(other: Batch<IOType.D2>): Batch<IOType.D2> {
@@ -23,24 +24,28 @@ operator fun IOType.D2.times(other: Batch<IOType.D2>): Batch<IOType.D2> {
 }
 
 @JvmName("batchD2sTimesFloat")
+@ScopeOp
 operator fun Batch<IOType.D2>.times(other: Float): Batch<IOType.D2> {
     val result = Backend.times(x = value, y = other)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD2sTimesD0s")
+@ScopeOp
 operator fun Batch<IOType.D2>.times(other: Batch<IOType.D0>): Batch<IOType.D2> {
     val result = Backend.times(x = value, xi = size, xj = step, y = other.value, axis = 0)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD2sTimesD1WithAxis")
+@ScopeOp
 fun Batch<IOType.D2>.times(other: IOType.D1, axis: Int): Batch<IOType.D2> {
     val result = Backend.times(x = value, xi = size, xj = i, xk = j, y = other.value, axis = axis + 1)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD2sTimesD1sWithAxis")
+@ScopeOp
 fun Batch<IOType.D2>.times(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2> {
     val result = Backend.times(
         x = value,
@@ -57,6 +62,7 @@ fun Batch<IOType.D2>.times(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2>
 }
 
 @JvmName("batchD2sTimesD2")
+@ScopeOp
 operator fun Batch<IOType.D2>.times(other: IOType.D2): Batch<IOType.D2> {
     val result = Backend.times(
         x = value,
@@ -69,12 +75,14 @@ operator fun Batch<IOType.D2>.times(other: IOType.D2): Batch<IOType.D2> {
 }
 
 @JvmName("batchD2sTimesD2s")
+@ScopeOp
 operator fun Batch<IOType.D2>.times(other: Batch<IOType.D2>): Batch<IOType.D2> {
     val result = Backend.times(x = value, y = other.value)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD2sTimesD3sWithAxis")
+@ScopeOp
 fun Batch<IOType.D2>.times(other: Batch<IOType.D3>, axis1: Int, axis2: Int): Batch<IOType.D3> {
     val result = Backend.times(
         x = value,

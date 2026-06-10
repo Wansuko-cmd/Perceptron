@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
 @JvmName("batchWhereFloatToFloatAsD0")
 fun where(condition: Batch<IOType.D0>, onTrue: Float, onFalse: Float): Batch<IOType.D0> {
@@ -30,12 +31,14 @@ fun where(condition: Batch<IOType.D0>, onTrue: Batch<IOType.D0>, onFalse: Batch<
 }
 
 @JvmName("batchFloatWhereFloat")
+@ScopeOp
 fun Batch<IOType.D0>.where(condition: Batch<IOType.D0>, onTrue: Float, onFalse: Float): Batch<IOType.D0> {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchFloatWhereFloatWithLambda")
+@ScopeOp
 inline fun Batch<IOType.D0>.where(
     onTrue: Float,
     onFalse: Float,
@@ -43,6 +46,7 @@ inline fun Batch<IOType.D0>.where(
 ): Batch<IOType.D0> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
 
 @JvmName("batchFloatWhereD0s")
+@ScopeOp
 fun Batch<IOType.D0>.where(
     condition: Batch<IOType.D0>,
     onTrue: Float,
@@ -53,6 +57,7 @@ fun Batch<IOType.D0>.where(
 }
 
 @JvmName("batchFloatWhereD0sWithLambda")
+@ScopeOp
 inline fun Batch<IOType.D0>.where(
     onTrue: Float,
     onFalse: Batch<IOType.D0> = this,
@@ -60,6 +65,7 @@ inline fun Batch<IOType.D0>.where(
 ): Batch<IOType.D0> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
 
 @JvmName("batchD0sWhereFloat")
+@ScopeOp
 fun Batch<IOType.D0>.where(
     condition: Batch<IOType.D0>,
     onTrue: Batch<IOType.D0> = this,
@@ -70,6 +76,7 @@ fun Batch<IOType.D0>.where(
 }
 
 @JvmName("batchD0sWhereFloatWithLambda")
+@ScopeOp
 inline fun Batch<IOType.D0>.where(
     onTrue: Batch<IOType.D0> = this,
     onFalse: Float,
@@ -77,6 +84,7 @@ inline fun Batch<IOType.D0>.where(
 ) = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
 
 @JvmName("batchD0sWhereD0s")
+@ScopeOp
 fun Batch<IOType.D0>.where(
     condition: Batch<IOType.D0>,
     onTrue: Batch<IOType.D0> = this,
@@ -87,6 +95,7 @@ fun Batch<IOType.D0>.where(
 }
 
 @JvmName("batchD0sWhereD0sWithLambda")
+@ScopeOp
 inline fun Batch<IOType.D0>.where(
     onTrue: Batch<IOType.D0> = this,
     onFalse: Batch<IOType.D0> = this,

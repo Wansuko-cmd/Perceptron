@@ -3,17 +3,21 @@
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 operator fun IOType.D4.div(other: Float): IOType.D4 {
     val result = Backend.div(x = value, y = other)
     return IOType.D4(shape = shape, value = result)
 }
 
+@ScopeOp
 operator fun IOType.D4.div(other: IOType.D0): IOType.D4 {
     val result = Backend.div(x = value, y = other.get())
     return IOType.D4(shape = shape, value = result)
 }
 
+@ScopeOp
 fun IOType.D4.div(other: IOType.D1, axis: Int): IOType.D4 {
     val result = Backend.div(
         x = value,
@@ -27,6 +31,7 @@ fun IOType.D4.div(other: IOType.D1, axis: Int): IOType.D4 {
     return IOType.D4(shape = shape, value = result)
 }
 
+@ScopeOp
 fun IOType.D4.div(other: IOType.D2, axis1: Int, axis2: Int): IOType.D4 {
     val result = Backend.div(
         x = value,
@@ -43,6 +48,7 @@ fun IOType.D4.div(other: IOType.D2, axis1: Int, axis2: Int): IOType.D4 {
     return IOType.D4(shape = shape, value = result)
 }
 
+@ScopeOp
 fun IOType.D4.div(other: IOType.D3, axis1: Int, axis2: Int, axis3: Int): IOType.D4 {
     val result = Backend.div(
         x = value,
@@ -61,6 +67,7 @@ fun IOType.D4.div(other: IOType.D3, axis1: Int, axis2: Int, axis3: Int): IOType.
     return IOType.D4(shape = shape, value = result)
 }
 
+@ScopeOp
 operator fun IOType.D4.div(other: IOType.D4): IOType.D4 {
     val result = Backend.div(x = value, y = other.value)
     return IOType.D4(shape = shape, value = result)

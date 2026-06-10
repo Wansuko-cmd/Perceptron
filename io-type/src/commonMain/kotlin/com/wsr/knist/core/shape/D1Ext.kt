@@ -4,7 +4,9 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun IOType.D1.broadcastToD2(axis: Int, size: Int) = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = 1, j = 1, k = this.size)
@@ -21,11 +23,13 @@ fun IOType.D1.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
 
 fun IOType.D1.reshapeToD2(shape: List<Int>) = IOType.D2(shape = shape, value = value)
 
+@ScopeOp
 fun IOType.D1.slice(indices: IntProgression): IOType.D1 {
     val result = Backend.slice(x = value, indices = indices)
     return IOType.D1(value = result)
 }
 
+@ScopeOp
 fun IOType.D1.interleave(other: IOType.D1): IOType.D1 {
     check(size == other.size)
 

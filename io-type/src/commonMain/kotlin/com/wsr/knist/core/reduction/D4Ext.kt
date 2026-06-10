@@ -2,9 +2,12 @@ package com.wsr.knist.core.reduction
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun IOType.D4.average(): IOType.D0 = IOType.D0(Backend.average(value))
 
+@ScopeOp
 fun IOType.D4.average(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),
@@ -24,8 +27,10 @@ fun IOType.D4.average(axis: Int): IOType.D3 = when (axis) {
     )
 }
 
+@ScopeOp
 fun IOType.D4.max(): IOType.D0 = IOType.D0(Backend.max(x = value))
 
+@ScopeOp
 fun IOType.D4.max(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),
@@ -45,8 +50,10 @@ fun IOType.D4.max(axis: Int): IOType.D3 = when (axis) {
     )
 }
 
+@ScopeOp
 fun IOType.D4.min() = IOType.D0(Backend.min(x = value))
 
+@ScopeOp
 fun IOType.D4.min(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),
@@ -66,8 +73,10 @@ fun IOType.D4.min(axis: Int): IOType.D3 = when (axis) {
     )
 }
 
+@ScopeOp
 fun IOType.D4.sum(): IOType.D0 = IOType.D0(Backend.sum(value))
 
+@ScopeOp
 fun IOType.D4.sum(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),
@@ -87,6 +96,7 @@ fun IOType.D4.sum(axis: Int): IOType.D3 = when (axis) {
     )
 }
 
+@ScopeOp
 fun IOType.D4.maxIndex(axis: Int): IOType.D3 = when (axis) {
     0 -> IOType.D3(
         shape = listOf(j, k, l),

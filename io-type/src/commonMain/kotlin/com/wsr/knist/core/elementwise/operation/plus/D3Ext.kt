@@ -3,17 +3,21 @@
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 operator fun IOType.D3.plus(other: Float): IOType.D3 {
     val result = Backend.plus(x = value, y = other)
     return IOType.D3(shape = shape, value = result)
 }
 
+@ScopeOp
 operator fun IOType.D3.plus(other: IOType.D0): IOType.D3 {
     val result = Backend.plus(x = value, y = other.get())
     return IOType.D3(shape = shape, value = result)
 }
 
+@ScopeOp
 fun IOType.D3.plus(other: IOType.D1, axis: Int): IOType.D3 {
     val result = Backend.plus(
         x = value,
@@ -26,6 +30,7 @@ fun IOType.D3.plus(other: IOType.D1, axis: Int): IOType.D3 {
     return IOType.D3(shape = shape, value = result)
 }
 
+@ScopeOp
 fun IOType.D3.plus(other: IOType.D2, axis1: Int, axis2: Int): IOType.D3 {
     val result = Backend.plus(
         x = value,
@@ -41,6 +46,7 @@ fun IOType.D3.plus(other: IOType.D2, axis1: Int, axis2: Int): IOType.D3 {
     return IOType.D3(shape = shape, value = result)
 }
 
+@ScopeOp
 operator fun IOType.D3.plus(other: IOType.D3): IOType.D3 {
     val result = Backend.plus(x = value, y = other.value)
     return IOType.D3(shape = shape, value = result)

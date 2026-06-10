@@ -8,7 +8,9 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i)
@@ -40,11 +42,13 @@ fun Batch<IOType.D1>.reshapeToD3(i: Int, j: Int, k: Int) = reshapeToD3(listOf(i,
 @JvmName("batchD1sReshapeToD3ByShape")
 fun Batch<IOType.D1>.reshapeToD3(shape: List<Int>) = Batch<IOType.D3>(size = size, shape = shape, value = value)
 
+@ScopeOp
 fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
     val result = Backend.slice(x = value, xi = size, xj = i, axis = 1, indices = indices)
     return Batch(size = size, shape = listOf(indices.size), value = result)
 }
 
+@ScopeOp
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
     check(size == other.size && i == other.i)
     val newI = i * 2

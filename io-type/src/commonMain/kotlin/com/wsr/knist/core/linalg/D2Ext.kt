@@ -2,7 +2,9 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun IOType.D2.matMul(other: IOType.D1, trans: Boolean = false): IOType.D1 {
     val m = if (trans) shape[1] else shape[0]
     val k = if (trans) shape[0] else shape[1]
@@ -16,6 +18,7 @@ fun IOType.D2.matMul(other: IOType.D1, trans: Boolean = false): IOType.D1 {
     return IOType.D1(result)
 }
 
+@ScopeOp
 fun IOType.D2.matMul(other: IOType.D2, transA: Boolean = false, transB: Boolean = false): IOType.D2 {
     val m = if (transA) shape[1] else shape[0]
     val n = if (transB) other.shape[0] else other.shape[1]

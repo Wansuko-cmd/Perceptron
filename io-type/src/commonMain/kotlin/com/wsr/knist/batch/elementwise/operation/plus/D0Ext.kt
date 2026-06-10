@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
 @JvmName("batchFloatPlusD0s")
 operator fun Float.plus(other: Batch<IOType.D0>): Batch<IOType.D0> {
@@ -30,24 +31,28 @@ operator fun Float.plus(other: Batch<IOType.D3>): Batch<IOType.D3> {
 }
 
 @JvmName("batchD0sPlusFloat")
+@ScopeOp
 operator fun Batch<IOType.D0>.plus(other: Float): Batch<IOType.D0> {
     val result = Backend.plus(x = value, y = other)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD0sPlusD0s")
+@ScopeOp
 operator fun Batch<IOType.D0>.plus(other: Batch<IOType.D0>): Batch<IOType.D0> {
     val result = Backend.plus(x = value, y = other.value)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD0sPlusD1s")
+@ScopeOp
 operator fun Batch<IOType.D0>.plus(other: Batch<IOType.D1>): Batch<IOType.D1> {
     val result = Backend.plus(x = value, y = other.value, yi = other.size, yj = other.step, axis = 0)
     return Batch(size = size, shape = other.shape, value = result)
 }
 
 @JvmName("batchD0sPlusD2s")
+@ScopeOp
 operator fun Batch<IOType.D0>.plus(other: Batch<IOType.D2>): Batch<IOType.D2> {
     val result = Backend.plus(
         x = value,
@@ -60,6 +65,7 @@ operator fun Batch<IOType.D0>.plus(other: Batch<IOType.D2>): Batch<IOType.D2> {
 }
 
 @JvmName("batchD0sPlusD3s")
+@ScopeOp
 operator fun Batch<IOType.D0>.plus(other: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.plus(
         x = value,

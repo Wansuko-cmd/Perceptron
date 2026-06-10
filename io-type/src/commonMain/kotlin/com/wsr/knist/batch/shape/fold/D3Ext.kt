@@ -8,7 +8,9 @@ import com.wsr.knist.batch.k
 import com.wsr.knist.batch.l
 import com.wsr.knist.core.IOType
 import kotlin.math.sqrt
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D4> {
     val oj = (j - windowSize + padding * 2) / stride + 1
     val ok = (k - windowSize + padding * 2) / stride + 1
@@ -29,6 +31,7 @@ fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
     )
 }
 
+@ScopeOp
 fun Batch<IOType.D4>.fold(stride: Int, padding: Int): Batch<IOType.D3> {
     val window = sqrt(l.toDouble()).toInt()
     val result = Backend.fold(

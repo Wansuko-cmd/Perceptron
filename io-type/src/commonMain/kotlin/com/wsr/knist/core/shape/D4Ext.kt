@@ -3,7 +3,9 @@ package com.wsr.knist.core.shape
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.get
+import com.wsr.knist.scope.ScopeOp
 
+@ScopeOp
 fun IOType.D4.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): IOType.D4 {
     val result = Backend.transpose(
         x = value,
@@ -19,6 +21,7 @@ fun IOType.D4.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): IOType.
     return IOType.D4(shape = listOf(shape[axisI], shape[axisJ], shape[axisK], shape[axisL]), value = result)
 }
 
+@ScopeOp
 fun IOType.D4.flip(axis: Int): IOType.D4 {
     val result = when (axis) {
         0 -> Backend.flip(x = value, xi = i, xj = j, xk = k * l, axis = 0)

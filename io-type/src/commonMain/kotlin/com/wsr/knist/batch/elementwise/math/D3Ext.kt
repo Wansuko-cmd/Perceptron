@@ -12,29 +12,35 @@ import com.wsr.knist.core.elementwise.math.softmax
 import com.wsr.knist.core.shape.reshapeToD2
 import com.wsr.knist.core.shape.reshapeToD4
 import kotlin.jvm.JvmName
+import com.wsr.knist.scope.ScopeOp
 
 @JvmName("batchD3sExp")
+@ScopeOp
 fun Batch<IOType.D3>.exp(): Batch<IOType.D3> {
     val result = Backend.exp(x = value)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD3sLn")
+@ScopeOp
 fun Batch<IOType.D3>.ln(e: Float = 1e-7f): Batch<IOType.D3> {
     val result = Backend.ln(x = value, e = e)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD3sPow")
+@ScopeOp
 fun Batch<IOType.D3>.pow(n: Int): Batch<IOType.D3> {
     val result = Backend.pow(x = value, n = n)
     return Batch(size = size, shape = shape, value = result)
 }
 
 @JvmName("batchD3sSigmoid")
+@ScopeOp
 fun Batch<IOType.D3>.sigmoid(): Batch<IOType.D3> = Batch(size = size, shape = shape, value = Backend.sigmoid(value))
 
 @JvmName("batchD3sSoftmax")
+@ScopeOp
 fun Batch<IOType.D3>.softmax(): Batch<IOType.D3> = toD4()
     .reshapeToD2(i = size, j = step)
     .softmax(axis = 1)
@@ -42,11 +48,13 @@ fun Batch<IOType.D3>.softmax(): Batch<IOType.D3> = toD4()
     .toBatch()
 
 @JvmName("batchD3sSoftmaxWithAxis")
+@ScopeOp
 fun Batch<IOType.D3>.softmax(axis: Int): Batch<IOType.D3> = toD4()
     .softmax(axis = axis + 1)
     .toBatch()
 
 @JvmName("batchD3sSqrt")
+@ScopeOp
 fun Batch<IOType.D3>.sqrt(e: Float = 1e-7f): Batch<IOType.D3> {
     val result = Backend.sqrt(x = value, e = e)
     return Batch(size = size, shape = shape, value = result)

@@ -5,6 +5,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
 fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> = when (axis) {
     0 -> {
