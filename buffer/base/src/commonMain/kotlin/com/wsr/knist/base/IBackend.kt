@@ -383,6 +383,8 @@ interface IBackend {
     fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
 
     fun maxIndex(x: DataBuffer): DataBuffer
+    fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer
+    fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
 
     fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer
 

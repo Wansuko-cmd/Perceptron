@@ -432,6 +432,11 @@ object Backend : IBackend {
 
     override fun maxIndex(x: DataBuffer): DataBuffer = instance.maxIndex(x)
 
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.maxIndex(x, xi, xj, axis)
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        instance.maxIndex(x, xi, xj, xk, axis)
+
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer = instance.topK(x, k, random)
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer = instance.topP(x, p, random)
