@@ -56,6 +56,12 @@ dependencies {
     add("kspCommonMainMetadata", projects.ioType.scopeProcessor)
 }
 
+ktlint {
+    filter {
+        exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
+    }
+}
+
 afterEvaluate {
     publishing {
         publications {
