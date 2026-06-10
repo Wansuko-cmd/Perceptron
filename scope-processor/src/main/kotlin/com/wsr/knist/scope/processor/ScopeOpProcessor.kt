@@ -107,6 +107,8 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         }
 
         val member = buildString {
+            // @JvmName needed to avoid platform declaration clashes when Batch<T> generics are erased
+            appendLine("    @kotlin.jvm.JvmName(\"_ioScopeImpl$index\")")
             appendLine("    $modifiers fun $receiverTypeName.$funcName($paramsDecl): $returnTypeName {")
             appendLine("        val result = this._impl$index($paramCall)")
             appendLine("        bufferScope.register(result.value)")
