@@ -1,5 +1,6 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
     kotlin("multiplatform")
@@ -58,6 +59,9 @@ dependencies {
 }
 
 tasks.withType<AbstractKotlinCompile<*>>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+tasks.withType<KotlinNativeCompile>().configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
 
