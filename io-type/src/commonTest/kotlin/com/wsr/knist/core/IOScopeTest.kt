@@ -12,7 +12,7 @@ class IOScopeTest {
 
     @Test
     fun `plus の結果が bufferScope に登録される`() = ioTypeTestRule {
-        val bufferScope = BufferScope.Local()
+        val bufferScope = BufferScope()
         val ioScope = IOScope(bufferScope)
         val a = IOType.d2(2, 2) { _, _ -> 1f }
         val b = IOType.d2(2, 2) { _, _ -> 2f }
@@ -22,7 +22,7 @@ class IOScopeTest {
 
     @Test
     fun `scope外ではbufferScopeに登録されない`() = ioTypeTestRule {
-        val bufferScope = BufferScope.Local()
+        val bufferScope = BufferScope()
         val a = IOType.d2(2, 2) { _, _ -> 1f }
         val b = IOType.d2(2, 2) { _, _ -> 2f }
         val result = a + b
