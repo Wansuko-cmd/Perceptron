@@ -40,7 +40,7 @@ harness = false
 
 [dependencies]
 bytemuck = "1.25.0"
-jni = "0.21.1"
+jni = "0.22.0"
 pollster = "0.4.0"
 wgpu = "28.0.0"
 
