@@ -91,15 +91,15 @@ fun <T> NetworkBuilder.D2<T>.minMaxNorm(
     initializer: WeightInitializer = Fixed(1f),
 ) = addProcess(
     process =
-    MinMaxNormD2(
-        outputX = inputX,
-        outputY = inputY,
-        optimizer = optimizer.d2(inputX, inputY),
-        weight = initializer.d2(
-            input = listOf(inputX, inputY),
-            output = listOf(inputX, inputY),
-            x = inputX,
-            y = inputY,
+        MinMaxNormD2(
+            outputX = inputX,
+            outputY = inputY,
+            optimizer = optimizer.d2(inputX, inputY),
+            weight = initializer.d2(
+                input = listOf(inputX, inputY),
+                output = listOf(inputX, inputY),
+                x = inputX,
+                y = inputY,
+            ),
         ),
-    ),
 )

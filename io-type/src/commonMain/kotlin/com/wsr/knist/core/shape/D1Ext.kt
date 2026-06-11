@@ -12,10 +12,12 @@ fun IOType.D1.broadcastToD2(axis: Int, size: Int) = when (axis) {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = 1, j = 1, k = this.size)
         IOType.D2(shape = listOf(size, this.size), value = result)
     }
+
     1 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = 1)
         IOType.D2(shape = listOf(this.size, size), value = result)
     }
+
     else -> throw IllegalArgumentException("IOType.D1.broadcastToD2 axis is $axis not 0 or 1.")
 }
 

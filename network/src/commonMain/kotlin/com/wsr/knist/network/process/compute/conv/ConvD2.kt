@@ -97,22 +97,22 @@ fun <T> NetworkBuilder.D3<T>.convD2(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process =
-    ConvD2(
-        filter = filter,
-        channel = inputX,
-        kernel = kernel,
-        stride = stride,
-        padding = padding,
-        inputX = inputY,
-        inputY = inputZ,
-        optimizer = optimizer.d4(filter, inputX, kernel, kernel),
-        weight = initializer.d4(
-            input = listOf(inputX, kernel, kernel),
-            output = listOf(filter, kernel, kernel),
-            i = filter,
-            j = inputX,
-            k = kernel,
-            l = kernel,
+        ConvD2(
+            filter = filter,
+            channel = inputX,
+            kernel = kernel,
+            stride = stride,
+            padding = padding,
+            inputX = inputY,
+            inputY = inputZ,
+            optimizer = optimizer.d4(filter, inputX, kernel, kernel),
+            weight = initializer.d4(
+                input = listOf(inputX, kernel, kernel),
+                output = listOf(filter, kernel, kernel),
+                i = filter,
+                j = inputX,
+                k = kernel,
+                l = kernel,
+            ),
         ),
-    ),
 )

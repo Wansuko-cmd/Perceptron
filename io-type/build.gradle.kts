@@ -50,7 +50,7 @@ kotlin {
     }
 
     compilerOptions {
-        freeCompilerArgs.addAll("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xcontext-parameters")
     }
 }
 
@@ -62,6 +62,9 @@ tasks.withType<AbstractKotlinCompile<*>>().configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
 tasks.withType<KotlinNativeCompile>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+tasks.matching { it.name.contains("CommonMainSourceSet") }.configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
 

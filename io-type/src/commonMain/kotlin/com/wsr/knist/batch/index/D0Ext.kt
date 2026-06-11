@@ -15,6 +15,7 @@ fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> =
             value = result,
         )
     }
+
     else -> {
         val result = Backend.gather(
             x = value,
