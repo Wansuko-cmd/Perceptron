@@ -53,14 +53,7 @@ kotlin {
 }
 
 dependencies {
-    add("kspCommonMainMetadata", projects.ioType.scopeProcessor)
-}
-
-
-ktlint {
-    filter {
-        exclude { it.file.absolutePath.replace('\\', '/').contains("/build/generated/") }
-    }
+    kspCommonMainMetadata(projects.ioType.scopeProcessor)
 }
 
 tasks.matching { it.name == "compileCommonMainKotlinMetadata" }.configureEach {

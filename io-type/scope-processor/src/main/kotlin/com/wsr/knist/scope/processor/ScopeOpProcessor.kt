@@ -25,8 +25,6 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
             .partition { it.validate() }
 
         collectedFunctions.addAll(valid)
-
-        // Deferred symbols will be re-presented in the next round; wait until all are resolved.
         if (deferred.isNotEmpty()) return deferred
 
         if (!generated && collectedFunctions.isNotEmpty()) {
@@ -56,8 +54,7 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("package com.wsr.knist.core")
         sb.appendLine()
         sb.appendLine("import com.wsr.knist.base.BufferScope")
-        // Import alias per function — avoids calling extension functions via FQN (not valid Kotlin)
-        // and avoids infinite recursion from IOScope member shadowing top-level extension
+        // 名前衝突回避の為(FQNは使えない)
         indexed.forEach { (i, data) ->
             sb.appendLine("import ${data.fqn} as _impl$i")
         }
@@ -110,7 +107,6 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         }
 
         val member = buildString {
-            // @JvmName needed to avoid platform declaration clashes when Batch<T> generics are erased
             appendLine("    @kotlin.jvm.JvmName(\"_ioScopeImpl$index\")")
             appendLine("    $modifiers fun $receiverTypeName.$funcName($paramsDecl): $returnTypeName {")
             appendLine("        val result = this._impl$index($paramCall)")
