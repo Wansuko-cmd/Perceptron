@@ -72,5 +72,7 @@ private class TrackingDataBuffer(override val size: Int) : DataBuffer {
     override fun get(i: Int) = 0f
     override fun set(i: Int, value: Float) {}
     override fun toFloatArray() = FloatArray(size)
-    override fun release() { released = true }
+    override fun release() {
+        released = true
+    }
 }

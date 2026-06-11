@@ -1460,6 +1460,7 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                     step = indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }
@@ -1479,6 +1480,7 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                     step = indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }
@@ -1499,6 +1501,7 @@ class CPUNativeBackend : IBackend by KotlinBackend {
                     step = indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }

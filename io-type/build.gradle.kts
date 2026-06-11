@@ -64,6 +64,9 @@ tasks.withType<AbstractKotlinCompile<*>>().configureEach {
 tasks.withType<KotlinNativeCompile>().configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
+tasks.matching { it.name.contains("CommonMainSourceSet") }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
 
 afterEvaluate {
     publishing {

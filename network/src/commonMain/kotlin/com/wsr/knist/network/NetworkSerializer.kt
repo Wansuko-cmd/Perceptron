@@ -287,7 +287,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
 
 private val buildInSerializersModule = SerializersModule {
     polymorphic(Process::class) {
-        /**
+        /*
          * Process
          */
         // Affine
@@ -379,7 +379,7 @@ private val buildInSerializersModule = SerializersModule {
         subclass(SkipD2::class)
         subclass(SkipD3::class)
 
-        /**
+        /*
          * Reshape
          */
         // Global Average
@@ -400,7 +400,7 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Output::class) {
-        /**
+        /*
          * Output
          */
         subclass(MeanSquareD1::class)
@@ -413,7 +413,7 @@ private val buildInSerializersModule = SerializersModule {
         subclass(SoftmaxWithLossD2::class)
     }
 
-    /**
+    /*
      * Optimizer
      */
     polymorphic(Optimizer.D1::class) {

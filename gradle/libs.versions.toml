@@ -17,6 +17,7 @@ okio = "3.17.0"
 
 # Ktlint
 ktlint = "14.2.0"
+ktlint-lib = "1.8.0"
 
 # Android
 agp = "9.2.1"
