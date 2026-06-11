@@ -63,11 +63,26 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("class IOScope(val bufferScope: BufferScope) {")
         sb.appendLine()
 
+        sb.appendLine("    companion object {")
+        sb.appendLine("        // 二重ラップ防止用(context parameterで優先順位を整える)")
+        sb.appendLine("        context(scope: IOScope)")
+        sb.appendLine("        inline fun <T : IOType> launch(block: IOScope.() -> T): T = scope.block()")
+        sb.appendLine("    }")
+
         indexed.forEach { (_, data) ->
             sb.appendLine(data.member)
         }
 
         sb.appendLine("}")
+
+        sb.appendLine("inline fun <T : IOType> IOScope.Companion.launch(block: IOScope.() -> T): T {")
+        sb.appendLine("    val bufferScope = BufferScope()")
+        sb.appendLine("    val ioScope = IOScope(bufferScope)")
+        sb.appendLine("    return bufferScope.use {")
+        sb.appendLine("        ioScope.block().also { bufferScope.remove(it.value) }")
+        sb.appendLine("    }")
+        sb.appendLine("}")
+
         return sb.toString()
     }
 
