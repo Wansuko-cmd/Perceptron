@@ -1,4 +1,5 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 plugins {
     kotlin("multiplatform")
@@ -48,7 +49,7 @@ kotlin {
     }
 
     compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes")
     }
 }
 
@@ -56,7 +57,7 @@ dependencies {
     kspCommonMainMetadata(projects.ioType.scopeProcessor)
 }
 
-tasks.matching { it.name == "compileCommonMainKotlinMetadata" }.configureEach {
+tasks.withType<AbstractKotlinCompile<*>>().configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
 
