@@ -20,9 +20,9 @@ class SigmoidWithLossD1Test {
 
         val actual = target._expect(input) as Batch<IOType.D1>
 
-        assertEquals(expected = 0.731f, actual = actual[0][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.8807f, actual = actual[0][1], absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.9525f, actual = actual[0][2], absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.731f, actual = actual[0][0].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.8807f, actual = actual[0][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.9525f, actual = actual[0][2].get(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -36,8 +36,8 @@ class SigmoidWithLossD1Test {
         val delta = actual.delta as Batch<IOType.D1>
 
         assertEquals(expected = -15.5112f, actual = loss, absoluteTolerance = 1e-4f)
-        assertEquals(expected = -0.2689f, actual = delta[0][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.1192f, actual = delta[0][1], absoluteTolerance = 1e-4f)
-        assertEquals(expected = -4.0474f, actual = delta[0][2], absoluteTolerance = 1e-4f)
+        assertEquals(expected = -0.2689f, actual = delta[0][0].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.1192f, actual = delta[0][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -4.0474f, actual = delta[0][2].get(), absoluteTolerance = 1e-4f)
     }
 }

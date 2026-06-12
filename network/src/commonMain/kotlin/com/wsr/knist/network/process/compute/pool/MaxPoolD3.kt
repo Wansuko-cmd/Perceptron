@@ -48,16 +48,16 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
             IOType.d3(i = channel, j = inputX, k = inputY) { c, x, y ->
                 val xo = x / poolSize
                 val yo = y / poolSize
-                if (input[c, x, y] == output[c, xo, yo]) delta[c, xo, yo] else 0f
+                if (input[c, x, y].get() == output[c, xo, yo].get()) delta[c, xo, yo].get() else 0f
             }
         }.toBatch()
     }
 
     private fun forward(input: IOType.D3): IOType.D3 = IOType.d3(outputX, outputY, outputZ) { x, y, z ->
-        var max = input[x, y, z]
+        var max = input[x, y, z].get()
         for (i in 0 until poolSize) {
             for (j in 0 until poolSize) {
-                max = maxOf(max, input[x, y + i, z + j])
+                max = maxOf(max, input[x, y + i, z + j].get())
             }
         }
         max

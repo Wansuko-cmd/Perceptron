@@ -29,11 +29,11 @@ class RoPED2 internal constructor(
     }
 
     private val cosCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> cos(x * theta[y]) }
+        IOType.d2(outputX, outputY / 2) { x, y -> cos(x * theta[y].get()) }
     }
 
     private val sinCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y]) }
+        IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y].get()) }
     }
 
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.applyRoPE()

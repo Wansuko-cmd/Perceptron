@@ -10,14 +10,14 @@ class D3Test {
     @Test
     fun `get=3次元要素取得`() {
         val d3 = IOType.d3(listOf(2, 2, 2)) { x, y, z -> x + y * 2.0f + z * 4.0f }
-        assertEquals(expected = 0.0f, actual = d3[0, 0, 0])
-        assertEquals(expected = 4.0f, actual = d3[0, 0, 1])
-        assertEquals(expected = 2.0f, actual = d3[0, 1, 0])
-        assertEquals(expected = 6.0f, actual = d3[0, 1, 1])
-        assertEquals(expected = 1.0f, actual = d3[1, 0, 0])
-        assertEquals(expected = 5.0f, actual = d3[1, 0, 1])
-        assertEquals(expected = 3.0f, actual = d3[1, 1, 0])
-        assertEquals(expected = 7.0f, actual = d3[1, 1, 1])
+        assertEquals(expected = 0.0f, actual = d3[0, 0, 0].get())
+        assertEquals(expected = 4.0f, actual = d3[0, 0, 1].get())
+        assertEquals(expected = 2.0f, actual = d3[0, 1, 0].get())
+        assertEquals(expected = 6.0f, actual = d3[0, 1, 1].get())
+        assertEquals(expected = 1.0f, actual = d3[1, 0, 0].get())
+        assertEquals(expected = 5.0f, actual = d3[1, 0, 1].get())
+        assertEquals(expected = 3.0f, actual = d3[1, 1, 0].get())
+        assertEquals(expected = 7.0f, actual = d3[1, 1, 1].get())
     }
 
     @Test
@@ -73,13 +73,13 @@ class D3Test {
         d3[1, 0, 1] = 2.0f
         d3[1, 1, 0] = 4.0f
         d3[1, 1, 1] = 0.0f
-        assertEquals(expected = 7.0f, actual = d3[0, 0, 0])
-        assertEquals(expected = 3.0f, actual = d3[0, 0, 1])
-        assertEquals(expected = 5.0f, actual = d3[0, 1, 0])
-        assertEquals(expected = 1.0f, actual = d3[0, 1, 1])
-        assertEquals(expected = 6.0f, actual = d3[1, 0, 0])
-        assertEquals(expected = 2.0f, actual = d3[1, 0, 1])
-        assertEquals(expected = 4.0f, actual = d3[1, 1, 0])
-        assertEquals(expected = 0.0f, actual = d3[1, 1, 1])
+        assertEquals(expected = 7.0f, actual = d3[0, 0, 0].get())
+        assertEquals(expected = 3.0f, actual = d3[0, 0, 1].get())
+        assertEquals(expected = 5.0f, actual = d3[0, 1, 0].get())
+        assertEquals(expected = 1.0f, actual = d3[0, 1, 1].get())
+        assertEquals(expected = 6.0f, actual = d3[1, 0, 0].get())
+        assertEquals(expected = 2.0f, actual = d3[1, 0, 1].get())
+        assertEquals(expected = 4.0f, actual = d3[1, 1, 0].get())
+        assertEquals(expected = 0.0f, actual = d3[1, 1, 1].get())
     }
 }

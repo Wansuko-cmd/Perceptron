@@ -34,8 +34,8 @@ class MeanSquareD1Test {
         val delta = actual.delta as Batch<IOType.D1>
 
         assertEquals(expected = 0.8333f, actual = loss, absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0f, actual = delta[0][0])
-        assertEquals(expected = -1f, actual = delta[0][1])
-        assertEquals(expected = -2f, actual = delta[0][2])
+        assertEquals(expected = 0f, actual = delta[0][0].get())
+        assertEquals(expected = -1f, actual = delta[0][1].get())
+        assertEquals(expected = -2f, actual = delta[0][2].get())
     }
 }

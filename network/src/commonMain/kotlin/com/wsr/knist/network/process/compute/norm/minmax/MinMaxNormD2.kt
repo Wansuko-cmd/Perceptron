@@ -75,11 +75,11 @@ class MinMaxNormD2 internal constructor(
                  * dy/min(x) = if(x == min(x)) -dNumerator + dDenominator else 0f
                  * dy/max(x) = if(x == max(x)) -dDenominator else 0f
                  */
-                val inputValue = input[x, y]
+                val inputValue = input[x, y].get()
                 when (inputValue) {
                     min.get() -> dDenominator.get()
-                    max.get() -> dNumerator[x, y] - dDenominator.get()
-                    else -> dNumerator[x, y]
+                    max.get() -> dNumerator[x, y].get() - dDenominator.get()
+                    else -> dNumerator[x, y].get()
                 }
             }
         }
