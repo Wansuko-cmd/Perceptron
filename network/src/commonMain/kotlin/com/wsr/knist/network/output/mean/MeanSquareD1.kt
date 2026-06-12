@@ -6,8 +6,8 @@ import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.operation.times.times
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.core.reduction.average
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output

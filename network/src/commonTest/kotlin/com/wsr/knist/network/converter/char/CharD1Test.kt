@@ -7,8 +7,8 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.core.set
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals

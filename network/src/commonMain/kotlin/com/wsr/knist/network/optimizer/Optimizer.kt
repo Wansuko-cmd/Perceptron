@@ -6,8 +6,8 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.math.pow
 import com.wsr.knist.core.elementwise.math.sqrt
 import com.wsr.knist.core.elementwise.operation.times.times
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.core.reduction.sum
+import com.wsr.knist.core.unwrap
 import kotlinx.serialization.Serializable
 
 interface Optimizer {
