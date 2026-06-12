@@ -34,7 +34,7 @@ class SoftmaxWithLossD2Test {
         val label = batchOf(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
         val actual = target._train(input = input, label = { label })
-        val loss = actual.loss
+        val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D2>
 
         assertEquals(expected = -1.0388f, actual = loss, absoluteTolerance = 1e-4f)

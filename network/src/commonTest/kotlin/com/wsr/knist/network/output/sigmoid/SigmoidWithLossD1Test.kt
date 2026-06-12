@@ -33,7 +33,7 @@ class SigmoidWithLossD1Test {
         val label = batchOf(IOType.d1(1f, 3f, 5f))
 
         val actual = target._train(input = input, label = { label })
-        val loss = actual.loss
+        val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D1>
 
         assertEquals(expected = -15.5112f, actual = loss, absoluteTolerance = 1e-4f)

@@ -13,7 +13,6 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -45,7 +44,7 @@ internal class SoftmaxWithLossD2 internal constructor(
         val maskedLosses = losses * maskD1
 
         // 有効値のみの平均を取る
-        val loss = (maskedLosses.sum() / maskD1.sum()).batchAverage().unwrap()
+        val loss = (maskedLosses.sum() / maskD1.sum()).batchAverage()
 
         val delta = (output - label) * mask
         return TResult(loss = loss, delta = delta)

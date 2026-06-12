@@ -7,7 +7,6 @@ import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.operation.times.times
 import com.wsr.knist.core.reduction.average
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -23,7 +22,7 @@ internal class MeanSquareD1 internal constructor(val outputSize: Int) : Output.D
         val loss = delta
             .pow(2)
             .batchAverage().average() * 0.5f
-        return TResult(loss = loss.unwrap(), delta = delta)
+        return TResult(loss = loss, delta = delta)
     }
 }
 

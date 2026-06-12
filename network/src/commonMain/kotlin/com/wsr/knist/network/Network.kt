@@ -5,6 +5,7 @@ package com.wsr.knist.network
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
@@ -63,7 +64,7 @@ class Network<I, O> internal constructor(
         val output = layers
             .fold(input) { acc, process -> process._expect(acc, context) }
             .let { output._train(it, { label(it) }) }
-        return output.loss
+        return output.loss.unwrap()
     }
 
     /**
@@ -90,7 +91,7 @@ class Network<I, O> internal constructor(
         var loss = 0f
         val output: TrainLambda = { input: Batch<IOType>, context: Context ->
             val output = output._train(input) { label(it) }
-            loss = output.loss
+            loss = output.loss.unwrap()
             output.delta
         }
         val input = inputConverter._encode(input)

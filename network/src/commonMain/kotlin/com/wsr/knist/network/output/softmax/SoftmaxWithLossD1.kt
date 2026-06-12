@@ -7,12 +7,12 @@ import com.wsr.knist.batch.elementwise.math.exp
 import com.wsr.knist.batch.elementwise.math.ln
 import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.elementwise.operation.minus.minus
+import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.batch.reduction.max
 import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -42,10 +42,9 @@ internal class SoftmaxWithLossD1 internal constructor(
 
         val label = label(output)
 
-        val loss = -(output * label).sum()
+        val loss = 0f - (output * label).sum()
             .ln(1e-7f)
             .batchAverage()
-            .unwrap()
         val delta = (output - label).let { diff ->
             if (maskValue == null) diff else diff * label.where(onTrue = 0f) { it eq maskValue.toFloat() }
         }

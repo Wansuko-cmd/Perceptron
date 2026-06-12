@@ -11,6 +11,7 @@ import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 
 class WordD2Test {
     private val words = listOf("<PAD>", "<UNK>", "hello", "world")
