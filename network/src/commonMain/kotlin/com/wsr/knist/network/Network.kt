@@ -4,8 +4,8 @@ package com.wsr.knist.network
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
-import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.core.unwrap
+import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
