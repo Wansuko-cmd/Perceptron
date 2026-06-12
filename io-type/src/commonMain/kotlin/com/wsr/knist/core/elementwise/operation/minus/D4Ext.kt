@@ -2,15 +2,13 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.unwrap
-
 operator fun IOType.D4.minus(other: Float): IOType.D4 {
     val result = Backend.minus(x = value, y = other)
     return IOType.D4(shape = shape, value = result)
 }
 
 operator fun IOType.D4.minus(other: IOType.D0): IOType.D4 {
-    val result = Backend.minus(x = value, y = other.unwrap())
+    val result = Backend.minus(x = value, xi = 1, xj = size, y = other.value, axis = 0)
     return IOType.D4(shape = shape, value = result)
 }
 

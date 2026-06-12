@@ -2,15 +2,13 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.unwrap
-
 operator fun IOType.D4.times(other: Float): IOType.D4 {
     val result = Backend.times(x = value, y = other)
     return IOType.D4(shape = shape, value = result)
 }
 
 operator fun IOType.D4.times(other: IOType.D0): IOType.D4 {
-    val result = Backend.times(x = value, y = other.unwrap())
+    val result = Backend.times(x = value, xi = 1, xj = size, y = other.value, axis = 0)
     return IOType.D4(shape = shape, value = result)
 }
 
