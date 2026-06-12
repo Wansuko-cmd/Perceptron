@@ -15,8 +15,11 @@ sealed class IOType {
         override val shape = listOf(1)
         override val size = 1
 
-        internal fun toLocal() = Local(value)
-        fun toGlobal() = Global(value)
+        context(scope: IOScope)
+        internal fun toLocal() = Local(value).also { scope.register(it) }
+
+        context(scope: IOScope)
+        fun toGlobal() = Global(value).also { scope.remove(it) }
 
         @Serializable
         data class Local(override val value: DataBuffer) : D0()
@@ -30,8 +33,11 @@ sealed class IOType {
         override val size get() = value.size
         override val shape get() = listOf(size)
 
-        internal fun toLocal() = Local(value)
-        fun toGlobal() = Global(value)
+        context(scope: IOScope)
+        internal fun toLocal() = Local(value).also { scope.register(it) }
+
+        context(scope: IOScope)
+        fun toGlobal() = Global(value).also { scope.remove(it) }
 
         @Serializable
         data class Local(override val value: DataBuffer) : D1()
@@ -46,8 +52,11 @@ sealed class IOType {
         val i get() = shape[0]
         val j get() = shape[1]
 
-        internal fun toLocal() = Local(value, shape)
-        fun toGlobal() = Global(value, shape)
+        context(scope: IOScope)
+        internal fun toLocal() = Local(value, shape).also { scope.register(it) }
+
+        context(scope: IOScope)
+        fun toGlobal() = Global(value, shape).also { scope.remove(it) }
 
         @Serializable
         data class Local(override val value: DataBuffer, override val shape: List<Int>) : D2()
@@ -63,8 +72,11 @@ sealed class IOType {
         val j get() = shape[1]
         val k get() = shape[2]
 
-        internal fun toLocal() = Local(value, shape)
-        fun toGlobal() = Global(value, shape)
+        context(scope: IOScope)
+        internal fun toLocal() = Local(value, shape).also { scope.register(it) }
+
+        context(scope: IOScope)
+        fun toGlobal() = Global(value, shape).also { scope.remove(it) }
 
         @Serializable
         data class Local(override val value: DataBuffer, override val shape: List<Int>) : D3()
@@ -81,8 +93,11 @@ sealed class IOType {
         val k get() = shape[2]
         val l get() = shape[3]
 
-        internal fun toLocal() = Local(value, shape)
-        fun toGlobal() = Global(value, shape)
+        context(scope: IOScope)
+        internal fun toLocal() = Local(value, shape).also { scope.register(it) }
+
+        context(scope: IOScope)
+        fun toGlobal() = Global(value, shape).also { scope.remove(it) }
 
         @Serializable
         data class Local(override val value: DataBuffer, override val shape: List<Int>) : D4()
@@ -193,6 +208,14 @@ sealed class IOType {
         @JvmName("d4WithElements")
         fun d4(vararg elements: D3): D4.Local = d4Impl(*elements).toLocal()
     }
+}
+
+private fun IOScope.register(value: IOType) {
+    bufferScope.register(value.value)
+}
+
+private fun IOScope.remove(value: IOType) {
+    bufferScope.remove(value.value)
 }
 
 fun IOType.Companion.D0(value: DataBuffer) = IOType.D0.Global(value)
