@@ -4,7 +4,8 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 
-inline fun IOType.Companion.d3(i: Int, j: Int, k: Int, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }): IOType.D3 {
+@PublishedApi
+internal inline fun IOType.Companion.d3Impl(i: Int, j: Int, k: Int, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }): IOType.D3.Global {
     val value = FloatArray(i * j * k)
     for (_i in 0 until i) {
         for (_j in 0 until j) {
@@ -13,23 +14,24 @@ inline fun IOType.Companion.d3(i: Int, j: Int, k: Int, init: (Int, Int, Int) -> 
             }
         }
     }
-    return IOType.d3(shape = listOf(i, j, k), value = value)
+    return d3Impl(shape = listOf(i, j, k), value = value)
 }
 
-inline fun IOType.Companion.d3(shape: List<Int>, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }) = d3(
+@PublishedApi
+internal inline fun IOType.Companion.d3Impl(shape: List<Int>, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }) = d3Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],
     init = init,
 )
 
-fun IOType.Companion.d3(shape: List<Int>, value: List<Float>) = IOType.d3(
-    value = value.toFloatArray(),
+internal fun IOType.Companion.d3Impl(shape: List<Int>, value: List<Float>) = d3Impl(
     shape = shape,
+    value = value.toFloatArray(),
 )
 
-@JvmName("d3WithElements")
-fun IOType.Companion.d3(vararg elements: IOType.D2): IOType.D3 {
+@JvmName("d3ImplWithElements")
+internal fun IOType.Companion.d3Impl(vararg elements: IOType.D2): IOType.D3.Global {
     val size = elements.size
     val shape = elements.first().shape
     val step = shape.reduce { acc, i -> acc * i }
@@ -38,11 +40,12 @@ fun IOType.Companion.d3(vararg elements: IOType.D2): IOType.D3 {
         val start = index * step
         Backend.copyInto(item.value, value, start until start + item.size)
     }
-    return IOType.D3(shape = listOf(size, shape[0], shape[1]), value = value)
+    return IOType.D3.Global(shape = listOf(size, shape[0], shape[1]), value = value)
 }
 
-fun IOType.Companion.d3(shape: List<Int>, value: FloatArray) =
-    IOType.D3(shape = shape, value = DataBuffer.create(value))
+@PublishedApi
+internal fun IOType.Companion.d3Impl(shape: List<Int>, value: FloatArray): IOType.D3.Global =
+    IOType.D3.Global(shape = shape, value = DataBuffer.create(value))
 
 operator fun IOType.D3.get(i: Int, j: Int, k: Int): IOType.D0 = IOType.d0(value[(i * shape[1] + j) * shape[2] + k])
 
