@@ -10,54 +10,83 @@ sealed class IOType {
     abstract val size: Int
 
     @Serializable
-    data class D0(override val value: DataBuffer) : IOType() {
+    sealed class D0 : IOType() {
         override val shape = listOf(1)
         override val size = 1
 
-        override fun equals(other: Any?): Boolean = super.equals(other)
+        internal fun toLocal() = Local(value)
+        fun toGlobal() = Global(value)
 
-        override fun hashCode(): Int = super.hashCode()
+        @Serializable
+        data class Local(override val value: DataBuffer) : D0()
+
+        @Serializable
+        data class Global(override val value: DataBuffer) : D0()
     }
 
     @Serializable
-    data class D1(override val value: DataBuffer, override val size: Int = value.size) : IOType() {
-        override val shape = listOf(size)
+    sealed class D1 : IOType() {
+        override val shape get() = listOf(size)
 
-        override fun equals(other: Any?): Boolean = super.equals(other)
-        override fun hashCode(): Int = super.hashCode()
+        internal fun toLocal() = Local(value, size)
+        fun toGlobal() = Global(value, size)
+
+        @Serializable
+        data class Local(override val value: DataBuffer, override val size: Int = value.size) : D1()
+
+        @Serializable
+        data class Global(override val value: DataBuffer, override val size: Int = value.size) : D1()
     }
 
     @Serializable
-    data class D2(override val value: DataBuffer, override val shape: List<Int>) : IOType() {
-        override val size = shape.reduce { acc, i -> acc * i }
-        val i = shape[0]
-        val j = shape[1]
+    sealed class D2 : IOType() {
+        override val size get() = shape.reduce { acc, i -> acc * i }
+        val i get() = shape[0]
+        val j get() = shape[1]
 
-        override fun equals(other: Any?): Boolean = super.equals(other)
-        override fun hashCode(): Int = super.hashCode()
+        internal fun toLocal() = Local(value, shape)
+        fun toGlobal() = Global(value, shape)
+
+        @Serializable
+        data class Local(override val value: DataBuffer, override val shape: List<Int>) : D2()
+
+        @Serializable
+        data class Global(override val value: DataBuffer, override val shape: List<Int>) : D2()
     }
 
     @Serializable
-    data class D3(override val value: DataBuffer, override val shape: List<Int>) : IOType() {
-        override val size = shape.reduce { acc, i -> acc * i }
-        val i = shape[0]
-        val j = shape[1]
-        val k = shape[2]
+    sealed class D3 : IOType() {
+        override val size get() = shape.reduce { acc, i -> acc * i }
+        val i get() = shape[0]
+        val j get() = shape[1]
+        val k get() = shape[2]
 
-        override fun equals(other: Any?): Boolean = super.equals(other)
-        override fun hashCode(): Int = super.hashCode()
+        internal fun toLocal() = Local(value, shape)
+        fun toGlobal() = Global(value, shape)
+
+        @Serializable
+        data class Local(override val value: DataBuffer, override val shape: List<Int>) : D3()
+
+        @Serializable
+        data class Global(override val value: DataBuffer, override val shape: List<Int>) : D3()
     }
 
     @Serializable
-    data class D4(override val value: DataBuffer, override val shape: List<Int>) : IOType() {
-        override val size = shape.reduce { acc, i -> acc * i }
-        val i = shape[0]
-        val j = shape[1]
-        val k = shape[2]
-        val l = shape[3]
+    sealed class D4 : IOType() {
+        override val size get() = shape.reduce { acc, i -> acc * i }
+        val i get() = shape[0]
+        val j get() = shape[1]
+        val k get() = shape[2]
+        val l get() = shape[3]
 
-        override fun equals(other: Any?): Boolean = super.equals(other)
-        override fun hashCode(): Int = super.hashCode()
+        internal fun toLocal() = Local(value, shape)
+        fun toGlobal() = Global(value, shape)
+
+        @Serializable
+        data class Local(override val value: DataBuffer, override val shape: List<Int>) : D4()
+
+        @Serializable
+        data class Global(override val value: DataBuffer, override val shape: List<Int>) : D4()
     }
 
     override fun equals(other: Any?): Boolean {
