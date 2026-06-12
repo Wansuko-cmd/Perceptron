@@ -7,10 +7,7 @@ import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.shape.interleave
 import com.wsr.knist.batch.shape.slice
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
-import com.wsr.knist.core.get
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
@@ -26,15 +23,15 @@ class RoPED2 internal constructor(
     private val waveLength: Float,
 ) : Compute.D2() {
     private val theta by lazy {
-        IOType.d1(outputY / 2) { i -> 1f / waveLength.pow(2f * i / outputY) }
+        FloatArray(outputY / 2) { i -> 1f / waveLength.pow(2f * i / outputY) }
     }
 
     private val cosCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> cos(x * theta[y].unwrap()) }
+        IOType.d2(outputX, outputY / 2) { x, y -> cos(x * theta[y]) }
     }
 
     private val sinCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y].unwrap()) }
+        IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y]) }
     }
 
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.applyRoPE()
