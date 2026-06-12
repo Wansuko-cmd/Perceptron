@@ -2,7 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 
 operator fun IOType.D1.times(other: Float): IOType.D1 {
     val result = Backend.times(x = value, y = other)
@@ -10,7 +10,7 @@ operator fun IOType.D1.times(other: Float): IOType.D1 {
 }
 
 operator fun IOType.D1.times(other: IOType.D0): IOType.D1 {
-    val result = Backend.times(x = value, y = other.get())
+    val result = Backend.times(x = value, y = other.unwrap())
     return IOType.D1(value = result)
 }
 

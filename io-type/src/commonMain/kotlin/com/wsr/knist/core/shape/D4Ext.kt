@@ -2,7 +2,6 @@ package com.wsr.knist.core.shape
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 
 fun IOType.D4.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): IOType.D4 {
     val result = Backend.transpose(

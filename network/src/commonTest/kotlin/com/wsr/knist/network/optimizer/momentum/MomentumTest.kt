@@ -8,6 +8,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import kotlin.test.Test
@@ -22,15 +23,15 @@ class MomentumTest {
 
         val actual1 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual1[0].get())
-        assertEquals(expected = 0f, actual = actual1[1].get())
-        assertEquals(expected = 0f, actual = actual1[2].get())
+        assertEquals(expected = 0f, actual = actual1[0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[2].unwrap())
 
         val actual2 = target.adapt(weight, dw)
 
-        assertEquals(expected = -0.9000f, actual = actual2[0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -1.8000f, actual = actual2[1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.7000f, actual = actual2[2].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -0.9000f, actual = actual2[0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.8000f, actual = actual2[1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.7000f, actual = actual2[2].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -41,17 +42,17 @@ class MomentumTest {
 
         val actual1 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual1[0][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][1].get())
+        assertEquals(expected = 0f, actual = actual1[0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1].unwrap())
 
         val actual2 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual2[0][0].get())
-        assertEquals(expected = -0.9000f, actual = actual2[0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -1.8000f, actual = actual2[1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.7000f, actual = actual2[1][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0f, actual = actual2[0][0].unwrap())
+        assertEquals(expected = -0.9000f, actual = actual2[0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.8000f, actual = actual2[1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.7000f, actual = actual2[1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -62,25 +63,25 @@ class MomentumTest {
 
         val actual1 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual1[0][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][1].get())
+        assertEquals(expected = 0f, actual = actual1[0][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][1].unwrap())
 
         val actual2 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual2[0][0][0].get())
-        assertEquals(expected = -0.9000f, actual = actual2[0][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -1.8000f, actual = actual2[0][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.7000f, actual = actual2[0][1][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -3.6000f, actual = actual2[1][0][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -4.5000f, actual = actual2[1][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -5.4000f, actual = actual2[1][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -6.3000f, actual = actual2[1][1][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0f, actual = actual2[0][0][0].unwrap())
+        assertEquals(expected = -0.9000f, actual = actual2[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.8000f, actual = actual2[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.7000f, actual = actual2[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -3.6000f, actual = actual2[1][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -4.5000f, actual = actual2[1][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -5.4000f, actual = actual2[1][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -6.3000f, actual = actual2[1][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -91,40 +92,40 @@ class MomentumTest {
 
         val actual1 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual1[0][0][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][0][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[0][0][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][0][1][1].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[0][1][1][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][0][1][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][0][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][0][1].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][1][0].get())
-        assertEquals(expected = 0f, actual = actual1[1][1][1][1].get())
+        assertEquals(expected = 0f, actual = actual1[0][0][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][0][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][0][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][0][1][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[0][1][1][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][0][1][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][0][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][0][1].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][1][0].unwrap())
+        assertEquals(expected = 0f, actual = actual1[1][1][1][1].unwrap())
 
         val actual2 = target.adapt(weight, dw)
 
-        assertEquals(expected = 0f, actual = actual2[0][0][0][0].get())
-        assertEquals(expected = -0.9000f, actual = actual2[0][0][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -1.8000f, actual = actual2[0][0][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.7000f, actual = actual2[0][0][1][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -3.6000f, actual = actual2[0][1][0][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -4.5000f, actual = actual2[0][1][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -5.4000f, actual = actual2[0][1][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -6.3000f, actual = actual2[0][1][1][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -7.2000f, actual = actual2[1][0][0][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -8.1000f, actual = actual2[1][0][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -9.0000f, actual = actual2[1][0][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -9.9000f, actual = actual2[1][0][1][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -10.8000f, actual = actual2[1][1][0][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -11.7000f, actual = actual2[1][1][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -12.6000f, actual = actual2[1][1][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -13.5000f, actual = actual2[1][1][1][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0f, actual = actual2[0][0][0][0].unwrap())
+        assertEquals(expected = -0.9000f, actual = actual2[0][0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.8000f, actual = actual2[0][0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.7000f, actual = actual2[0][0][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -3.6000f, actual = actual2[0][1][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -4.5000f, actual = actual2[0][1][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -5.4000f, actual = actual2[0][1][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -6.3000f, actual = actual2[0][1][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -7.2000f, actual = actual2[1][0][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -8.1000f, actual = actual2[1][0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -9.0000f, actual = actual2[1][0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -9.9000f, actual = actual2[1][0][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -10.8000f, actual = actual2[1][1][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -11.7000f, actual = actual2[1][1][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -12.6000f, actual = actual2[1][1][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -13.5000f, actual = actual2[1][1][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 }

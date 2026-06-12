@@ -4,10 +4,8 @@ import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.core.elementwise.operation.minus.minus
-import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.max
 import com.wsr.knist.core.reduction.sum
-import kotlin.math.pow
 
 fun IOType.D4.exp(): IOType.D4 {
     val result = Backend.exp(x = value)

@@ -2,7 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 
 operator fun IOType.D2.plus(other: Float): IOType.D2 {
     val result = Backend.plus(x = value, y = other)
@@ -10,7 +10,7 @@ operator fun IOType.D2.plus(other: Float): IOType.D2 {
 }
 
 operator fun IOType.D2.plus(other: IOType.D0): IOType.D2 {
-    val result = Backend.plus(x = value, y = other.get())
+    val result = Backend.plus(x = value, y = other.unwrap())
     return IOType.D2(shape = shape, value = result)
 }
 

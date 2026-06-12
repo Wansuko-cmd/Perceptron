@@ -6,8 +6,6 @@ import com.wsr.knist.batch.reduction.average.average
 import com.wsr.knist.batch.shape.broadcastToD3
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.elementwise.operation.div.div
-import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape

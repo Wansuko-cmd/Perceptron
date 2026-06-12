@@ -2,7 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 
 operator fun IOType.D4.div(other: Float): IOType.D4 {
     val result = Backend.div(x = value, y = other)
@@ -10,7 +10,7 @@ operator fun IOType.D4.div(other: Float): IOType.D4 {
 }
 
 operator fun IOType.D4.div(other: IOType.D0): IOType.D4 {
-    val result = Backend.div(x = value, y = other.get())
+    val result = Backend.div(x = value, y = other.unwrap())
     return IOType.D4(shape = shape, value = result)
 }
 

@@ -8,6 +8,7 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,10 +21,10 @@ class SigmoidWithLossD2Test {
 
         val actual = target._expect(input) as Batch<IOType.D2>
 
-        assertEquals(expected = 0.5f, actual = actual[0][0][0].get())
-        assertEquals(expected = 0.7310f, actual = actual[0][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.8807f, actual = actual[0][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.9525f, actual = actual[0][1][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.5f, actual = actual[0][0][0].unwrap())
+        assertEquals(expected = 0.7310f, actual = actual[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.8807f, actual = actual[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.9525f, actual = actual[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -37,9 +38,9 @@ class SigmoidWithLossD2Test {
         val delta = actual.delta as Batch<IOType.D2>
 
         assertEquals(expected = -20.818f, actual = loss, absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.5f, actual = delta[0][0][0].get())
-        assertEquals(expected = -1.2689f, actual = delta[0][0][1].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -3.1192f, actual = delta[0][1][0].get(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -5.0474f, actual = delta[0][1][1].get(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.5f, actual = delta[0][0][0].unwrap())
+        assertEquals(expected = -1.2689f, actual = delta[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -3.1192f, actual = delta[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -5.0474f, actual = delta[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 }

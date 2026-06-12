@@ -6,11 +6,6 @@ import com.wsr.knist.assertContentEquals
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
-import com.wsr.knist.core.get
-import com.wsr.knist.core.shape.broadcastToD2
-import com.wsr.knist.core.shape.interleave
-import com.wsr.knist.core.shape.reshapeToD2
-import com.wsr.knist.core.shape.slice
 import com.wsr.knist.ioTypeTestRule
 import kotlin.test.Test
 

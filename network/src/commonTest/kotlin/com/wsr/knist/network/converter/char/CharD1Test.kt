@@ -7,6 +7,7 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.core.set
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
@@ -21,9 +22,9 @@ class CharD1Test {
         val actual = target.encode(input)
 
         assertEquals(expected = CharD1.vocabSize, actual = actual[0].size)
-        assertEquals(expected = 1f, actual = actual[0][1].get())
-        assertEquals(expected = 1f, actual = actual[1][2].get())
-        assertEquals(expected = 1f, actual = actual[2][3].get())
+        assertEquals(expected = 1f, actual = actual[0][1].unwrap())
+        assertEquals(expected = 1f, actual = actual[1][2].unwrap())
+        assertEquals(expected = 1f, actual = actual[2][3].unwrap())
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 
 fun IOType.D2.broadcastToD3(axis: Int, size: Int) = when (axis) {
     0 -> {

@@ -2,12 +2,10 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import kotlin.jvm.JvmName
 
 @JvmName("batchD3TimesD3s")

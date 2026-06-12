@@ -5,6 +5,7 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
@@ -42,15 +43,15 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
             val delta = delta[index]
             IOType.d2(channel, inputSize) { c, i ->
                 val o = i / poolSize
-                if (input[c, i].get() == output[c, o].get()) delta[c, o].get() else 0f
+                if (input[c, i].unwrap() == output[c, o].unwrap()) delta[c, o].unwrap() else 0f
             }
         }
     }
 
     private fun forward(input: IOType.D2): IOType.D2 = IOType.d2(outputX, outputY) { x, y ->
-        var max = input[x, y].get()
+        var max = input[x, y].unwrap()
         for (i in 1 until poolSize) {
-            max = maxOf(max, input[x, y + i].get())
+            max = maxOf(max, input[x, y + i].unwrap())
         }
         max
     }

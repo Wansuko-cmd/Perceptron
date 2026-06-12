@@ -12,6 +12,7 @@ import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -77,11 +78,11 @@ class MinMaxNormD3 internal constructor(
                  * dy/min(x) = if(x == min(x)) -dNumerator + dDenominator else 0f
                  * dy/max(x) = if(x == max(x)) -dDenominator else 0f
                  */
-                val inputValue = input[x, y, z].get()
+                val inputValue = input[x, y, z].unwrap()
                 when (inputValue) {
-                    min.get() -> dDenominator.get()
-                    max.get() -> dNumerator[x, y, z].get() - dDenominator.get()
-                    else -> dNumerator[x, y, z].get()
+                    min.unwrap() -> dDenominator.unwrap()
+                    max.unwrap() -> dNumerator[x, y, z].unwrap() - dDenominator.unwrap()
+                    else -> dNumerator[x, y, z].unwrap()
                 }
             }
         }

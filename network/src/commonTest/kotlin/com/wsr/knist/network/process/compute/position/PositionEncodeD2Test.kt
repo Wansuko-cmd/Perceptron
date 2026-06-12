@@ -13,7 +13,6 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class PositionEncodeD2Test {
     val target get() = PositionEncodeD2(outputX = 2, outputY = 3, waveLength = 100f)

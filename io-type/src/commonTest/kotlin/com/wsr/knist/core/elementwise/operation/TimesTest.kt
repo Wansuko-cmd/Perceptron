@@ -8,7 +8,6 @@ import com.wsr.knist.core.d0
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.elementwise.operation.times.times
-import com.wsr.knist.core.get
 import com.wsr.knist.ioTypeTestRule
 import kotlin.test.Test
 

@@ -10,10 +10,10 @@ class D2Test {
     @Test
     fun `get=2次元要素取得`() {
         val d2 = IOType.d2(listOf(2, 2)) { x, y -> x + y * 2.0f }
-        assertEquals(expected = 0.0f, actual = d2[0, 0].get())
-        assertEquals(expected = 2.0f, actual = d2[0, 1].get())
-        assertEquals(expected = 1.0f, actual = d2[1, 0].get())
-        assertEquals(expected = 3.0f, actual = d2[1, 1].get())
+        assertEquals(expected = 0.0f, actual = d2[0, 0].unwrap())
+        assertEquals(expected = 2.0f, actual = d2[0, 1].unwrap())
+        assertEquals(expected = 1.0f, actual = d2[1, 0].unwrap())
+        assertEquals(expected = 3.0f, actual = d2[1, 1].unwrap())
     }
 
     @Test
@@ -30,10 +30,10 @@ class D2Test {
         d2[0, 1] = 1.0f
         d2[1, 0] = 2.0f
         d2[1, 1] = 0.0f
-        assertEquals(expected = 3.0f, actual = d2[0, 0].get())
-        assertEquals(expected = 1.0f, actual = d2[0, 1].get())
-        assertEquals(expected = 2.0f, actual = d2[1, 0].get())
-        assertEquals(expected = 0.0f, actual = d2[1, 1].get())
+        assertEquals(expected = 3.0f, actual = d2[0, 0].unwrap())
+        assertEquals(expected = 1.0f, actual = d2[0, 1].unwrap())
+        assertEquals(expected = 2.0f, actual = d2[1, 0].unwrap())
+        assertEquals(expected = 0.0f, actual = d2[1, 1].unwrap())
     }
 
     @Test
