@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.D0
 import com.wsr.knist.scope.ScopeOp
 
 fun where(condition: IOType.D0, onTrue: Float, onFalse: Float): IOType.D0 {

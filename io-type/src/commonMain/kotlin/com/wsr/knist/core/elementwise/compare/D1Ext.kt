@@ -1,7 +1,8 @@
-package com.wsr.knist.core.elementwise.compare
+﻿package com.wsr.knist.core.elementwise.compare
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.D1
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp

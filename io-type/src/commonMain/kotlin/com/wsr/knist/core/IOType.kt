@@ -26,16 +26,17 @@ sealed class IOType {
 
     @Serializable
     sealed class D1 : IOType() {
+        override val size get() = value.size
         override val shape get() = listOf(size)
 
-        internal fun toLocal() = Local(value, size)
-        fun toGlobal() = Global(value, size)
+        internal fun toLocal() = Local(value)
+        fun toGlobal() = Global(value)
 
         @Serializable
-        data class Local(override val value: DataBuffer, override val size: Int = value.size) : D1()
+        data class Local(override val value: DataBuffer) : D1()
 
         @Serializable
-        data class Global(override val value: DataBuffer, override val size: Int = value.size) : D1()
+        data class Global(override val value: DataBuffer) : D1()
     }
 
     @Serializable
@@ -104,4 +105,31 @@ sealed class IOType {
         result = 31 * result + shape.hashCode()
         return result
     }
+
+    companion object {
+        context(_: IOScope)
+        fun D0(value: DataBuffer) = D0.Local(value)
+
+        context(_: IOScope)
+        fun D1(value: DataBuffer) = D1.Local(value)
+
+        context(_: IOScope)
+        fun D2(value: DataBuffer, shape: List<Int>) = D2.Local(value, shape)
+
+        context(_: IOScope)
+        fun D3(value: DataBuffer, shape: List<Int>) = D3.Local(value, shape)
+
+        context(_: IOScope)
+        fun D4(value: DataBuffer, shape: List<Int>) = D4.Local(value, shape)
+    }
 }
+
+fun IOType.Companion.D0(value: DataBuffer) = IOType.D0.Global(value)
+
+fun IOType.Companion.D1(value: DataBuffer) = IOType.D1.Global(value)
+
+fun IOType.Companion.D2(value: DataBuffer, shape: List<Int>) = IOType.D2.Global(value, shape)
+
+fun IOType.Companion.D3(value: DataBuffer, shape: List<Int>) = IOType.D3.Global(value, shape)
+
+fun IOType.Companion.D4(value: DataBuffer, shape: List<Int>) = IOType.D4.Global(value, shape)

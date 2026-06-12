@@ -1,7 +1,8 @@
-package com.wsr.knist.core.elementwise.compare
+﻿package com.wsr.knist.core.elementwise.compare
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.D0
 import com.wsr.knist.scope.ScopeOp
 
 internal const val EQUALS_ABSOLUTE_TOLERANCE = 1e-4f
