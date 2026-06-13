@@ -1,10 +1,10 @@
 package com.wsr.knist.network.process.compute.norm.minmax
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.elementwise.compare.eq
 import com.wsr.knist.batch.elementwise.compare.where.where
+import com.wsr.knist.batch.elementwise.math.pow
+import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.max

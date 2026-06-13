@@ -14,12 +14,8 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MaxPoolD2 internal constructor(
-    val poolSize: Int,
-    val channel: Int,
-    val inputSize: Int,
-    val padding: Int,
-) : Compute.D2() {
+class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int, val padding: Int) :
+    Compute.D2() {
     override val outputX: Int = channel
     override val outputY: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 
