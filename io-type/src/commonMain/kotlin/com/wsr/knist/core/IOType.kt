@@ -15,6 +15,7 @@ sealed class IOType {
         override val shape = listOf(1)
         override val size = 1
 
+        @PublishedApi
         context(scope: IOScope)
         internal fun toLocal() = Local(value).also { scope.register(it) }
 
@@ -33,6 +34,7 @@ sealed class IOType {
         override val size get() = value.size
         override val shape get() = listOf(size)
 
+        @PublishedApi
         context(scope: IOScope)
         internal fun toLocal() = Local(value).also { scope.register(it) }
 
@@ -52,6 +54,7 @@ sealed class IOType {
         val i get() = shape[0]
         val j get() = shape[1]
 
+        @PublishedApi
         context(scope: IOScope)
         internal fun toLocal() = Local(value, shape).also { scope.register(it) }
 
@@ -72,6 +75,7 @@ sealed class IOType {
         val j get() = shape[1]
         val k get() = shape[2]
 
+        @PublishedApi
         context(scope: IOScope)
         internal fun toLocal() = Local(value, shape).also { scope.register(it) }
 
@@ -93,6 +97,7 @@ sealed class IOType {
         val k get() = shape[2]
         val l get() = shape[3]
 
+        @PublishedApi
         context(scope: IOScope)
         internal fun toLocal() = Local(value, shape).also { scope.register(it) }
 
