@@ -3,7 +3,9 @@ package com.wsr.knist.batch
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.indices
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import kotlin.jvm.JvmName
 
 class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {
     companion object {
@@ -63,3 +65,58 @@ inline fun <T : IOType> Batch(size: Int, init: (index: Int) -> T): Batch<T> {
         shape = first.shape,
     )
 }
+
+@PublishedApi
+@JvmName("batchD0ToLocal")
+context(scope: IOScope)
+internal fun Batch<IOType.D0>.toLocal(): Batch<IOType.D0.Local> =
+    Batch<IOType.D0.Local>(value, size, shape).also { scope.bufferScope.register(value) }
+
+@PublishedApi
+@JvmName("batchD1ToLocal")
+context(scope: IOScope)
+internal fun Batch<IOType.D1>.toLocal(): Batch<IOType.D1.Local> =
+    Batch<IOType.D1.Local>(value, size, shape).also { scope.bufferScope.register(value) }
+
+@PublishedApi
+@JvmName("batchD2ToLocal")
+context(scope: IOScope)
+internal fun Batch<IOType.D2>.toLocal(): Batch<IOType.D2.Local> =
+    Batch<IOType.D2.Local>(value, size, shape).also { scope.bufferScope.register(value) }
+
+@PublishedApi
+@JvmName("batchD3ToLocal")
+context(scope: IOScope)
+internal fun Batch<IOType.D3>.toLocal(): Batch<IOType.D3.Local> =
+    Batch<IOType.D3.Local>(value, size, shape).also { scope.bufferScope.register(value) }
+
+@PublishedApi
+@JvmName("batchD4ToLocal")
+context(scope: IOScope)
+internal fun Batch<IOType.D4>.toLocal(): Batch<IOType.D4.Local> =
+    Batch<IOType.D4.Local>(value, size, shape).also { scope.bufferScope.register(value) }
+
+@JvmName("batchD0ToGlobal")
+context(scope: IOScope)
+fun Batch<IOType.D0>.toGlobal(): Batch<IOType.D0.Global> =
+    Batch<IOType.D0.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
+
+@JvmName("batchD1ToGlobal")
+context(scope: IOScope)
+fun Batch<IOType.D1>.toGlobal(): Batch<IOType.D1.Global> =
+    Batch<IOType.D1.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
+
+@JvmName("batchD2ToGlobal")
+context(scope: IOScope)
+fun Batch<IOType.D2>.toGlobal(): Batch<IOType.D2.Global> =
+    Batch<IOType.D2.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
+
+@JvmName("batchD3ToGlobal")
+context(scope: IOScope)
+fun Batch<IOType.D3>.toGlobal(): Batch<IOType.D3.Global> =
+    Batch<IOType.D3.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
+
+@JvmName("batchD4ToGlobal")
+context(scope: IOScope)
+fun Batch<IOType.D4>.toGlobal(): Batch<IOType.D4.Global> =
+    Batch<IOType.D4.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
