@@ -1,8 +1,8 @@
 ﻿package com.wsr.knist.core.elementwise.compare.where
 
 import com.wsr.knist.Backend
-import com.wsr.knist.core.IOType
 import com.wsr.knist.core.D4
+import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 fun where(condition: IOType.D4, onTrue: Float, onFalse: Float): IOType.D4 {

@@ -6,8 +6,8 @@ import com.wsr.knist.base.data.size
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
-import com.wsr.knist.core.IOType
 import com.wsr.knist.core.D2
+import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 

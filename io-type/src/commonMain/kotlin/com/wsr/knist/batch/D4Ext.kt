@@ -1,8 +1,8 @@
 ﻿package com.wsr.knist.batch
 
 import com.wsr.knist.Backend
-import com.wsr.knist.core.IOType
 import com.wsr.knist.core.D4
+import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
 
 val Batch<IOType.D4>.i get() = shape[0]

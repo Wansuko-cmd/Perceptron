@@ -6,13 +6,13 @@ import com.wsr.knist.scope.ScopeOp
 @ScopeOp
 operator fun IOType.D3.div(other: Float): IOType.D3 {
     val result = Backend.div(x = value, y = other)
-    return IOType.D3(shape = shape, value = result)
+    return IOType.D3.Global(shape = shape, value = result)
 }
 
 @ScopeOp
 operator fun IOType.D3.div(other: IOType.D0): IOType.D3 {
     val result = Backend.div(x = value, xi = 1, xj = size, y = other.value, axis = 0)
-    return IOType.D3(shape = shape, value = result)
+    return IOType.D3.Global(shape = shape, value = result)
 }
 
 @ScopeOp
@@ -25,7 +25,7 @@ fun IOType.D3.div(other: IOType.D1, axis: Int): IOType.D3 {
         y = other.value,
         axis = axis,
     )
-    return IOType.D3(shape = shape, value = result)
+    return IOType.D3.Global(shape = shape, value = result)
 }
 
 @ScopeOp
@@ -41,11 +41,11 @@ fun IOType.D3.div(other: IOType.D2, axis1: Int, axis2: Int): IOType.D3 {
         axis1 = axis1,
         axis2 = axis2,
     )
-    return IOType.D3(shape = shape, value = result)
+    return IOType.D3.Global(shape = shape, value = result)
 }
 
 @ScopeOp
 operator fun IOType.D3.div(other: IOType.D3): IOType.D3 {
     val result = Backend.div(x = value, y = other.value)
-    return IOType.D3(shape = shape, value = result)
+    return IOType.D3.Global(shape = shape, value = result)
 }

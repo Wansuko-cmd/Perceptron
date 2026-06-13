@@ -1,9 +1,9 @@
 ﻿package com.wsr.knist.core.linalg
 
 import com.wsr.knist.Backend
-import com.wsr.knist.core.IOType
 import com.wsr.knist.core.D1
 import com.wsr.knist.core.D2
+import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp

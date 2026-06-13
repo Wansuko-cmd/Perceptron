@@ -3,8 +3,8 @@
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.j
-import com.wsr.knist.core.IOType
 import com.wsr.knist.core.D2
+import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp
