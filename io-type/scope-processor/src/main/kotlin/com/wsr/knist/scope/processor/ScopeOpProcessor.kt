@@ -121,12 +121,24 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
             p.name!!.asString()
         }
 
+        val isGlobalReturn = returnDeclFqn.startsWith("com.wsr.knist.core.IOType") &&
+            returnDeclFqn.endsWith(".Global")
+        val outputReturnTypeName = if (isGlobalReturn) {
+            returnTypeName.replace(".Global", ".Local")
+        } else {
+            returnTypeName
+        }
+
         val member = buildString {
             appendLine("    @kotlin.jvm.JvmName(\"_ioScopeImpl$index\")")
-            appendLine("    $modifiers fun $receiverTypeName.$funcName($paramsDecl): $returnTypeName {")
+            appendLine("    $modifiers fun $receiverTypeName.$funcName($paramsDecl): $outputReturnTypeName {")
             appendLine("        val result = this._impl$index($paramCall)")
-            appendLine("        bufferScope.register(result.value)")
-            appendLine("        return result")
+            if (isGlobalReturn) {
+                appendLine("        return result.toLocal()")
+            } else {
+                appendLine("        bufferScope.register(result.value)")
+                appendLine("        return result")
+            }
             append("    }")
         }
         return MemberData(fqn = fqn, member = member)

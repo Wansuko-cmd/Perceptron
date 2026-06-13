@@ -39,7 +39,7 @@ class IOScopeTest {
             bufferScope.register(intermediate)
             val result = TrackingDataBuffer(4)
             bufferScope.register(result)
-            IOType.D1(result, 4)
+            IOType.D1(result)
         }
         assertTrue(intermediate.released)
     }
@@ -49,7 +49,7 @@ class IOScopeTest {
         val result = TrackingDataBuffer(4)
         IOScope.launch {
             bufferScope.register(result)
-            IOType.D1(result, 4)
+            IOType.D1(result)
         }
         assertFalse(result.released)
     }
