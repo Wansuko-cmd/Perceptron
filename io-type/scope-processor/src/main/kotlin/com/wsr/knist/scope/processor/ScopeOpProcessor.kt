@@ -125,11 +125,13 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         val batchTypeArgFqn = if (returnDeclFqn == "com.wsr.knist.batch.Batch") {
             returnType.arguments.firstOrNull()
                 ?.type?.resolve()?.declaration?.qualifiedName?.asString()
-        } else null
+        } else {
+            null
+        }
 
         val isGlobalReturn =
             (returnDeclFqn.startsWith("com.wsr.knist.core.IOType") && returnDeclFqn.endsWith(".Global")) ||
-            (batchTypeArgFqn?.endsWith(".Global") == true)
+                (batchTypeArgFqn?.endsWith(".Global") == true)
         val outputReturnTypeName = if (isGlobalReturn) {
             returnTypeName.replace(".Global", ".Local")
         } else {
