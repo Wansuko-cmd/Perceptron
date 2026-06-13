@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.linalg
+﻿package com.wsr.knist.batch.linalg
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch

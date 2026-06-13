@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.shape
+﻿package com.wsr.knist.batch.shape
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch

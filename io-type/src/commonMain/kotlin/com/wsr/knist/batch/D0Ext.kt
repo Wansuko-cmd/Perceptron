@@ -5,10 +5,11 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
 import kotlin.jvm.JvmName
 
-inline fun Batch.Companion.d0(batchSize: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0> =
+@PublishedApi
+internal inline fun Batch.Companion.d0Impl(batchSize: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0.Global> =
     Batch(batchSize) { IOType.d0(init(it)) }
 
-internal fun Batch.Companion.d0(batchSize: Int, value: DataBuffer): Batch<IOType.D0> =
+internal fun Batch.Companion.d0Impl(batchSize: Int, value: DataBuffer): Batch<IOType.D0.Global> =
     Batch(value = value, size = batchSize, shape = listOf(1))
 
 @JvmName("batchD0sGet")

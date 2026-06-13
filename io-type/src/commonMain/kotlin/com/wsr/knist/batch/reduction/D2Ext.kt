@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.reduction
+﻿package com.wsr.knist.batch.reduction
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch

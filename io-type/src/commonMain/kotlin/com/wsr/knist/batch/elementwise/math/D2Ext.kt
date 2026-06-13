@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.elementwise.math
+﻿package com.wsr.knist.batch.elementwise.math
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
