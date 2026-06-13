@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
@@ -16,13 +18,13 @@ operator fun IOType.D1.times(other: Batch<IOType.D1>): Batch<IOType.D1> {
         yj = other.step,
         axis = 1,
     )
-    return Batch(size = other.size, shape = other.shape, value = result)
+    return Batch.d1(other.size, other.shape, result)
 }
 
 @JvmName("batchD1sTimesFloat")
 operator fun Batch<IOType.D1>.times(other: Float): Batch<IOType.D1> {
     val result = Backend.times(x = value, y = other)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sTimesD0s")
@@ -34,19 +36,19 @@ operator fun Batch<IOType.D1>.times(other: Batch<IOType.D0>): Batch<IOType.D1> {
         y = other.value,
         axis = 0,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sTimesD1")
 operator fun Batch<IOType.D1>.times(other: IOType.D1): Batch<IOType.D1> {
     val result = Backend.times(x = value, xi = size, xj = step, y = other.value, axis = 1)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sTimesD1s")
 operator fun Batch<IOType.D1>.times(other: Batch<IOType.D1>): Batch<IOType.D1> {
     val result = Backend.times(x = value, y = other.value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sTimesD2sWithAxis")
@@ -62,5 +64,5 @@ fun Batch<IOType.D1>.times(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2>
         axis1 = 0,
         axis2 = axis + 1,
     )
-    return Batch(size = size, shape = other.shape, value = result)
+    return Batch.d2(size, other.shape, result)
 }

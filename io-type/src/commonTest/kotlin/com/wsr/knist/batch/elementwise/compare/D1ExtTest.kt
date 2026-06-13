@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.elementwise.compare
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -13,7 +12,7 @@ import kotlin.test.Test
 class D1ExtTest {
     @Test
     fun `eq_Float=D1バッチとFloat値の等値比較`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(2f, 2f, 2f)),
         )
@@ -24,11 +23,11 @@ class D1ExtTest {
 
     @Test
     fun `eq_D1s=D1バッチ同士の等値比較`() = ioTypeTestRule {
-        val batch1 = batchOf(
+        val batch1 = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
-        val batch2 = batchOf(
+        val batch2 = Batch.of(
             IOType.d1(listOf(1f, 0f, 3f)),
             IOType.d1(listOf(4f, 5f, 0f)),
         )
@@ -39,7 +38,7 @@ class D1ExtTest {
 
     @Test
     fun `gt_Float=D1バッチとFloat値の大比較`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(0f, 2f, 4f)),
         )
@@ -50,7 +49,7 @@ class D1ExtTest {
 
     @Test
     fun `lt_Float=D1バッチとFloat値の小比較`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(0f, 2f, 4f)),
         )

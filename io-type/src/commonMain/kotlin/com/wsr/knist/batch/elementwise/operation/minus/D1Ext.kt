@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
@@ -11,7 +13,7 @@ import kotlin.jvm.JvmName
 @JvmName("batchD1sMinusFloat")
 operator fun Batch<IOType.D1>.minus(other: Float): Batch<IOType.D1> {
     val result = Backend.minus(x = value, y = other)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD0s")
@@ -23,19 +25,19 @@ operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D0>): Batch<IOType.D1> {
         y = other.value,
         axis = 0,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD1")
 operator fun Batch<IOType.D1>.minus(other: IOType.D1): Batch<IOType.D1> {
     val result = Backend.minus(x = value, xi = size, xj = step, y = other.value, axis = 1)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD1s")
 operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D1>): Batch<IOType.D1> {
     val result = Backend.minus(x = value, y = other.value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD2sWithAxis")
@@ -51,5 +53,5 @@ fun Batch<IOType.D1>.minus(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2>
         axis1 = 0,
         axis2 = axis + 1,
     )
-    return Batch(size = size, shape = other.shape, value = result)
+    return Batch.d2(size, other.shape, result)
 }

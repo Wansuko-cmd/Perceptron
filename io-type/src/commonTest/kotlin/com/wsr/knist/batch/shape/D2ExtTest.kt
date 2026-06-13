@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.shape
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
@@ -18,7 +17,7 @@ import kotlin.test.assertEquals
 class D2ExtTest {
     @Test
     fun `toD3=D2バッチを3次元に変換`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -41,7 +40,7 @@ class D2ExtTest {
     fun `toList=D2バッチをリストに変換`() = ioTypeTestRule {
         val d2a = IOType.d2(2, 2) { i, j -> i * 2f + j }
         val d2b = IOType.d2(2, 2) { i, j -> i * 2f + j + 4f }
-        val batch = batchOf(d2a, d2b)
+        val batch = Batch.of(d2a, d2b)
         val list = batch.toList()
         assertEquals(2, list.size)
         assertContentEquals(d2a, list[0])
@@ -50,7 +49,7 @@ class D2ExtTest {
 
     @Test
     fun `flatten=D2バッチをD1バッチにフラット化`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -61,7 +60,7 @@ class D2ExtTest {
 
     @Test
     fun `slice_axis0=D2バッチのaxis0スライス`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(3, 2) { i, j -> i * 2f + j },
             IOType.d2(3, 2) { i, j -> i * 2f + j + 6f },
         )
@@ -72,7 +71,7 @@ class D2ExtTest {
 
     @Test
     fun `slice_axis1=D2バッチのaxis1スライス`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -83,7 +82,7 @@ class D2ExtTest {
 
     @Test
     fun `reshapeToD3=D2バッチをD3バッチに変形`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 4) { i, j -> i * 4f + j },
             IOType.d2(2, 4) { i, j -> i * 4f + j + 8f },
         )
@@ -96,11 +95,11 @@ class D2ExtTest {
 
     @Test
     fun `interleave_axis0=D2バッチのaxis0インターリーブ`() = ioTypeTestRule {
-        val batch1 = batchOf(
+        val batch1 = Batch.of(
             IOType.d2(2, 2) { i, _ -> i * 2f },
             IOType.d2(2, 2) { i, _ -> i * 2f + 4f },
         )
-        val batch2 = batchOf(
+        val batch2 = Batch.of(
             IOType.d2(2, 2) { i, _ -> i * 2f + 1f },
             IOType.d2(2, 2) { i, _ -> i * 2f + 5f },
         )
@@ -111,7 +110,7 @@ class D2ExtTest {
 
     @Test
     fun `transpose=D2バッチの転置`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )

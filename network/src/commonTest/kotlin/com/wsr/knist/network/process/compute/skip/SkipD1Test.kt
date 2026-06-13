@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.skip
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -32,7 +31,7 @@ class SkipD1Test {
         outputSize = 3,
     )
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d1(3) { it * 2f },
             IOType.d1(3) { it * 3f },
         )

@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.affine
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -24,7 +23,7 @@ class AffineD1Test {
             weight = IOType.d2(3, 4) { i, j -> i * 2f + j },
         )
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d1(3) { it * 2f },
             IOType.d1(3) { it * 3f },
         )

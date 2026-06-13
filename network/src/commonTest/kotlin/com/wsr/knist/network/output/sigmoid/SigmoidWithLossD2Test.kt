@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.output.sigmoid
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
@@ -17,7 +16,7 @@ class SigmoidWithLossD2Test {
     @Test
     fun `expect=sigmoidを計算`() = networkTestRule {
         val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
-        val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
+        val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
         val actual = target._expect(input) as Batch<IOType.D2>
 
@@ -30,8 +29,8 @@ class SigmoidWithLossD2Test {
     @Test
     fun `train=sigmoidの逆伝播`() = networkTestRule {
         val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
-        val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
-        val label = batchOf(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
+        val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
+        val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
         val actual = target._train(input = input, label = { label })
         val loss = actual.loss.unwrap()

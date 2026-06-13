@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.output.mean
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
@@ -17,7 +16,7 @@ class MeanSquareD2Test {
     @Test
     fun `expect=そのまま返す`() = networkTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
-        val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
+        val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
         val actual = target._expect(input)
 
@@ -27,8 +26,8 @@ class MeanSquareD2Test {
     @Test
     fun `train=二乗平均誤差`() = networkTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
-        val input = batchOf(IOType.d2(2, 2) { i, j -> i * 2f + j })
-        val label = batchOf(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
+        val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
+        val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
         val actual = target._train(input = input, label = { label })
         val loss = actual.loss.unwrap()

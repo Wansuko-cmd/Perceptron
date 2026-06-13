@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.shape
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.core.IOType
@@ -17,7 +16,7 @@ import kotlin.test.assertEquals
 class D1ExtTest {
     @Test
     fun `broadcastToD2_axis0=D1バッチを2次元にブロードキャスト`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -28,7 +27,7 @@ class D1ExtTest {
 
     @Test
     fun `toD2=D1バッチを2次元に変換`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -51,7 +50,7 @@ class D1ExtTest {
 
     @Test
     fun `reshapeToD2=D1バッチをD2バッチに変形`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(0f, 1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f, 7f)),
         )
@@ -62,7 +61,7 @@ class D1ExtTest {
 
     @Test
     fun `slice=D1バッチの部分抽出`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(0f, 1f, 2f, 3f, 4f)),
             IOType.d1(listOf(5f, 6f, 7f, 8f, 9f)),
         )
@@ -73,7 +72,7 @@ class D1ExtTest {
 
     @Test
     fun `reshapeToD3=D1バッチをD3バッチに変形`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f)),
             IOType.d1(listOf(8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f)),
         )
@@ -86,11 +85,11 @@ class D1ExtTest {
 
     @Test
     fun `interleave=2つのD1バッチをインターリーブ`() = ioTypeTestRule {
-        val batch1 = batchOf(
+        val batch1 = Batch.of(
             IOType.d1(listOf(0f, 2f)),
             IOType.d1(listOf(4f, 6f)),
         )
-        val batch2 = batchOf(
+        val batch2 = Batch.of(
             IOType.d1(listOf(1f, 3f)),
             IOType.d1(listOf(5f, 7f)),
         )

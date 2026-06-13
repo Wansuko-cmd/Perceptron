@@ -1,8 +1,7 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.network.converter.char
-
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -30,7 +29,7 @@ class CharD1Test {
     @Test
     fun `decode=one-hotベクトルを文字に変換`() = networkTestRule {
         val target = CharD1()
-        val input = batchOf(
+        val input = Batch.of(
             IOType.d1(CharD1.vocabSize).also { it[1] = 1.0f },
             IOType.d1(CharD1.vocabSize).also { it[2] = 1.0f },
             IOType.d1(CharD1.vocabSize).also { it[3] = 1.0f },

@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.index
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -16,7 +15,7 @@ class IndexTest {
     @Test
     fun `D0gather_axis0=D0でD2バッチの行を収集`() = ioTypeTestRule {
         val d0 = IOType.d0(1f)
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -28,7 +27,7 @@ class IndexTest {
     @Test
     fun `D0gather_axis1=D0でD2バッチの列を収集`() = ioTypeTestRule {
         val d0 = IOType.d0(1f)
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -39,7 +38,7 @@ class IndexTest {
 
     @Test
     fun `D1Batchgather=インデックスでD2の行を収集`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(0f, 2f)),
             IOType.d1(listOf(1f, 0f)),
         )
@@ -54,11 +53,11 @@ class IndexTest {
 
     @Test
     fun `D2BatchscatterAdd=インデックスにバッチ値を散布加算`() = ioTypeTestRule {
-        val batchD2 = batchOf(
+        val batchD2 = Batch.of(
             IOType.d2(2, 2) { i, j -> (i + 1) * 10f + (j + 1) },
             IOType.d2(2, 2) { i, j -> (i + 1) * 10f + (j + 1) + 100f },
         )
-        val batchD1 = batchOf(
+        val batchD1 = Batch.of(
             IOType.d1(listOf(0f, 1f)),
             IOType.d1(listOf(0f, 1f)),
         )

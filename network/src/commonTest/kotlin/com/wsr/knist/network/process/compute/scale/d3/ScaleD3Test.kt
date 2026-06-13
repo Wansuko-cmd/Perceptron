@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.scale.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -28,7 +27,7 @@ class ScaleD3Test {
         )
 
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d3(
                 IOType.d2(
                     IOType.d1(2) { it * 2f },

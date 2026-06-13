@@ -1,7 +1,7 @@
 ﻿package com.wsr.knist.network.converter.word
 
-import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
@@ -32,7 +32,7 @@ class WordD2(private val words: List<String>, private val length: Int, private v
                 result[offset + index * outputY] = 1f
             }
         }
-        return Batch(size = input.size, shape = listOf(outputX, outputY), value = DataBuffer.create(result))
+        return Batch.d2(batchSize = input.size, i = outputX, j = outputY, value = result)
     }
 
     override fun decode(input: Batch<IOType.D2>): List<List<String>> = input.maxIndex(axis = 1).toList()
