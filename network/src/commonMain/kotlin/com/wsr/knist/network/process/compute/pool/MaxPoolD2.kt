@@ -1,67 +1,64 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
+import com.wsr.knist.batch.elementwise.compare.eq
+import com.wsr.knist.batch.elementwise.compare.where.where
+import com.wsr.knist.batch.reduction.max
+import com.wsr.knist.batch.shape.broadcastToD3
+import com.wsr.knist.batch.shape.fold.fold
+import com.wsr.knist.batch.shape.fold.unfold
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d2
-import com.wsr.knist.core.get
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int) : Compute.D2() {
+class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int, val padding: Int) :
+    Compute.D2() {
     override val outputX: Int = channel
-    override val outputY: Int = inputSize / poolSize
+    override val outputY: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 
     init {
-        check(inputSize % poolSize == 0) {
+        check((inputSize + 2 * padding - poolSize) % poolSize == 0) {
             """
             invalid parameter.
             inputSize: $inputSize
             poolSize: $poolSize
-            output: ${inputSize / poolSize.toFloat()}
+            padding: $padding
+            output: ${(inputSize + 2 * padding - poolSize) / poolSize.toFloat() + 1}
             """.trimIndent()
         }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =
-        Batch(input.size) { forward(input[it]) }
+    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
+        windowSize = poolSize,
+        stride = poolSize,
+        padding = padding,
+    )
+        .max(axis = 2)
 
     override fun train(
         input: Batch<IOType.D2>,
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val output = Batch(input.size) { forward(input[it]) }
+        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
+        val output = unfold.max(axis = 2)
         val delta = calcDelta(output)
-        return Batch(input.size) { index ->
-            val input = input[index]
-            val output = output[index]
-            val delta = delta[index]
-            IOType.d2(channel, inputSize) { c, i ->
-                val o = i / poolSize
-                if (input[c, i].unwrap() == output[c, o].unwrap()) delta[c, o].unwrap() else 0f
-            }
-        }
-    }
-
-    private fun forward(input: IOType.D2): IOType.D2 = IOType.d2(outputX, outputY) { x, y ->
-        var max = input[x, y].unwrap()
-        for (i in 1 until poolSize) {
-            max = maxOf(max, input[x, y + i].unwrap())
-        }
-        max
+        return where(
+            condition = unfold eq output.broadcastToD3(axis = 2, size = poolSize),
+            onTrue = delta.broadcastToD3(axis = 2, size = poolSize),
+            onFalse = 0f,
+        ).fold(stride = poolSize, padding = padding)
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.maxPool(size: Int) = addProcess(
-    process =
-    MaxPoolD2(
+fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
+    process = MaxPoolD2(
         poolSize = size,
         channel = inputX,
         inputSize = inputY,
+        padding = padding,
     ),
 )
