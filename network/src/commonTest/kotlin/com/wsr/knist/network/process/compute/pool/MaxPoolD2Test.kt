@@ -15,7 +15,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class MaxPoolD2Test {
-    val target get() = MaxPoolD2(poolSize = 2, channel = 2, inputSize = 4)
+    val target get() = MaxPoolD2(poolSize = 2, channel = 2, inputSize = 4, padding = 0)
     val input
         get() = batchOf(
             IOType.d2(

@@ -14,21 +14,30 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val inputX: Int, val inputY: Int) :
-    Compute.D3() {
+class MaxPoolD3 internal constructor(
+    val poolSize: Int,
+    val channel: Int,
+    val inputX: Int,
+    val inputY: Int,
+    val padding: Int,
+) : Compute.D3() {
     override val outputX: Int = channel
-    override val outputY: Int = inputX / poolSize
-    override val outputZ: Int = inputY / poolSize
+    override val outputY: Int = (inputX + 2 * padding - poolSize) / poolSize + 1
+    override val outputZ: Int = (inputY + 2 * padding - poolSize) / poolSize + 1
 
     init {
-        check(inputX % poolSize == 0 && inputY % poolSize == 0) {
+        check(
+            (inputX + 2 * padding - poolSize) % poolSize == 0 &&
+                (inputY + 2 * padding - poolSize) % poolSize == 0,
+        ) {
             """
             invalid parameter.
             inputX: $inputX
             inputY: $inputY
             poolSize: $poolSize
-            outputX: ${inputX / poolSize.toFloat()}
-            outputY: ${inputY / poolSize.toFloat()}
+            padding: $padding
+            outputY: ${(inputX + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            outputZ: ${(inputY + 2 * padding - poolSize) / poolSize.toFloat() + 1}
             """.trimIndent()
         }
     }
@@ -36,7 +45,7 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
     override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.unfold(
         windowSize = poolSize,
         stride = poolSize,
-        padding = 0,
+        padding = padding,
     )
         .max(axis = 3)
 
@@ -45,7 +54,7 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = 0)
+        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
         val output = unfold.max(axis = 3)
         val delta = calcDelta(output)
         val windowSize = poolSize * poolSize
@@ -53,15 +62,16 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
             condition = unfold eq output.broadcastToD4(axis = 3, size = windowSize),
             onTrue = delta.broadcastToD4(axis = 3, size = windowSize),
             onFalse = 0f,
-        ).fold(stride = poolSize, padding = 0)
+        ).fold(stride = poolSize, padding = padding)
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.maxPool(size: Int) = addProcess(
+fun <T> NetworkBuilder.D3<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
     process = MaxPoolD3(
         poolSize = size,
         channel = inputX,
         inputX = inputY,
         inputY = inputZ,
+        padding = padding,
     ),
 )

@@ -14,17 +14,23 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int) : Compute.D2() {
+class MaxPoolD2 internal constructor(
+    val poolSize: Int,
+    val channel: Int,
+    val inputSize: Int,
+    val padding: Int,
+) : Compute.D2() {
     override val outputX: Int = channel
-    override val outputY: Int = inputSize / poolSize
+    override val outputY: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 
     init {
-        check(inputSize % poolSize == 0) {
+        check((inputSize + 2 * padding - poolSize) % poolSize == 0) {
             """
             invalid parameter.
             inputSize: $inputSize
             poolSize: $poolSize
-            output: ${inputSize / poolSize.toFloat()}
+            padding: $padding
+            output: ${(inputSize + 2 * padding - poolSize) / poolSize.toFloat() + 1}
             """.trimIndent()
         }
     }
@@ -32,7 +38,7 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
     override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
         windowSize = poolSize,
         stride = poolSize,
-        padding = 0,
+        padding = padding,
     )
         .max(axis = 2)
 
@@ -41,22 +47,22 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
         context: Context,
         calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = 0)
+        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
         val output = unfold.max(axis = 2)
         val delta = calcDelta(output)
         return where(
             condition = unfold eq output.broadcastToD3(axis = 2, size = poolSize),
             onTrue = delta.broadcastToD3(axis = 2, size = poolSize),
             onFalse = 0f,
-        ).fold(stride = poolSize, padding = 0)
+        ).fold(stride = poolSize, padding = padding)
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.maxPool(size: Int) = addProcess(
-    process =
-    MaxPoolD2(
+fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
+    process = MaxPoolD2(
         poolSize = size,
         channel = inputX,
         inputSize = inputY,
+        padding = padding,
     ),
 )
