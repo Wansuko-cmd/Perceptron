@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp
-infix fun IOType.D2.eq(other: Float) = eq(
+infix fun IOType.D2.eq(other: Float): IOType.D2.Global = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,
@@ -17,7 +17,7 @@ fun IOType.D2.eq(
     other: Float,
     absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
-): IOType.D2 {
+): IOType.D2.Global {
     val result = Backend.equals(
         x = value,
         y = other,
@@ -28,7 +28,7 @@ fun IOType.D2.eq(
 }
 
 @ScopeOp
-infix fun IOType.D2.eq(other: IOType.D2) = eq(
+infix fun IOType.D2.eq(other: IOType.D2): IOType.D2.Global = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,
@@ -39,7 +39,7 @@ fun IOType.D2.eq(
     other: IOType.D2,
     absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
-): IOType.D2 {
+): IOType.D2.Global {
     val result = Backend.equals(
         x = value,
         y = other.value,
@@ -50,25 +50,25 @@ fun IOType.D2.eq(
 }
 
 @ScopeOp
-infix fun IOType.D2.gt(other: Float): IOType.D2 {
+infix fun IOType.D2.gt(other: Float): IOType.D2.Global {
     val result = Backend.greaterThan(value, other)
     return IOType.D2(shape = shape, value = result)
 }
 
 @ScopeOp
-infix fun IOType.D2.gt(other: IOType.D2): IOType.D2 {
+infix fun IOType.D2.gt(other: IOType.D2): IOType.D2.Global {
     val result = Backend.greaterThan(value, other.value)
     return IOType.D2(shape = shape, value = result)
 }
 
 @ScopeOp
-infix fun IOType.D2.lt(other: Float): IOType.D2 {
+infix fun IOType.D2.lt(other: Float): IOType.D2.Global {
     val result = Backend.lessThan(value, other)
     return IOType.D2(shape = shape, value = result)
 }
 
 @ScopeOp
-infix fun IOType.D2.lt(other: IOType.D2): IOType.D2 {
+infix fun IOType.D2.lt(other: IOType.D2): IOType.D2.Global {
     val result = Backend.lessThan(value, other.value)
     return IOType.D2(shape = shape, value = result)
 }

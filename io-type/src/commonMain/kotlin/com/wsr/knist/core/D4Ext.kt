@@ -26,7 +26,7 @@ internal inline fun IOType.Companion.d4Impl(
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d4Impl(shape: List<Int>, init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f }) = d4Impl(
+internal inline fun IOType.Companion.d4Impl(shape: List<Int>, init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f }): IOType.D4.Global = d4Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],
@@ -34,7 +34,7 @@ internal inline fun IOType.Companion.d4Impl(shape: List<Int>, init: (Int, Int, I
     init = init,
 )
 
-internal fun IOType.Companion.d4Impl(shape: List<Int>, value: List<Float>) = d4Impl(
+internal fun IOType.Companion.d4Impl(shape: List<Int>, value: List<Float>): IOType.D4.Global = d4Impl(
     shape = shape,
     value = value.toFloatArray(),
 )

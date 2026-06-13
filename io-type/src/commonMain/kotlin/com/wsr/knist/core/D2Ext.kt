@@ -16,13 +16,13 @@ internal inline fun IOType.Companion.d2Impl(i: Int, j: Int, init: (Int, Int) -> 
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d2Impl(shape: List<Int>, init: (Int, Int) -> Float = { _, _ -> 0f }) = d2Impl(
+internal inline fun IOType.Companion.d2Impl(shape: List<Int>, init: (Int, Int) -> Float = { _, _ -> 0f }): IOType.D2.Global = d2Impl(
     i = shape[0],
     j = shape[1],
     init = init,
 )
 
-internal fun IOType.Companion.d2Impl(shape: List<Int>, value: List<Float>) = d2Impl(
+internal fun IOType.Companion.d2Impl(shape: List<Int>, value: List<Float>): IOType.D2.Global = d2Impl(
     shape = shape,
     value = value.toFloatArray(),
 )

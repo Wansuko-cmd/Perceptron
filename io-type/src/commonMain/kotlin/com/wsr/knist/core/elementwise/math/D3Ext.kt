@@ -12,25 +12,25 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.math.pow
 
 @ScopeOp
-fun IOType.D3.exp(): IOType.D3 {
+fun IOType.D3.exp(): IOType.D3.Global {
     val result = Backend.exp(x = value)
     return IOType.D3(shape = shape, value = result)
 }
 
 @ScopeOp
-fun IOType.D3.ln(e: Float): IOType.D3 {
+fun IOType.D3.ln(e: Float): IOType.D3.Global {
     val result = Backend.ln(x = value, e = e)
     return IOType.D3(shape = shape, value = result)
 }
 
 @ScopeOp
-fun IOType.D3.pow(n: Int): IOType.D3 {
+fun IOType.D3.pow(n: Int): IOType.D3.Global {
     val result = Backend.pow(x = value, n = n)
     return IOType.D3(shape = shape, value = result)
 }
 
 @ScopeOp
-fun IOType.D3.softmax(): IOType.D3 {
+fun IOType.D3.softmax(): IOType.D3.Global {
     val max = max()
     val exp = (this - max).exp()
     val sum = exp.sum()
@@ -38,7 +38,7 @@ fun IOType.D3.softmax(): IOType.D3 {
 }
 
 @ScopeOp
-fun IOType.D3.softmax(axis: Int): IOType.D3 {
+fun IOType.D3.softmax(axis: Int): IOType.D3.Global {
     val axis1 = when (axis) {
         0 -> 1
         else -> 0
@@ -54,7 +54,7 @@ fun IOType.D3.softmax(axis: Int): IOType.D3 {
 }
 
 @ScopeOp
-fun IOType.D3.sqrt(e: Float = 1e-7f): IOType.D3 {
+fun IOType.D3.sqrt(e: Float = 1e-7f): IOType.D3.Global {
     val result = Backend.sqrt(x = value, e = e)
     return IOType.D3(shape = shape, value = result)
 }

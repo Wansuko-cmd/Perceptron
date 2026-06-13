@@ -18,14 +18,14 @@ internal inline fun IOType.Companion.d3Impl(i: Int, j: Int, k: Int, init: (Int, 
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d3Impl(shape: List<Int>, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }) = d3Impl(
+internal inline fun IOType.Companion.d3Impl(shape: List<Int>, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }): IOType.D3.Global = d3Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],
     init = init,
 )
 
-internal fun IOType.Companion.d3Impl(shape: List<Int>, value: List<Float>) = d3Impl(
+internal fun IOType.Companion.d3Impl(shape: List<Int>, value: List<Float>): IOType.D3.Global = d3Impl(
     shape = shape,
     value = value.toFloatArray(),
 )

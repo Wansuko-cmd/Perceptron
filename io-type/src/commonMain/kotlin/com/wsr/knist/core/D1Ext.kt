@@ -10,9 +10,9 @@ internal inline fun IOType.Companion.d1Impl(size: Int, init: (Int) -> Float = { 
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d1Impl(shape: List<Int>, init: (Int) -> Float = { 0f }) = d1Impl(shape[0], init)
+internal inline fun IOType.Companion.d1Impl(shape: List<Int>, init: (Int) -> Float = { 0f }): IOType.D1.Global = d1Impl(shape[0], init)
 
-internal fun IOType.Companion.d1Impl(value: List<Float>) = d1Impl(value = value.toFloatArray())
+internal fun IOType.Companion.d1Impl(value: List<Float>): IOType.D1.Global = d1Impl(value = value.toFloatArray())
 
 @PublishedApi
 internal fun IOType.Companion.d1Impl(value: FloatArray): IOType.D1.Global =
