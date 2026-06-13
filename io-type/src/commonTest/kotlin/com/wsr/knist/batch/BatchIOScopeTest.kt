@@ -32,7 +32,7 @@ class BatchIOScopeTest {
     }
 
     @Test
-    fun `@ScopeOp の結果がLocal型になり bufferScope に登録される`() = ioTypeTestRule {
+    fun `ScopeOp の結果がLocal型になり bufferScope に登録される`() = ioTypeTestRule {
         val bufferScope = BufferScope()
         val ioScope = IOScope(bufferScope)
         val batch = Batch.of(IOType.d0(1f), IOType.d0(2f), IOType.d0(3f))
@@ -41,7 +41,7 @@ class BatchIOScopeTest {
     }
 
     @Test
-    fun `@ScopeOp 連鎖でも全中間バッファが bufferScope に登録される`() = ioTypeTestRule {
+    fun `ScopeOp 連鎖でも全中間バッファが bufferScope に登録される`() = ioTypeTestRule {
         val bufferScope = BufferScope()
         val ioScope = IOScope(bufferScope)
         val batch = Batch.of(IOType.d0(1f), IOType.d0(2f))
@@ -62,7 +62,7 @@ class BatchIOScopeTest {
     }
 
     @Test
-    fun `@ScopeOp の計算結果が正しい`() = ioTypeTestRule {
+    fun `ScopeOp の計算結果が正しい`() = ioTypeTestRule {
         val bufferScope = BufferScope()
         val ioScope = IOScope(bufferScope)
         val batch = Batch.of(IOType.d0(1f), IOType.d0(2f), IOType.d0(3f))
