@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
@@ -11,13 +12,13 @@ import kotlin.jvm.JvmName
 @JvmName("batchD3sDivFloat")
 operator fun Batch<IOType.D3>.div(other: Float): Batch<IOType.D3> {
     val result = Backend.div(x = value, y = other)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD0s")
 operator fun Batch<IOType.D3>.div(other: Batch<IOType.D0>): Batch<IOType.D3> {
     val result = Backend.div(x = value, xi = size, xj = step, y = other.value, axis = 0)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD1WithAxis")
@@ -31,7 +32,7 @@ fun Batch<IOType.D3>.div(other: IOType.D1, axis: Int): Batch<IOType.D3> {
         y = other.value,
         axis = axis + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD2")
@@ -51,7 +52,7 @@ fun Batch<IOType.D3>.div(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOType
         axis1 = axis1 + 1,
         axis2 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD2s")
@@ -73,7 +74,7 @@ fun Batch<IOType.D3>.div(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Batch
         axis2 = axis1 + 1,
         axis3 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD3")
@@ -85,11 +86,11 @@ operator fun Batch<IOType.D3>.div(other: IOType.D3): Batch<IOType.D3> {
         y = other.value,
         axis = 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sDivD3s")
 operator fun Batch<IOType.D3>.div(other: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.div(x = value, y = other.value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }

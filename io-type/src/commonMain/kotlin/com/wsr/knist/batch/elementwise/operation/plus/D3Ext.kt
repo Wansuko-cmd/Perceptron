@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
@@ -11,13 +12,13 @@ import kotlin.jvm.JvmName
 @JvmName("batchD3sPlusFloat")
 operator fun Batch<IOType.D3>.plus(other: Float): Batch<IOType.D3> {
     val result = Backend.plus(x = value, y = other)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD0s")
 operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D0>): Batch<IOType.D3> {
     val result = Backend.plus(x = value, xi = size, xj = step, y = other.value, axis = 0)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD1WithAxis")
@@ -31,7 +32,7 @@ fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3> {
         y = other.value,
         axis = axis + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD1sWithAxis")
@@ -48,7 +49,7 @@ fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3> 
         axis1 = 0,
         axis2 = axis + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD2")
@@ -68,7 +69,7 @@ fun Batch<IOType.D3>.plus(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOTyp
         axis1 = axis1 + 1,
         axis2 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD2s")
@@ -90,7 +91,7 @@ fun Batch<IOType.D3>.plus(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Batc
         axis2 = axis1 + 1,
         axis3 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD3")
@@ -102,11 +103,11 @@ operator fun Batch<IOType.D3>.plus(other: IOType.D3): Batch<IOType.D3> {
         y = other.value,
         axis = 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD3s")
 operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.plus(x = value, y = other.value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }

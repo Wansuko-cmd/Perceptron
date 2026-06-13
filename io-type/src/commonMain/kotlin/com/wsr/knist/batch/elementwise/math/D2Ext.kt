@@ -2,6 +2,7 @@ package com.wsr.knist.batch.elementwise.math
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.shape.toBatch
@@ -15,23 +16,23 @@ import kotlin.jvm.JvmName
 @JvmName("batchD2sExp")
 fun Batch<IOType.D2>.exp(): Batch<IOType.D2> {
     val result = Backend.exp(x = value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sLn")
 fun Batch<IOType.D2>.ln(e: Float = 1e-7f): Batch<IOType.D2> {
     val result = Backend.ln(x = value, e = e)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sPow")
 fun Batch<IOType.D2>.pow(n: Int): Batch<IOType.D2> {
     val result = Backend.pow(x = value, n = n)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sSigmoid")
-fun Batch<IOType.D2>.sigmoid(): Batch<IOType.D2> = Batch(size = size, shape = shape, value = Backend.sigmoid(value))
+fun Batch<IOType.D2>.sigmoid(): Batch<IOType.D2> = Batch.d2(size, shape, Backend.sigmoid(value))
 
 @JvmName("batchD2sSoftmax")
 fun Batch<IOType.D2>.softmax(): Batch<IOType.D2> = toD3()
@@ -48,5 +49,5 @@ fun Batch<IOType.D2>.softmax(axis: Int): Batch<IOType.D2> = toD3()
 @JvmName("batchD2sSqrt")
 fun Batch<IOType.D2>.sqrt(e: Float = 1e-7f): Batch<IOType.D2> {
     val result = Backend.sqrt(x = value, e = e)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d2(size, shape, result)
 }

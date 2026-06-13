@@ -4,6 +4,9 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
+import com.wsr.knist.batch.d2
+import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.core.IOType
@@ -12,18 +15,18 @@ import kotlin.jvm.JvmName
 fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i)
-        Batch(size = this.size, shape = listOf(size, i), value = result)
+        Batch.d2(this.size, size, i, result)
     }
     1 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i, j = 1, k = 1)
-        Batch(size = this.size, shape = listOf(i, size), value = result)
+        Batch.d2(this.size, i, size, result)
     }
     else -> throw IllegalArgumentException("Batch<IOType.D1>.broadcastToD2 axis is $axis not 0 or 1.")
 }
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
 
-fun IOType.D2.toBatch(): Batch<IOType.D1> = Batch(size = i, shape = listOf(j), value = value)
+fun IOType.D2.toBatch(): Batch<IOType.D1> = Batch.d1(i, j, value)
 
 @JvmName("batchD1sToList")
 fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
@@ -32,17 +35,17 @@ fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
 fun Batch<IOType.D1>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
 
 @JvmName("batchD1sReshapeToD2ByShape")
-fun Batch<IOType.D1>.reshapeToD2(shape: List<Int>) = Batch<IOType.D2>(size = size, shape = shape, value = value)
+fun Batch<IOType.D1>.reshapeToD2(shape: List<Int>) = Batch.d2(size, shape, value)
 
 @JvmName("batchD1sReshapeToD3")
 fun Batch<IOType.D1>.reshapeToD3(i: Int, j: Int, k: Int) = reshapeToD3(listOf(i, j, k))
 
 @JvmName("batchD1sReshapeToD3ByShape")
-fun Batch<IOType.D1>.reshapeToD3(shape: List<Int>) = Batch<IOType.D3>(size = size, shape = shape, value = value)
+fun Batch<IOType.D1>.reshapeToD3(shape: List<Int>) = Batch.d3(size, shape, value)
 
 fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
     val result = Backend.slice(x = value, xi = size, xj = i, axis = 1, indices = indices)
-    return Batch(size = size, shape = listOf(indices.size), value = result)
+    return Batch.d1(size, indices.size, result)
 }
 
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
@@ -65,5 +68,5 @@ fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
         axis = 1,
         indices = 1 until newI step 2,
     )
-    return Batch(size = size, shape = listOf(newI), value = result)
+    return Batch.d1(size, newI, result)
 }
