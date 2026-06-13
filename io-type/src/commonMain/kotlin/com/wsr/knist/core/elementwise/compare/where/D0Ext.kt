@@ -26,11 +26,12 @@ fun where(condition: IOType.D0, onTrue: IOType.D0, onFalse: IOType.D0): IOType.D
 }
 
 @ScopeOp
-inline fun IOType.D0.where(onTrue: Float, onFalse: Float, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global = where(
-    condition = condition(this),
-    onTrue = onTrue,
-    onFalse = onFalse,
-)
+inline fun IOType.D0.where(onTrue: Float, onFalse: Float, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global =
+    where(
+        condition = condition(this),
+        onTrue = onTrue,
+        onFalse = onFalse,
+    )
 
 @ScopeOp
 fun IOType.D0.where(condition: IOType.D0, onTrue: Float, onFalse: IOType.D0 = this): IOType.D0.Global {
@@ -39,11 +40,12 @@ fun IOType.D0.where(condition: IOType.D0, onTrue: Float, onFalse: IOType.D0 = th
 }
 
 @ScopeOp
-inline fun IOType.D0.where(onTrue: Float, onFalse: IOType.D0, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global = where(
-    condition = condition(this),
-    onTrue = onTrue,
-    onFalse = onFalse,
-)
+inline fun IOType.D0.where(onTrue: Float, onFalse: IOType.D0, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global =
+    where(
+        condition = condition(this),
+        onTrue = onTrue,
+        onFalse = onFalse,
+    )
 
 @ScopeOp
 fun IOType.D0.where(condition: IOType.D0, onTrue: IOType.D0 = this, onFalse: Float): IOType.D0.Global {
@@ -52,7 +54,11 @@ fun IOType.D0.where(condition: IOType.D0, onTrue: IOType.D0 = this, onFalse: Flo
 }
 
 @ScopeOp
-inline fun IOType.D0.where(onTrue: IOType.D0 = this, onFalse: Float, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global = where(
+inline fun IOType.D0.where(
+    onTrue: IOType.D0 = this,
+    onFalse: Float,
+    condition: (IOType.D0) -> IOType.D0,
+): IOType.D0.Global = where(
     condition = condition(this),
     onTrue = onTrue,
     onFalse = onFalse,
@@ -65,7 +71,11 @@ fun IOType.D0.where(condition: IOType.D0, onTrue: IOType.D0 = this, onFalse: IOT
 }
 
 @ScopeOp
-inline fun IOType.D0.where(onTrue: IOType.D0 = this, onFalse: IOType.D0, condition: (IOType.D0) -> IOType.D0): IOType.D0.Global = where(
+inline fun IOType.D0.where(
+    onTrue: IOType.D0 = this,
+    onFalse: IOType.D0,
+    condition: (IOType.D0) -> IOType.D0,
+): IOType.D0.Global = where(
     condition = condition(this),
     onTrue = onTrue,
     onFalse = onFalse,

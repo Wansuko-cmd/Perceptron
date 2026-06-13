@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp
-infix fun IOType.D4.eq(other: Float): IOType.D4.Global  = eq(
+infix fun IOType.D4.eq(other: Float): IOType.D4.Global = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,

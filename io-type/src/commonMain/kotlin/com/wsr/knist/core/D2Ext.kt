@@ -5,7 +5,11 @@ import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 
 @PublishedApi
-internal inline fun IOType.Companion.d2Impl(i: Int, j: Int, init: (Int, Int) -> Float = { _, _ -> 0f }): IOType.D2.Global {
+internal inline fun IOType.Companion.d2Impl(
+    i: Int,
+    j: Int,
+    init: (Int, Int) -> Float = { _, _ -> 0f },
+): IOType.D2.Global {
     val value = FloatArray(i * j)
     for (_i in 0 until i) {
         for (_j in 0 until j) {
@@ -16,7 +20,10 @@ internal inline fun IOType.Companion.d2Impl(i: Int, j: Int, init: (Int, Int) -> 
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d2Impl(shape: List<Int>, init: (Int, Int) -> Float = { _, _ -> 0f }): IOType.D2.Global = d2Impl(
+internal inline fun IOType.Companion.d2Impl(
+    shape: List<Int>,
+    init: (Int, Int) -> Float = { _, _ -> 0f },
+): IOType.D2.Global = d2Impl(
     i = shape[0],
     j = shape[1],
     init = init,

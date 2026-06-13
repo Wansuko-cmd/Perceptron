@@ -26,7 +26,10 @@ internal inline fun IOType.Companion.d4Impl(
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d4Impl(shape: List<Int>, init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f }): IOType.D4.Global = d4Impl(
+internal inline fun IOType.Companion.d4Impl(
+    shape: List<Int>,
+    init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
+): IOType.D4.Global = d4Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],

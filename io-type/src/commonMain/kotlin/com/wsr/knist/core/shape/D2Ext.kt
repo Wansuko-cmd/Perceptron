@@ -7,7 +7,6 @@ import com.wsr.knist.core.D2
 import com.wsr.knist.core.D3
 import com.wsr.knist.core.D4
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp
@@ -40,7 +39,8 @@ fun IOType.D2.reshapeToD3(i: Int, j: Int, k: Int): IOType.D3.Global = reshapeToD
 
 fun IOType.D2.reshapeToD3(shape: List<Int>): IOType.D3.Global = IOType.D3(shape = shape, value = value)
 
-fun IOType.D2.reshapeToD4(i: Int, j: Int, k: Int, l: Int): IOType.D4.Global = IOType.D4(shape = listOf(i, j, k, l), value = value)
+fun IOType.D2.reshapeToD4(i: Int, j: Int, k: Int, l: Int): IOType.D4.Global =
+    IOType.D4(shape = listOf(i, j, k, l), value = value)
 
 @ScopeOp
 fun IOType.D2.slice(indices: IntProgression, axis: Int): IOType.D2.Global {

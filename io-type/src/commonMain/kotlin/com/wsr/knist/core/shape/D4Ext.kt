@@ -5,7 +5,6 @@ import com.wsr.knist.core.D2
 import com.wsr.knist.core.D3
 import com.wsr.knist.core.D4
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp

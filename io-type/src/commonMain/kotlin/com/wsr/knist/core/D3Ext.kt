@@ -5,7 +5,12 @@ import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 
 @PublishedApi
-internal inline fun IOType.Companion.d3Impl(i: Int, j: Int, k: Int, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }): IOType.D3.Global {
+internal inline fun IOType.Companion.d3Impl(
+    i: Int,
+    j: Int,
+    k: Int,
+    init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
+): IOType.D3.Global {
     val value = FloatArray(i * j * k)
     for (_i in 0 until i) {
         for (_j in 0 until j) {
@@ -18,7 +23,10 @@ internal inline fun IOType.Companion.d3Impl(i: Int, j: Int, k: Int, init: (Int, 
 }
 
 @PublishedApi
-internal inline fun IOType.Companion.d3Impl(shape: List<Int>, init: (Int, Int, Int) -> Float = { _, _, _ -> 0f }): IOType.D3.Global = d3Impl(
+internal inline fun IOType.Companion.d3Impl(
+    shape: List<Int>,
+    init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
+): IOType.D3.Global = d3Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],

@@ -29,7 +29,7 @@ fun IOType.D3.eq(
 }
 
 @ScopeOp
-infix fun IOType.D3.eq(other: IOType.D3): IOType.D3.Global  = eq(
+infix fun IOType.D3.eq(other: IOType.D3): IOType.D3.Global = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,
