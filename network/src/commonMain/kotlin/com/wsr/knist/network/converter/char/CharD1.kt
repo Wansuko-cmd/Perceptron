@@ -7,7 +7,6 @@ import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
-import com.wsr.knist.core.reduction.maxIndex
 import com.wsr.knist.core.set
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter

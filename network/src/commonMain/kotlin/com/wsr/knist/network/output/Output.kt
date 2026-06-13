@@ -4,7 +4,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import kotlinx.serialization.Serializable
 
-data class TResult<T : IOType>(val loss: Float, val delta: Batch<T>)
+data class TResult<T : IOType>(val loss: IOType.D0, val delta: Batch<T>)
 
 @Suppress("UNCHECKED_CAST")
 sealed interface Output {

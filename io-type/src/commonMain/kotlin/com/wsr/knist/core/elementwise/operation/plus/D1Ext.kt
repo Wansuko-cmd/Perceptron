@@ -2,9 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import com.wsr.knist.scope.ScopeOp
-
 @ScopeOp
 operator fun IOType.D1.plus(other: Float): IOType.D1 {
     val result = Backend.plus(x = value, y = other)
@@ -13,7 +11,7 @@ operator fun IOType.D1.plus(other: Float): IOType.D1 {
 
 @ScopeOp
 operator fun IOType.D1.plus(other: IOType.D0): IOType.D1 {
-    val result = Backend.plus(x = value, y = other.get())
+    val result = Backend.plus(x = value, xi = 1, xj = size, y = other.value, axis = 0)
     return IOType.D1(value = result)
 }
 

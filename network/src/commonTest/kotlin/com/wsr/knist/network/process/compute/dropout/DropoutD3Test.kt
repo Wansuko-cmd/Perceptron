@@ -13,7 +13,6 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class DropoutD3Test {
     val target get() = DropoutD3(outputX = 2, outputY = 2, outputZ = 2, ratio = 0.8f, seed = 0)

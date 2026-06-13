@@ -3,12 +3,13 @@ package com.wsr.knist.network.optimizer
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.elementwise.compare.lt
+import com.wsr.knist.core.elementwise.compare.where.where
 import com.wsr.knist.core.elementwise.math.pow
 import com.wsr.knist.core.elementwise.math.sqrt
+import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.core.elementwise.operation.times.times
-import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.sum
-import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
 
 interface Optimizer {
@@ -25,11 +26,10 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt().get()
-                if (norm > _maxNorm) {
-                    val scale = _maxNorm / norm
-                    return adapt(weight, dw * scale).also { _step++ }
-                }
+                val norm = dw.pow(2).sum().sqrt()
+                val scale = _maxNorm / norm
+                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                return adapt(weight, dw * clipped).also { _step++ }
             }
             return adapt(weight, dw).also { _step++ }
         }
@@ -49,11 +49,10 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt().get()
-                if (norm > _maxNorm) {
-                    val scale = _maxNorm / norm
-                    return adapt(weight, dw * scale).also { _step++ }
-                }
+                val norm = dw.pow(2).sum().sqrt()
+                val scale = _maxNorm / norm
+                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                return adapt(weight, dw * clipped).also { _step++ }
             }
             return adapt(weight, dw).also { _step++ }
         }
@@ -73,11 +72,10 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt().get()
-                if (norm > _maxNorm) {
-                    val scale = _maxNorm / norm
-                    return adapt(weight, dw * scale).also { _step++ }
-                }
+                val norm = dw.pow(2).sum().sqrt()
+                val scale = _maxNorm / norm
+                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                return adapt(weight, dw * clipped).also { _step++ }
             }
             return adapt(weight, dw).also { _step++ }
         }
@@ -97,11 +95,10 @@ interface Optimizer {
 
         fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt().get()
-                if (norm > _maxNorm) {
-                    val scale = _maxNorm / norm
-                    return adapt(weight, dw * scale).also { _step++ }
-                }
+                val norm = dw.pow(2).sum().sqrt()
+                val scale = _maxNorm / norm
+                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                return adapt(weight, dw * clipped).also { _step++ }
             }
             return adapt(weight, dw).also { _step++ }
         }

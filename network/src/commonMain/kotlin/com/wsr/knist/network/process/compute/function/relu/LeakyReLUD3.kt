@@ -4,9 +4,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.elementwise.compare.gt
 import com.wsr.knist.batch.elementwise.compare.where.where
 import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute

@@ -9,10 +9,10 @@ class D1Test {
     @Test
     fun `get=1次元要素取得`() {
         val d1 = IOType.d1(listOf(1.0f, 2.0f, 3.0f, 4.0f))
-        assertEquals(expected = 1.0f, actual = d1[0])
-        assertEquals(expected = 2.0f, actual = d1[1])
-        assertEquals(expected = 3.0f, actual = d1[2])
-        assertEquals(expected = 4.0f, actual = d1[3])
+        assertEquals(expected = 1.0f, actual = d1[0].unwrap())
+        assertEquals(expected = 2.0f, actual = d1[1].unwrap())
+        assertEquals(expected = 3.0f, actual = d1[2].unwrap())
+        assertEquals(expected = 4.0f, actual = d1[3].unwrap())
     }
 
     @Test
@@ -22,26 +22,26 @@ class D1Test {
         d1[1] = 3.0f
         d1[2] = 2.0f
         d1[3] = 1.0f
-        assertEquals(expected = 4.0f, actual = d1[0])
-        assertEquals(expected = 3.0f, actual = d1[1])
-        assertEquals(expected = 2.0f, actual = d1[2])
-        assertEquals(expected = 1.0f, actual = d1[3])
+        assertEquals(expected = 4.0f, actual = d1[0].unwrap())
+        assertEquals(expected = 3.0f, actual = d1[1].unwrap())
+        assertEquals(expected = 2.0f, actual = d1[2].unwrap())
+        assertEquals(expected = 1.0f, actual = d1[3].unwrap())
     }
 
     @Test
     fun `d1_init=ラムダでD1を作成`() {
         val d1 = IOType.d1(3) { i -> (i + 1).toFloat() }
-        assertEquals(expected = 1.0f, actual = d1[0])
-        assertEquals(expected = 2.0f, actual = d1[1])
-        assertEquals(expected = 3.0f, actual = d1[2])
+        assertEquals(expected = 1.0f, actual = d1[0].unwrap())
+        assertEquals(expected = 2.0f, actual = d1[1].unwrap())
+        assertEquals(expected = 3.0f, actual = d1[2].unwrap())
     }
 
     @Test
     fun `d1_vararg=可変長引数でD1を作成`() {
         val d1 = IOType.d1(1.0f, 2.0f, 3.0f)
-        assertEquals(expected = 1.0f, actual = d1[0])
-        assertEquals(expected = 2.0f, actual = d1[1])
-        assertEquals(expected = 3.0f, actual = d1[2])
+        assertEquals(expected = 1.0f, actual = d1[0].unwrap())
+        assertEquals(expected = 2.0f, actual = d1[1].unwrap())
+        assertEquals(expected = 3.0f, actual = d1[2].unwrap())
     }
 
     @Test

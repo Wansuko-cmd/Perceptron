@@ -8,7 +8,6 @@ import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.linalg.matMul
 import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.batch.shape.reshapeToD2
@@ -16,7 +15,6 @@ import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.batch.shape.transpose
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
-import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
