@@ -5,7 +5,12 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.indices
 import com.wsr.knist.core.IOType
 
-class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {
+class Batch<out T : IOType>(
+    val value: DataBuffer,
+    val size: Int,
+    val shape: List<Int>,
+) {
+    companion object
     val step = shape.reduce { acc, i -> acc * i }
     val indices = 0 until size
 
