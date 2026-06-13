@@ -44,7 +44,7 @@ fun IOType.Companion.d3(vararg elements: IOType.D2): IOType.D3 {
 fun IOType.Companion.d3(shape: List<Int>, value: FloatArray) =
     IOType.D3(shape = shape, value = DataBuffer.create(value))
 
-operator fun IOType.D3.get(i: Int, j: Int, k: Int) = value[(i * shape[1] + j) * shape[2] + k]
+operator fun IOType.D3.get(i: Int, j: Int, k: Int): IOType.D0 = IOType.d0(value[(i * shape[1] + j) * shape[2] + k])
 
 operator fun IOType.D3.get(i: Int, j: Int): IOType.D1 {
     val offset = (i * shape[1] + j) * shape[2]

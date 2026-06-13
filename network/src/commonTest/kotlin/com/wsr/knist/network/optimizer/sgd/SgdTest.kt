@@ -12,7 +12,6 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class SgdTest {
     @Test

@@ -15,7 +15,6 @@ import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class BiasD2Test {
     val target

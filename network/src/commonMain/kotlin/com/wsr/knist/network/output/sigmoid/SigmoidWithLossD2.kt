@@ -10,7 +10,7 @@ import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
-import com.wsr.knist.core.get
+import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -28,7 +28,7 @@ internal class SigmoidWithLossD2 internal constructor(val outputX: Int, val outp
         val loss = run {
             val y = label * output.ln(1e-7f)
             val p = (one - label) * (one - output).ln(1e-7f)
-            -(y + p).sum().batchAverage().get()
+            0f - (y + p).sum().batchAverage()
         }
         val delta = output - label
         return TResult(loss = loss, delta = delta)

@@ -18,7 +18,7 @@ fun IOType.Companion.d1(vararg elements: Float) = IOType.d1(value = elements)
 
 fun IOType.Companion.d1(value: FloatArray) = IOType.D1(value = DataBuffer.create(value))
 
-operator fun IOType.D1.get(index: Int) = value[index]
+operator fun IOType.D1.get(index: Int): IOType.D0 = IOType.d0(value[index])
 
 operator fun IOType.D1.set(index: Int, element: Float) {
     value[index] = element

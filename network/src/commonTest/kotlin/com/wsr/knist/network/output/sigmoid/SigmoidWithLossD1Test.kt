@@ -8,6 +8,7 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,9 +21,9 @@ class SigmoidWithLossD1Test {
 
         val actual = target._expect(input) as Batch<IOType.D1>
 
-        assertEquals(expected = 0.731f, actual = actual[0][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.8807f, actual = actual[0][1], absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.9525f, actual = actual[0][2], absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.731f, actual = actual[0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.8807f, actual = actual[0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.9525f, actual = actual[0][2].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
@@ -32,12 +33,12 @@ class SigmoidWithLossD1Test {
         val label = batchOf(IOType.d1(1f, 3f, 5f))
 
         val actual = target._train(input = input, label = { label })
-        val loss = actual.loss
+        val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D1>
 
         assertEquals(expected = -15.5112f, actual = loss, absoluteTolerance = 1e-4f)
-        assertEquals(expected = -0.2689f, actual = delta[0][0], absoluteTolerance = 1e-4f)
-        assertEquals(expected = -2.1192f, actual = delta[0][1], absoluteTolerance = 1e-4f)
-        assertEquals(expected = -4.0474f, actual = delta[0][2], absoluteTolerance = 1e-4f)
+        assertEquals(expected = -0.2689f, actual = delta[0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -2.1192f, actual = delta[0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -4.0474f, actual = delta[0][2].unwrap(), absoluteTolerance = 1e-4f)
     }
 }

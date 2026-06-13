@@ -6,6 +6,7 @@ import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
@@ -48,16 +49,16 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
             IOType.d3(i = channel, j = inputX, k = inputY) { c, x, y ->
                 val xo = x / poolSize
                 val yo = y / poolSize
-                if (input[c, x, y] == output[c, xo, yo]) delta[c, xo, yo] else 0f
+                if (input[c, x, y].unwrap() == output[c, xo, yo].unwrap()) delta[c, xo, yo].unwrap() else 0f
             }
         }.toBatch()
     }
 
     private fun forward(input: IOType.D3): IOType.D3 = IOType.d3(outputX, outputY, outputZ) { x, y, z ->
-        var max = input[x, y, z]
+        var max = input[x, y, z].unwrap()
         for (i in 0 until poolSize) {
             for (j in 0 until poolSize) {
-                max = maxOf(max, input[x, y + i, z + j])
+                max = maxOf(max, input[x, y + i, z + j].unwrap())
             }
         }
         max

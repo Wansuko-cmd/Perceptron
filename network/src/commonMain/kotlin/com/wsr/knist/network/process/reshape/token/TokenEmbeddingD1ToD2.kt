@@ -1,16 +1,11 @@
 package com.wsr.knist.network.process.reshape.token
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.index.gather
 import com.wsr.knist.batch.index.scatterAdd
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
-import com.wsr.knist.core.d2
 import com.wsr.knist.core.elementwise.operation.div.div
-import com.wsr.knist.core.elementwise.operation.plus.plus
-import com.wsr.knist.core.get
-import com.wsr.knist.core.set
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer

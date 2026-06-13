@@ -2,15 +2,13 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
-
 operator fun IOType.D2.div(other: Float): IOType.D2 {
     val result = Backend.div(x = value, y = other)
     return IOType.D2(shape = shape, value = result)
 }
 
 operator fun IOType.D2.div(other: IOType.D0): IOType.D2 {
-    val result = Backend.div(x = value, y = other.get())
+    val result = Backend.div(x = value, xi = 1, xj = size, y = other.value, axis = 0)
     return IOType.D2(shape = shape, value = result)
 }
 

@@ -13,7 +13,6 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class RoPED2Test {
     val target get() = RoPED2(outputX = 2, outputY = 4, waveLength = 100f)
