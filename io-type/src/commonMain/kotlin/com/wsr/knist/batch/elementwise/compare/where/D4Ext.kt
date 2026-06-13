@@ -8,32 +8,32 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchWhereFloatToFloatAsD4")
-fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Float): Batch<IOType.D4> {
+fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Float): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereFloatToD4s")
-fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Batch<IOType.D4>): Batch<IOType.D4> {
+fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Batch<IOType.D4>): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereD4sToFloat")
-fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Float): Batch<IOType.D4> {
+fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Float): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereD4sToD4s")
-fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Batch<IOType.D4>): Batch<IOType.D4> {
+fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Batch<IOType.D4>): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchFloatWhereFloat")
 @ScopeOp
-fun Batch<IOType.D4>.where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Float): Batch<IOType.D4> {
+fun Batch<IOType.D4>.where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Float): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return Batch.d4(size, shape, result)
 }
@@ -44,7 +44,7 @@ inline fun Batch<IOType.D4>.where(
     onTrue: Float,
     onFalse: Float,
     condition: (Batch<IOType.D4>) -> Batch<IOType.D4>,
-): Batch<IOType.D4> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
+): Batch<IOType.D4.Global> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
 
 @JvmName("batchFloatWhereD4s")
 @ScopeOp
@@ -52,7 +52,7 @@ fun Batch<IOType.D4>.where(
     condition: Batch<IOType.D4>,
     onTrue: Float,
     onFalse: Batch<IOType.D4> = this,
-): Batch<IOType.D4> {
+): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return Batch.d4(size, shape, result)
 }
@@ -63,7 +63,7 @@ inline fun Batch<IOType.D4>.where(
     onTrue: Float,
     onFalse: Batch<IOType.D4> = this,
     condition: (Batch<IOType.D4>) -> Batch<IOType.D4>,
-): Batch<IOType.D4> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
+): Batch<IOType.D4.Global> = where(onTrue = onTrue, onFalse = onFalse, condition = condition(this))
 
 @JvmName("batchD4sWhereFloat")
 @ScopeOp
@@ -71,7 +71,7 @@ fun Batch<IOType.D4>.where(
     condition: Batch<IOType.D4>,
     onTrue: Batch<IOType.D4> = this,
     onFalse: Float,
-): Batch<IOType.D4> {
+): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return Batch.d4(size, shape, result)
 }
@@ -90,7 +90,7 @@ fun Batch<IOType.D4>.where(
     condition: Batch<IOType.D4>,
     onTrue: Batch<IOType.D4> = this,
     onFalse: Batch<IOType.D4> = this,
-): Batch<IOType.D4> {
+): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch.d4(size, shape, result)
 }

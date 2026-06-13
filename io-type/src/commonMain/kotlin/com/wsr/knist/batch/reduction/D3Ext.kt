@@ -13,14 +13,14 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD3sSum")
 @ScopeOp
-fun Batch<IOType.D3>.sum(): Batch<IOType.D0> {
+fun Batch<IOType.D3>.sum(): Batch<IOType.D0.Global> {
     val result = Backend.sum(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD3sSumWithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2> = when (axis) {
+fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2.Global> = when (axis) {
     0 -> Batch.d2(
         size,
         j,
@@ -47,20 +47,20 @@ fun Batch<IOType.D3>.sum(axis: Int): Batch<IOType.D2> = when (axis) {
 
 @JvmName("batchD3sMax")
 @ScopeOp
-fun Batch<IOType.D3>.max(): Batch<IOType.D0> {
+fun Batch<IOType.D3>.max(): Batch<IOType.D0.Global> {
     val result = Backend.max(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD3sMin")
 @ScopeOp
-fun Batch<IOType.D3>.min(): Batch<IOType.D0> {
+fun Batch<IOType.D3>.min(): Batch<IOType.D0.Global> {
     val result = Backend.min(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD3sMaxWithAxis")
-fun Batch<IOType.D3>.max(axis: Int): Batch<IOType.D2> = when (axis) {
+fun Batch<IOType.D3>.max(axis: Int): Batch<IOType.D2.Global> = when (axis) {
     0 -> Batch.d2(
         size,
         j,
@@ -87,7 +87,7 @@ fun Batch<IOType.D3>.max(axis: Int): Batch<IOType.D2> = when (axis) {
 
 @JvmName("batchD3sMaxIndexWithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.maxIndex(axis: Int): Batch<IOType.D2> = when (axis) {
+fun Batch<IOType.D3>.maxIndex(axis: Int): Batch<IOType.D2.Global> = when (axis) {
     0 -> Batch.d2(
         size,
         j,

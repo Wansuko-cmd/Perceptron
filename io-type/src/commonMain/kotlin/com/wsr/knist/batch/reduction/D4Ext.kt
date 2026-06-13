@@ -11,7 +11,7 @@ import com.wsr.knist.core.IOType
 import kotlin.jvm.JvmName
 
 @JvmName("batchD4sMaxWithAxis")
-fun Batch<IOType.D4>.max(axis: Int): Batch<IOType.D3> = when (axis) {
+fun Batch<IOType.D4>.max(axis: Int): Batch<IOType.D3.Global> = when (axis) {
     0 -> Batch.d3(
         size,
         j,

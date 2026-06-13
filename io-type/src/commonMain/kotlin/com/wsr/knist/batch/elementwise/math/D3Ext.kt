@@ -17,32 +17,32 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD3sExp")
 @ScopeOp
-fun Batch<IOType.D3>.exp(): Batch<IOType.D3> {
+fun Batch<IOType.D3>.exp(): Batch<IOType.D3.Global> {
     val result = Backend.exp(x = value)
     return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sLn")
 @ScopeOp
-fun Batch<IOType.D3>.ln(e: Float = 1e-7f): Batch<IOType.D3> {
+fun Batch<IOType.D3>.ln(e: Float = 1e-7f): Batch<IOType.D3.Global> {
     val result = Backend.ln(x = value, e = e)
     return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPow")
 @ScopeOp
-fun Batch<IOType.D3>.pow(n: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.pow(n: Int): Batch<IOType.D3.Global> {
     val result = Backend.pow(x = value, n = n)
     return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sSigmoid")
 @ScopeOp
-fun Batch<IOType.D3>.sigmoid(): Batch<IOType.D3> = Batch.d3(size, shape, Backend.sigmoid(value))
+fun Batch<IOType.D3>.sigmoid(): Batch<IOType.D3.Global> = Batch.d3(size, shape, Backend.sigmoid(value))
 
 @JvmName("batchD3sSoftmax")
 @ScopeOp
-fun Batch<IOType.D3>.softmax(): Batch<IOType.D3> = toD4()
+fun Batch<IOType.D3>.softmax(): Batch<IOType.D3.Global> = toD4()
     .reshapeToD2(i = size, j = step)
     .softmax(axis = 1)
     .reshapeToD4(i = size, j = i, k = j, l = k)
@@ -50,13 +50,13 @@ fun Batch<IOType.D3>.softmax(): Batch<IOType.D3> = toD4()
 
 @JvmName("batchD3sSoftmaxWithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.softmax(axis: Int): Batch<IOType.D3> = toD4()
+fun Batch<IOType.D3>.softmax(axis: Int): Batch<IOType.D3.Global> = toD4()
     .softmax(axis = axis + 1)
     .toBatch()
 
 @JvmName("batchD3sSqrt")
 @ScopeOp
-fun Batch<IOType.D3>.sqrt(e: Float = 1e-7f): Batch<IOType.D3> {
+fun Batch<IOType.D3>.sqrt(e: Float = 1e-7f): Batch<IOType.D3.Global> {
     val result = Backend.sqrt(x = value, e = e)
     return Batch.d3(size, shape, result)
 }

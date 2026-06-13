@@ -14,28 +14,28 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD2sDivFloat")
 @ScopeOp
-operator fun Batch<IOType.D2>.div(other: Float): Batch<IOType.D2> {
+operator fun Batch<IOType.D2>.div(other: Float): Batch<IOType.D2.Global> {
     val result = Backend.div(x = value, y = other)
     return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sDivD0s")
 @ScopeOp
-operator fun Batch<IOType.D2>.div(other: Batch<IOType.D0>): Batch<IOType.D2> {
+operator fun Batch<IOType.D2>.div(other: Batch<IOType.D0>): Batch<IOType.D2.Global> {
     val result = Backend.div(x = value, xi = size, xj = step, y = other.value, axis = 0)
     return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sDivD1WithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.div(other: IOType.D1, axis: Int): Batch<IOType.D2> {
+fun Batch<IOType.D2>.div(other: IOType.D1, axis: Int): Batch<IOType.D2.Global> {
     val result = Backend.div(x = value, xi = size, xj = i, xk = j, y = other.value, axis = axis + 1)
     return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sDivD1sWithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.div(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2> {
+fun Batch<IOType.D2>.div(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2.Global> {
     val result = Backend.div(
         x = value,
         xi = size,
@@ -52,7 +52,7 @@ fun Batch<IOType.D2>.div(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D2> {
 
 @JvmName("batchD2sDivD2")
 @ScopeOp
-operator fun Batch<IOType.D2>.div(other: IOType.D2): Batch<IOType.D2> {
+operator fun Batch<IOType.D2>.div(other: IOType.D2): Batch<IOType.D2.Global> {
     val result = Backend.div(
         x = value,
         xi = size,
@@ -65,14 +65,14 @@ operator fun Batch<IOType.D2>.div(other: IOType.D2): Batch<IOType.D2> {
 
 @JvmName("batchD2sDivD2s")
 @ScopeOp
-operator fun Batch<IOType.D2>.div(other: Batch<IOType.D2>): Batch<IOType.D2> {
+operator fun Batch<IOType.D2>.div(other: Batch<IOType.D2>): Batch<IOType.D2.Global> {
     val result = Backend.div(x = value, y = other.value)
     return Batch.d2(size, shape, result)
 }
 
 @JvmName("batchD2sDivD3sWithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.div(other: Batch<IOType.D3>, axis1: Int, axis2: Int): Batch<IOType.D3> {
+fun Batch<IOType.D2>.div(other: Batch<IOType.D3>, axis1: Int, axis2: Int): Batch<IOType.D3.Global> {
     val result = Backend.div(
         x = value,
         xi = size,

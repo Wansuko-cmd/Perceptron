@@ -11,7 +11,7 @@ import kotlin.jvm.JvmName
 
 @JvmName("infixBatchD0sEqFloat")
 @ScopeOp
-infix fun Batch<IOType.D0>.eq(other: Float): Batch<IOType.D0> = eq(
+infix fun Batch<IOType.D0>.eq(other: Float): Batch<IOType.D0.Global> = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,
@@ -22,7 +22,7 @@ fun Batch<IOType.D0>.eq(
     other: Float,
     absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
-): Batch<IOType.D0> {
+): Batch<IOType.D0.Global> {
     val result = Backend.equals(
         x = value,
         y = other,
@@ -34,7 +34,7 @@ fun Batch<IOType.D0>.eq(
 
 @JvmName("infixBatchD0sEqD0s")
 @ScopeOp
-infix fun Batch<IOType.D0>.eq(other: Batch<IOType.D0>): Batch<IOType.D0> = eq(
+infix fun Batch<IOType.D0>.eq(other: Batch<IOType.D0>): Batch<IOType.D0.Global> = eq(
     other = other,
     absoluteTolerance = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance = EQUALS_RELATIVE_TOLERANCE,
@@ -46,7 +46,7 @@ fun Batch<IOType.D0>.eq(
     other: Batch<IOType.D0>,
     absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
     relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
-): Batch<IOType.D0> {
+): Batch<IOType.D0.Global> {
     val result = Backend.equals(
         x = value,
         y = other.value,
@@ -58,28 +58,28 @@ fun Batch<IOType.D0>.eq(
 
 @JvmName("batchD0sGtFloat")
 @ScopeOp
-infix fun Batch<IOType.D0>.gt(other: Float): Batch<IOType.D0> {
+infix fun Batch<IOType.D0>.gt(other: Float): Batch<IOType.D0.Global> {
     val result = Backend.greaterThan(value, other)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD0sGtD0s")
 @ScopeOp
-infix fun Batch<IOType.D0>.gt(other: Batch<IOType.D0>): Batch<IOType.D0> {
+infix fun Batch<IOType.D0>.gt(other: Batch<IOType.D0>): Batch<IOType.D0.Global> {
     val result = Backend.greaterThan(value, other.value)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD0sLtFloat")
 @ScopeOp
-infix fun Batch<IOType.D0>.lt(other: Float): Batch<IOType.D0> {
+infix fun Batch<IOType.D0>.lt(other: Float): Batch<IOType.D0.Global> {
     val result = Backend.lessThan(value, other)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD0sLtD0s")
 @ScopeOp
-infix fun Batch<IOType.D0>.lt(other: Batch<IOType.D0>): Batch<IOType.D0> {
+infix fun Batch<IOType.D0>.lt(other: Batch<IOType.D0>): Batch<IOType.D0.Global> {
     val result = Backend.lessThan(value, other.value)
     return Batch.d0(size, result)
 }

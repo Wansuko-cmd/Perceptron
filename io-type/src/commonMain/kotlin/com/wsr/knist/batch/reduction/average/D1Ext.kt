@@ -10,7 +10,7 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD1sAverage")
 @ScopeOp
-fun Batch<IOType.D1>.average(): Batch<IOType.D0> {
+fun Batch<IOType.D1>.average(): Batch<IOType.D0.Global> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }

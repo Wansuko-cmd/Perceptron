@@ -7,7 +7,7 @@ import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
 
-fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> = when (axis) {
+fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1.Global> = when (axis) {
     0 -> {
         val result = Backend.gather(x = value, y = other.value, i = other.size, j = other.i, k = other.j)
         Batch.d1(other.size, other.j, result)
