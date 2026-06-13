@@ -1,6 +1,7 @@
 package com.wsr.knist.network.output.sigmoid
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.elementwise.math.ln
 import com.wsr.knist.batch.elementwise.math.sigmoid
 import com.wsr.knist.batch.elementwise.operation.minus.minus
@@ -9,7 +10,6 @@ import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d2
 import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
@@ -24,7 +24,7 @@ internal class SigmoidWithLossD2 internal constructor(val outputX: Int, val outp
     override fun train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
         val output = input.sigmoid()
         val label = label(output)
-        val one = Batch(label.size) { IOType.d2(outputX, outputY) { _, _ -> 1f } }
+        val one = Batch.d2(label.size, outputX, outputY) { _, _ -> 1f }
         val loss = run {
             val y = label * output.ln(1e-7f)
             val p = (one - label) * (one - output).ln(1e-7f)

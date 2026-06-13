@@ -1,6 +1,7 @@
 package com.wsr.knist.network.output.softmax
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.elementwise.math.ln
 import com.wsr.knist.batch.elementwise.math.softmax
 import com.wsr.knist.batch.elementwise.operation.div.div
@@ -51,7 +52,7 @@ internal class SoftmaxWithLossD2 internal constructor(
     }
 
     private fun Batch<IOType.D2>.generateMask(): Batch<IOType.D2> = when {
-        maskValue == null -> Batch(size) { IOType.d2(shape = shape) { _, _ -> 1f } }
+        maskValue == null -> Batch.d2(size, shape) { _, _ -> 1f }
 
         else -> {
             IOType.d0(maskValue.toFloat())
