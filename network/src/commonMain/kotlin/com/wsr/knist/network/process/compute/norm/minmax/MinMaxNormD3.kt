@@ -3,16 +3,15 @@ package com.wsr.knist.network.process.compute.norm.minmax
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.elementwise.math.pow
 import com.wsr.knist.batch.elementwise.operation.div.div
+import com.wsr.knist.batch.elementwise.compare.eq
+import com.wsr.knist.batch.elementwise.compare.where.where
 import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.get
 import com.wsr.knist.batch.reduction.max
 import com.wsr.knist.batch.reduction.min
 import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.batch.shape.broadcastToD3
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d3
-import com.wsr.knist.core.get
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -65,27 +64,17 @@ class MinMaxNormD3 internal constructor(
         // 分子側(dy/d[x - min(x)])
         val dNumerator = denominator * dOutput
 
-        return Batch(input.size) {
-            val input = input[it]
-            val min = min[it]
-            val max = max[it]
-            val dDenominator = dDenominator[it]
-            val dNumerator = dNumerator[it]
-            IOType.d3(input.shape) { x, y, z ->
-                /**
-                 * dy/input + dy/min(x) + dy/max(x)
-                 * dy/dx = dNumerator
-                 * dy/min(x) = if(x == min(x)) -dNumerator + dDenominator else 0f
-                 * dy/max(x) = if(x == max(x)) -dDenominator else 0f
-                 */
-                val inputValue = input[x, y, z].unwrap()
-                when (inputValue) {
-                    min.unwrap() -> dDenominator.unwrap()
-                    max.unwrap() -> dNumerator[x, y, z].unwrap() - dDenominator.unwrap()
-                    else -> dNumerator[x, y, z].unwrap()
-                }
-            }
-        }
+        val dMin = dDenominator.broadcastToD3(input.shape)
+        val dMax = dNumerator - dDenominator
+        return where(
+            condition = (input - min) eq 0f,
+            onTrue = dMin,
+            onFalse = where(
+                condition = (input - max) eq 0f,
+                onTrue = dMax,
+                onFalse = dNumerator,
+            ),
+        )
     }
 }
 
