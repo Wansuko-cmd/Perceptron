@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.dropout
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -17,7 +16,7 @@ import kotlin.test.Test
 class DropoutD2Test {
     val target get() = DropoutD2(outputX = 2, outputY = 2, ratio = 0.8f, seed = 0)
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d2(2, 2) { i, j -> i * 2f + j },
             IOType.d2(2, 2) { i, j -> i * 3f + j * 2f },
         )

@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.elementwise.math
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -15,7 +14,7 @@ import kotlin.test.Test
 class D1ExtTest {
     @Test
     fun `exp=D1バッチの指数関数`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(0f, 1f)),
             IOType.d1(listOf(2f, 0f)),
         )
@@ -26,7 +25,7 @@ class D1ExtTest {
 
     @Test
     fun `pow=D1バッチのべき乗`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(2f, 3f)),
             IOType.d1(listOf(4f, 5f)),
         )
@@ -37,7 +36,7 @@ class D1ExtTest {
 
     @Test
     fun `sqrt=D1バッチの平方根`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(4f, 9f)),
             IOType.d1(listOf(16f, 25f)),
         )
@@ -48,7 +47,7 @@ class D1ExtTest {
 
     @Test
     fun `ln=D1バッチの自然対数`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, exp(1f))),
             IOType.d1(listOf(exp(2f), 1f)),
         )

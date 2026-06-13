@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -17,7 +16,7 @@ import kotlin.test.Test
 class MaxPoolD2Test {
     val target get() = MaxPoolD2(poolSize = 2, channel = 2, inputSize = 4, padding = 0)
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d2(
                 IOType.d1(4) { it.toFloat() },
                 IOType.d1(4) { it * 2f },

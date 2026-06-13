@@ -1,8 +1,7 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.network.converter.word
-
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -42,7 +41,7 @@ class WordD2Test {
     @Test
     fun `decode=one-hotベクトルを単語に変換`() = networkTestRule {
         val target = WordD2(words = words, length = length, unknownIndex = unknownIndex)
-        val input = batchOf(
+        val input = Batch.of(
             IOType.d2(
                 IOType.d1(0f, 0f, 1f, 0f),
                 IOType.d1(0f, 0f, 0f, 1f),

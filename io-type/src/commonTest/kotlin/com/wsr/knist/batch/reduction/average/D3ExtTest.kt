@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.reduction.average
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -15,7 +14,7 @@ import kotlin.test.Test
 class D3ExtTest {
     @Test
     fun `average=D3バッチの各要素の平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -26,7 +25,7 @@ class D3ExtTest {
 
     @Test
     fun `average_axis0=D3バッチのaxis0平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -37,7 +36,7 @@ class D3ExtTest {
 
     @Test
     fun `batchAverage=D3バッチのバッチ平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )

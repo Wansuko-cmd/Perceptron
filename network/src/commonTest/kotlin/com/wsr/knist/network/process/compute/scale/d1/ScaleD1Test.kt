@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.scale.d1
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -23,7 +22,7 @@ class ScaleD1Test {
             weight = IOType.d1(3) { it.toFloat() },
         )
 
-    val input get() = batchOf(
+    val input get() = Batch.of(
         IOType.d1(3) { it * 2f },
         IOType.d1(3) { it * 3f },
     )

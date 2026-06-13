@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.norm.layer
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
@@ -17,7 +16,7 @@ import kotlin.test.Test
 class LayerNormD1Test {
     val target get() = LayerNormD1(outputSize = 3, e = 1e-6f)
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d1(3) { it.toFloat() },
             IOType.d1(3) { it * 2f },
         )

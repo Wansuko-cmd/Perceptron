@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.reshape.token
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -25,7 +24,7 @@ class TokenEmbeddingD1ToD2Test {
         weight = IOType.d2(5, 5) { i, j -> i * 2f + j },
     )
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d1(3) { it % 5f },
             IOType.d1(3) { -it % 4f + 4 },
         )

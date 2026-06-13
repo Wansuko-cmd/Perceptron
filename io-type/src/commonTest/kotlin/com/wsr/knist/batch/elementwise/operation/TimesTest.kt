@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.elementwise.operation
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
@@ -15,7 +14,7 @@ import kotlin.test.Test
 class TimesTest {
     @Test
     fun `D0バッチ×スカラー`() = ioTypeTestRule {
-        val batch = batchOf(IOType.d0(2f), IOType.d0(3f), IOType.d0(4f))
+        val batch = Batch.of(IOType.d0(2f), IOType.d0(3f), IOType.d0(4f))
         val result = batch * 10f
         assertContentEquals(IOType.d0(20f), result[0])
         assertContentEquals(IOType.d0(30f), result[1])
@@ -24,7 +23,7 @@ class TimesTest {
 
     @Test
     fun `スカラー×D0バッチ`() = ioTypeTestRule {
-        val batch = batchOf(IOType.d0(2f), IOType.d0(3f), IOType.d0(4f))
+        val batch = Batch.of(IOType.d0(2f), IOType.d0(3f), IOType.d0(4f))
         val result = 10f * batch
         assertContentEquals(IOType.d0(20f), result[0])
         assertContentEquals(IOType.d0(30f), result[1])
@@ -33,8 +32,8 @@ class TimesTest {
 
     @Test
     fun `D0バッチ×D0バッチ`() = ioTypeTestRule {
-        val batch1 = batchOf(IOType.d0(2f), IOType.d0(3f))
-        val batch2 = batchOf(IOType.d0(4f), IOType.d0(5f))
+        val batch1 = Batch.of(IOType.d0(2f), IOType.d0(3f))
+        val batch2 = Batch.of(IOType.d0(4f), IOType.d0(5f))
         val result = batch1 * batch2
         assertContentEquals(IOType.d0(8f), result[0])
         assertContentEquals(IOType.d0(15f), result[1])
@@ -42,7 +41,7 @@ class TimesTest {
 
     @Test
     fun `D1バッチ×スカラー`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -53,11 +52,11 @@ class TimesTest {
 
     @Test
     fun `D1バッチ×D1バッチ`() = ioTypeTestRule {
-        val batch1 = batchOf(
+        val batch1 = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
-        val batch2 = batchOf(
+        val batch2 = Batch.of(
             IOType.d1(listOf(2f, 2f, 2f)),
             IOType.d1(listOf(3f, 3f, 3f)),
         )
@@ -69,7 +68,7 @@ class TimesTest {
     @Test
     fun `D1×D1バッチ=ブロードキャスト`() = ioTypeTestRule {
         val d1 = IOType.d1(listOf(2f, 3f, 4f))
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 1f, 1f)),
             IOType.d1(listOf(2f, 2f, 2f)),
         )

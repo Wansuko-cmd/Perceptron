@@ -1,8 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch
-
 import com.wsr.knist.assertContentEquals
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.ioTypeTestRule
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class D1Test {
     @Test
     fun `i=D1バッチのi次元`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -21,7 +21,7 @@ class D1Test {
 
     @Test
     fun `get=D1バッチ要素取得`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -31,7 +31,7 @@ class D1Test {
 
     @Test
     fun `set=D1バッチ要素設定`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )

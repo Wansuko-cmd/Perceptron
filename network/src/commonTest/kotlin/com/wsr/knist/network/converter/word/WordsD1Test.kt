@@ -1,8 +1,7 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.network.converter.word
-
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -50,7 +49,7 @@ class WordsD1Test {
             paddingIndex = paddingIndex,
             unknownIndex = unknownIndex,
         )
-        val input = batchOf(
+        val input = Batch.of(
             IOType.d1(2f, 3f, 1f, 0f, 0f),
             IOType.d1(1f, 3f, 0f, 0f, 0f),
         )

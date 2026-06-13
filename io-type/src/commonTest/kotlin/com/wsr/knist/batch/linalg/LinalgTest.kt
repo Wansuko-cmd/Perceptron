@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.linalg
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -15,11 +14,11 @@ import kotlin.test.Test
 class LinalgTest {
     @Test
     fun `D1バッチ内積=バッチごとに内積を計算`() = ioTypeTestRule {
-        val batch1 = batchOf(
+        val batch1 = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
-        val batch2 = batchOf(
+        val batch2 = Batch.of(
             IOType.d1(listOf(1f, 0f, 0f)),
             IOType.d1(listOf(0f, 1f, 0f)),
         )
@@ -31,7 +30,7 @@ class LinalgTest {
     @Test
     fun `D2 matMul D1バッチ=行列とバッチベクトルの積`() = ioTypeTestRule {
         val d2 = IOType.d2(2, 3) { i, j -> i * 3f + j }
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 0f, 0f)),
             IOType.d1(listOf(0f, 1f, 0f)),
         )
@@ -42,7 +41,7 @@ class LinalgTest {
 
     @Test
     fun `D2バッチ matMul D2=バッチ行列積`() = ioTypeTestRule {
-        val batchD2 = batchOf(
+        val batchD2 = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
@@ -60,11 +59,11 @@ class LinalgTest {
 
     @Test
     fun `D2バッチ matMul D2バッチ=バッチごとの行列積`() = ioTypeTestRule {
-        val batchA = batchOf(
+        val batchA = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
             IOType.d2(2, 3) { i, j -> i * 3f + j + 6f },
         )
-        val batchB = batchOf(
+        val batchB = Batch.of(
             IOType.d2(3, 2) { i, j -> i * 2f + j },
             IOType.d2(3, 2) { i, j -> i * 2f + j },
         )

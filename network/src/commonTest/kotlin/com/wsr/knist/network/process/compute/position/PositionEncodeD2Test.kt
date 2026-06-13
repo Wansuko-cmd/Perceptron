@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.position
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -17,7 +16,7 @@ import kotlin.test.Test
 class PositionEncodeD2Test {
     val target get() = PositionEncodeD2(outputX = 2, outputY = 3, waveLength = 100f)
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d2(
                 IOType.d1(3) { it.toFloat() },
                 IOType.d1(3) { it * 2f },

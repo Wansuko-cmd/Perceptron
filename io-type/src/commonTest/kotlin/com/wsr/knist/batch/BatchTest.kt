@@ -1,8 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch
-
 import com.wsr.knist.assertContentEquals
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.d0
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -14,14 +14,14 @@ import kotlin.test.assertEquals
 class BatchTest {
     @Test
     fun `batchOf=D0バッチのサイズと形状`() = ioTypeTestRule {
-        val batch = batchOf(IOType.d0(1f), IOType.d0(2f), IOType.d0(3f))
+        val batch = Batch.of(IOType.d0(1f), IOType.d0(2f), IOType.d0(3f))
         assertEquals(3, batch.size)
         assertEquals(listOf(1), batch.shape)
     }
 
     @Test
     fun `batchOf=D1バッチのサイズと形状`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
@@ -40,7 +40,7 @@ class BatchTest {
 
     @Test
     fun `step=バッチのstepが形状から計算される`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d1(listOf(1f, 2f, 3f)),
             IOType.d1(listOf(4f, 5f, 6f)),
         )
