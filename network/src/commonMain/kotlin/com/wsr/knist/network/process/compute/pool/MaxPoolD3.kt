@@ -1,12 +1,13 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
-import com.wsr.knist.batch.shape.toBatch
+import com.wsr.knist.batch.elementwise.compare.eq
+import com.wsr.knist.batch.elementwise.compare.where.where
+import com.wsr.knist.batch.reduction.max
+import com.wsr.knist.batch.shape.broadcastToD4
+import com.wsr.knist.batch.shape.fold.fold
+import com.wsr.knist.batch.shape.fold.unfold
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d3
-import com.wsr.knist.core.get
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
@@ -32,36 +33,27 @@ class MaxPoolD3 internal constructor(val poolSize: Int, val channel: Int, val in
         }
     }
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
-        Batch(input.size) { forward(input[it]) }
+    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.unfold(
+        windowSize = poolSize,
+        stride = poolSize,
+        padding = 0,
+    )
+        .max(axis = 3)
 
     override fun train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val output = Batch(input.size) { forward(input[it]) }
+        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = 0)
+        val output = unfold.max(axis = 3)
         val delta = calcDelta(output)
-        return List(input.size) { index ->
-            val input = input[index]
-            val output = output[index]
-            val delta = delta[index]
-            IOType.d3(i = channel, j = inputX, k = inputY) { c, x, y ->
-                val xo = x / poolSize
-                val yo = y / poolSize
-                if (input[c, x, y].unwrap() == output[c, xo, yo].unwrap()) delta[c, xo, yo].unwrap() else 0f
-            }
-        }.toBatch()
-    }
-
-    private fun forward(input: IOType.D3): IOType.D3 = IOType.d3(outputX, outputY, outputZ) { x, y, z ->
-        var max = input[x, y, z].unwrap()
-        for (i in 0 until poolSize) {
-            for (j in 0 until poolSize) {
-                max = maxOf(max, input[x, y + i, z + j].unwrap())
-            }
-        }
-        max
+        val windowSize = poolSize * poolSize
+        return where(
+            condition = unfold eq output.broadcastToD4(axis = 3, size = windowSize),
+            onTrue = delta.broadcastToD4(axis = 3, size = windowSize),
+            onFalse = 0f,
+        ).fold(stride = poolSize, padding = 0)
     }
 }
 

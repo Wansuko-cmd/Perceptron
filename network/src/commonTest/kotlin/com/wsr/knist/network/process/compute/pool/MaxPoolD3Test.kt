@@ -45,11 +45,11 @@ class MaxPoolD3Test {
     fun `expect=指定区間内での最大値を取得`() = networkTestRule {
         val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
 
-        assertContentEquals(expected = IOType.d1(2f, 4f), actual = actual[0][0][0])
-        assertContentEquals(expected = IOType.d1(0.3f, 1f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][0])
+        assertContentEquals(expected = IOType.d1(0.3f, 2f), actual = actual[0][1][0])
 
-        assertContentEquals(expected = IOType.d1(6f, 8f), actual = actual[1][0][0])
-        assertContentEquals(expected = IOType.d1(1f, 1f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(6f, 18f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(1f, 0.5f), actual = actual[1][1][0])
     }
 
     @Test
@@ -57,9 +57,9 @@ class MaxPoolD3Test {
         val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 0f), actual = actual[0][0][0])
-        assertContentEquals(expected = IOType.d1(0f, 0f, 1f, 0f), actual = actual[0][1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 2f), actual = actual[0][1][0])
 
-        assertContentEquals(expected = IOType.d1(0f, 0f, 8f, 0f), actual = actual[1][0][0])
-        assertContentEquals(expected = IOType.d1(0f, 1f, 0f, 0f), actual = actual[1][1][0])
+        assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 18f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 1f, 0.5f, 0f), actual = actual[1][1][0])
     }
 }
