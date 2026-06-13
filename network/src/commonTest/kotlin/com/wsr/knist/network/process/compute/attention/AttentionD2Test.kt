@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.attention
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -40,7 +39,7 @@ class AttentionD2Test {
         )
 
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d2(
                 IOType.d1(4) { it * 0.2f },
                 IOType.d1(4) { it * 0.3f },

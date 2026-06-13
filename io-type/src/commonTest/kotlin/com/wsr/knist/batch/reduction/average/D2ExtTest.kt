@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.reduction.average
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -15,7 +14,7 @@ import kotlin.test.Test
 class D2ExtTest {
     @Test
     fun `average=D2バッチの各要素の平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 2) { i, j -> i * 2f + j },
             IOType.d2(2, 2) { i, j -> i * 2f + j + 4f },
         )
@@ -26,7 +25,7 @@ class D2ExtTest {
 
     @Test
     fun `average_axis0=D2バッチのaxis0平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 2) { i, j -> i * 2f + j },
             IOType.d2(2, 2) { i, j -> i * 2f + j + 4f },
         )
@@ -37,7 +36,7 @@ class D2ExtTest {
 
     @Test
     fun `average_axis1=D2バッチのaxis1平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 2) { i, j -> i * 2f + j },
             IOType.d2(2, 2) { i, j -> i * 2f + j + 4f },
         )
@@ -48,7 +47,7 @@ class D2ExtTest {
 
     @Test
     fun `batchAverage=D2バッチのバッチ平均`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 2) { i, j -> i * 2f + j },
             IOType.d2(2, 2) { i, j -> i * 2f + j + 4f },
         )

@@ -1,10 +1,10 @@
 package com.wsr.knist.network.process.reshape.token
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
 import com.wsr.knist.batch.index.gather
 import com.wsr.knist.batch.index.scatterAdd
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
 import com.wsr.knist.core.elementwise.operation.div.div
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -37,7 +37,7 @@ class TokenEmbeddingD1ToD2 internal constructor(
 
         // Embedding層は離散的なので、入力への勾配は意味を持たない
         // しかし型の整合性のため、ダミーのD1を返す
-        return Batch(input.size) { IOType.d1(input.shape) }
+        return Batch.d1(input.size, input.shape)
     }
 }
 

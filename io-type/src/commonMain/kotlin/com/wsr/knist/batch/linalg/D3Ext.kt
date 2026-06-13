@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
@@ -23,7 +24,7 @@ fun IOType.D3.matMul(other: Batch<IOType.D3>, transA: Boolean = false, transB: B
         k = k,
         b = i,
     )
-    return Batch(value = result, size = size, shape = listOf(i, m, n))
+    return Batch.d3(other.size, i, m, n, result)
 }
 
 @JvmName("batchD3sMatMulD3")
@@ -42,7 +43,7 @@ fun Batch<IOType.D3>.matMul(other: IOType.D3, transA: Boolean = false, transB: B
         k = k,
         b = i,
     )
-    return Batch(value = result, size = size, shape = listOf(i, m, n))
+    return Batch.d3(size, i, m, n, result)
 }
 
 @JvmName("batchD3sMatMulD3s")
@@ -65,5 +66,5 @@ fun Batch<IOType.D3>.matMul(
         k = k,
         b = size * i,
     )
-    return Batch(value = result, size = size, shape = listOf(i, m, n))
+    return Batch.d3(size, i, m, n, result)
 }

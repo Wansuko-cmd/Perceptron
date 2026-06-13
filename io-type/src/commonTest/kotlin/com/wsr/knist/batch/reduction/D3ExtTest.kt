@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch.reduction
-
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
@@ -15,7 +14,7 @@ import kotlin.test.Test
 class D3ExtTest {
     @Test
     fun `sum=D3バッチの全合計`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -26,7 +25,7 @@ class D3ExtTest {
 
     @Test
     fun `sum_axis0=D3バッチのaxis0合計`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -37,7 +36,7 @@ class D3ExtTest {
 
     @Test
     fun `max=D3バッチの最大値`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -48,7 +47,7 @@ class D3ExtTest {
 
     @Test
     fun `min=D3バッチの最小値`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f },
         )
@@ -85,7 +84,7 @@ class D3ExtTest {
 
     @Test
     fun `maxIndex_axis0=D3バッチのaxis0最大値インデックス`() = ioTypeTestRule {
-        val batch = batchOf(d3v0, d3v1)
+        val batch = Batch.of(d3v0, d3v1)
         val result = batch.maxIndex(axis = 0)
         assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 1f, 0f)), result[0])
         assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 0f, 1f)), result[1])
@@ -93,7 +92,7 @@ class D3ExtTest {
 
     @Test
     fun `maxIndex_axis1=D3バッチのaxis1最大値インデックス`() = ioTypeTestRule {
-        val batch = batchOf(d3v0, d3v1)
+        val batch = Batch.of(d3v0, d3v1)
         val result = batch.maxIndex(axis = 1)
         assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(1f, 2f, 0f, 1f)), result[0])
         assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(2f, 0f, 0f, 2f)), result[1])
@@ -101,7 +100,7 @@ class D3ExtTest {
 
     @Test
     fun `maxIndex_axis2=D3バッチのaxis2最大値インデックス`() = ioTypeTestRule {
-        val batch = batchOf(d3v0, d3v1)
+        val batch = Batch.of(d3v0, d3v1)
         val result = batch.maxIndex(axis = 2)
         assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 1f, 0f, 1f, 0f)), result[0])
         assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 0f, 0f, 1f, 1f)), result[1])

@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d3
+import com.wsr.knist.batch.d4
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
@@ -24,11 +26,7 @@ fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
         stride = stride,
         padding = padding,
     )
-    return Batch(
-        value = result,
-        size = size,
-        shape = listOf(i, oj, ok, windowSize * windowSize),
-    )
+    return Batch.d4(size, i, oj, ok, windowSize * windowSize, result)
 }
 
 @ScopeOp
@@ -44,13 +42,11 @@ fun Batch<IOType.D4>.fold(stride: Int, padding: Int): Batch<IOType.D3> {
         stride = stride,
         padding = padding,
     )
-    return Batch(
-        value = result,
-        size = size,
-        shape = listOf(
-            i,
-            window + (j - 1) * stride - padding * 2,
-            window + (k - 1) * stride - padding * 2,
-        ),
+    return Batch.d3(
+        size,
+        i,
+        window + (j - 1) * stride - padding * 2,
+        window + (k - 1) * stride - padding * 2,
+        result,
     )
 }

@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
@@ -20,21 +21,21 @@ operator fun IOType.D3.times(other: Batch<IOType.D3>): Batch<IOType.D3> {
         yj = other.step,
         axis = 1,
     )
-    return Batch(size = other.size, shape = other.shape, value = result)
+    return Batch.d3(other.size, other.shape, result)
 }
 
 @JvmName("batchD3sTimesFloat")
 @ScopeOp
 operator fun Batch<IOType.D3>.times(other: Float): Batch<IOType.D3> {
     val result = Backend.times(x = value, y = other)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD0s")
 @ScopeOp
 operator fun Batch<IOType.D3>.times(other: Batch<IOType.D0>): Batch<IOType.D3> {
     val result = Backend.times(x = value, xi = size, xj = step, y = other.value, axis = 0)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD1WithAxis")
@@ -49,7 +50,7 @@ fun Batch<IOType.D3>.times(other: IOType.D1, axis: Int): Batch<IOType.D3> {
         y = other.value,
         axis = axis + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD2")
@@ -71,7 +72,7 @@ fun Batch<IOType.D3>.times(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOTy
         axis1 = axis1 + 1,
         axis2 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD2s")
@@ -95,7 +96,7 @@ fun Batch<IOType.D3>.times(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Bat
         axis2 = axis1 + 1,
         axis3 = axis2 + 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD3")
@@ -108,12 +109,12 @@ operator fun Batch<IOType.D3>.times(other: IOType.D3): Batch<IOType.D3> {
         y = other.value,
         axis = 1,
     )
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sTimesD3s")
 @ScopeOp
 operator fun Batch<IOType.D3>.times(other: Batch<IOType.D3>): Batch<IOType.D3> {
     val result = Backend.times(x = value, y = other.value)
-    return Batch(size = size, shape = shape, value = result)
+    return Batch.d3(size, shape, result)
 }

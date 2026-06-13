@@ -1,8 +1,7 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.network.converter.linear
-
-import com.wsr.knist.batch.batchOf
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import com.wsr.knist.network.assertContentEquals
@@ -18,14 +17,14 @@ class LinearD3Test {
 
         val actual = target.encode(input)
 
-        val expected = batchOf(IOType.d3(2, 2, 2) { i, j, k -> i.toFloat() + j.toFloat() + k.toFloat() })
+        val expected = Batch.of(IOType.d3(2, 2, 2) { i, j, k -> i.toFloat() + j.toFloat() + k.toFloat() })
         assertContentEquals(expected = expected, actual = actual)
     }
 
     @Test
     fun `decode=Listに変換`() = networkTestRule {
         val target = LinearD3(outputX = 3, outputY = 3, outputZ = 3)
-        val input = batchOf(IOType.d3(2, 2, 2) { i, j, k -> i.toFloat() + j.toFloat() + k.toFloat() })
+        val input = Batch.of(IOType.d3(2, 2, 2) { i, j, k -> i.toFloat() + j.toFloat() + k.toFloat() })
 
         val actual = target.decode(input)
 

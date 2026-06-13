@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d0
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
@@ -14,28 +16,31 @@ import kotlin.jvm.JvmName
 @ScopeOp
 fun Batch<IOType.D3>.average(): Batch<IOType.D0> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
-    return Batch(size = size, shape = listOf(1), value = result)
+    return Batch.d0(size, result)
 }
 
 @JvmName("batchD3sAverageWithAxis")
 @ScopeOp
 fun Batch<IOType.D3>.average(axis: Int): Batch<IOType.D2> = when (axis) {
-    0 -> Batch(
-        size = size,
-        shape = listOf(j, k),
-        value = Backend.average(x = value, xi = size, xj = i, xk = j * k, axis = 1),
+    0 -> Batch.d2(
+        size,
+        j,
+        k,
+        Backend.average(x = value, xi = size, xj = i, xk = j * k, axis = 1),
     )
 
-    1 -> Batch(
-        size = size,
-        shape = listOf(i, k),
-        value = Backend.average(x = value, xi = size * i, xj = j, xk = k, axis = 1),
+    1 -> Batch.d2(
+        size,
+        i,
+        k,
+        Backend.average(x = value, xi = size * i, xj = j, xk = k, axis = 1),
     )
 
-    2 -> Batch(
-        size = size,
-        shape = listOf(i, j),
-        value = Backend.average(x = value, xi = size, xj = i * j, xk = k, axis = 2),
+    2 -> Batch.d2(
+        size,
+        i,
+        j,
+        Backend.average(x = value, xi = size, xj = i * j, xk = k, axis = 2),
     )
 
     else -> throw IllegalArgumentException("axis is $axis, not 0, 1 or 2.")

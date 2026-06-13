@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.conv
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
@@ -32,7 +31,7 @@ class ConvD2Test {
             weight = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l },
         )
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d3(2, 3, 3) { i, j, k -> i * 4f + j * 2f + k },
             IOType.d3(2, 3, 3) { i, j, k -> i * 6f + j * 3f + k },
         )

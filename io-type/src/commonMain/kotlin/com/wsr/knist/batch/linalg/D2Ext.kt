@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
+import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
@@ -22,7 +24,7 @@ fun IOType.D2.matMul(other: Batch<IOType.D1>, trans: Boolean = false): Batch<IOT
         b = 1,
     )
 
-    return Batch(result, other.size, listOf(n))
+    return Batch.d1(other.size, n, result)
 }
 
 @JvmName("batchD2sMatMulD2")
@@ -41,7 +43,7 @@ fun Batch<IOType.D2>.matMul(other: IOType.D2, transA: Boolean = false, transB: B
         k = k,
         b = 1,
     )
-    return Batch(value = result, size = size, shape = listOf(m, n))
+    return Batch.d2(size, m, n, result)
 }
 
 @JvmName("batchD2sMatMulD2s")
@@ -64,5 +66,5 @@ fun Batch<IOType.D2>.matMul(
         k = k,
         b = size,
     )
-    return Batch(value = result, size = size, shape = listOf(m, n))
+    return Batch.d2(size, m, n, result)
 }

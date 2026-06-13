@@ -1,8 +1,8 @@
-@file:Suppress("NonAsciiCharacters")
+﻿@file:Suppress("NonAsciiCharacters")
 
 package com.wsr.knist.batch
-
 import com.wsr.knist.assertContentEquals
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.ioTypeTestRule
@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class D2Test {
     @Test
     fun `i_j=D2バッチの次元`() = ioTypeTestRule {
-        val batch = batchOf(
+        val batch = Batch.of(
             IOType.d2(2, 3) { _, _ -> 0f },
             IOType.d2(2, 3) { _, _ -> 1f },
         )
@@ -24,7 +24,7 @@ class D2Test {
     fun `get=D2バッチ要素取得`() = ioTypeTestRule {
         val d2a = IOType.d2(2, 3) { i, j -> i * 3f + j }
         val d2b = IOType.d2(2, 3) { i, j -> i * 3f + j + 6f }
-        val batch = batchOf(d2a, d2b)
+        val batch = Batch.of(d2a, d2b)
         assertContentEquals(d2a, batch[0])
         assertContentEquals(d2b, batch[1])
     }
@@ -33,7 +33,7 @@ class D2Test {
     fun `set=D2バッチ要素設定`() = ioTypeTestRule {
         val d2a = IOType.d2(2, 3) { i, j -> i * 3f + j }
         val d2b = IOType.d2(2, 3) { i, j -> i * 3f + j + 6f }
-        val batch = batchOf(d2a, d2b)
+        val batch = Batch.of(d2a, d2b)
         val d2c = IOType.d2(2, 3) { _, _ -> 99f }
         batch[0] = d2c
         assertContentEquals(d2c, batch[0])

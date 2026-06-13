@@ -2,6 +2,7 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d1
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
@@ -9,11 +10,7 @@ import com.wsr.knist.core.IOType
 fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> = when (axis) {
     0 -> {
         val result = Backend.gather(x = value, y = other.value, i = other.size, j = other.i, k = other.j)
-        Batch(
-            size = other.size,
-            shape = listOf(other.j),
-            value = result,
-        )
+        Batch.d1(other.size, other.j, result)
     }
 
     else -> {
@@ -24,10 +21,6 @@ fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> =
             j = other.j,
             k = 1,
         )
-        Batch(
-            size = other.size,
-            shape = listOf(other.i),
-            value = result,
-        )
+        Batch.d1(other.size, other.i, result)
     }
 }

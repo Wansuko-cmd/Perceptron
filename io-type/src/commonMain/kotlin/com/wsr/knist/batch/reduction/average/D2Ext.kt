@@ -2,6 +2,8 @@
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d0
+import com.wsr.knist.batch.d1
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.D2
@@ -13,20 +15,20 @@ import kotlin.jvm.JvmName
 @ScopeOp
 fun Batch<IOType.D2>.average(): Batch<IOType.D0> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
-    return Batch(size = size, shape = listOf(1), value = result)
+    return Batch.d0(size, result)
 }
 
 @JvmName("batchD2sAverageWithAxis")
 @ScopeOp
 fun Batch<IOType.D2>.average(axis: Int): Batch<IOType.D1> {
     val result = Backend.average(x = value, xi = size, xj = i, xk = j, axis = axis + 1)
-    return Batch(
-        size = size,
-        shape = when (axis) {
+    return Batch.d1(
+        size,
+        when (axis) {
             0 -> listOf(j)
             else -> listOf(i)
         },
-        value = result,
+        result,
     )
 }
 

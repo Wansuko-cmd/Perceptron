@@ -6,6 +6,24 @@ import com.wsr.knist.base.data.indices
 import com.wsr.knist.core.IOType
 
 class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {
+    companion object {
+        fun <T : IOType> of(vararg elements: T): Batch<T> {
+            val batchSize = elements.size
+            val shape = elements.first().shape
+            val step = shape.reduce { acc, i -> acc * i }
+            val batchValue = DataBuffer.create(batchSize * step)
+            elements.forEachIndexed { index, item ->
+                val start = index * step
+                Backend.copyInto(item.value, batchValue, start until start + item.value.size)
+            }
+            return Batch(
+                value = batchValue,
+                size = batchSize,
+                shape = shape,
+            )
+        }
+    }
+
     val step = shape.reduce { acc, i -> acc * i }
     val indices = 0 until size
 
@@ -43,21 +61,5 @@ inline fun <T : IOType> Batch(size: Int, init: (index: Int) -> T): Batch<T> {
         value = value,
         size = size,
         shape = first.shape,
-    )
-}
-
-fun <T : IOType> batchOf(vararg elements: T): Batch<T> {
-    val batchSize = elements.size
-    val shape = elements.first().shape
-    val step = shape.reduce { acc, i -> acc * i }
-    val batchValue = DataBuffer.create(batchSize * step)
-    elements.forEachIndexed { index, item ->
-        val start = index * step
-        Backend.copyInto(item.value, batchValue, start until start + item.value.size)
-    }
-    return Batch(
-        value = batchValue,
-        size = batchSize,
-        shape = shape,
     )
 }

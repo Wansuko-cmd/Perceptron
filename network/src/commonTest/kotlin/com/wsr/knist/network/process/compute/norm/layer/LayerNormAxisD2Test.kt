@@ -1,9 +1,8 @@
-@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+﻿@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
 
 package com.wsr.knist.network.process.compute.norm.layer
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.batchOf
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
@@ -20,7 +19,7 @@ class LayerNormAxisD2Test {
     val target0 get() = LayerNormAxisD2(outputX = 2, outputY = 3, axis = 0, e = 1e-6f)
     val target1 get() = LayerNormAxisD2(outputX = 2, outputY = 3, axis = 1, e = 1e-6f)
     val input
-        get() = batchOf(
+        get() = Batch.of(
             IOType.d2(
                 IOType.d1(3) { it.toFloat() },
                 IOType.d1(3) { it * 2f },
