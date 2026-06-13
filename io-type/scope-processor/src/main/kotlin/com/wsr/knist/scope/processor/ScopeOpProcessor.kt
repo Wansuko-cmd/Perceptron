@@ -54,6 +54,7 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("package com.wsr.knist.core")
         sb.appendLine()
         sb.appendLine("import com.wsr.knist.base.BufferScope")
+        sb.appendLine("import com.wsr.knist.batch.toLocal")
         // 名前衝突回避の為(FQNは使えない)
         indexed.forEach { (i, data) ->
             sb.appendLine("import ${data.fqn} as _impl$i")
@@ -121,8 +122,16 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
             p.name!!.asString()
         }
 
-        val isGlobalReturn = returnDeclFqn.startsWith("com.wsr.knist.core.IOType") &&
-            returnDeclFqn.endsWith(".Global")
+        val batchTypeArgFqn = if (returnDeclFqn == "com.wsr.knist.batch.Batch") {
+            returnType.arguments.firstOrNull()
+                ?.type?.resolve()?.declaration?.qualifiedName?.asString()
+        } else {
+            null
+        }
+
+        val isGlobalReturn =
+            (returnDeclFqn.startsWith("com.wsr.knist.core.IOType") && returnDeclFqn.endsWith(".Global")) ||
+                (batchTypeArgFqn?.endsWith(".Global") == true)
         val outputReturnTypeName = if (isGlobalReturn) {
             returnTypeName.replace(".Global", ".Local")
         } else {

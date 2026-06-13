@@ -1,4 +1,4 @@
-﻿package com.wsr.knist.batch
+package com.wsr.knist.batch
 
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
@@ -7,19 +7,27 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import kotlin.jvm.JvmName
 
-inline fun Batch.Companion.d1(batchSize: Int, size: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1> =
-    Batch(batchSize) { IOType.d1(size, init) }
+@PublishedApi
+internal inline fun Batch.Companion.d1Impl(
+    batchSize: Int,
+    size: Int,
+    init: (Int) -> Float = { 0f },
+): Batch<IOType.D1.Global> = Batch(batchSize) { IOType.d1(size, init) }
 
-inline fun Batch.Companion.d1(batchSize: Int, shape: List<Int>, init: (Int) -> Float = { 0f }): Batch<IOType.D1> =
-    d1(batchSize, shape[0], init)
+@PublishedApi
+internal inline fun Batch.Companion.d1Impl(
+    batchSize: Int,
+    shape: List<Int>,
+    init: (Int) -> Float = { 0f },
+): Batch<IOType.D1.Global> = d1Impl(batchSize, shape[0], init)
 
-fun Batch.Companion.d1(batchSize: Int, size: Int, value: FloatArray): Batch<IOType.D1> =
+internal fun Batch.Companion.d1Impl(batchSize: Int, size: Int, value: FloatArray): Batch<IOType.D1.Global> =
     Batch(value = DataBuffer.create(value), size = batchSize, shape = listOf(size))
 
-internal fun Batch.Companion.d1(batchSize: Int, size: Int, value: DataBuffer): Batch<IOType.D1> =
+internal fun Batch.Companion.d1Impl(batchSize: Int, size: Int, value: DataBuffer): Batch<IOType.D1.Global> =
     Batch(value = value, size = batchSize, shape = listOf(size))
 
-internal fun Batch.Companion.d1(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D1> =
+internal fun Batch.Companion.d1Impl(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D1.Global> =
     Batch(value = value, size = batchSize, shape = shape)
 
 val Batch<IOType.D1>.i get() = shape[0]

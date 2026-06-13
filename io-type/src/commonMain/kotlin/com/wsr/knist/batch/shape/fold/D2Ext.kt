@@ -11,7 +11,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 
 @ScopeOp
-fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D3> {
+fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D3.Global> {
     val result = Backend.unfold(
         x = value,
         xi = i,
@@ -31,7 +31,7 @@ fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
 }
 
 @ScopeOp
-fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2> {
+fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2.Global> {
     val result = Backend.fold(
         x = value,
         xi = i,

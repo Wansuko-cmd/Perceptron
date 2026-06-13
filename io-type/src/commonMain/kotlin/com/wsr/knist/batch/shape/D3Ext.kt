@@ -19,7 +19,7 @@ import kotlin.jvm.JvmName
 
 fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, i, j, k), value = value)
 
-fun Batch<IOType.D3>.broadcastToD4(axis: Int, size: Int): Batch<IOType.D4> = when (axis) {
+fun Batch<IOType.D3>.broadcastToD4(axis: Int, size: Int): Batch<IOType.D4.Global> = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i * j * k)
         Batch.d4(this.size, size, i, j, k, result)
@@ -43,7 +43,7 @@ fun Batch<IOType.D3>.broadcastToD4(axis: Int, size: Int): Batch<IOType.D4> = whe
     else -> throw IllegalArgumentException("Batch<IOType.D3>.broadcastToD4 axis is $axis not 0, 1, 2 or 3.")
 }
 
-fun IOType.D4.toBatch(): Batch<IOType.D3> = Batch.d3(i, j, k, l, value)
+fun IOType.D4.toBatch(): Batch<IOType.D3.Global> = Batch.d3(i, j, k, l, value)
 
 @JvmName("batchD3sToList")
 fun Batch<IOType.D3>.toList(): List<IOType.D3> = List(size) { get(it) }
@@ -60,7 +60,7 @@ fun Batch<IOType.D3>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
 @JvmName("batchD3sReshapeToD2ByShape")
 fun Batch<IOType.D3>.reshapeToD2(shape: List<Int>) = Batch.d2(size, shape, value)
 
-fun Batch<IOType.D3>.slice(indices: IntProgression, axis: Int): Batch<IOType.D3> = when (axis) {
+fun Batch<IOType.D3>.slice(indices: IntProgression, axis: Int): Batch<IOType.D3.Global> = when (axis) {
     0 -> {
         val result = Backend.slice(x = value, xi = size, xj = i, xk = j * k, axis = 1, indices = indices)
         Batch.d3(size, indices.size, j, k, result)
@@ -80,7 +80,7 @@ fun Batch<IOType.D3>.slice(indices: IntProgression, axis: Int): Batch<IOType.D3>
 }
 
 @ScopeOp
-fun Batch<IOType.D3>.transpose(axisI: Int, axisJ: Int, axisK: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.transpose(axisI: Int, axisJ: Int, axisK: Int): Batch<IOType.D3.Global> {
     val result = Backend.transpose(
         x = value,
         xi = size,

@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.reduction
+﻿package com.wsr.knist.batch.reduction
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
@@ -12,35 +12,35 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD2sSum")
 @ScopeOp
-fun Batch<IOType.D2>.sum(): Batch<IOType.D0> {
+fun Batch<IOType.D2>.sum(): Batch<IOType.D0.Global> {
     val result = Backend.sum(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD2sSumWithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.sum(axis: Int): Batch<IOType.D1> {
+fun Batch<IOType.D2>.sum(axis: Int): Batch<IOType.D1.Global> {
     val result = Backend.sum(x = value, xi = size, xj = i, xk = j, axis = axis + 1)
     return Batch.d1(size, if (axis == 0) j else i, result)
 }
 
 @JvmName("batchD2sMax")
 @ScopeOp
-fun Batch<IOType.D2>.max(): Batch<IOType.D0> {
+fun Batch<IOType.D2>.max(): Batch<IOType.D0.Global> {
     val result = Backend.max(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD2sMin")
 @ScopeOp
-fun Batch<IOType.D2>.min(): Batch<IOType.D0> {
+fun Batch<IOType.D2>.min(): Batch<IOType.D0.Global> {
     val result = Backend.min(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD2sMaxIndexWithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.maxIndex(axis: Int): Batch<IOType.D1> {
+fun Batch<IOType.D2>.maxIndex(axis: Int): Batch<IOType.D1.Global> {
     val result = Backend.maxIndex(x = value, xi = size, xj = i, xk = j, axis = axis + 1)
     return Batch.d1(size, if (axis == 0) j else i, result)
 }

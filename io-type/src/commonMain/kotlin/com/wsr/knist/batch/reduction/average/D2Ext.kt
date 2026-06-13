@@ -13,14 +13,14 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD2sAverage")
 @ScopeOp
-fun Batch<IOType.D2>.average(): Batch<IOType.D0> {
+fun Batch<IOType.D2>.average(): Batch<IOType.D0.Global> {
     val result = Backend.average(x = value, xi = size, xj = step, axis = 1)
     return Batch.d0(size, result)
 }
 
 @JvmName("batchD2sAverageWithAxis")
 @ScopeOp
-fun Batch<IOType.D2>.average(axis: Int): Batch<IOType.D1> {
+fun Batch<IOType.D2>.average(axis: Int): Batch<IOType.D1.Global> {
     val result = Backend.average(x = value, xi = size, xj = i, xk = j, axis = axis + 1)
     return Batch.d1(
         size,

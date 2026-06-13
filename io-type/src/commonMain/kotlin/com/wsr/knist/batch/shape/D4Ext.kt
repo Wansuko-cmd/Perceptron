@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.shape
+﻿package com.wsr.knist.batch.shape
 
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
@@ -16,7 +16,7 @@ import kotlin.jvm.JvmName
 fun Batch<IOType.D4>.reshapeToD3(i: Int, j: Int, k: Int) = Batch.d3(size, i, j, k, value)
 
 @ScopeOp
-fun Batch<IOType.D4>.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): Batch<IOType.D4> {
+fun Batch<IOType.D4>.transpose(axisI: Int, axisJ: Int, axisK: Int, axisL: Int): Batch<IOType.D4.Global> {
     val result = Backend.transpose(
         x = value,
         xi = size,

@@ -12,21 +12,21 @@ import kotlin.jvm.JvmName
 
 @JvmName("batchD3sPlusFloat")
 @ScopeOp
-operator fun Batch<IOType.D3>.plus(other: Float): Batch<IOType.D3> {
+operator fun Batch<IOType.D3>.plus(other: Float): Batch<IOType.D3.Global> {
     val result = Backend.plus(x = value, y = other)
     return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD0s")
 @ScopeOp
-operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D0>): Batch<IOType.D3> {
+operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D0>): Batch<IOType.D3.Global> {
     val result = Backend.plus(x = value, xi = size, xj = step, y = other.value, axis = 0)
     return Batch.d3(size, shape, result)
 }
 
 @JvmName("batchD3sPlusD1WithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3.Global> {
     val result = Backend.plus(
         x = value,
         xi = size,
@@ -41,7 +41,7 @@ fun Batch<IOType.D3>.plus(other: IOType.D1, axis: Int): Batch<IOType.D3> {
 
 @JvmName("batchD3sPlusD1sWithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3.Global> {
     val result = Backend.plus(
         x = value,
         xi = size,
@@ -59,11 +59,12 @@ fun Batch<IOType.D3>.plus(other: Batch<IOType.D1>, axis: Int): Batch<IOType.D3> 
 
 @JvmName("batchD3sPlusD2")
 @ScopeOp
-operator fun Batch<IOType.D3>.plus(other: IOType.D2): Batch<IOType.D3> = plus(other = other, axis1 = 1, axis2 = 2)
+operator fun Batch<IOType.D3>.plus(other: IOType.D2): Batch<IOType.D3.Global> =
+    plus(other = other, axis1 = 1, axis2 = 2)
 
 @JvmName("batchD3sPlusD2WithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.plus(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.plus(other: IOType.D2, axis1: Int, axis2: Int): Batch<IOType.D3.Global> {
     val result = Backend.plus(
         x = value,
         xi = size,
@@ -85,7 +86,7 @@ operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D2>) = plus(other, axis1 
 
 @JvmName("batchD3sPlusD2sWithAxis")
 @ScopeOp
-fun Batch<IOType.D3>.plus(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Batch<IOType.D3> {
+fun Batch<IOType.D3>.plus(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Batch<IOType.D3.Global> {
     val result = Backend.plus(
         x = value,
         xi = size,
@@ -105,7 +106,7 @@ fun Batch<IOType.D3>.plus(other: Batch<IOType.D2>, axis1: Int, axis2: Int): Batc
 
 @JvmName("batchD3sPlusD3")
 @ScopeOp
-operator fun Batch<IOType.D3>.plus(other: IOType.D3): Batch<IOType.D3> {
+operator fun Batch<IOType.D3>.plus(other: IOType.D3): Batch<IOType.D3.Global> {
     val result = Backend.plus(
         x = value,
         xi = size,
@@ -118,7 +119,7 @@ operator fun Batch<IOType.D3>.plus(other: IOType.D3): Batch<IOType.D3> {
 
 @JvmName("batchD3sPlusD3s")
 @ScopeOp
-operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D3>): Batch<IOType.D3> {
+operator fun Batch<IOType.D3>.plus(other: Batch<IOType.D3>): Batch<IOType.D3.Global> {
     val result = Backend.plus(x = value, y = other.value)
     return Batch.d3(size, shape, result)
 }
