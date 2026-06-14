@@ -115,7 +115,10 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         val paramsDecl = params.joinToString(", ") { p ->
             val name = p.name!!.asString()
             val type = p.type.resolve().toFqnString()
-            "$name: $type"
+            val default = p.annotations
+                .find { it.shortName.asString() == "ScopeOpDefault" }
+                ?.arguments?.firstOrNull()?.value as? String
+            if (default != null) "$name: $type = $default" else "$name: $type"
         }
 
         val paramCall = params.joinToString(", ") { p ->
