@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.core.D0
 import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 
 fun where(condition: IOType.D0, onTrue: Float, onFalse: Float): IOType.D0.Global {
     val result = Backend.where(condition.value, onTrue, onFalse)
@@ -34,7 +35,11 @@ inline fun IOType.D0.where(onTrue: Float, onFalse: Float, condition: (IOType.D0)
     )
 
 @ScopeOp
-fun IOType.D0.where(condition: IOType.D0, onTrue: Float, onFalse: IOType.D0 = this): IOType.D0.Global {
+fun IOType.D0.where(
+    condition: IOType.D0,
+    onTrue: Float,
+    @ScopeOpDefault("this") onFalse: IOType.D0 = this,
+): IOType.D0.Global {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return IOType.D0(result)
 }
@@ -48,14 +53,18 @@ inline fun IOType.D0.where(onTrue: Float, onFalse: IOType.D0, condition: (IOType
     )
 
 @ScopeOp
-fun IOType.D0.where(condition: IOType.D0, onTrue: IOType.D0 = this, onFalse: Float): IOType.D0.Global {
+fun IOType.D0.where(
+    condition: IOType.D0,
+    @ScopeOpDefault("this") onTrue: IOType.D0 = this,
+    onFalse: Float,
+): IOType.D0.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return IOType.D0(result)
 }
 
 @ScopeOp
 inline fun IOType.D0.where(
-    onTrue: IOType.D0 = this,
+    @ScopeOpDefault("this") onTrue: IOType.D0 = this,
     onFalse: Float,
     condition: (IOType.D0) -> IOType.D0,
 ): IOType.D0.Global = where(
@@ -65,14 +74,18 @@ inline fun IOType.D0.where(
 )
 
 @ScopeOp
-fun IOType.D0.where(condition: IOType.D0, onTrue: IOType.D0 = this, onFalse: IOType.D0 = this): IOType.D0.Global {
+fun IOType.D0.where(
+    condition: IOType.D0,
+    @ScopeOpDefault("this") onTrue: IOType.D0 = this,
+    @ScopeOpDefault("this") onFalse: IOType.D0 = this,
+): IOType.D0.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return IOType.D0(result)
 }
 
 @ScopeOp
 inline fun IOType.D0.where(
-    onTrue: IOType.D0 = this,
+    @ScopeOpDefault("this") onTrue: IOType.D0 = this,
     onFalse: IOType.D0,
     condition: (IOType.D0) -> IOType.D0,
 ): IOType.D0.Global = where(

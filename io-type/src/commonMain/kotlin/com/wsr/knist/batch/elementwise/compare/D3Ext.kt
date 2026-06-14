@@ -5,8 +5,11 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.d3
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.compare.EQUALS_ABSOLUTE_TOLERANCE
+import com.wsr.knist.core.elementwise.compare.EQUALS_ABSOLUTE_TOLERANCE_FQN
 import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE
+import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE_FQN
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
 @JvmName("infixBatchD3sEqFloat")
@@ -20,8 +23,8 @@ infix fun Batch<IOType.D3>.eq(other: Float): Batch<IOType.D3.Global> = eq(
 @ScopeOp
 fun Batch<IOType.D3>.eq(
     other: Float,
-    absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
-    relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_ABSOLUTE_TOLERANCE_FQN) absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_RELATIVE_TOLERANCE_FQN) relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
 ): Batch<IOType.D3.Global> {
     val result = Backend.equals(
         x = value,
@@ -44,8 +47,8 @@ infix fun Batch<IOType.D3>.eq(other: Batch<IOType.D3>): Batch<IOType.D3.Global> 
 @ScopeOp
 fun Batch<IOType.D3>.eq(
     other: Batch<IOType.D3>,
-    absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
-    relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_ABSOLUTE_TOLERANCE_FQN) absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_RELATIVE_TOLERANCE_FQN) relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
 ): Batch<IOType.D3.Global> {
     val result = Backend.equals(
         x = value,

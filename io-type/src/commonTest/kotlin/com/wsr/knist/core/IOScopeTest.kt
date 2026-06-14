@@ -9,6 +9,7 @@ import com.wsr.knist.ioTypeTestRule
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class IOScopeTest {
@@ -64,6 +65,33 @@ class IOScopeTest {
             }
         }
         assertTrue(intermediate.released)
+    }
+
+    @Test
+    fun `matMulをtransB=trueのみ指定してもIOScope版が呼ばれる`() = ioTypeTestRule {
+        val ioScope = IOScope(BufferScope())
+        val a = IOType.d2(2, 3) { _, _ -> 1f }
+        val b = IOType.d2(4, 3) { _, _ -> 1f }
+        val result = with(ioScope) { a.matMul(b, transB = true) }
+        assertIs<IOType.D2.Local>(result)
+    }
+
+    @Test
+    fun `matMulをtransA=trueのみ指定してもIOScope版が呼ばれる`() = ioTypeTestRule {
+        val ioScope = IOScope(BufferScope())
+        val a = IOType.d2(3, 2) { _, _ -> 1f }
+        val b = IOType.d2(3, 4) { _, _ -> 1f }
+        val result = with(ioScope) { a.matMul(b, transA = true) }
+        assertIs<IOType.D2.Local>(result)
+    }
+
+    @Test
+    fun `matMulを引数省略で呼んでもIOScope版が呼ばれる`() = ioTypeTestRule {
+        val ioScope = IOScope(BufferScope())
+        val a = IOType.d2(2, 3) { _, _ -> 1f }
+        val b = IOType.d2(3, 2) { _, _ -> 1f }
+        val result = with(ioScope) { a.matMul(b) }
+        assertIs<IOType.D2.Local>(result)
     }
 }
 

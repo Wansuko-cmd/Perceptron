@@ -9,6 +9,7 @@ import com.wsr.knist.core.get
 import com.wsr.knist.core.reduction.max
 import com.wsr.knist.core.reduction.sum
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.math.pow
 
 @ScopeOp
@@ -46,7 +47,7 @@ fun IOType.D2.softmax(axis: Int): IOType.D2.Global {
 }
 
 @ScopeOp
-fun IOType.D2.sqrt(e: Float = 1e-7f): IOType.D2.Global {
+fun IOType.D2.sqrt(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): IOType.D2.Global {
     val result = Backend.sqrt(x = value, e = e)
     return IOType.D2(shape = shape, value = result)
 }

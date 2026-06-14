@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.core.D2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 
 @ScopeOp
 infix fun IOType.D2.eq(other: Float): IOType.D2.Global = eq(
@@ -15,8 +16,8 @@ infix fun IOType.D2.eq(other: Float): IOType.D2.Global = eq(
 @ScopeOp
 fun IOType.D2.eq(
     other: Float,
-    absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
-    relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_ABSOLUTE_TOLERANCE_FQN) absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_RELATIVE_TOLERANCE_FQN) relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
 ): IOType.D2.Global {
     val result = Backend.equals(
         x = value,
@@ -37,8 +38,8 @@ infix fun IOType.D2.eq(other: IOType.D2): IOType.D2.Global = eq(
 @ScopeOp
 fun IOType.D2.eq(
     other: IOType.D2,
-    absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
-    relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_ABSOLUTE_TOLERANCE_FQN) absoluteTolerance: Float = EQUALS_ABSOLUTE_TOLERANCE,
+    @ScopeOpDefault(EQUALS_RELATIVE_TOLERANCE_FQN) relativeTolerance: Float = EQUALS_RELATIVE_TOLERANCE,
 ): IOType.D2.Global {
     val result = Backend.equals(
         x = value,

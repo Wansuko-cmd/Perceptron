@@ -8,6 +8,7 @@ import com.wsr.knist.batch.shape.toD2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.math.softmax
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
 @JvmName("batchD1sExp")
@@ -19,7 +20,7 @@ fun Batch<IOType.D1>.exp(): Batch<IOType.D1.Global> {
 
 @JvmName("batchD1sLn")
 @ScopeOp
-fun Batch<IOType.D1>.ln(e: Float = 1e-7f): Batch<IOType.D1.Global> {
+fun Batch<IOType.D1>.ln(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): Batch<IOType.D1.Global> {
     val result = Backend.ln(x = value, e = e)
     return Batch.d1(size, shape, result)
 }
@@ -41,7 +42,7 @@ fun Batch<IOType.D1>.softmax(): Batch<IOType.D1.Global> = toD2().softmax(axis = 
 
 @JvmName("batchD1sSqrt")
 @ScopeOp
-fun Batch<IOType.D1>.sqrt(e: Float = 1e-7f): Batch<IOType.D1.Global> {
+fun Batch<IOType.D1>.sqrt(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): Batch<IOType.D1.Global> {
     val result = Backend.sqrt(x = value, e = e)
     return Batch.d1(size, shape, result)
 }
