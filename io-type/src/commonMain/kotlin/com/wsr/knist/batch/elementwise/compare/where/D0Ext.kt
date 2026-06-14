@@ -89,8 +89,8 @@ inline fun Batch<IOType.D0>.where(
 @ScopeOp
 fun Batch<IOType.D0>.where(
     condition: Batch<IOType.D0>,
-    @ScopeOpDefault("this")  onTrue: Batch<IOType.D0> = this,
-    @ScopeOpDefault("this")  onFalse: Batch<IOType.D0> = this,
+    @ScopeOpDefault("this") onTrue: Batch<IOType.D0> = this,
+    @ScopeOpDefault("this") onFalse: Batch<IOType.D0> = this,
 ): Batch<IOType.D0.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch.d0(size, result)

@@ -35,7 +35,11 @@ inline fun IOType.D1.where(onTrue: Float, onFalse: Float, condition: (IOType.D1)
     )
 
 @ScopeOp
-fun IOType.D1.where(condition: IOType.D1, onTrue: Float, @ScopeOpDefault("this") onFalse: IOType.D1 = this): IOType.D1.Global {
+fun IOType.D1.where(
+    condition: IOType.D1,
+    onTrue: Float,
+    @ScopeOpDefault("this") onFalse: IOType.D1 = this,
+): IOType.D1.Global {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return IOType.D1(result)
 }
@@ -49,7 +53,11 @@ inline fun IOType.D1.where(onTrue: Float, onFalse: IOType.D1, condition: (IOType
     )
 
 @ScopeOp
-fun IOType.D1.where(condition: IOType.D1, @ScopeOpDefault("this") onTrue: IOType.D1 = this, onFalse: Float): IOType.D1.Global {
+fun IOType.D1.where(
+    condition: IOType.D1,
+    @ScopeOpDefault("this") onTrue: IOType.D1 = this,
+    onFalse: Float,
+): IOType.D1.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return IOType.D1(result)
 }
@@ -66,7 +74,11 @@ inline fun IOType.D1.where(
 )
 
 @ScopeOp
-fun IOType.D1.where(condition: IOType.D1, @ScopeOpDefault("this") onTrue: IOType.D1 = this, @ScopeOpDefault("this") onFalse: IOType.D1 = this): IOType.D1.Global {
+fun IOType.D1.where(
+    condition: IOType.D1,
+    @ScopeOpDefault("this") onTrue: IOType.D1 = this,
+    @ScopeOpDefault("this") onFalse: IOType.D1 = this,
+): IOType.D1.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return IOType.D1(result)
 }

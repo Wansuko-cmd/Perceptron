@@ -6,8 +6,8 @@ import com.wsr.knist.batch.d1
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.compare.EQUALS_ABSOLUTE_TOLERANCE
 import com.wsr.knist.core.elementwise.compare.EQUALS_ABSOLUTE_TOLERANCE_FQN
-import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE_FQN
 import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE
+import com.wsr.knist.core.elementwise.compare.EQUALS_RELATIVE_TOLERANCE_FQN
 import com.wsr.knist.scope.ScopeOp
 import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName

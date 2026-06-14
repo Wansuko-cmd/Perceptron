@@ -8,6 +8,7 @@ import com.wsr.knist.scope.ScopeOpDefault
 
 @PublishedApi
 internal const val EQUALS_ABSOLUTE_TOLERANCE = 1e-4f
+
 @PublishedApi
 internal const val EQUALS_RELATIVE_TOLERANCE = 1e-4f
 

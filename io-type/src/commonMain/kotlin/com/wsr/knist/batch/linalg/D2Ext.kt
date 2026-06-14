@@ -32,8 +32,8 @@ fun IOType.D2.matMul(other: Batch<IOType.D1>, trans: Boolean = false): Batch<IOT
 @ScopeOp
 fun Batch<IOType.D2>.matMul(
     other: IOType.D2,
-     @ScopeOpDefault("false") transA: Boolean = false,
-     @ScopeOpDefault("false") transB: Boolean = false,
+    @ScopeOpDefault("false") transA: Boolean = false,
+    @ScopeOpDefault("false") transB: Boolean = false,
 ): Batch<IOType.D2.Global> {
     val m = if (transA) j else i
     val n = if (transB) other.i else other.j
@@ -55,8 +55,8 @@ fun Batch<IOType.D2>.matMul(
 @ScopeOp
 fun Batch<IOType.D2>.matMul(
     other: Batch<IOType.D2>,
-     @ScopeOpDefault("false") transA: Boolean = false,
-     @ScopeOpDefault("false") transB: Boolean = false,
+    @ScopeOpDefault("false") transA: Boolean = false,
+    @ScopeOpDefault("false") transB: Boolean = false,
 ): Batch<IOType.D2.Global> {
     val m = if (transA) j else i
     val n = if (transB) other.i else other.j

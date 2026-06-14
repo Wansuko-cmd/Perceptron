@@ -35,7 +35,11 @@ inline fun IOType.D2.where(onTrue: Float, onFalse: Float, condition: (IOType.D2)
     )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, onTrue: Float, @ScopeOpDefault("this") onFalse: IOType.D2 = this): IOType.D2.Global {
+fun IOType.D2.where(
+    condition: IOType.D2,
+    onTrue: Float,
+    @ScopeOpDefault("this") onFalse: IOType.D2 = this,
+): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return IOType.D2(shape = shape, value = result)
 }
@@ -52,7 +56,11 @@ inline fun IOType.D2.where(
 )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, @ScopeOpDefault("this") onTrue: IOType.D2 = this, onFalse: Float): IOType.D2.Global {
+fun IOType.D2.where(
+    condition: IOType.D2,
+    @ScopeOpDefault("this") onTrue: IOType.D2 = this,
+    onFalse: Float,
+): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return IOType.D2(shape = shape, value = result)
 }
@@ -69,7 +77,11 @@ inline fun IOType.D2.where(
 )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, @ScopeOpDefault("this") onTrue: IOType.D2 = this, @ScopeOpDefault("this") onFalse: IOType.D2 = this): IOType.D2.Global {
+fun IOType.D2.where(
+    condition: IOType.D2,
+    @ScopeOpDefault("this") onTrue: IOType.D2 = this,
+    @ScopeOpDefault("this") onFalse: IOType.D2 = this,
+): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return IOType.D2(shape = shape, value = result)
 }
