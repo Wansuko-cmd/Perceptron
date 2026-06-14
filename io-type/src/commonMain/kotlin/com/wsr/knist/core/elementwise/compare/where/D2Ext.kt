@@ -4,6 +4,7 @@ import com.wsr.knist.Backend
 import com.wsr.knist.core.D2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 
 fun where(condition: IOType.D2, onTrue: Float, onFalse: Float): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue, onFalse)
@@ -34,7 +35,7 @@ inline fun IOType.D2.where(onTrue: Float, onFalse: Float, condition: (IOType.D2)
     )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, onTrue: Float, onFalse: IOType.D2 = this): IOType.D2.Global {
+fun IOType.D2.where(condition: IOType.D2, onTrue: Float, @ScopeOpDefault("this") onFalse: IOType.D2 = this): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return IOType.D2(shape = shape, value = result)
 }
@@ -42,7 +43,7 @@ fun IOType.D2.where(condition: IOType.D2, onTrue: Float, onFalse: IOType.D2 = th
 @ScopeOp
 inline fun IOType.D2.where(
     onTrue: Float,
-    onFalse: IOType.D2 = this,
+    @ScopeOpDefault("this") onFalse: IOType.D2 = this,
     condition: (IOType.D2) -> IOType.D2,
 ): IOType.D2.Global = where(
     condition = condition(this),
@@ -51,14 +52,14 @@ inline fun IOType.D2.where(
 )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, onTrue: IOType.D2 = this, onFalse: Float): IOType.D2.Global {
+fun IOType.D2.where(condition: IOType.D2, @ScopeOpDefault("this") onTrue: IOType.D2 = this, onFalse: Float): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return IOType.D2(shape = shape, value = result)
 }
 
 @ScopeOp
 inline fun IOType.D2.where(
-    onTrue: IOType.D2 = this,
+    @ScopeOpDefault("this") onTrue: IOType.D2 = this,
     onFalse: Float,
     condition: (IOType.D2) -> IOType.D2,
 ): IOType.D2.Global = where(
@@ -68,15 +69,15 @@ inline fun IOType.D2.where(
 )
 
 @ScopeOp
-fun IOType.D2.where(condition: IOType.D2, onTrue: IOType.D2 = this, onFalse: IOType.D2 = this): IOType.D2.Global {
+fun IOType.D2.where(condition: IOType.D2, @ScopeOpDefault("this") onTrue: IOType.D2 = this, @ScopeOpDefault("this") onFalse: IOType.D2 = this): IOType.D2.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return IOType.D2(shape = shape, value = result)
 }
 
 @ScopeOp
 inline fun IOType.D2.where(
-    onTrue: IOType.D2 = this,
-    onFalse: IOType.D2 = this,
+    @ScopeOpDefault("this") onTrue: IOType.D2 = this,
+    @ScopeOpDefault("this") onFalse: IOType.D2 = this,
     condition: (IOType.D2) -> IOType.D2,
 ): IOType.D2.Global = where(
     condition = condition(this),
