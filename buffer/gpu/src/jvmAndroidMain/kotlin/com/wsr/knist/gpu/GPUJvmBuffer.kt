@@ -4,8 +4,8 @@ package com.wsr.knist.gpu
 
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.IDataBufferGenerator
-import com.wsr.knist.base.data.size
 import java.lang.ref.Cleaner
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.minusAssign
@@ -24,15 +24,20 @@ class GPUJvmBuffer(
     private val runtime: Long,
     private val native: JBuffer,
 ) : DataBuffer {
+    private val isReleased = AtomicBoolean(false)
+
     init {
         val size = size
         val ptr = ptr
         val runtime = runtime
         val native = native
+        val isReleased = isReleased
         if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
         cleaner.register(this) {
-            native.release(ptr, runtime)
-            allocateSize.minusAssign(size)
+            if (!isReleased.getAndSet(true)) {
+                native.release(ptr, runtime)
+                allocateSize.minusAssign(size)
+            }
         }
     }
 
@@ -47,7 +52,10 @@ class GPUJvmBuffer(
     override fun toString(): String = toFloatArray().joinToString(prefix = "GPUJvmBuffer[", postfix = "]")
 
     override fun release() {
-        native.release(ptr, runtime)
+        if (!isReleased.getAndSet(true)) {
+            native.release(ptr, runtime)
+            allocateSize.minusAssign(size)
+        }
     }
 
     companion object {
