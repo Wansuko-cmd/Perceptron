@@ -1,18 +1,8 @@
 package com.wsr.knist.network.output.softmax
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.math.exp
-import com.wsr.knist.batch.elementwise.math.ln
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.batchAverage
-import com.wsr.knist.batch.reduction.max
-import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -25,7 +15,7 @@ internal class SoftmaxWithLossD1 internal constructor(
     val temperature: Float,
     val maskValue: Int? = null,
 ) : Output.D1() {
-    override fun expect(input: Batch<IOType.D1>): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>): Batch<IOType.D1> {
         val input = input / temperature
         val max = input.max()
         val exp = (input - max).exp()
@@ -33,7 +23,7 @@ internal class SoftmaxWithLossD1 internal constructor(
         return exp / sum
     }
 
-    override fun train(input: Batch<IOType.D1>, label: (Batch<IOType.D1>) -> Batch<IOType.D1>): TResult<IOType.D1> {
+    override fun IOScope.train(input: Batch<IOType.D1>, label: (Batch<IOType.D1>) -> Batch<IOType.D1>): TResult<IOType.D1> {
         val input = input / temperature
         val max = input.max()
         val exp = (input - max).exp()

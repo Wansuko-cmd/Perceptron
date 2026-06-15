@@ -37,7 +37,7 @@ class Network<I, O> internal constructor(
         val output = IOScope.launch {
             layers
                 .fold(input) { acc, process -> with(process) { _expect(acc, context) } }
-                .let { output._expect(it) }
+                .let { with(output) { _expect(it) } }
         }
         return outputConverter._decode(output) as List<O>
     }
@@ -68,7 +68,7 @@ class Network<I, O> internal constructor(
         val output = IOScope.launch {
             val result = layers
                 .fold(input) { acc, process -> with(process) { _expect(acc, context) } }
-                .let { i -> output._train(i, { label(it) }) }
+                .let { i -> with(output) { _train(i, { label(it) }) } }
             result.loss
         }
         return output.unwrap()
@@ -97,7 +97,7 @@ class Network<I, O> internal constructor(
     private inline fun _train(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
         var loss = 0f
         val output: TrainLambda = { input: Batch<IOType>, context: Context ->
-            val output = output._train(input) { label(it) }
+            val output = with(output) { _train(input) { label(it) }}
             loss = output.loss.unwrap()
             output.delta
         }

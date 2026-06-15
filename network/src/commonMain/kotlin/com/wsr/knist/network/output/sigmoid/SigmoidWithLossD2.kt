@@ -9,6 +9,7 @@ import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.average.batchAverage
 import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.operation.minus.minus
 import com.wsr.knist.network.NetworkBuilder
@@ -19,9 +20,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class SigmoidWithLossD2 internal constructor(val outputX: Int, val outputY: Int) : Output.D2() {
-    override fun expect(input: Batch<IOType.D2>): Batch<IOType.D2> = input.sigmoid()
+    override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> = input.sigmoid()
 
-    override fun train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
+    override fun IOScope.train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
         val output = input.sigmoid()
         val label = label(output)
         val one = Batch.d2(label.size, outputX, outputY) { _, _ -> 1f }

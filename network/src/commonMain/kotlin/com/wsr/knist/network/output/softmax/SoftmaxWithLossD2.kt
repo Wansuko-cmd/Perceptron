@@ -1,19 +1,8 @@
 package com.wsr.knist.network.output.softmax
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.d2
-import com.wsr.knist.batch.elementwise.math.ln
-import com.wsr.knist.batch.elementwise.math.softmax
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.index.gather
-import com.wsr.knist.batch.reduction.average.batchAverage
-import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d0
-import com.wsr.knist.core.d1
-import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -27,17 +16,29 @@ internal class SoftmaxWithLossD2 internal constructor(
     val temperature: Float,
     val maskValue: Int? = null,
 ) : Output.D2() {
-    override fun expect(input: Batch<IOType.D2>): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> {
         val input = input / temperature
         return input.softmax(axis = 1)
     }
 
-    override fun train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
+    override fun IOScope.train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
         val input = input / temperature
         val output = input.softmax(axis = 1)
 
         val label = label(output)
-        val mask = label.generateMask()
+        val mask = when {
+            maskValue == null -> Batch.d2(label.size, label.shape) { _, _ -> 1f }
+            else -> {
+                IOType.d0(maskValue.toFloat())
+                    .gather(other = label, axis = 1)
+                    .gather(
+                        other = IOType.d2(
+                            IOType.d1(outputY) { 1f },
+                            IOType.d1(outputY) { 0f },
+                        ),
+                    )
+            }
+        }
 
         // -log(p)
         val losses = -1f * (output * label).sum(axis = 1).ln(1e-7f)
@@ -49,21 +50,6 @@ internal class SoftmaxWithLossD2 internal constructor(
 
         val delta = (output - label) * mask
         return TResult(loss = loss, delta = delta)
-    }
-
-    private fun Batch<IOType.D2>.generateMask(): Batch<IOType.D2> = when {
-        maskValue == null -> Batch.d2(size, shape) { _, _ -> 1f }
-
-        else -> {
-            IOType.d0(maskValue.toFloat())
-                .gather(other = this, axis = 1)
-                .gather(
-                    other = IOType.d2(
-                        IOType.d1(outputY) { 1f },
-                        IOType.d1(outputY) { 0f },
-                    ),
-                )
-        }
     }
 }
 
