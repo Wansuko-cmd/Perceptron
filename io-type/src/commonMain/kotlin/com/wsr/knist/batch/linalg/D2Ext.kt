@@ -10,8 +10,11 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
-
-fun IOType.D2.matMul(other: Batch<IOType.D1>, trans: Boolean = false): Batch<IOType.D1.Global> {
+@ScopeOp
+fun IOType.D2.matMul(
+    other: Batch<IOType.D1>,
+    @ScopeOpDefault("false") trans: Boolean = false,
+): Batch<IOType.D1.Global> {
     val n = if (trans) j else i
     val k = if (trans) i else j
     val result = Backend.matMul(

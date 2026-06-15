@@ -6,21 +6,25 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.scope.ScopeOp
 import com.wsr.knist.scope.ScopeOpDefault
 
+@ScopeOp
 fun where(condition: IOType.D3, onTrue: Float, onFalse: Float): IOType.D3.Global {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return IOType.D3(shape = condition.shape, value = result)
 }
 
+@ScopeOp
 fun where(condition: IOType.D3, onTrue: Float, onFalse: IOType.D3): IOType.D3.Global {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return IOType.D3(shape = condition.shape, value = result)
 }
 
+@ScopeOp
 fun where(condition: IOType.D3, onTrue: IOType.D3, onFalse: Float): IOType.D3.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return IOType.D3(shape = condition.shape, value = result)
 }
 
+@ScopeOp
 fun where(condition: IOType.D3, onTrue: IOType.D3, onFalse: IOType.D3): IOType.D3.Global {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return IOType.D3(shape = condition.shape, value = result)

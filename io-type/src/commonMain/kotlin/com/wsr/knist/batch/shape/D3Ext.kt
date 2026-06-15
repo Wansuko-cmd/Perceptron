@@ -19,6 +19,7 @@ import kotlin.jvm.JvmName
 
 fun Batch<IOType.D3>.toD4(): IOType.D4 = IOType.D4(shape = listOf(size, i, j, k), value = value)
 
+@ScopeOp
 fun Batch<IOType.D3>.broadcastToD4(axis: Int, size: Int): Batch<IOType.D4.Global> = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i * j * k)
@@ -60,6 +61,7 @@ fun Batch<IOType.D3>.reshapeToD2(i: Int, j: Int) = reshapeToD2(listOf(i, j))
 @JvmName("batchD3sReshapeToD2ByShape")
 fun Batch<IOType.D3>.reshapeToD2(shape: List<Int>) = Batch.d2(size, shape, value)
 
+@ScopeOp
 fun Batch<IOType.D3>.slice(indices: IntProgression, axis: Int): Batch<IOType.D3.Global> = when (axis) {
     0 -> {
         val result = Backend.slice(x = value, xi = size, xj = i, xk = j * k, axis = 1, indices = indices)

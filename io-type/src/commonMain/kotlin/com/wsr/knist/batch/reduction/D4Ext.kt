@@ -8,9 +8,11 @@ import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.batch.l
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchD4sMaxWithAxis")
+@ScopeOp
 fun Batch<IOType.D4>.max(axis: Int): Batch<IOType.D3.Global> = when (axis) {
     0 -> Batch.d3(
         size,

@@ -60,6 +60,7 @@ fun Batch<IOType.D3>.min(): Batch<IOType.D0.Global> {
 }
 
 @JvmName("batchD3sMaxWithAxis")
+@ScopeOp
 fun Batch<IOType.D3>.max(axis: Int): Batch<IOType.D2.Global> = when (axis) {
     0 -> Batch.d2(
         size,

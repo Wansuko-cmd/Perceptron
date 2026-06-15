@@ -11,24 +11,28 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchFloatPlusD0s")
+@ScopeOp
 operator fun Float.plus(other: Batch<IOType.D0>): Batch<IOType.D0.Global> {
     val result = Backend.plus(x = this, y = other.value)
     return Batch.d0(other.size, result)
 }
 
 @JvmName("batchFloatPlusD1s")
+@ScopeOp
 operator fun Float.plus(other: Batch<IOType.D1>): Batch<IOType.D1.Global> {
     val result = Backend.plus(x = this, y = other.value)
     return Batch.d1(other.size, other.shape, result)
 }
 
 @JvmName("batchFloatPlusD2s")
+@ScopeOp
 operator fun Float.plus(other: Batch<IOType.D2>): Batch<IOType.D2.Global> {
     val result = Backend.plus(x = this, y = other.value)
     return Batch.d2(other.size, other.shape, result)
 }
 
 @JvmName("batchFloatPlusD3s")
+@ScopeOp
 operator fun Float.plus(other: Batch<IOType.D3>): Batch<IOType.D3.Global> {
     val result = Backend.plus(x = this, y = other.value)
     return Batch.d3(other.size, other.shape, result)

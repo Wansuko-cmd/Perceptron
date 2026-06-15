@@ -59,7 +59,7 @@ class IOScopeTest {
     fun `launch内で例外が発生しても中間バッファはreleaseされる`() = ioTypeTestRule {
         val intermediate = TrackingDataBuffer(4)
         assertFails {
-            IOScope.launch {
+            IOScope.launch<IOType.D0> {
                 bufferScope.register(intermediate)
                 throw RuntimeException("test")
             }
