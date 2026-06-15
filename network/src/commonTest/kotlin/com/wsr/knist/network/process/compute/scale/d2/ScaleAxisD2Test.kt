@@ -9,7 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
@@ -47,8 +47,8 @@ class ScaleAxisD2Test {
         )
 
     @Test
-    fun `Axis0_expect=axis0で共通のスケール項`() = networkTestRule {
-        val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+    fun `Axis0_expect=axis0で共通のスケール項`() = networkScopeTestRule {
+        val actual = with(target0) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
@@ -57,8 +57,10 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkTestRule {
-        val actual = target0._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+    fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target0) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
@@ -67,11 +69,11 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis0_train=重みを更新する`() = networkTestRule {
+    fun `Axis0_train=重みを更新する`() = networkScopeTestRule {
         val target = target0
 
-        target._train(input = input, context = Context(input), calcDelta = { it })
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 2.85f), actual = actual[0][1])
@@ -80,8 +82,8 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_expect=axis1で共通のスケール項`() = networkTestRule {
-        val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+    fun `Axis1_expect=axis1で共通のスケール項`() = networkScopeTestRule {
+        val actual = with(target1) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
@@ -90,8 +92,10 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkTestRule {
-        val actual = target1._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+    fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target1) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][1])
@@ -100,11 +104,11 @@ class ScaleAxisD2Test {
     }
 
     @Test
-    fun `Axis1_train=重みを更新する`() = networkTestRule {
+    fun `Axis1_train=重みを更新する`() = networkScopeTestRule {
         val target = target1
 
-        target._train(input = input, context = Context(input), calcDelta = { it })
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1.82f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 2.73f), actual = actual[0][1])

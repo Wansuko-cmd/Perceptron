@@ -9,7 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
@@ -48,8 +48,8 @@ class SkipD2Test {
         )
 
     @Test
-    fun `expect=スキップ接続を行う`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+    fun `expect=スキップ接続を行う`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 6f, 12f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(4f, 12f, 20f), actual = actual[0][1])
@@ -58,8 +58,10 @@ class SkipD2Test {
     }
 
     @Test
-    fun `train=勾配を伝播`() = networkTestRule {
-        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+    fun `train=勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 12f, 24f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(8f, 24f, 40f), actual = actual[0][1])

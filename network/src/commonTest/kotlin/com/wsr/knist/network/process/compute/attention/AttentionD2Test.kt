@@ -9,7 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
@@ -53,8 +53,8 @@ class AttentionD2Test {
         )
 
     @Test
-    fun `expect=注目度を計算`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+    fun `expect=注目度を計算`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(181.4400f, 168.8640f, 156.2880f, 143.7120f),
@@ -90,8 +90,10 @@ class AttentionD2Test {
     }
 
     @Test
-    fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
-        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+    fun `train=逆伝播を行い勾配を返す`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(-10267.7650f, 32172.5840f, 74612.9300f, 117053.2700f),
@@ -127,10 +129,10 @@ class AttentionD2Test {
     }
 
     @Test
-    fun `train=重みを更新する`() = networkTestRule {
+    fun `train=重みを更新する`() = networkScopeTestRule {
         val target = target
-        target._train(input = input, context = Context(input), calcDelta = { it })
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(44581.2730f, 41340.8200f, 38100.3670f, 34859.9060f),

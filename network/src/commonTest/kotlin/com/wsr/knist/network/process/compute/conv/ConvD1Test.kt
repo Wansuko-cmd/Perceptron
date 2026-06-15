@@ -10,7 +10,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
@@ -35,8 +35,8 @@ class ConvD1Test {
         )
 
     @Test
-    fun `expect=1次元畳み込み`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+    fun `expect=1次元畳み込み`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(55f, 70f, 85f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(115f, 154f, 193f), actual = actual[0][1])
@@ -45,8 +45,10 @@ class ConvD1Test {
     }
 
     @Test
-    fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
-        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D2>
+    fun `train=逆伝播を行い勾配を返す`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(630f, 1300f, 1666f, 772f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(970f, 2088f, 2670f, 1328f), actual = actual[0][1])
@@ -55,11 +57,11 @@ class ConvD1Test {
     }
 
     @Test
-    fun `train=重みを更新する`() = networkTestRule {
+    fun `train=重みを更新する`() = networkScopeTestRule {
         val target = target
 
-        target._train(input = input, context = Context(input), calcDelta = { it })
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D2>
+        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(-152.735f, -199.25f, -245.76498f),

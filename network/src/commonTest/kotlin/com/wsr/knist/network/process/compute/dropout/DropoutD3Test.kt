@@ -9,7 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
@@ -22,16 +22,18 @@ class DropoutD3Test {
         )
 
     @Test
-    fun `expect=入力をそのまま返す`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+    fun `expect=入力をそのまま返す`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
 
         assertContentEquals(expected = input[0], actual = actual[0])
         assertContentEquals(expected = input[1], actual = actual[1])
     }
 
     @Test
-    fun `train=dropoutを行いratioを掛け勾配を伝播`() = networkTestRule {
-        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D3>
+    fun `train=dropoutを行いratioを掛け勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(3.125f, 4.6875f), actual = actual[0][0][1])
