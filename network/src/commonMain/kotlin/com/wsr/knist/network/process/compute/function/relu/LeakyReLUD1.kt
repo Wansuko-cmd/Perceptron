@@ -1,9 +1,7 @@
 package com.wsr.knist.network.process.compute.function.relu
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.gt
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.operation.times.times
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -12,15 +10,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LeakyReLUD1 internal constructor(override val outputSize: Int) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0.01f)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
-        calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val mask = input gt 0f
         val output = input.where(condition = mask, onFalse = 0f)

@@ -1,7 +1,7 @@
 package com.wsr.knist.network.process.compute.position
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.plus.plus
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
@@ -28,12 +28,12 @@ class PositionEncodeD2 internal constructor(
         }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input + position
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input + position
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val output = input + position
         return calcDelta(output)

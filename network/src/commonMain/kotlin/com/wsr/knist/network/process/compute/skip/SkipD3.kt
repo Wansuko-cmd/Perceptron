@@ -3,7 +3,7 @@
 package com.wsr.knist.network.process.compute.skip
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.plus.plus
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -11,7 +11,7 @@ import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
-private typealias CALC_DELTA_D3 = (input: Batch<IOType.D3>, context: Context) -> Batch<IOType.D3>
+private typealias CALC_DELTA_D3 = IOScope.(input: Batch<IOType.D3>, context: Context) -> Batch<IOType.D3>
 
 @Serializable
 class SkipD3 internal constructor(
@@ -21,8 +21,11 @@ class SkipD3 internal constructor(
     override val outputY: Int,
     override val outputZ: Int,
 ) : Compute.D3() {
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
-        val main = layers.fold(input) { acc, layer -> layer._expect(acc, context) as Batch<IOType.D3> }
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+        val scope = this
+        val main = layers.fold(input) { acc, layer ->
+            with(layer) { scope._expect(acc, context) } as Batch<IOType.D3>
+        }
         return main + input
     }
 
@@ -32,16 +35,21 @@ class SkipD3 internal constructor(
         ) { layer, acc ->
             { final ->
                 { input, context ->
-                    layer._train(input, context) { acc(final)(it as Batch<IOType.D3>, context) } as Batch<IOType.D3>
+                    val scope = this
+                    with(layer) {
+                        scope._train(input, context) {
+                            acc(final)(it as Batch<IOType.D3>, context)
+                        }
+                    } as Batch<IOType.D3>
                 }
             }
         }
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         var skipDelta: Batch<IOType.D3>? = null
 

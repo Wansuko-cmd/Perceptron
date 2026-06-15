@@ -47,6 +47,10 @@ kotlin {
             }
         }
     }
+
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xcontext-parameters")
+    }
 }
 
 afterEvaluate {

@@ -9,6 +9,7 @@ import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.average.average
 import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -24,7 +25,7 @@ class LayerNormD3 internal constructor(
 ) : Compute.D3() {
     private val outputSize = outputX * outputY * outputZ
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val average = input.average()
         val numerator = input - average
 
@@ -34,10 +35,10 @@ class LayerNormD3 internal constructor(
         return numerator / denominator
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val average = input.average()
         val numerator = input - average

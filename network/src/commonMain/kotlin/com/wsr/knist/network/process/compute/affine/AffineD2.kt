@@ -1,7 +1,7 @@
 package com.wsr.knist.network.process.compute.affine
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.linalg.matMul
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -20,14 +20,14 @@ class AffineD2 internal constructor(
     override val outputX = channel
     override val outputY = outputSize
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.matMul(weight)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val output = forward(input)
+        val output = input.matMul(weight)
         val delta = calcDelta(output)
 
         val dx = delta.matMul(weight, transB = true)
@@ -36,8 +36,6 @@ class AffineD2 internal constructor(
         weight = optimizer.adapt(weight = weight, dw = dw)
         return dx
     }
-
-    private fun forward(input: Batch<IOType.D2>): Batch<IOType.D2> = input.matMul(weight)
 }
 
 fun <T> NetworkBuilder.D2<T>.affine(

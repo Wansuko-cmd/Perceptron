@@ -7,6 +7,7 @@ import com.wsr.knist.batch.elementwise.operation.div.div
 import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.reduction.average.average
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -20,15 +21,15 @@ class RmsNormD3 internal constructor(
     override val outputZ: Int,
     private val e: Float,
 ) : Compute.D3() {
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val variance = input.pow(2).average()
         val deviation = variance.sqrt(e = e)

@@ -1,6 +1,7 @@
 package com.wsr.knist.network.process.compute.debug
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -17,12 +18,14 @@ class DebugD3 internal constructor(override val outputX: Int, override val outpu
     @Transient
     var onDelta: (Batch<IOType.D3>) -> Unit = {}
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.also { onInput(it) }
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.also {
+        onInput(it)
+    }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val input = input.also { onInput(it) }
         val delta = calcDelta(input).also { onDelta(it) }

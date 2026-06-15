@@ -1,8 +1,7 @@
 package com.wsr.knist.network.process.compute.function.relu
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.gt
-import com.wsr.knist.batch.elementwise.compare.where.where
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -12,15 +11,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ReLUD3 internal constructor(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
     Compute.D3() {
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0f)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val mask = input gt 0f
         val output = input.where(condition = mask, onFalse = 0f)

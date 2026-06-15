@@ -1,14 +1,7 @@
 package com.wsr.knist.network.process.compute.norm.layer.d2
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.math.sqrt
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.plus.plus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.average
-import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
@@ -30,7 +23,7 @@ class LayerNormAxisD2 internal constructor(
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val average = input.average(axis = axis)
         val numerator = input.minus(other = average, axis = basicOpAxis)
 
@@ -40,10 +33,10 @@ class LayerNormAxisD2 internal constructor(
         return numerator.div(other = denominator, axis = basicOpAxis)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val average = input.average(axis = axis)
         val numerator = input.minus(other = average, axis = basicOpAxis)
