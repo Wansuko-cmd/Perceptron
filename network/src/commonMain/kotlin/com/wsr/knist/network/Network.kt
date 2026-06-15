@@ -4,8 +4,8 @@ package com.wsr.knist.network
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
-import com.wsr.knist.core.launch
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.launch
 import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -97,7 +97,7 @@ class Network<I, O> internal constructor(
     private inline fun _train(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
         var loss = 0f
         val output: TrainLambda = { input: Batch<IOType>, context: Context ->
-            val output = with(output) { _train(input) { label(it) }}
+            val output = with(output) { _train(input) { label(it) } }
             loss = output.loss.unwrap()
             output.delta
         }

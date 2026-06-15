@@ -23,7 +23,10 @@ internal class SoftmaxWithLossD1 internal constructor(
         return exp / sum
     }
 
-    override fun IOScope.train(input: Batch<IOType.D1>, label: (Batch<IOType.D1>) -> Batch<IOType.D1>): TResult<IOType.D1> {
+    override fun IOScope.train(
+        input: Batch<IOType.D1>,
+        label: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+    ): TResult<IOType.D1> {
         val input = input / temperature
         val max = input.max()
         val exp = (input - max).exp()

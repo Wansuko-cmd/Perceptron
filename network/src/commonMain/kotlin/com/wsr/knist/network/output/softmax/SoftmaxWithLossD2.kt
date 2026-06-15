@@ -21,13 +21,17 @@ internal class SoftmaxWithLossD2 internal constructor(
         return input.softmax(axis = 1)
     }
 
-    override fun IOScope.train(input: Batch<IOType.D2>, label: (Batch<IOType.D2>) -> Batch<IOType.D2>): TResult<IOType.D2> {
+    override fun IOScope.train(
+        input: Batch<IOType.D2>,
+        label: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+    ): TResult<IOType.D2> {
         val input = input / temperature
         val output = input.softmax(axis = 1)
 
         val label = label(output)
         val mask = when {
             maskValue == null -> Batch.d2(label.size, label.shape) { _, _ -> 1f }
+
             else -> {
                 IOType.d0(maskValue.toFloat())
                     .gather(other = label, axis = 1)

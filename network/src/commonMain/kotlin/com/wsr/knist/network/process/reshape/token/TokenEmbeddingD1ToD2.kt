@@ -19,7 +19,8 @@ class TokenEmbeddingD1ToD2 internal constructor(
     private var weight: IOType.D2,
 ) : Reshape.D1ToD2() {
 
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> = input.gather(other = weight)
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
+        input.gather(other = weight)
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,

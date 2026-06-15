@@ -74,7 +74,9 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("        context(scope: IOScope)")
         sb.appendLine("        @kotlin.jvm.JvmName(\"launchBatch\")")
         sb.appendLine("        @kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine("        inline fun <T : com.wsr.knist.batch.Batch<out IOType>> launch(block: IOScope.() -> T): T = scope.block()")
+        sb.appendLine(
+            "        inline fun <T : com.wsr.knist.batch.Batch<out IOType>> launch(block: IOScope.() -> T): T = scope.block()",
+        )
         sb.appendLine("    }")
 
         indexed.forEach { (_, data) ->
@@ -93,7 +95,9 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("}")
         sb.appendLine("@kotlin.jvm.JvmName(\"launchBatch\")")
         sb.appendLine("@kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine("inline fun <T : com.wsr.knist.batch.Batch<out IOType>> IOScope.Companion.launch(block: IOScope.() -> T): T {")
+        sb.appendLine(
+            "inline fun <T : com.wsr.knist.batch.Batch<out IOType>> IOScope.Companion.launch(block: IOScope.() -> T): T {",
+        )
         sb.appendLine("    val bufferScope = BufferScope()")
         sb.appendLine("    val ioScope = IOScope(bufferScope)")
         sb.appendLine("    return bufferScope.use {")
