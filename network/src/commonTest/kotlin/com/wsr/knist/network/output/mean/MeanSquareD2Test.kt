@@ -8,28 +8,28 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MeanSquareD2Test {
     @Test
-    fun `expect=そのまま返す`() = networkTestRule {
+    fun `expect=そのまま返す`() = networkScopeTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
-        val actual = target._expect(input)
+        val actual = with(target) { _expect(input) }
 
         assertEquals(expected = input, actual = actual)
     }
 
     @Test
-    fun `train=二乗平均誤差`() = networkTestRule {
+    fun `train=二乗平均誤差`() = networkScopeTestRule {
         val target = MeanSquareD2(outputX = 2, outputY = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
-        val actual = target._train(input = input, label = { label })
+        val actual = with(target) { _train(input = input, label = { label }) }
         val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D2>
 

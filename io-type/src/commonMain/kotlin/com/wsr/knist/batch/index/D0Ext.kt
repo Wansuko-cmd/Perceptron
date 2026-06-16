@@ -6,12 +6,15 @@ import com.wsr.knist.batch.d1
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
-fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1> = when (axis) {
+@ScopeOp
+fun IOType.D0.gather(other: Batch<IOType.D2>, axis: Int = 1): Batch<IOType.D1.Global> = when (axis) {
     0 -> {
         val result = Backend.gather(x = value, y = other.value, i = other.size, j = other.i, k = other.j)
         Batch.d1(other.size, other.j, result)
     }
+
     else -> {
         val result = Backend.gather(
             x = value,

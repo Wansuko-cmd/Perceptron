@@ -11,9 +11,15 @@ subprojects {
     // ktlintプラグインはKotlinプラグインが適用されているプロジェクトのみに適用
     pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
         apply(plugin = libs.plugins.ktlint.get().pluginId)
+        configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+            version.set(libs.versions.ktlint.lib.get())
+        }
     }
     pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
         apply(plugin = libs.plugins.ktlint.get().pluginId)
+        configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+            version.set(libs.versions.ktlint.lib.get())
+        }
     }
 }
 

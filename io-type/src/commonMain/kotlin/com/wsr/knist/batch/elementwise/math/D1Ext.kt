@@ -7,34 +7,42 @@ import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toD2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.math.softmax
+import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
 @JvmName("batchD1sExp")
-fun Batch<IOType.D1>.exp(): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.exp(): Batch<IOType.D1.Global> {
     val result = Backend.exp(x = value)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sLn")
-fun Batch<IOType.D1>.ln(e: Float = 1e-7f): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.ln(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): Batch<IOType.D1.Global> {
     val result = Backend.ln(x = value, e = e)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sPow")
-fun Batch<IOType.D1>.pow(n: Int): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.pow(n: Int): Batch<IOType.D1.Global> {
     val result = Backend.pow(x = value, n = n)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sSigmoid")
-fun Batch<IOType.D1>.sigmoid(): Batch<IOType.D1> = Batch.d1(size, shape, Backend.sigmoid(value))
+@ScopeOp
+fun Batch<IOType.D1>.sigmoid(): Batch<IOType.D1.Global> = Batch.d1(size, shape, Backend.sigmoid(value))
 
 @JvmName("batchD1sSoftmax")
-fun Batch<IOType.D1>.softmax(): Batch<IOType.D1> = toD2().softmax(axis = 1).toBatch()
+@ScopeOp
+fun Batch<IOType.D1>.softmax(): Batch<IOType.D1.Global> = toD2().softmax(axis = 1).toBatch()
 
 @JvmName("batchD1sSqrt")
-fun Batch<IOType.D1>.sqrt(e: Float = 1e-7f): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.sqrt(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): Batch<IOType.D1.Global> {
     val result = Backend.sqrt(x = value, e = e)
     return Batch.d1(size, shape, result)
 }

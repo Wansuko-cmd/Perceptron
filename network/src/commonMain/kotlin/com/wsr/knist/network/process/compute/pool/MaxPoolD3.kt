@@ -1,12 +1,8 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.reduction.max
 import com.wsr.knist.batch.shape.broadcastToD4
-import com.wsr.knist.batch.shape.fold.fold
-import com.wsr.knist.batch.shape.fold.unfold
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -42,17 +38,17 @@ class MaxPoolD3 internal constructor(
         }
     }
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.unfold(
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.unfold(
         windowSize = poolSize,
         stride = poolSize,
         padding = padding,
     )
         .max(axis = 3)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
         val output = unfold.max(axis = 3)

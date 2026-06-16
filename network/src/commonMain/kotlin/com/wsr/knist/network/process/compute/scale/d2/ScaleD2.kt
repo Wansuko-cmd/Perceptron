@@ -1,7 +1,7 @@
 package com.wsr.knist.network.process.compute.scale.d2
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
@@ -18,12 +18,12 @@ class ScaleD2 internal constructor(
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2,
 ) : Compute.D2() {
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input * weight
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input * weight
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val output = input * weight
         val delta = calcDelta(output)

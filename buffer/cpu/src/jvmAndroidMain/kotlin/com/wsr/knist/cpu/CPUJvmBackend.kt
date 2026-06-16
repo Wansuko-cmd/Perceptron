@@ -1262,6 +1262,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                     indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }
@@ -1280,6 +1281,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                     indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }
@@ -1299,6 +1301,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                     indices.step,
                 )
             }
+
             else -> KotlinBackend.copyInto(x, y, indices)
         }
     }

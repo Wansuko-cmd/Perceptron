@@ -11,7 +11,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormD3
 import kotlin.test.Test
@@ -43,8 +43,8 @@ class RmsNormD3Test {
         )
 
     @Test
-    fun `expect=層正規化`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+    fun `expect=層正規化`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.6735f, 1.3471f),
@@ -90,12 +90,14 @@ class RmsNormD3Test {
     }
 
     @Test
-    fun `train=正規化および勾配を伝播`() = networkTestRule {
-        val actual = target._train(
-            input = input,
-            context = Context(input),
-            calcDelta = { 1e6f * it as Batch<IOType.D2> },
-        ) as Batch<IOType.D3>
+    fun `train=正規化および勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(
+                input = input,
+                context = Context(input),
+                calcDelta = { 1e6f * it as Batch<IOType.D2> },
+            )
+        } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.1875f, 0.3750f),

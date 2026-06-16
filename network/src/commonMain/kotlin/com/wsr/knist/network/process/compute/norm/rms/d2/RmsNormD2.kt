@@ -1,12 +1,7 @@
 package com.wsr.knist.network.process.compute.norm.rms.d2
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.math.sqrt
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.average
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -16,15 +11,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 class RmsNormD2 internal constructor(override val outputX: Int, override val outputY: Int, private val e: Float) :
     Compute.D2() {
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val variance = input.pow(2).average()
         val deviation = variance.sqrt(e = e)

@@ -8,16 +8,19 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchD1sMinusFloat")
-operator fun Batch<IOType.D1>.minus(other: Float): Batch<IOType.D1> {
+@ScopeOp
+operator fun Batch<IOType.D1>.minus(other: Float): Batch<IOType.D1.Global> {
     val result = Backend.minus(x = value, y = other)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD0s")
-operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D0>): Batch<IOType.D1> {
+@ScopeOp
+operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D0>): Batch<IOType.D1.Global> {
     val result = Backend.minus(
         x = value,
         xi = size,
@@ -29,19 +32,22 @@ operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D0>): Batch<IOType.D1> {
 }
 
 @JvmName("batchD1sMinusD1")
-operator fun Batch<IOType.D1>.minus(other: IOType.D1): Batch<IOType.D1> {
+@ScopeOp
+operator fun Batch<IOType.D1>.minus(other: IOType.D1): Batch<IOType.D1.Global> {
     val result = Backend.minus(x = value, xi = size, xj = step, y = other.value, axis = 1)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD1s")
-operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D1>): Batch<IOType.D1> {
+@ScopeOp
+operator fun Batch<IOType.D1>.minus(other: Batch<IOType.D1>): Batch<IOType.D1.Global> {
     val result = Backend.minus(x = value, y = other.value)
     return Batch.d1(size, shape, result)
 }
 
 @JvmName("batchD1sMinusD2sWithAxis")
-fun Batch<IOType.D1>.minus(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2> {
+@ScopeOp
+fun Batch<IOType.D1>.minus(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2.Global> {
     val result = Backend.minus(
         x = value,
         xi = size,

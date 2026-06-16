@@ -2,49 +2,61 @@ package com.wsr.knist.core.elementwise.operation.plus
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
-operator fun Float.plus(other: IOType.D0): IOType.D0 = IOType.D0(Backend.plus(x = this, y = other.value))
+@ScopeOp
+operator fun Float.plus(other: IOType.D0): IOType.D0 = IOType.D0.Global(Backend.plus(x = this, y = other.value))
 
-operator fun Float.plus(other: IOType.D1): IOType.D1 {
+@ScopeOp
+operator fun Float.plus(other: IOType.D1): IOType.D1.Global {
     val result = Backend.plus(x = this, y = other.value)
-    return IOType.D1(value = result)
+    return IOType.D1.Global(value = result)
 }
 
-operator fun Float.plus(other: IOType.D2): IOType.D2 {
+@ScopeOp
+operator fun Float.plus(other: IOType.D2): IOType.D2.Global {
     val result = Backend.plus(x = this, y = other.value)
-    return IOType.D2(shape = other.shape, value = result)
+    return IOType.D2.Global(shape = other.shape, value = result)
 }
 
-operator fun Float.plus(other: IOType.D3): IOType.D3 {
+@ScopeOp
+operator fun Float.plus(other: IOType.D3): IOType.D3.Global {
     val result = Backend.plus(x = this, y = other.value)
-    return IOType.D3(shape = other.shape, value = result)
+    return IOType.D3.Global(shape = other.shape, value = result)
 }
 
-operator fun Float.plus(other: IOType.D4): IOType.D4 {
+@ScopeOp
+operator fun Float.plus(other: IOType.D4): IOType.D4.Global {
     val result = Backend.plus(x = this, y = other.value)
-    return IOType.D4(shape = other.shape, value = result)
+    return IOType.D4.Global(shape = other.shape, value = result)
 }
 
-operator fun IOType.D0.plus(other: Float): IOType.D0 = IOType.D0(Backend.plus(x = value, y = other))
+@ScopeOp
+operator fun IOType.D0.plus(other: Float): IOType.D0 = IOType.D0.Global(Backend.plus(x = value, y = other))
 
-operator fun IOType.D0.plus(other: IOType.D0): IOType.D0 = IOType.D0(Backend.plus(x = value, y = other.value))
+@ScopeOp
+operator fun IOType.D0.plus(other: IOType.D0): IOType.D0 = IOType.D0.Global(Backend.plus(x = value, y = other.value))
 
-operator fun IOType.D0.plus(other: IOType.D1): IOType.D1 {
+@ScopeOp
+operator fun IOType.D0.plus(other: IOType.D1): IOType.D1.Global {
     val result = Backend.plus(x = value, y = other.value, yi = 1, yj = other.size, axis = 0)
-    return IOType.D1(value = result)
+    return IOType.D1.Global(value = result)
 }
 
-operator fun IOType.D0.plus(other: IOType.D2): IOType.D2 {
+@ScopeOp
+operator fun IOType.D0.plus(other: IOType.D2): IOType.D2.Global {
     val result = Backend.plus(x = value, y = other.value, yi = 1, yj = other.size, axis = 0)
-    return IOType.D2(shape = other.shape, value = result)
+    return IOType.D2.Global(shape = other.shape, value = result)
 }
 
-operator fun IOType.D0.plus(other: IOType.D3): IOType.D3 {
+@ScopeOp
+operator fun IOType.D0.plus(other: IOType.D3): IOType.D3.Global {
     val result = Backend.plus(x = value, y = other.value, yi = 1, yj = other.size, axis = 0)
-    return IOType.D3(shape = other.shape, value = result)
+    return IOType.D3.Global(shape = other.shape, value = result)
 }
 
-operator fun IOType.D0.plus(other: IOType.D4): IOType.D4 {
+@ScopeOp
+operator fun IOType.D0.plus(other: IOType.D4): IOType.D4.Global {
     val result = Backend.plus(x = value, y = other.value, yi = 1, yj = other.size, axis = 0)
-    return IOType.D4(shape = other.shape, value = result)
+    return IOType.D4.Global(shape = other.shape, value = result)
 }

@@ -1,8 +1,7 @@
 package com.wsr.knist.network.process.compute.scale.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
@@ -26,13 +25,13 @@ class ScaleAxisD3 internal constructor(
         0, 1 -> 1
         else -> 0
     }
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
         input.times(other = weight, axis = axis)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val output = input.times(other = weight, axis = axis)
         val delta = calcDelta(output)

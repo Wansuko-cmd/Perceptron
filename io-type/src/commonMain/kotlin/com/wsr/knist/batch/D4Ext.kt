@@ -2,38 +2,38 @@ package com.wsr.knist.batch
 
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
+import com.wsr.knist.core.D4
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d4
 import kotlin.jvm.JvmName
 
-inline fun Batch.Companion.d4(
+@PublishedApi
+internal inline fun Batch.Companion.d4Impl(
     batchSize: Int,
     i: Int,
     j: Int,
     k: Int,
     l: Int,
-    init: (Int, Int, Int, Int) -> Float = {
-            _,
-            _,
-            _,
-            _,
-        ->
-        0f
-    },
-): Batch<IOType.D4> = Batch(batchSize) { IOType.d4(i, j, k, l, init) }
+    init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
+): Batch<IOType.D4.Global> = Batch(batchSize) { IOType.d4(i, j, k, l, init) }
 
-inline fun Batch.Companion.d4(
+@PublishedApi
+internal inline fun Batch.Companion.d4Impl(
     batchSize: Int,
     shape: List<Int>,
-    init: (Int, Int, Int, Int) -> Float = { _, _, _, _ ->
-        0f
-    },
-): Batch<IOType.D4> = d4(batchSize, shape[0], shape[1], shape[2], shape[3], init)
+    init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
+): Batch<IOType.D4.Global> = d4Impl(batchSize, shape[0], shape[1], shape[2], shape[3], init)
 
-internal fun Batch.Companion.d4(batchSize: Int, i: Int, j: Int, k: Int, l: Int, value: DataBuffer): Batch<IOType.D4> =
-    Batch(value = value, size = batchSize, shape = listOf(i, j, k, l))
+internal fun Batch.Companion.d4Impl(
+    batchSize: Int,
+    i: Int,
+    j: Int,
+    k: Int,
+    l: Int,
+    value: DataBuffer,
+): Batch<IOType.D4.Global> = Batch(value = value, size = batchSize, shape = listOf(i, j, k, l))
 
-internal fun Batch.Companion.d4(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4> =
+internal fun Batch.Companion.d4Impl(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4.Global> =
     Batch(value = value, size = batchSize, shape = shape)
 
 val Batch<IOType.D4>.i get() = shape[0]

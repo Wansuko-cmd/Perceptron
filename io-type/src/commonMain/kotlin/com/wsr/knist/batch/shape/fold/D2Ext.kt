@@ -8,8 +8,10 @@ import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 
-fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D3> {
+@ScopeOp
+fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D3.Global> {
     val result = Backend.unfold(
         x = value,
         xi = i,
@@ -28,7 +30,8 @@ fun Batch<IOType.D2>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
     )
 }
 
-fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2> {
+@ScopeOp
+fun Batch<IOType.D3>.fold(stride: Int, padding: Int): Batch<IOType.D2.Global> {
     val result = Backend.fold(
         x = value,
         xi = i,

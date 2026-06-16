@@ -1,9 +1,8 @@
 package com.wsr.knist.network.process.compute.dropout
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d3
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.nextFloat
 import com.wsr.knist.network.process.Context
@@ -22,12 +21,12 @@ class DropoutD3 internal constructor(
     private val random by lazy { seed?.let { Random(it) } ?: Random }
     private val q = 1 / ratio
 
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val mask = IOType.d3(
             i = outputX,
@@ -42,11 +41,11 @@ class DropoutD3 internal constructor(
 
 fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
-    DropoutD3(
-        outputX = inputX,
-        outputY = inputY,
-        outputZ = inputZ,
-        ratio = ratio,
-        seed = seed,
-    ),
+        DropoutD3(
+            outputX = inputX,
+            outputY = inputY,
+            outputZ = inputZ,
+            ratio = ratio,
+            seed = seed,
+        ),
 )

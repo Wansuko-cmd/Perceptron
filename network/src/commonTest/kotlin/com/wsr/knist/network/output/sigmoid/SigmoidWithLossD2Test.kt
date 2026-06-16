@@ -8,17 +8,17 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SigmoidWithLossD2Test {
     @Test
-    fun `expect=sigmoidを計算`() = networkTestRule {
+    fun `expect=sigmoidを計算`() = networkScopeTestRule {
         val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
-        val actual = target._expect(input) as Batch<IOType.D2>
+        val actual = with(target) { _expect(input) } as Batch<IOType.D2>
 
         assertEquals(expected = 0.5f, actual = actual[0][0][0].unwrap())
         assertEquals(expected = 0.7310f, actual = actual[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
@@ -27,12 +27,12 @@ class SigmoidWithLossD2Test {
     }
 
     @Test
-    fun `train=sigmoidの逆伝播`() = networkTestRule {
+    fun `train=sigmoidの逆伝播`() = networkScopeTestRule {
         val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
-        val actual = target._train(input = input, label = { label })
+        val actual = with(target) { _train(input = input, label = { label }) }
         val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D2>
 

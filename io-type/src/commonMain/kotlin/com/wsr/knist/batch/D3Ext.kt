@@ -2,32 +2,36 @@ package com.wsr.knist.batch
 
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
+import com.wsr.knist.core.D3
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import kotlin.jvm.JvmName
 
-inline fun Batch.Companion.d3(
+@PublishedApi
+internal inline fun Batch.Companion.d3Impl(
     batchSize: Int,
     i: Int,
     j: Int,
     k: Int,
-    init: (Int, Int, Int) -> Float = { _, _, _ ->
-        0f
-    },
-): Batch<IOType.D3> = Batch(batchSize) { IOType.d3(i, j, k, init) }
+    init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
+): Batch<IOType.D3.Global> = Batch(batchSize) { IOType.d3(i, j, k, init) }
 
-inline fun Batch.Companion.d3(
+@PublishedApi
+internal inline fun Batch.Companion.d3Impl(
     batchSize: Int,
     shape: List<Int>,
-    init: (Int, Int, Int) -> Float = { _, _, _ ->
-        0f
-    },
-): Batch<IOType.D3> = d3(batchSize, shape[0], shape[1], shape[2], init)
+    init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
+): Batch<IOType.D3.Global> = d3Impl(batchSize, shape[0], shape[1], shape[2], init)
 
-internal fun Batch.Companion.d3(batchSize: Int, i: Int, j: Int, k: Int, value: DataBuffer): Batch<IOType.D3> =
-    Batch(value = value, size = batchSize, shape = listOf(i, j, k))
+internal fun Batch.Companion.d3Impl(
+    batchSize: Int,
+    i: Int,
+    j: Int,
+    k: Int,
+    value: DataBuffer,
+): Batch<IOType.D3.Global> = Batch(value = value, size = batchSize, shape = listOf(i, j, k))
 
-internal fun Batch.Companion.d3(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D3> =
+internal fun Batch.Companion.d3Impl(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D3.Global> =
     Batch(value = value, size = batchSize, shape = shape)
 
 val Batch<IOType.D3>.i get() = shape[0]

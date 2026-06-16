@@ -11,7 +11,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormAxisD3
 import kotlin.test.Test
@@ -45,8 +45,8 @@ class RmsNormAxisD3Test {
         )
 
     @Test
-    fun `Axis0_expect=axis0で層正規化`() = networkTestRule {
-        val actual = target0._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+    fun `Axis0_expect=axis0で層正規化`() = networkScopeTestRule {
+        val actual = with(target0) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 1.4142f, 1.2649f),
@@ -92,12 +92,14 @@ class RmsNormAxisD3Test {
     }
 
     @Test
-    fun `Axis0_train=axis0で正規化および勾配を伝播`() = networkTestRule {
-        val actual = target0._train(
-            input = input,
-            context = Context(input),
-            calcDelta = { 1e6f * it as Batch<IOType.D2> },
-        ) as Batch<IOType.D3>
+    fun `Axis0_train=axis0で正規化および勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target0) {
+            _train(
+                input = input,
+                context = Context(input),
+                calcDelta = { 1e6f * it as Batch<IOType.D2> },
+            )
+        } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 4.1250f, 0.2500f),
@@ -143,8 +145,8 @@ class RmsNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_expect=axis1で層正規化`() = networkTestRule {
-        val actual = target1._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+    fun `Axis1_expect=axis1で層正規化`() = networkScopeTestRule {
+        val actual = with(target1) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.6324f, 0.6324f),
@@ -190,12 +192,14 @@ class RmsNormAxisD3Test {
     }
 
     @Test
-    fun `Axis1_train=axis1で正規化および勾配を伝播`() = networkTestRule {
-        val actual = target1._train(
-            input = input,
-            context = Context(input),
-            calcDelta = { it },
-        ) as Batch<IOType.D3>
+    fun `Axis1_train=axis1で正規化および勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target1) {
+            _train(
+                input = input,
+                context = Context(input),
+                calcDelta = { it },
+            )
+        } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 1.1920E-7f, 1.4901E-8f),
@@ -241,8 +245,8 @@ class RmsNormAxisD3Test {
     }
 
     @Test
-    fun `Axis2_expect=axis2で層正規化`() = networkTestRule {
-        val actual = target2._expect(input = input, context = Context(input)) as Batch<IOType.D3>
+    fun `Axis2_expect=axis2で層正規化`() = networkScopeTestRule {
+        val actual = with(target2) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.7745f, 1.5491f),
@@ -288,12 +292,14 @@ class RmsNormAxisD3Test {
     }
 
     @Test
-    fun `Axis2_train=axis2で正規化および勾配を伝播`() = networkTestRule {
-        val actual = target2._train(
-            input = input,
-            context = Context(input),
-            calcDelta = { 1e6f * it as Batch<IOType.D2> },
-        ) as Batch<IOType.D3>
+    fun `Axis2_train=axis2で正規化および勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target2) {
+            _train(
+                input = input,
+                context = Context(input),
+                calcDelta = { 1e6f * it as Batch<IOType.D2> },
+            )
+        } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.3125f, 0.6250f),

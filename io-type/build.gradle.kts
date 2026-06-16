@@ -1,9 +1,12 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 plugins {
     kotlin("multiplatform")
     alias(libs.plugins.serialization)
     alias(libs.plugins.android.kmp.library)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -30,10 +33,12 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 api(projects.buffer)
 
                 implementation(libs.serialization)
+                implementation(projects.ioType.scopeAnnotation)
             }
         }
 
@@ -45,8 +50,22 @@ kotlin {
     }
 
     compilerOptions {
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll("-Xexpect-actual-classes", "-Xcontext-parameters")
     }
+}
+
+dependencies {
+    kspCommonMainMetadata(projects.ioType.scopeProcessor)
+}
+
+tasks.withType<AbstractKotlinCompile<*>>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+tasks.withType<KotlinNativeCompile>().configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+tasks.matching { it.name.contains("CommonMainSourceSet") }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
 }
 
 afterEvaluate {

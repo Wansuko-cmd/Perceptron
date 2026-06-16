@@ -8,7 +8,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
@@ -29,27 +29,29 @@ class AffineD1Test {
         )
 
     @Test
-    fun `expect=全結合`() = networkTestRule {
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
+    fun `expect=全結合`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(20f, 26f, 32f, 38f), actual = actual[0])
         assertContentEquals(expected = IOType.d1(30f, 39f, 48f, 57f), actual = actual[1])
     }
 
     @Test
-    fun `train=逆伝播を行い勾配を返す`() = networkTestRule {
-        val actual = target._train(input = input, context = Context(input), calcDelta = { it }) as Batch<IOType.D1>
+    fun `train=逆伝播を行い勾配を返す`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(204f, 436f, 668f), actual = actual[0])
         assertContentEquals(expected = IOType.d1(306f, 654f, 1002f), actual = actual[1])
     }
 
     @Test
-    fun `train=重みを更新する`() = networkTestRule {
+    fun `train=重みを更新する`() = networkScopeTestRule {
         val target = target
 
-        target._train(input = input, context = Context(input), calcDelta = { it })
-        val actual = target._expect(input = input, context = Context(input)) as Batch<IOType.D1>
+        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
 
         assertContentEquals(
             expected = IOType.d1(7.0000f, 9.1f, 11.2000f, 13.2999f),

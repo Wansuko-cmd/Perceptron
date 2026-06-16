@@ -7,9 +7,16 @@ import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.k
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
+import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
-fun IOType.D3.matMul(other: Batch<IOType.D3>, transA: Boolean = false, transB: Boolean = false): Batch<IOType.D3> {
+@ScopeOp
+fun IOType.D3.matMul(
+    other: Batch<IOType.D3>,
+    transA: Boolean = false,
+    transB: Boolean = false,
+): Batch<IOType.D3.Global> {
     val m = if (transA) k else j
     val n = if (transB) other.j else other.k
     val k = if (transA) j else k
@@ -27,7 +34,12 @@ fun IOType.D3.matMul(other: Batch<IOType.D3>, transA: Boolean = false, transB: B
 }
 
 @JvmName("batchD3sMatMulD3")
-fun Batch<IOType.D3>.matMul(other: IOType.D3, transA: Boolean = false, transB: Boolean = false): Batch<IOType.D3> {
+@ScopeOp
+fun Batch<IOType.D3>.matMul(
+    other: IOType.D3,
+    @ScopeOpDefault("false") transA: Boolean = false,
+    @ScopeOpDefault("false") transB: Boolean = false,
+): Batch<IOType.D3.Global> {
     val m = if (transA) k else j
     val n = if (transB) other.j else other.k
     val k = if (transA) j else k
@@ -45,11 +57,12 @@ fun Batch<IOType.D3>.matMul(other: IOType.D3, transA: Boolean = false, transB: B
 }
 
 @JvmName("batchD3sMatMulD3s")
+@ScopeOp
 fun Batch<IOType.D3>.matMul(
     other: Batch<IOType.D3>,
-    transA: Boolean = false,
-    transB: Boolean = false,
-): Batch<IOType.D3> {
+    @ScopeOpDefault("false") transA: Boolean = false,
+    @ScopeOpDefault("false") transB: Boolean = false,
+): Batch<IOType.D3.Global> {
     val m = if (transA) this.k else this.j
     val n = if (transB) other.j else other.k
     val k = if (transA) this.j else this.k

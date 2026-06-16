@@ -1,10 +1,9 @@
 package com.wsr.knist.network.process.compute.affine
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.linalg.matMul
 import com.wsr.knist.batch.shape.toD2
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.linalg.matMul
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -18,22 +17,21 @@ class AffineD1 internal constructor(
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2,
 ) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = forward(input)
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
+        weight.matMul(input, trans = true)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
-        calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
-        val output = forward(input)
+        val output = weight.matMul(input, trans = true)
         val delta = calcDelta(output)
         val dx = weight.matMul(delta)
         val dw = input.toD2().matMul(delta.toD2(), transA = true)
         weight = optimizer.adapt(weight = weight, dw = dw)
         return dx
     }
-
-    private fun forward(input: Batch<IOType.D1>): Batch<IOType.D1> = weight.matMul(input, trans = true)
 }
 
 fun <T> NetworkBuilder.D1<T>.affine(
@@ -42,14 +40,14 @@ fun <T> NetworkBuilder.D1<T>.affine(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process =
-    AffineD1(
-        outputSize = neuron,
-        optimizer = optimizer.d2(inputSize, neuron),
-        weight = initializer.d2(
-            input = listOf(inputSize),
-            output = listOf(neuron),
-            x = inputSize,
-            y = neuron,
+        AffineD1(
+            outputSize = neuron,
+            optimizer = optimizer.d2(inputSize, neuron),
+            weight = initializer.d2(
+                input = listOf(inputSize),
+                output = listOf(neuron),
+                x = inputSize,
+                y = neuron,
+            ),
         ),
-    ),
 )

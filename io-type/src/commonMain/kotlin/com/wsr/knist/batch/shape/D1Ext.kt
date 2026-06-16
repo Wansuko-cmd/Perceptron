@@ -1,4 +1,4 @@
-package com.wsr.knist.batch.shape
+﻿package com.wsr.knist.batch.shape
 
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
@@ -9,24 +9,29 @@ import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.d3
 import com.wsr.knist.batch.get
 import com.wsr.knist.batch.i
+import com.wsr.knist.core.D2
 import com.wsr.knist.core.IOType
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
-fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2> = when (axis) {
+@ScopeOp
+fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2.Global> = when (axis) {
     0 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size, j = 1, k = i)
         Batch.d2(this.size, size, i, result)
     }
+
     1 -> {
         val result = Backend.gather(x = DataBuffer.create(size), y = value, i = this.size * i, j = 1, k = 1)
         Batch.d2(this.size, i, size, result)
     }
+
     else -> throw IllegalArgumentException("Batch<IOType.D1>.broadcastToD2 axis is $axis not 0 or 1.")
 }
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
 
-fun IOType.D2.toBatch(): Batch<IOType.D1> = Batch.d1(i, j, value)
+fun IOType.D2.toBatch(): Batch<IOType.D1.Global> = Batch.d1(i, j, value)
 
 @JvmName("batchD1sToList")
 fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }
@@ -43,12 +48,14 @@ fun Batch<IOType.D1>.reshapeToD3(i: Int, j: Int, k: Int) = reshapeToD3(listOf(i,
 @JvmName("batchD1sReshapeToD3ByShape")
 fun Batch<IOType.D1>.reshapeToD3(shape: List<Int>) = Batch.d3(size, shape, value)
 
-fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1.Global> {
     val result = Backend.slice(x = value, xi = size, xj = i, axis = 1, indices = indices)
     return Batch.d1(size, indices.size, result)
 }
 
-fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1> {
+@ScopeOp
+fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1.Global> {
     check(size == other.size && i == other.i)
     val newI = i * 2
     val result = DataBuffer.create(value.size + other.value.size)

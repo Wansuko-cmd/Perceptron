@@ -4,13 +4,14 @@ import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 
-inline fun IOType.Companion.d4(
+@PublishedApi
+internal inline fun IOType.Companion.d4Impl(
     i: Int,
     j: Int,
     k: Int,
     l: Int,
     init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-): IOType.D4 {
+): IOType.D4.Global {
     val value = FloatArray(i * j * k * l)
     for (_i in 0 until i) {
         for (_j in 0 until j) {
@@ -21,10 +22,14 @@ inline fun IOType.Companion.d4(
             }
         }
     }
-    return IOType.d4(shape = listOf(i, j, k, l), value = value)
+    return d4Impl(shape = listOf(i, j, k, l), value = value)
 }
 
-inline fun IOType.Companion.d4(shape: List<Int>, init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f }) = d4(
+@PublishedApi
+internal inline fun IOType.Companion.d4Impl(
+    shape: List<Int>,
+    init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
+): IOType.D4.Global = d4Impl(
     i = shape[0],
     j = shape[1],
     k = shape[2],
@@ -32,13 +37,13 @@ inline fun IOType.Companion.d4(shape: List<Int>, init: (Int, Int, Int, Int) -> F
     init = init,
 )
 
-fun IOType.Companion.d4(shape: List<Int>, value: List<Float>) = IOType.d4(
-    value = value.toFloatArray(),
+internal fun IOType.Companion.d4Impl(shape: List<Int>, value: List<Float>): IOType.D4.Global = d4Impl(
     shape = shape,
+    value = value.toFloatArray(),
 )
 
-@JvmName("d4WithElements")
-fun IOType.Companion.d4(vararg elements: IOType.D3): IOType.D4 {
+@JvmName("d4ImplWithElements")
+internal fun IOType.Companion.d4Impl(vararg elements: IOType.D3): IOType.D4.Global {
     val size = elements.size
     val shape = elements.first().shape
     val step = shape.reduce { acc, i -> acc * i }
@@ -47,11 +52,12 @@ fun IOType.Companion.d4(vararg elements: IOType.D3): IOType.D4 {
         val start = index * step
         Backend.copyInto(item.value, value, start until start + item.size)
     }
-    return IOType.D4(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
+    return IOType.D4.Global(shape = listOf(size, shape[0], shape[1], shape[2]), value = value)
 }
 
-fun IOType.Companion.d4(shape: List<Int>, value: FloatArray) =
-    IOType.D4(shape = shape, value = DataBuffer.create(value))
+@PublishedApi
+internal fun IOType.Companion.d4Impl(shape: List<Int>, value: FloatArray): IOType.D4.Global =
+    IOType.D4.Global(shape = shape, value = DataBuffer.create(value))
 
 operator fun IOType.D4.get(i: Int, j: Int, k: Int, l: Int): IOType.D0 = IOType.d0(
     value[
