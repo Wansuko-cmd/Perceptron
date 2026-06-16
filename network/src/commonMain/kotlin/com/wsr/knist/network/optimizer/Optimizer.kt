@@ -25,21 +25,25 @@ interface Optimizer {
         protected val step: Int get() = _step / _stepUnit
         protected abstract fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1
 
-        fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
+        context(scope: IOScope)
+        fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt()
-                val scale = _maxNorm / norm
-                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
-                return adapt(weight, dw * clipped).also { _step++ }
+                with(scope) {
+                    val norm = dw.pow(2).sum().sqrt()
+                    val scale = _maxNorm / norm
+                    val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                    return adapt(weight, dw * clipped).also { _step++ }
+                }
             }
-            return adapt(weight, dw).also { _step++ }
+            return with(scope) { adapt(weight, dw) }.also { _step++ }
         }
 
-        fun IOScope.adapt(
+        context(scope: IOScope)
+        fun adapt(
             weight: IOType.D1,
             dw: Batch<IOType.D1>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D1 = adapt(weight, dw.batchAverage(), enableClip)
+        ): IOType.D1 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
@@ -48,21 +52,25 @@ interface Optimizer {
         protected val step: Int get() = _step / _stepUnit
         protected abstract fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2
 
-        fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
+        context(scope: IOScope)
+        fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt()
-                val scale = _maxNorm / norm
-                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
-                return adapt(weight, dw * clipped).also { _step++ }
+                with(scope) {
+                    val norm = dw.pow(2).sum().sqrt()
+                    val scale = _maxNorm / norm
+                    val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                    return adapt(weight, dw * clipped).also { _step++ }
+                }
             }
-            return adapt(weight, dw).also { _step++ }
+            return with(scope) { adapt(weight, dw) }.also { _step++ }
         }
 
-        fun IOScope.adapt(
+        context(scope: IOScope)
+        fun adapt(
             weight: IOType.D2,
             dw: Batch<IOType.D2>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D2 = adapt(weight, dw.batchAverage(), enableClip)
+        ): IOType.D2 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
@@ -71,21 +79,25 @@ interface Optimizer {
         protected val step: Int get() = _step / _stepUnit
         protected abstract fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3
 
-        fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
+        context(scope: IOScope)
+        fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt()
-                val scale = _maxNorm / norm
-                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
-                return adapt(weight, dw * clipped).also { _step++ }
+                with(scope) {
+                    val norm = dw.pow(2).sum().sqrt()
+                    val scale = _maxNorm / norm
+                    val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                    return adapt(weight, dw * clipped).also { _step++ }
+                }
             }
-            return adapt(weight, dw).also { _step++ }
+            return with(scope) { adapt(weight, dw) }.also { _step++ }
         }
 
-        fun IOScope.adapt(
+        context(scope: IOScope)
+        fun adapt(
             weight: IOType.D3,
             dw: Batch<IOType.D3>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D3 = adapt(weight, dw.batchAverage(), enableClip)
+        ): IOType.D3 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
@@ -94,20 +106,24 @@ interface Optimizer {
         protected val step: Int get() = _step / _stepUnit
         protected abstract fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4
 
-        fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
+        context(scope: IOScope)
+        fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             if (enableClip) {
-                val norm = dw.pow(2).sum().sqrt()
-                val scale = _maxNorm / norm
-                val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
-                return adapt(weight, dw * clipped).also { _step++ }
+                with(scope) {
+                    val norm = dw.pow(2).sum().sqrt()
+                    val scale = _maxNorm / norm
+                    val clipped = scale.where(condition = scale lt 1f, onFalse = 1f)
+                    return adapt(weight, dw * clipped).also { _step++ }
+                }
             }
-            return adapt(weight, dw).also { _step++ }
+            return with(scope) { adapt(weight, dw) }.also { _step++ }
         }
 
-        fun IOScope.adapt(
+        context(scope: IOScope)
+        fun adapt(
             weight: IOType.D4,
             dw: Batch<IOType.D4>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D4 = adapt(weight, dw.batchAverage(), enableClip)
+        ): IOType.D4 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 }

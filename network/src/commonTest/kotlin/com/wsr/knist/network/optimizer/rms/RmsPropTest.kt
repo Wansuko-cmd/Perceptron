@@ -9,14 +9,14 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RmsPropTest {
     @Test
-    fun `D1_adapt=RMSPropアルゴリズムで最適化`() = networkTestRule {
+    fun `D1_adapt=RMSPropアルゴリズムで最適化`() = networkScopeTestRule {
         val target = RmsProp(scheduler = Scheduler.Fix(1f)).d1(3)
         val weight = IOType.d1(1f, 2f, 3f)
         val dw = IOType.d1(1f, 2f, 3f)
@@ -35,7 +35,7 @@ class RmsPropTest {
     }
 
     @Test
-    fun `D2_adapt=RMSPropアルゴリズムで最適化`() = networkTestRule {
+    fun `D2_adapt=RMSPropアルゴリズムで最適化`() = networkScopeTestRule {
         val target = RmsProp(scheduler = Scheduler.Fix(1f)).d2(i = 2, j = 2)
         val weight = IOType.d2(2, 2) { i, j -> i * 2f + j }
         val dw = IOType.d2(2, 2) { i, j -> i * 2f + j }
@@ -56,7 +56,7 @@ class RmsPropTest {
     }
 
     @Test
-    fun `D3_adapt=RMSPropアルゴリズムで最適化`() = networkTestRule {
+    fun `D3_adapt=RMSPropアルゴリズムで最適化`() = networkScopeTestRule {
         val target = RmsProp(scheduler = Scheduler.Fix(1f)).d3(i = 2, j = 2, k = 2)
         val weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }
         val dw = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }
@@ -85,7 +85,7 @@ class RmsPropTest {
     }
 
     @Test
-    fun `D4_adapt=RMSPropアルゴリズムで最適化`() = networkTestRule {
+    fun `D4_adapt=RMSPropアルゴリズムで最適化`() = networkScopeTestRule {
         val target = RmsProp(scheduler = Scheduler.Fix(1f)).d4(i = 2, j = 2, k = 2, l = 2)
         val weight = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l }
         val dw = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l }
