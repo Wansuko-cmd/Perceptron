@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class CharsD1(override val outputSize: Int) : Converter.D1<String>() {
-    override fun IOScope.encode(input: List<String>): Batch<IOType.D1> = input.toList().map { text ->
+    override fun IOScope.encode(input: List<String>): Batch<IOType.D1> = input.map { text ->
         IOType.d1(outputSize) { index ->
             text.getOrNull(index)
                 ?.let { charToId[it] }
