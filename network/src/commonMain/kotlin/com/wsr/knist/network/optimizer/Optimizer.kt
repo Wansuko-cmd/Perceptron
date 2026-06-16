@@ -2,6 +2,7 @@ package com.wsr.knist.network.optimizer
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.reduction.average.batchAverage
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.elementwise.compare.lt
 import com.wsr.knist.core.elementwise.compare.where.where
@@ -22,9 +23,9 @@ interface Optimizer {
     abstract class D1(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var _step: Int = 0
         protected val step: Int get() = _step / _stepUnit
-        protected abstract fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1
+        protected abstract fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1
 
-        fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
+        fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             if (enableClip) {
                 val norm = dw.pow(2).sum().sqrt()
                 val scale = _maxNorm / norm
@@ -34,7 +35,7 @@ interface Optimizer {
             return adapt(weight, dw).also { _step++ }
         }
 
-        fun adapt(
+        fun IOScope.adapt(
             weight: IOType.D1,
             dw: Batch<IOType.D1>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -45,9 +46,9 @@ interface Optimizer {
     abstract class D2(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var _step: Int = 0
         protected val step: Int get() = _step / _stepUnit
-        protected abstract fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2
+        protected abstract fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2
 
-        fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
+        fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             if (enableClip) {
                 val norm = dw.pow(2).sum().sqrt()
                 val scale = _maxNorm / norm
@@ -57,7 +58,7 @@ interface Optimizer {
             return adapt(weight, dw).also { _step++ }
         }
 
-        fun adapt(
+        fun IOScope.adapt(
             weight: IOType.D2,
             dw: Batch<IOType.D2>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -68,9 +69,9 @@ interface Optimizer {
     abstract class D3(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var _step: Int = 0
         protected val step: Int get() = _step / _stepUnit
-        protected abstract fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3
+        protected abstract fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3
 
-        fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
+        fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             if (enableClip) {
                 val norm = dw.pow(2).sum().sqrt()
                 val scale = _maxNorm / norm
@@ -80,7 +81,7 @@ interface Optimizer {
             return adapt(weight, dw).also { _step++ }
         }
 
-        fun adapt(
+        fun IOScope.adapt(
             weight: IOType.D3,
             dw: Batch<IOType.D3>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -91,9 +92,9 @@ interface Optimizer {
     abstract class D4(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var _step: Int = 0
         protected val step: Int get() = _step / _stepUnit
-        protected abstract fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4
+        protected abstract fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4
 
-        fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
+        fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             if (enableClip) {
                 val norm = dw.pow(2).sum().sqrt()
                 val scale = _maxNorm / norm
@@ -103,7 +104,7 @@ interface Optimizer {
             return adapt(weight, dw).also { _step++ }
         }
 
-        fun adapt(
+        fun IOScope.adapt(
             weight: IOType.D4,
             dw: Batch<IOType.D4>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
