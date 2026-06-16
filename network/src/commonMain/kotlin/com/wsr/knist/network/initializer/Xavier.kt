@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 class Xavier(seed: Int? = null) : WeightInitializer {
     private val random = seed?.let { Random(it) } ?: Random
-    override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1 {
+    override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
@@ -20,7 +20,7 @@ class Xavier(seed: Int? = null) : WeightInitializer {
         return IOType.d1(value = weight)
     }
 
-    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2 {
+    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
@@ -29,7 +29,7 @@ class Xavier(seed: Int? = null) : WeightInitializer {
         return IOType.d2(shape = listOf(x, y), value = weight)
     }
 
-    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3 {
+    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
@@ -38,7 +38,7 @@ class Xavier(seed: Int? = null) : WeightInitializer {
         return IOType.d3(shape = listOf(x, y, z), value = weight)
     }
 
-    override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4 {
+    override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
