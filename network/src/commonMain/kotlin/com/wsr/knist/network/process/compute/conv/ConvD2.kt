@@ -1,19 +1,14 @@
 package com.wsr.knist.network.process.compute.conv
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.shape.fold.fold
-import com.wsr.knist.batch.shape.fold.unfold
 import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.batch.shape.reshapeToD4
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toD4
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.elementwise.operation.div.div
-import com.wsr.knist.core.linalg.matMul
-import com.wsr.knist.core.shape.flip
 import com.wsr.knist.core.shape.reshapeToD2
 import com.wsr.knist.core.shape.reshapeToD4
-import com.wsr.knist.core.shape.transpose
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -36,7 +31,7 @@ class ConvD2 internal constructor(
     override val outputX: Int = filter
     override val outputY: Int = (inputX - kernel + 2 * padding) / stride + 1
     override val outputZ: Int = (inputY - kernel + 2 * padding) / stride + 1
-    override fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)
             .toD4()
@@ -48,10 +43,10 @@ class ConvD2 internal constructor(
             .toBatch()
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
-        calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)

@@ -2,6 +2,7 @@
 
 package com.wsr.knist.core
 
+import com.wsr.knist.base.BufferScope
 import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable

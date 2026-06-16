@@ -1,11 +1,7 @@
 package com.wsr.knist.network.process.compute.position
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.plus.plus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.shape.interleave
-import com.wsr.knist.batch.shape.slice
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
@@ -34,21 +30,21 @@ class RoPED2 internal constructor(
         IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y]) }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.applyRoPE()
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val output = input.applyRoPE()
+        val output = forward(input)
         val delta = calcDelta(output)
-        return delta.applyRoPE()
+        return forward(delta)
     }
 
-    private fun Batch<IOType.D2>.applyRoPE(): Batch<IOType.D2> {
-        val even = this.slice(0 until shape[1] step 2, axis = 1)
-        val odd = this.slice(1 until shape[1] step 2, axis = 1)
+    private fun IOScope.forward(input: Batch<IOType.D2>): Batch<IOType.D2> {
+        val even = input.slice(0 until input.shape[1] step 2, axis = 1)
+        val odd = input.slice(1 until input.shape[1] step 2, axis = 1)
 
         val resEven = even * cosCache - odd * sinCache
         val resOdd = even * sinCache + odd * cosCache

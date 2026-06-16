@@ -1,19 +1,14 @@
 package com.wsr.knist.network.process.compute.conv
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.shape.fold.fold
-import com.wsr.knist.batch.shape.fold.unfold
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toD3
 import com.wsr.knist.batch.shape.toD4
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.elementwise.operation.div.div
-import com.wsr.knist.core.linalg.matMul
-import com.wsr.knist.core.shape.flip
 import com.wsr.knist.core.shape.reshapeToD2
 import com.wsr.knist.core.shape.reshapeToD3
 import com.wsr.knist.core.shape.reshapeToD4
-import com.wsr.knist.core.shape.transpose
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -49,7 +44,7 @@ class ConvD1 internal constructor(
         }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
@@ -60,10 +55,10 @@ class ConvD1 internal constructor(
             .toBatch()
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .toD4()

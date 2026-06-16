@@ -14,6 +14,7 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchD2TimesD2s")
+@ScopeOp
 operator fun IOType.D2.times(other: Batch<IOType.D2>): Batch<IOType.D2.Global> {
     val result = Backend.times(
         x = value,

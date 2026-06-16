@@ -3,16 +3,10 @@ package com.wsr.knist.network.process.compute.attention
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.elementwise.compare.eq
 import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.math.softmax
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
 import com.wsr.knist.batch.elementwise.operation.plus.plus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.linalg.matMul
-import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.batch.shape.reshapeToD3
-import com.wsr.knist.batch.shape.transpose
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
@@ -41,7 +35,7 @@ class AttentionD2 internal constructor(
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
     private val causalMask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
@@ -65,10 +59,10 @@ class AttentionD2 internal constructor(
         return concat.matMul(weightO)
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputX, j = numOfHeads, k = dim)

@@ -9,24 +9,28 @@ import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
 @JvmName("batchWhereFloatToFloatAsD4")
+@ScopeOp
 fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Float): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereFloatToD4s")
+@ScopeOp
 fun where(condition: Batch<IOType.D4>, onTrue: Float, onFalse: Batch<IOType.D4>): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue, onFalse.value)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereD4sToFloat")
+@ScopeOp
 fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Float): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse)
     return Batch.d4(condition.size, condition.shape, result)
 }
 
 @JvmName("batchWhereD4sToD4s")
+@ScopeOp
 fun where(condition: Batch<IOType.D4>, onTrue: Batch<IOType.D4>, onFalse: Batch<IOType.D4>): Batch<IOType.D4.Global> {
     val result = Backend.where(condition.value, onTrue.value, onFalse.value)
     return Batch.d4(condition.size, condition.shape, result)

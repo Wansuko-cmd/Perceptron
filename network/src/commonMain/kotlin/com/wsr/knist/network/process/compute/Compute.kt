@@ -1,6 +1,7 @@
 package com.wsr.knist.network.process.compute
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
@@ -13,23 +14,23 @@ sealed interface Compute : Process {
     abstract class D1 : Compute {
         abstract val outputSize: Int
 
-        protected abstract fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1>
 
-        protected abstract fun train(
+        protected abstract fun IOScope.train(
             input: Batch<IOType.D1>,
             context: Context,
-            calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+            calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         ): Batch<IOType.D1>
 
-        final override fun _expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
+        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
             input = input as Batch<IOType.D1>,
             context = context,
         )
 
-        final override fun _train(
+        final override fun IOScope._train(
             input: Batch<IOType>,
             context: Context,
-            calcDelta: (Batch<IOType>) -> Batch<IOType>,
+            calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D1>,
             context = context,
@@ -42,23 +43,23 @@ sealed interface Compute : Process {
         abstract val outputX: Int
         abstract val outputY: Int
 
-        protected abstract fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2>
 
-        protected abstract fun train(
+        protected abstract fun IOScope.train(
             input: Batch<IOType.D2>,
             context: Context,
-            calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+            calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         ): Batch<IOType.D2>
 
-        final override fun _expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
+        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
             input = input as Batch<IOType.D2>,
             context = context,
         )
 
-        final override fun _train(
+        final override fun IOScope._train(
             input: Batch<IOType>,
             context: Context,
-            calcDelta: (Batch<IOType>) -> Batch<IOType>,
+            calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D2>,
             context = context,
@@ -72,23 +73,23 @@ sealed interface Compute : Process {
         abstract val outputY: Int
         abstract val outputZ: Int
 
-        protected abstract fun expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3>
 
-        protected abstract fun train(
+        protected abstract fun IOScope.train(
             input: Batch<IOType.D3>,
             context: Context,
-            calcDelta: (Batch<IOType.D3>) -> Batch<IOType.D3>,
+            calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         ): Batch<IOType.D3>
 
-        final override fun _expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
+        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
             input = input as Batch<IOType.D3>,
             context = context,
         )
 
-        final override fun _train(
+        final override fun IOScope._train(
             input: Batch<IOType>,
             context: Context,
-            calcDelta: (Batch<IOType>) -> Batch<IOType>,
+            calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D3>,
             context = context,

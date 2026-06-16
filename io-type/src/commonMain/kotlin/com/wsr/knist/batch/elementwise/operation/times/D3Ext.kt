@@ -13,6 +13,7 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @JvmName("batchD3TimesD3s")
+@ScopeOp
 operator fun IOType.D3.times(other: Batch<IOType.D3>): Batch<IOType.D3.Global> {
     val result = Backend.times(
         x = value,

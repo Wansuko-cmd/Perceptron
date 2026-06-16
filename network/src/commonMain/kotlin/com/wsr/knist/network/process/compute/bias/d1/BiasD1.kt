@@ -1,7 +1,7 @@
 package com.wsr.knist.network.process.compute.bias.d1
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.plus.plus
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
@@ -17,12 +17,12 @@ class BiasD1 internal constructor(
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1,
 ) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
-        calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val output = input + weight
         val delta = calcDelta(output)

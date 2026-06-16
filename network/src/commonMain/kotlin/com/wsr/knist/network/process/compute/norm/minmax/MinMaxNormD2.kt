@@ -1,16 +1,7 @@
 package com.wsr.knist.network.process.compute.norm.minmax
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.max
-import com.wsr.knist.batch.reduction.min
-import com.wsr.knist.batch.reduction.sum
-import com.wsr.knist.batch.shape.broadcastToD2
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
@@ -27,17 +18,17 @@ class MinMaxNormD2 internal constructor(
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2,
 ) : Compute.D2() {
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val min = input.min()
         val max = input.max()
         val denominator = max - min
         return weight * (input - min) / denominator
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val min = input.min()
         val max = input.max()

@@ -1,14 +1,7 @@
 package com.wsr.knist.network.process.compute.norm.layer.d1
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.math.sqrt
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.plus.plus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.average
-import com.wsr.knist.batch.reduction.sum
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -17,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LayerNormD1 internal constructor(override val outputSize: Int, private val e: Float) : Compute.D1() {
-    override fun expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val average = input.average()
         val numerator = input - average
 
@@ -27,10 +20,10 @@ class LayerNormD1 internal constructor(override val outputSize: Int, private val
         return numerator / denominator
     }
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D1>,
         context: Context,
-        calcDelta: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val average = input.average()
         val numerator = input - average

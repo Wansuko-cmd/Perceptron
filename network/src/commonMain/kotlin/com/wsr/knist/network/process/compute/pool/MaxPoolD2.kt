@@ -1,12 +1,7 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.reduction.max
-import com.wsr.knist.batch.shape.broadcastToD3
-import com.wsr.knist.batch.shape.fold.fold
-import com.wsr.knist.batch.shape.fold.unfold
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
@@ -31,17 +26,17 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
         }
     }
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
         windowSize = poolSize,
         stride = poolSize,
         padding = padding,
     )
         .max(axis = 2)
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
         val output = unfold.max(axis = 2)

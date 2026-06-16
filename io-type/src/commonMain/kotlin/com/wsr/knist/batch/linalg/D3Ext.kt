@@ -11,6 +11,7 @@ import com.wsr.knist.scope.ScopeOp
 import com.wsr.knist.scope.ScopeOpDefault
 import kotlin.jvm.JvmName
 
+@ScopeOp
 fun IOType.D3.matMul(
     other: Batch<IOType.D3>,
     transA: Boolean = false,

@@ -1,9 +1,8 @@
 package com.wsr.knist.network.process.compute.dropout
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.nextFloat
 import com.wsr.knist.network.process.Context
@@ -21,12 +20,12 @@ class DropoutD2 internal constructor(
     private val random by lazy { seed?.let { Random(it) } ?: Random }
     private val q = 1 / ratio
 
-    override fun expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input
 
-    override fun train(
+    override fun IOScope.train(
         input: Batch<IOType.D2>,
         context: Context,
-        calcDelta: (Batch<IOType.D2>) -> Batch<IOType.D2>,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val mask = IOType.d2(outputX, outputY) { _, _ ->
             if (random.nextFloat(0f, 1f) <= ratio) q else 0f
