@@ -5,6 +5,7 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.core.D3
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @PublishedApi
@@ -41,6 +42,7 @@ val Batch<IOType.D3>.j get() = shape[1]
 val Batch<IOType.D3>.k get() = shape[2]
 
 @JvmName("batchD3sGet")
+@ScopeOp
 operator fun Batch<IOType.D3>.get(i: Int): IOType.D3 {
     val index = i * step
     val result = Backend.slice(x = value, indices = index until index + step)

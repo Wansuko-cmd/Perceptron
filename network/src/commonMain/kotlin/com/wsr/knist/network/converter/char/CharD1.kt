@@ -16,7 +16,6 @@ import kotlinx.serialization.Serializable
 class CharD1 : Converter.D1<Char>() {
     override val outputSize = chars.size
     override fun encode(input: List<Char>): Batch<IOType.D1> = input
-        .toList()
         .map { char ->
             val id = charToId[char] ?: 0
             IOType.d1(outputSize).also { it[id] = 1f }

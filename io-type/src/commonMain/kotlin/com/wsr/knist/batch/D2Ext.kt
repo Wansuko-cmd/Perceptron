@@ -5,6 +5,7 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.core.D2
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @PublishedApi
@@ -36,6 +37,7 @@ val Batch<IOType.D2>.i get() = shape[0]
 val Batch<IOType.D2>.j get() = shape[1]
 
 @JvmName("batchD2sGet")
+@ScopeOp
 operator fun Batch<IOType.D2>.get(i: Int): IOType.D2 {
     val index = i * step
     val result = Backend.slice(x = value, indices = index until index + step)

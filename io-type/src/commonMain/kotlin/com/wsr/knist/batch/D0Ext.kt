@@ -3,6 +3,7 @@ package com.wsr.knist.batch
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @PublishedApi
@@ -13,6 +14,7 @@ internal fun Batch.Companion.d0Impl(batchSize: Int, value: DataBuffer): Batch<IO
     Batch(value = value, size = batchSize, shape = listOf(1))
 
 @JvmName("batchD0sGet")
+@ScopeOp
 operator fun Batch<IOType.D0>.get(i: Int): IOType.D0 {
     val index = i * step
     return IOType.d0(value[index])
