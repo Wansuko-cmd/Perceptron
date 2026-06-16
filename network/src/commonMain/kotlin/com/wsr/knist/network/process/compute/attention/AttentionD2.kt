@@ -25,13 +25,13 @@ class AttentionD2 internal constructor(
     private val dim: Int,
     private val isCausal: Boolean = false,
     private val maskValue: Int? = null,
-    private var weightQ: IOType.D2,
-    private var weightK: IOType.D2,
-    private var weightV: IOType.D2,
+    private var weightQ: IOType.D2.Global,
+    private var weightK: IOType.D2.Global,
+    private var weightV: IOType.D2.Global,
     private val optimizerQ: Optimizer.D2,
     private val optimizerK: Optimizer.D2,
     private val optimizerV: Optimizer.D2,
-    private var weightO: IOType.D2,
+    private var weightO: IOType.D2.Global,
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
     private val causalMask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
@@ -91,7 +91,7 @@ class AttentionD2 internal constructor(
         // 出力変換（weightO）の逆伝播
         val dConcat = delta.matMul(weightO, transB = true)
         val dwo = concat.matMul(delta, transA = true)
-        weightO = optimizerO.adapt(weightO, dwo)
+        weightO = optimizerO.adapt(weightO, dwo).toGlobal()
 
         // Concatの逆伝播（各ヘッドへの勾配に分割）
         val dHeads = dConcat
@@ -130,9 +130,9 @@ class AttentionD2 internal constructor(
         val dxv = dValueD2.matMul(weightV, transB = true)
         val dwv = input.matMul(dValueD2, transA = true)
 
-        weightQ = optimizerQ.adapt(weightQ, dwq)
-        weightK = optimizerK.adapt(weightK, dwk)
-        weightV = optimizerV.adapt(weightV, dwv)
+        weightQ = optimizerQ.adapt(weightQ, dwq).toGlobal()
+        weightK = optimizerK.adapt(weightK, dwk).toGlobal()
+        weightV = optimizerV.adapt(weightV, dwv).toGlobal()
 
         return dxq + dxk + dxv
     }

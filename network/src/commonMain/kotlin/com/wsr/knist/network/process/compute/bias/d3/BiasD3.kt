@@ -17,7 +17,7 @@ class BiasD3(
     override val outputY: Int,
     override val outputZ: Int,
     private val optimizer: Optimizer.D3,
-    private var weight: IOType.D3,
+    private var weight: IOType.D3.Global,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input + weight
 
@@ -28,7 +28,7 @@ class BiasD3(
     ): Batch<IOType.D3> {
         val output = input + weight
         val delta = calcDelta(output)
-        weight = optimizer.adapt(weight = weight, dw = delta)
+        weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
         return delta
     }
 }

@@ -16,7 +16,7 @@ class TokenEmbeddingD1ToD2 internal constructor(
     override val outputY: Int,
     private val vocabSize: Int,
     private val optimizer: Optimizer.D2,
-    private var weight: IOType.D2,
+    private var weight: IOType.D2.Global,
 ) : Reshape.D1ToD2() {
 
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
@@ -31,7 +31,7 @@ class TokenEmbeddingD1ToD2 internal constructor(
         val delta = calcDelta(output)
 
         val dw = delta.scatterAdd(other = input, n = vocabSize)
-        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat())
+        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat()).toGlobal()
 
         // Embedding層は離散的なので、入力への勾配は意味を持たない
         // しかし型の整合性のため、ダミーのD1を返す

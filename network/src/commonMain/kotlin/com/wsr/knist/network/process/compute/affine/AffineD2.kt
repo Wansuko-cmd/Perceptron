@@ -15,7 +15,7 @@ class AffineD2 internal constructor(
     private val channel: Int,
     private val outputSize: Int,
     private val optimizer: Optimizer.D2,
-    private var weight: IOType.D2,
+    private var weight: IOType.D2.Global,
 ) : Compute.D2() {
     override val outputX = channel
     override val outputY = outputSize
@@ -33,7 +33,7 @@ class AffineD2 internal constructor(
         val dx = delta.matMul(weight, transB = true)
         val dw = input.matMul(delta, transA = true)
 
-        weight = optimizer.adapt(weight = weight, dw = dw)
+        weight = optimizer.adapt(weight = weight, dw = dw).toGlobal()
         return dx
     }
 }

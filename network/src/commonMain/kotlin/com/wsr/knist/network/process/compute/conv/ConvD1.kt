@@ -25,7 +25,7 @@ class ConvD1 internal constructor(
     private val padding: Int,
     private val inputSize: Int,
     private val optimizer: Optimizer.D3,
-    private var weight: IOType.D3,
+    private var weight: IOType.D3.Global,
 ) : Compute.D2() {
     override val outputX: Int = filter
     override val outputY: Int = (inputSize - kernel + 2 * padding) / stride + 1
@@ -86,7 +86,7 @@ class ConvD1 internal constructor(
 
         val dw = deltaCol.matMul(col.transpose())
             .reshapeToD3(i = filter, j = channel, k = kernel)
-        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat())
+        weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat()).toGlobal()
 
         return dx
     }

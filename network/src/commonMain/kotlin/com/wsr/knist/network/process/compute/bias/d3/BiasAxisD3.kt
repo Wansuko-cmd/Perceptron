@@ -15,7 +15,7 @@ class BiasAxisD3(
     override val outputZ: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D3() {
     private val sumAxis1 = when (axis) {
         0 -> 1
@@ -36,7 +36,7 @@ class BiasAxisD3(
     ): Batch<IOType.D3> {
         val output = input.plus(other = weight, axis = axis)
         val delta = calcDelta(output)
-        weight = optimizer.adapt(weight = weight, dw = delta.sum(sumAxis1).sum(sumAxis2))
+        weight = optimizer.adapt(weight = weight, dw = delta.sum(sumAxis1).sum(sumAxis2)).toGlobal()
         return delta
     }
 }

@@ -14,7 +14,7 @@ class ScaleAxisD2 internal constructor(
     override val outputY: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D2() {
     private val sumAxis = if (axis == 0) 1 else 0
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =
@@ -32,7 +32,7 @@ class ScaleAxisD2 internal constructor(
         weight = optimizer.adapt(
             weight = weight,
             dw = (input * delta).sum(axis = sumAxis),
-        )
+        ).toGlobal()
 
         return dx
     }

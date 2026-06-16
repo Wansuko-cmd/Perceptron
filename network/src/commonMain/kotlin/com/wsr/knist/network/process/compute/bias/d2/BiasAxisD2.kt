@@ -14,7 +14,7 @@ class BiasAxisD2(
     override val outputY: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D2() {
     private val sumAxis = if (axis == 0) 1 else 0
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =
@@ -27,7 +27,7 @@ class BiasAxisD2(
     ): Batch<IOType.D2> {
         val output = input.plus(other = weight, axis = axis)
         val delta = calcDelta(output)
-        weight = optimizer.adapt(weight = weight, dw = delta.sum(axis = sumAxis))
+        weight = optimizer.adapt(weight = weight, dw = delta.sum(axis = sumAxis)).toGlobal()
         return delta
     }
 }
