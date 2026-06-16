@@ -5,28 +5,27 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
 class LinearD1Test {
     @Test
-    fun `encode=Batchに変換`() = networkScopeTestRule {
+    fun `encode=Batchに変換`() = networkTestRule {
         val target = LinearD1(outputSize = 3)
         val input = listOf(IOType.d1(3) { it.toFloat() })
 
-        val actual = with(target) { encode(input) }
+        val actual = target.encode(input)
 
         assertContentEquals(expected = Batch.of(IOType.d1(3) { it.toFloat() }), actual = actual)
     }
 
     @Test
-    fun `decode=Listに変換`() = networkScopeTestRule {
+    fun `decode=Listに変換`() = networkTestRule {
         val target = LinearD1(outputSize = 3)
         val input = Batch.of(IOType.d1(3) { it.toFloat() })
 
-        val actual = with(target) { decode(input) }
+        val actual = target.decode(input)
 
         assertContentEquals(expected = listOf(IOType.d1(3) { it.toFloat() }), actual = actual)
     }
