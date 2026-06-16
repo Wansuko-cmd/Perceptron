@@ -2,6 +2,7 @@
 
 package com.wsr.knist.network.optimizer
 
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -9,15 +10,15 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.networkTestRule
+import com.wsr.knist.network.networkScopeTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OptimizerTest {
     @Test
-    fun `D1_adapt=勾配をmaxNormで正規化`() = networkTestRule {
+    fun `D1_adapt=勾配をmaxNormで正規化`() = networkScopeTestRule {
         val target = object : Optimizer.D1(_maxNorm = 1f) {
-            override fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 = dw
+            override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 = dw
         }
         val weight = IOType.d1(0f, 0f, 0f)
         val dw = IOType.d1(1f, 2f, 3f)
@@ -30,9 +31,9 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D2_adapt=勾配をmaxNormで正規化`() = networkTestRule {
+    fun `D2_adapt=勾配をmaxNormで正規化`() = networkScopeTestRule {
         val target = object : Optimizer.D2(_maxNorm = 1f) {
-            override fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 = dw
+            override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 = dw
         }
         val weight = IOType.d2(2, 2) { _, _ -> 0f }
         val dw = IOType.d2(2, 2) { i, j -> i * 2f + j }
@@ -46,9 +47,9 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D3_adapt=勾配をmaxNormで正規化`() = networkTestRule {
+    fun `D3_adapt=勾配をmaxNormで正規化`() = networkScopeTestRule {
         val target = object : Optimizer.D3(_maxNorm = 1f) {
-            override fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 = dw
+            override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 = dw
         }
         val weight = IOType.d3(2, 2, 2) { _, _, _ -> 0f }
         val dw = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }
@@ -66,9 +67,9 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D4_adapt=勾配をmaxNormで正規化`() = networkTestRule {
+    fun `D4_adapt=勾配をmaxNormで正規化`() = networkScopeTestRule {
         val target = object : Optimizer.D4(_maxNorm = 1f) {
-            override fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 = dw
+            override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 = dw
         }
         val weight = IOType.d4(2, 2, 2, 2) { _, _, _, _ -> 0f }
         val dw = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l }
