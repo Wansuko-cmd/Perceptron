@@ -17,7 +17,7 @@ class ScaleD3 internal constructor(
     override val outputY: Int,
     override val outputZ: Int,
     private val optimizer: Optimizer.D3,
-    private var weight: IOType.D3,
+    private var weight: IOType.D3.Global,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input * weight
 
@@ -33,7 +33,7 @@ class ScaleD3 internal constructor(
         weight = optimizer.adapt(
             weight = weight,
             dw = input * delta,
-        )
+        ).toGlobal()
 
         return dx
     }

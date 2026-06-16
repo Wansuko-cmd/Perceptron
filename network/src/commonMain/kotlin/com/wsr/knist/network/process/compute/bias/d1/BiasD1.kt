@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 class BiasD1 internal constructor(
     override val outputSize: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
 
@@ -26,7 +26,7 @@ class BiasD1 internal constructor(
     ): Batch<IOType.D1> {
         val output = input + weight
         val delta = calcDelta(output)
-        weight = optimizer.adapt(weight = weight, dw = delta)
+        weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
         return delta
     }
 }

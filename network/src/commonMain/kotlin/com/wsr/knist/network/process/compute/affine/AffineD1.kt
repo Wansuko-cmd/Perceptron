@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 class AffineD1 internal constructor(
     override val outputSize: Int,
     private val optimizer: Optimizer.D2,
-    private var weight: IOType.D2,
+    private var weight: IOType.D2.Global,
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
         weight.matMul(input, trans = true)
@@ -29,7 +29,7 @@ class AffineD1 internal constructor(
         val delta = calcDelta(output)
         val dx = weight.matMul(delta)
         val dw = input.toD2().matMul(delta.toD2(), transA = true)
-        weight = optimizer.adapt(weight = weight, dw = dw)
+        weight = optimizer.adapt(weight = weight, dw = dw).toGlobal()
         return dx
     }
 }

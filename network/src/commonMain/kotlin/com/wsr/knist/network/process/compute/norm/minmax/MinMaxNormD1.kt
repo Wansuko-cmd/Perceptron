@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 class MinMaxNormD1 internal constructor(
     override val outputSize: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val min = input.min()
@@ -46,7 +46,7 @@ class MinMaxNormD1 internal constructor(
         weight = optimizer.adapt(
             weight = weight,
             dw = mean * delta,
-        )
+        ).toGlobal()
 
         numerator.inner(other = dOutput)
 

@@ -15,7 +15,7 @@ class PositionEmbeddingD2 internal constructor(
     override val outputX: Int,
     override val outputY: Int,
     private val optimizer: Optimizer.D2,
-    private var weight: IOType.D2,
+    private var weight: IOType.D2.Global,
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input + weight
 
@@ -26,7 +26,7 @@ class PositionEmbeddingD2 internal constructor(
     ): Batch<IOType.D2> {
         val output = input + weight
         val delta = calcDelta(output)
-        weight = optimizer.adapt(weight = weight, dw = delta)
+        weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
         return delta
     }
 }

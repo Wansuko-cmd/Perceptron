@@ -17,7 +17,7 @@ class MinMaxNormD3 internal constructor(
     override val outputY: Int,
     override val outputZ: Int,
     private val optimizer: Optimizer.D3,
-    private var weight: IOType.D3,
+    private var weight: IOType.D3.Global,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val min = input.min()
@@ -47,7 +47,7 @@ class MinMaxNormD3 internal constructor(
         weight = optimizer.adapt(
             weight = weight,
             dw = mean * delta,
-        )
+        ).toGlobal()
 
         // 分母側(dy/d[max(x) - min(x)])
         val dDenominator = denominator.pow(2) * (numerator * dOutput).sum()

@@ -15,7 +15,7 @@ class ScaleAxisD3 internal constructor(
     override val outputZ: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
-    private var weight: IOType.D1,
+    private var weight: IOType.D1.Global,
 ) : Compute.D3() {
     private val sumAxis1 = when (axis) {
         0 -> 1
@@ -40,7 +40,7 @@ class ScaleAxisD3 internal constructor(
         weight = optimizer.adapt(
             weight = weight,
             dw = (input * delta).sum(axis = sumAxis1).sum(axis = sumAxis2),
-        )
+        ).toGlobal()
 
         return dx
     }
