@@ -3,7 +3,6 @@
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toList
-import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
@@ -13,8 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LinearD2(override val outputX: Int, override val outputY: Int) : Converter.D2<IOType.D2>() {
-    override fun IOScope.encode(input: List<IOType.D2>): Batch<IOType.D2> = input.toBatch()
-    override fun IOScope.decode(input: Batch<IOType.D2>): List<IOType.D2> = input.toList()
+    override fun encode(input: List<IOType.D2>): Batch<IOType.D2> = input.toBatch()
+    override fun decode(input: Batch<IOType.D2>): List<IOType.D2> = input.toList()
 }
 
 fun NetworkBuilder.Companion.inputD2(x: Int, y: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(

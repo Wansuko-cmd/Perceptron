@@ -1,9 +1,11 @@
 ﻿package com.wsr.knist.network.converter.word
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.d2
+import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toList
-import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -17,7 +19,7 @@ class WordD2(private val words: List<String>, private val length: Int, private v
     override val outputY = words.size
     private val wordToId = words.mapIndexed { index, word -> word to index }.toMap()
 
-    override fun IOScope.encode(input: List<List<String>>): Batch<IOType.D2> {
+    override fun encode(input: List<List<String>>): Batch<IOType.D2> {
         val result = FloatArray(input.size * outputX * outputY)
         repeat(input.size) { b ->
             val offset = b * outputX * outputY
@@ -33,7 +35,7 @@ class WordD2(private val words: List<String>, private val length: Int, private v
         return Batch.d2(batchSize = input.size, i = outputX, j = outputY, value = result)
     }
 
-    override fun IOScope.decode(input: Batch<IOType.D2>): List<List<String>> = input.maxIndex(axis = 1).toList()
+    override fun decode(input: Batch<IOType.D2>): List<List<String>> = input.maxIndex(axis = 1).toList()
         .map { input ->
             val input = input.value.toFloatArray()
             (0 until length).map { words[input[it].toInt()] }
