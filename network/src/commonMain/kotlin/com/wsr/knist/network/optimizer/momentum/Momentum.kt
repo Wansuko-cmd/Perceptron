@@ -1,5 +1,6 @@
 package com.wsr.knist.network.optimizer.momentum
 
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -61,7 +62,7 @@ internal data class MomentumD1(
     private val shape: List<Int>,
 ) : Optimizer.D1(maxNorm, stepUnit) {
     private var velocity: IOType.D1 = IOType.d1(shape)
-    override fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
+    override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
         velocity = momentum * velocity + dw
         return weight - scheduler.calcRate(step = step) * velocity
     }
@@ -76,7 +77,7 @@ internal data class MomentumD2(
     private val shape: List<Int>,
 ) : Optimizer.D2(maxNorm, stepUnit) {
     private var velocity: IOType.D2 = IOType.d2(shape)
-    override fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
+    override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
         velocity = momentum * velocity + dw
         return weight - scheduler.calcRate(step = step) * velocity
     }
@@ -91,7 +92,7 @@ internal data class MomentumD3(
     private val shape: List<Int>,
 ) : Optimizer.D3(maxNorm, stepUnit) {
     private var velocity: IOType.D3 = IOType.d3(shape)
-    override fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
+    override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
         velocity = momentum * velocity + dw
         return weight - scheduler.calcRate(step = step) * velocity
     }
@@ -106,7 +107,7 @@ internal data class MomentumD4(
     private val shape: List<Int>,
 ) : Optimizer.D4(maxNorm, stepUnit) {
     private var velocity: IOType.D4 = IOType.d4(shape)
-    override fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
+    override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
         velocity = momentum * velocity + dw
         return weight - scheduler.calcRate(step = step) * velocity
     }

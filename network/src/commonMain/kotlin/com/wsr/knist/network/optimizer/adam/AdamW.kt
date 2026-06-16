@@ -1,5 +1,6 @@
 package com.wsr.knist.network.optimizer.adam
 
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -82,7 +83,7 @@ internal data class AdamWD1(
     private var v: IOType.D1 = IOType.d1(shape)
     private var t: Int = 0
 
-    override fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
+    override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
         t += 1
 
         m = momentum * m + (1 - momentum) * dw
@@ -110,7 +111,7 @@ internal data class AdamWD2(
     private var v: IOType.D2 = IOType.d2(shape)
     private var t: Int = 0
 
-    override fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
+    override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
         t += 1
 
         m = momentum * m + (1 - momentum) * dw
@@ -138,7 +139,7 @@ internal data class AdamWD3(
     private var v: IOType.D3 = IOType.d3(shape)
     private var t: Int = 0
 
-    override fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
+    override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
         t += 1
 
         m = momentum * m + (1 - momentum) * dw
@@ -166,7 +167,7 @@ internal data class AdamWD4(
     private var v: IOType.D4 = IOType.d4(shape)
     private var t: Int = 0
 
-    override fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
+    override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
         t += 1
 
         m = momentum * m + (1 - momentum) * dw

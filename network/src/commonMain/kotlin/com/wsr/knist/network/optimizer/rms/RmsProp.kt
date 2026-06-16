@@ -1,5 +1,6 @@
 package com.wsr.knist.network.optimizer.rms
 
+import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -68,7 +69,7 @@ internal data class RmsPropD1(
     private var velocity: IOType.D1 = IOType.d1(shape)
     private val e = IOType.d1(shape) { E }
 
-    override fun adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
+    override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
         velocity = rms * velocity + (1 - rms) * dw.pow(2)
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
@@ -85,7 +86,7 @@ internal data class RmsPropD2(
     private var velocity: IOType.D2 = IOType.d2(shape)
     private val e = IOType.d2(shape) { _, _ -> E }
 
-    override fun adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
+    override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
         velocity = rms * velocity + (1 - rms) * dw.pow(2)
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
@@ -102,7 +103,7 @@ internal data class RmsPropD3(
     private var velocity: IOType.D3 = IOType.d3(shape)
     private val e = IOType.d3(shape) { _, _, _ -> E }
 
-    override fun adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
+    override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
         velocity = rms * velocity + (1 - rms) * dw.pow(2)
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
@@ -119,7 +120,7 @@ internal data class RmsPropD4(
     private var velocity: IOType.D4 = IOType.d4(shape)
     private val e = IOType.d4(shape) { _, _, _, _ -> E }
 
-    override fun adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
+    override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
         velocity = rms * velocity + (1 - rms) * dw.pow(2)
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
