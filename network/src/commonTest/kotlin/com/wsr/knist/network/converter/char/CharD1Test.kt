@@ -8,17 +8,18 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
 import com.wsr.knist.core.set
 import com.wsr.knist.core.unwrap
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CharD1Test {
     @Test
-    fun `encode=文字をone-hotベクトルに変換`() = networkTestRule {
+    fun `encode=文字をone-hotベクトルに変換`() = networkScopeTestRule {
         val target = CharD1()
         val input = listOf('a', 'b', 'c')
 
-        val actual = target.encode(input)
+        val actual = with(target) { encode(input) }
 
         assertEquals(expected = CharD1.vocabSize, actual = actual[0].size)
         assertEquals(expected = 1f, actual = actual[0][1].unwrap())
@@ -27,7 +28,7 @@ class CharD1Test {
     }
 
     @Test
-    fun `decode=one-hotベクトルを文字に変換`() = networkTestRule {
+    fun `decode=one-hotベクトルを文字に変換`() = networkScopeTestRule {
         val target = CharD1()
         val input = Batch.of(
             IOType.d1(CharD1.vocabSize).also { it[1] = 1.0f },
@@ -35,7 +36,7 @@ class CharD1Test {
             IOType.d1(CharD1.vocabSize).also { it[3] = 1.0f },
         )
 
-        val actual = target.decode(input)
+        val actual = with(target) { decode(input) }
 
         assertEquals(expected = 3, actual = actual.size)
         assertEquals(expected = 'a', actual = actual[0])

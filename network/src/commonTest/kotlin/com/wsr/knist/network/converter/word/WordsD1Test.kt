@@ -6,6 +6,7 @@ import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
+import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -17,7 +18,7 @@ class WordsD1Test {
     private val unknownIndex = 1
 
     @Test
-    fun `encode=単語列を単語IDベクトルに変換`() = networkTestRule {
+    fun `encode=単語列を単語IDベクトルに変換`() = networkScopeTestRule {
         val target = WordsD1(
             words = words,
             outputSize = outputSize,
@@ -29,7 +30,7 @@ class WordsD1Test {
             listOf("new", "world", "<PAD>"),
         )
 
-        val actual = target.encode(input)
+        val actual = with(target) { encode(input) }
 
         assertContentEquals(
             expected = IOType.d1(2f, 3f, 1f, 0f, 0f),
@@ -42,7 +43,7 @@ class WordsD1Test {
     }
 
     @Test
-    fun `decode=単語IDベクトルを単語列に変換`() = networkTestRule {
+    fun `decode=単語IDベクトルを単語列に変換`() = networkScopeTestRule {
         val target = WordsD1(
             words = words,
             outputSize = outputSize,
@@ -54,7 +55,7 @@ class WordsD1Test {
             IOType.d1(1f, 3f, 0f, 0f, 0f),
         )
 
-        val actual = target.decode(input)
+        val actual = with(target) { decode(input) }
 
         assertContentEquals(expected = listOf("hello", "world", "<UNK>"), actual = actual[0])
         assertContentEquals(expected = listOf("<UNK>", "world"), actual = actual[1])
