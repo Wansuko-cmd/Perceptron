@@ -66,11 +66,11 @@ internal data class RmsPropD1(
     private val stepUnit: Int,
     private val shape: List<Int>,
 ) : Optimizer.D1(maxNorm, stepUnit) {
-    private var velocity: IOType.D1 = IOType.d1(shape)
-    private val e = IOType.d1(shape) { E }
+    private var velocity: IOType.D1.Global = IOType.d1(shape)
+    private val e: IOType.D1.Global = IOType.d1(shape) { E }
 
     override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
-        velocity = rms * velocity + (1 - rms) * dw.pow(2)
+        velocity = (rms * velocity + (1 - rms) * dw.pow(2)).toGlobal()
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
 }
@@ -83,11 +83,11 @@ internal data class RmsPropD2(
     private val stepUnit: Int,
     private val shape: List<Int>,
 ) : Optimizer.D2(maxNorm, stepUnit) {
-    private var velocity: IOType.D2 = IOType.d2(shape)
-    private val e = IOType.d2(shape) { _, _ -> E }
+    private var velocity: IOType.D2.Global = IOType.d2(shape)
+    private val e: IOType.D2.Global = IOType.d2(shape) { _, _ -> E }
 
     override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 {
-        velocity = rms * velocity + (1 - rms) * dw.pow(2)
+        velocity = (rms * velocity + (1 - rms) * dw.pow(2)).toGlobal()
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
 }
@@ -100,11 +100,11 @@ internal data class RmsPropD3(
     private val stepUnit: Int,
     private val shape: List<Int>,
 ) : Optimizer.D3(maxNorm, stepUnit) {
-    private var velocity: IOType.D3 = IOType.d3(shape)
-    private val e = IOType.d3(shape) { _, _, _ -> E }
+    private var velocity: IOType.D3.Global = IOType.d3(shape)
+    private val e: IOType.D3.Global = IOType.d3(shape) { _, _, _ -> E }
 
     override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 {
-        velocity = rms * velocity + (1 - rms) * dw.pow(2)
+        velocity = (rms * velocity + (1 - rms) * dw.pow(2)).toGlobal()
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
 }
@@ -117,11 +117,11 @@ internal data class RmsPropD4(
     private val stepUnit: Int,
     private val shape: List<Int>,
 ) : Optimizer.D4(maxNorm, stepUnit) {
-    private var velocity: IOType.D4 = IOType.d4(shape)
-    private val e = IOType.d4(shape) { _, _, _, _ -> E }
+    private var velocity: IOType.D4.Global = IOType.d4(shape)
+    private val e: IOType.D4.Global = IOType.d4(shape) { _, _, _, _ -> E }
 
     override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 {
-        velocity = rms * velocity + (1 - rms) * dw.pow(2)
+        velocity = (rms * velocity + (1 - rms) * dw.pow(2)).toGlobal()
         return weight - scheduler.calcRate(step = step) / (velocity.sqrt() + e) * dw
     }
 }
