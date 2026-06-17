@@ -112,6 +112,8 @@ val results: List<OutputType> = network.expect(input = listOf(data1, data2))
 | `inputD3(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D3 |
 | `wordsD1(maxLength, words, unknownIndex, paddingIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordsD1` | `List<String>` | D1(maxLength) |
 
+`wordsD1` の `unknownIndex`・`paddingIndex` は `words` の範囲内でなければならない
+
 converter を省略できる省略形（IOType をそのまま入力する場合）:
 
 | 関数 | import | 入力型 | 最初のIO型 |
@@ -124,8 +126,6 @@ converter を省略できる省略形（IOType をそのまま入力する場合
 | `charD1(optimizer, initializer)` | `com.wsr.knist.network.converter.char.charD1` | `Char` | D1(34) |
 | `charsD1(maxLength, optimizer, initializer)` | `com.wsr.knist.network.converter.char.charsD1` | `String` | D1(maxLength) |
 
-> `inputPx` はライブラリには存在しない。サンプルプロジェクト内で `inputD2` + `PixelConverter` のラッパーとして定義されているもの。
-
 ---
 
 ## IOType 定義
@@ -135,6 +135,16 @@ converter を省略できる省略形（IOType をそのまま入力する場合
 | `D1(size)` | [size] | ベクトル |
 | `D2(X, Y)` | [X, Y] | 行列 |
 | `D3(X, Y, Z)` | [X, Y, Z] | 3次元テンソル |
+
+各次元型には `Global` と `Local` の2サブクラスがある。
+
+| サブクラス | 意味 |
+|-----------|------|
+| `IOType.Dx.Global` | スコープ外の値。バッファが自動解放されない |
+| `IOType.Dx.Local` | `IOScope` 内の中間値。スコープ終了時に自動解放される |
+
+`IOScope` 外で演算すると `Global` が返る。`IOScope` 内（`with(ioScope) { }` または `IOScope.launch { }` 内）で演算すると `Local` が返る。
+`Local` → `Global` 変換: `local.toGlobal()`（スコープ内でのみ呼び出し可）
 
 ---
 
@@ -146,13 +156,11 @@ converter を省略できる省略形（IOType をそのまま入力する場合
 |------|--------|------|------|-------------|
 | `convD1(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(X, Y) | D2(filter, outY) | stride=1, padding=0 |
 | `convD2(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD2` | D3(X, Y, Z) | D3(filter, outY, outZ) | stride=1, padding=0 |
-| `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(X, Y) | D2(X, Y/size) | — |
-| `maxPool(size)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(X, Y, Z) | D3(X, Y/size, Z/size) | — |
+| `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(X, Y) | D2(X, outY) | padding=0 |
+| `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(X, Y, Z) | D3(X, outY, outZ) | padding=0 |
 
-convD1のoutY計算式: `(Y - kernel + 2 * padding) / stride + 1`
-convD2のoutY・outZ計算式: `(Y - kernel + 2 * padding) / stride + 1`（Y・Z両方に適用）
 制約: `(size - kernel + 2 * padding) % stride == 0` でなければ実行時エラー
-制約: maxPool は Y（D2）または Y・Z（D3）が size の倍数でなければならない
+制約: maxPool は `(Y + 2*padding - size) % size == 0` でなければ実行時エラー（D3 は Y・Z 両方）
 
 ### 全結合・変換系
 
@@ -167,8 +175,7 @@ convD2のoutY・outZ計算式: `(Y - kernel + 2 * padding) / stride + 1`（Y・Z
 | `scale(axis?)` | `com.wsr.knist.network.process.compute.scale.d2.scale` | D2(X, Y) | D2(X, Y) |
 | `scale(axis?)` | `com.wsr.knist.network.process.compute.scale.d3.scale` | D3(X, Y, Z) | D3(X, Y, Z) |
 
-D2 の `bias` / `scale` の `axis`: null=全体, 0=行(X)方向, 1=列(Y)方向
-Transformerでは axis=1 が一般的（seq×dim の dim 方向に適用）
+D2/D3 の `bias` / `scale` の `axis`: null=全体, 0=X方向, 1=Y方向（D3はさらに 2=Z方向）
 
 D1とD2で同名関数を両方 import する場合、Kotlin はレシーバー型で自動解決する:
 ```kotlin
@@ -203,11 +210,13 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 | 関数 | import | デフォルト値 |
 |------|--------|-------------|
-| `layerNorm(e?)` | `com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm` | e=1e-6f |
-| `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d2.layerNorm` | axis=null, e=1e-6f |
-| `rmsNorm(e?)` | `com.wsr.knist.network.process.compute.norm.rms.d1.rmsNorm` | e=1e-6f |
-| `rmsNorm(e?)` | `com.wsr.knist.network.process.compute.norm.rms.d2.rmsNorm` | e=1e-6f |
-| `minMaxNorm()` | `com.wsr.knist.network.process.compute.norm.minmax.minMaxNorm` | — |
+| `layerNorm(e?)` | `com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm` | D1(n)→D1(n) | e=1e-6f |
+| `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d2.layerNorm` | D2→D2 | axis=null, e=1e-6f |
+| `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d3.layerNorm` | D3→D3 | axis=null, e=1e-6f |
+| `rmsNorm(e?)` | `com.wsr.knist.network.process.compute.norm.rms.d1.rmsNorm` | D1(n)→D1(n) | e=1e-6f |
+| `rmsNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.rms.d2.rmsNorm` | D2→D2 | axis=null, e=1e-6f |
+| `rmsNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.rms.d3.rmsNorm` | D3→D3 | axis=null, e=1e-6f |
+| `minMaxNorm()` | `com.wsr.knist.network.process.compute.norm.minmax.minMaxNorm` | D1/D2/D3→同形 | — |
 
 ### 位置エンコーディング
 
@@ -278,12 +287,13 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputX * inputY` でなければ�
 | `meanSquare(converter)` | 同上 | D1(n) | `Network<I, O>` |
 
 `softmaxWithLoss` デフォルト値: `temperature=1f`, `maskValue=null`
+`softmaxWithLoss` の `converter` ラムダ内では `inputSize` が参照可能
 
 ---
 
 ## Converter（入出力変換器）
 
-ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数に渡す。
+ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数と、`softmaxWithLoss` 等の出力層関数の両方に渡せる。
 
 ### 組み込みConverter
 
@@ -303,7 +313,7 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputX * inputY` でなければ�
 import com.wsr.knist.batch.Batch                  // Batch<T>
 import com.wsr.knist.batch.shape.toList           // Batch.toList()
 import com.wsr.knist.core.IOType                  // IOType.D1 / D2 / D3
-import com.wsr.knist.core.reduction.maxIndex      // IOType.D1.maxIndex()
+import com.wsr.knist.core.reduction.maxIndex      // IOType.D1.maxIndex() / D2.maxIndex(axis) / D3.maxIndex(axis)
 import com.wsr.knist.base.data.DataBuffer         // DataBuffer.create(floatArray)
 import com.wsr.knist.network.converter.Converter  // Converter.D1<T> / D2<T>
 ```
@@ -507,14 +517,11 @@ wordsD1(maxLength=128, words=..., ...)      → D1(128)
 
 ---
 
-## 注意事項
+## IOScope
 
-- `convD1` の `stride`・`padding` のデフォルトは `stride=1`, `padding=0`
-- `maxPool` は Y（またはY・Z）が size の倍数でなければ実行時エラー（initブロックでチェックされる）
-- D1/D2 の同名関数（bias, scale, layerNorm）を両方 import してもKotlinがレシーバー型で解決する
-- `softmaxWithLoss` の `converter` ラムダ内では `inputSize` が参照可能
-- `wordsD1` の `unknownIndex`・`paddingIndex` は `words` の範囲内でなければならない
-- `attention` の `dim` は `inputY / numOfHeads` がデフォルト。Y が numOfHeads で割り切れること
-- `dropout` の `ratio` は**保持確率**（一般的なdrop rateとは逆）
-- `positionEmbedding` はサイズを変えない。`D2(X, Y) → D2(X, Y)` のまま
-- `globalAverage()` という関数は存在しない。正しくは `globalAverageToD1()` / `globalAverageToD2()`
+`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。スコープ内で生成された中間 `IOType` は、スコープ終了時に自動的にメモリ解放（`release()`）される。ネットワークの学習・推論内部でも使われている。
+
+`IOScope.launch { }` で新しいスコープを作り、ブロック内で演算した中間値を自動解放できる。`with(ioScope) { }` で既存スコープを使って演算することもできる。
+
+カスタム層（`Compute`）・出力層（`Output`）・オプティマイザ（`Optimizer`）を実装する際の詳細な使い方は `docs/llms-custom.txt` を参照。
+

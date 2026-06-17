@@ -1,0 +1,403 @@
+# knist カスタム実装リファレンス
+
+knist の拡張ポイントは4つある。いずれも `@Serializable` を付けることで保存・読み込みに対応できる。
+
+- `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
+- `Output` — 出力層（損失計算）
+- `Optimizer` — 重み更新アルゴリズム
+- `WeightInitializer` — 重み初期化
+
+---
+
+## IOScope
+
+`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。`@ScopeOp` でアノテーションされた演算はすべて `IOScope` のメンバー拡張関数として生成される。
+
+`Compute.expect` / `Compute.train` / `Output.expect` / `Output.train` / `Optimizer.adapt` はすでに `IOScope` をレシーバーとして受け取るため、これらの実装ブロック内では `@ScopeOp` 演算をそのまま呼べる。`IOScope.launch` を明示的に呼ぶ必要はない。
+
+```kotlin
+override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    val a = input + weight   // @ScopeOp: IOScope レシーバーがあるので直接呼べる
+    return a * 2f
+}
+```
+
+演算の結果は `IOType.Dx.Local` として返る。中間値のバッファはスコープ終了時に自動解放される。
+保持し続けたい値（重み等）は `toGlobal()` で `Global` に昇格させてからフィールドに保存する。
+
+```kotlin
+// train 内での重み更新パターン
+weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
+```
+
+---
+
+## Batch<T>
+
+`Batch<T : IOType>` は同一形状の `IOType` を複数まとめたバッチコンテナ。
+
+```kotlin
+class Batch<out T : IOType>(
+    val value: DataBuffer,  // バッチ全体のデータを連続メモリで保持
+    val size: Int,          // バッチサイズ
+    val shape: List<Int>,   // 1要素の形状
+)
+```
+
+### 要素アクセス
+
+```kotlin
+val element: T = batch[i]          // i番目の IOType を取り出す
+val list: List<T> = batch.toList() // 全要素をリスト化（Converter の decode で使う）
+```
+
+### 生成
+
+```kotlin
+// IOType を直接並べて作る（テスト等で便利）
+val batch = Batch.of(iotype1, iotype2, iotype3)
+
+// IOScope 内では factory 関数で直接生成できる（結果は Local）
+context(ioScope)
+val batch: Batch<IOType.D1.Local> = Batch.d1(batchSize = 4, size = 10) { 0f }
+val batch: Batch<IOType.D2.Local> = Batch.d2(batchSize = 4, i = 3, j = 5) { _, _ -> 0f }
+```
+
+### バッチ集約
+
+```kotlin
+// バッチ方向の平均を取って IOType に変換（Optimizer の dw 計算で使う）
+val avg: IOType.D1 = batchOfD1.batchAverage()
+
+// 要素ごとの平均を Batch で返す
+val avg: Batch<IOType.D0> = batchOfD1.average()
+```
+
+---
+
+## Compute（カスタム層）
+
+`com.wsr.knist.network.process.compute.Compute` の `D1` / `D2` / `D3` を継承する。
+
+### Compute.D1
+
+```kotlin
+@Serializable
+class MyLayerD1 internal constructor(
+    override val outputSize: Int,
+    // 重みがある場合: private var weight: IOType.D1.Global
+) : Compute.D1() {
+
+    // 推論（勾配不要）
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+        return input + 1f  // @ScopeOp 演算はここで直接呼べる
+    }
+
+    // 学習（calcDelta に出力を渡すと upstream の delta が返ってくる）
+    override fun IOScope.train(
+        input: Batch<IOType.D1>,
+        context: Context,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
+    ): Batch<IOType.D1> {
+        val output = input + 1f
+        val delta = calcDelta(output)
+        // 重みの勾配計算・更新はここで行う
+        return delta  // 入力方向への delta を返す
+    }
+}
+```
+
+### Compute.D2
+
+```kotlin
+@Serializable
+class MyLayerD2 internal constructor(
+    override val outputX: Int,
+    override val outputY: Int,
+) : Compute.D2() {
+    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> { ... }
+    override fun IOScope.train(
+        input: Batch<IOType.D2>,
+        context: Context,
+        calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
+    ): Batch<IOType.D2> { ... }
+}
+```
+
+### Compute.D3
+
+```kotlin
+@Serializable
+class MyLayerD3 internal constructor(
+    override val outputX: Int,
+    override val outputY: Int,
+    override val outputZ: Int,
+) : Compute.D3() {
+    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> { ... }
+    override fun IOScope.train(
+        input: Batch<IOType.D3>,
+        context: Context,
+        calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
+    ): Batch<IOType.D3> { ... }
+}
+```
+
+### NetworkBuilder への登録
+
+```kotlin
+fun <T> NetworkBuilder.D1<T>.myLayer() = addProcess(MyLayerD1(outputSize = inputSize))
+fun <T> NetworkBuilder.D2<T>.myLayer() = addProcess(MyLayerD2(outputX = inputX, outputY = inputY))
+```
+
+`inputSize`（D1）・`inputX` / `inputY`（D2）・`inputX` / `inputY` / `inputZ`（D3）が前の層の出力サイズ。
+`optimizer` / `initializer` は `NetworkBuilder` のプロパティとして参照できる（`this.optimizer` / `this.initializer`）。
+
+### 重みを持つ層の実装例
+
+```kotlin
+@Serializable
+class WeightedD1 internal constructor(
+    override val outputSize: Int,
+    private val optimizer: Optimizer.D1,
+    private var weight: IOType.D1.Global,  // Global で保持する
+) : Compute.D1() {
+
+    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
+        input + weight
+
+    override fun IOScope.train(
+        input: Batch<IOType.D1>,
+        context: Context,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
+    ): Batch<IOType.D1> {
+        val output = input + weight
+        val delta = calcDelta(output)
+        // optimizer.adapt はスコープが必要なので context(scope: IOScope) で呼ばれる
+        weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
+        return delta
+    }
+}
+
+fun <T> NetworkBuilder.D1<T>.weightedLayer() = addProcess(
+    WeightedD1(
+        outputSize = inputSize,
+        optimizer = optimizer.d1(inputSize),
+        weight = initializer.d1(
+            input = listOf(inputSize),
+            output = listOf(inputSize),
+            size = inputSize,
+        ),
+    ),
+)
+```
+
+重みは必ず `IOType.Dx.Global` で保持する。`train` 内で `optimizer.adapt` を呼ぶと `Local` が返るので、`.toGlobal()` でスコープから外して保存する。
+
+### Context
+
+`Context(val input: Batch<IOType>)` — 現在の層への入力を保持する。通常は使わないが、入力に依存した処理（skip 接続の合流等）で参照できる。
+
+---
+
+## Output（カスタム出力層）
+
+`com.wsr.knist.network.output.Output.D1` または `Output.D2` を継承する。
+
+```kotlin
+@Serializable
+class MyOutputD1 internal constructor(val outputSize: Int) : Output.D1() {
+
+    // 推論時の出力（softmax 等の変換のみ。損失計算不要）
+    override fun IOScope.expect(input: Batch<IOType.D1>): Batch<IOType.D1> {
+        val max = input.max()
+        val exp = (input - max).exp()
+        val sum = exp.sum()
+        return exp / sum
+    }
+
+    // 学習時（損失と入力方向 delta を返す）
+    override fun IOScope.train(
+        input: Batch<IOType.D1>,
+        label: (Batch<IOType.D1>) -> Batch<IOType.D1>,
+    ): TResult<IOType.D1> {
+        val output = expect(input)          // expect を再利用してよい
+        val labelBatch = label(output)      // label は現在の output を受け取って目標値を返す
+        val loss = /* スカラー損失 */ output.sum()
+        val delta = output - labelBatch
+        return TResult(loss = loss, delta = delta)
+    }
+}
+```
+
+`TResult<T>` のフィールド：
+- `loss: IOType.D0` — バッチ全体のスカラー損失
+- `delta: Batch<T>` — 直前の層に渡す勾配
+
+NetworkBuilder への登録:
+
+```kotlin
+fun <T> NetworkBuilder.D1<T>.myOutput() = addOutput(MyOutputD1(outputSize = inputSize))
+
+// converter を使う場合（出力を任意型に変換）
+fun <I, O> NetworkBuilder.D1<I>.myOutput(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) =
+    addOutput(output = MyOutputD1(outputSize = inputSize), converter = converter)
+```
+
+---
+
+## Optimizer（カスタム最適化器）
+
+`com.wsr.knist.network.optimizer.Optimizer` インターフェースを実装する。`d1` 〜 `d4` で各次元のオプティマイザインスタンスを生成する。
+
+```kotlin
+class MyOptimizer(private val rate: Float) : Optimizer {
+    override fun d1(size: Int): D1 = MyD1(rate)
+    override fun d2(i: Int, j: Int): D2 = MyD2(rate)
+    override fun d3(i: Int, j: Int, k: Int): D3 = MyD3(rate)
+    override fun d4(i: Int, j: Int, k: Int, l: Int): D4 = MyD4(rate)
+}
+```
+
+各次元の実装。`Optimizer.D1` 〜 `Optimizer.D4` は抽象クラスで、`adapt(weight, dw)` だけ実装すれば良い。
+`maxNorm`（勾配クリッピング）・`stepUnit`（更新頻度）はコンストラクタ引数として基底クラスに渡せる。
+
+```kotlin
+@Serializable
+class MyD1(
+    private val rate: Float,
+    // private var moment: IOType.D1.Global = ... // モーメント等の状態量
+) : Optimizer.D1(/* maxNorm = ..., stepUnit = ... */) {
+
+    // weight: 現在の重み / dw: 勾配 / 戻り値: 更新後の重み（Local で返してよい）
+    override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 =
+        weight - dw * rate
+}
+```
+
+`step`（更新回数 / stepUnit）が `protected` プロパティとして参照できる。スケジューラ等に使える。
+
+---
+
+## WeightInitializer（カスタム重み初期化）
+
+`com.wsr.knist.network.initializer.WeightInitializer` を実装する。
+
+```kotlin
+class MyInitializer : WeightInitializer {
+    // input: 前の層の出力形状 / output: この層の出力形状
+    override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global {
+        val data = FloatArray(size) { /* 初期値の計算 */ 0f }
+        return IOType.D1.Global(DataBuffer.create(data))
+    }
+
+    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global {
+        val data = FloatArray(x * y) { /* 初期値 */ 0f }
+        return IOType.D2.Global(value = DataBuffer.create(data), shape = listOf(x, y))
+    }
+
+    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global { ... }
+    override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global { ... }
+}
+```
+
+`DataBuffer.create(floatArray)` で `DataBuffer` を生成する。
+import: `com.wsr.knist.base.data.DataBuffer`
+
+---
+
+## IOType 演算リファレンス
+
+`Compute.expect` / `Compute.train` / `Output.expect` / `Output.train` / `Optimizer.adapt` はすべて `IOScope` レシーバーを持つため、以下の演算をそのまま呼び出せる。
+
+### 四則演算（elementwise）
+
+| 演算 | D1 例 | 備考 |
+|------|-------|------|
+| `+` | `a + b` / `a + 1f` | D0 との加算は broadcast |
+| `-` | `a - b` / `a - 1f` | — |
+| `*` | `a * b` / `a * 2f` | — |
+| `/` | `a / b` / `a / 2f` | — |
+
+D1 の `plus(other: IOType.D2, axis: Int)` など broadcast 版も存在する。
+
+### 数学関数（elementwise）
+
+| 関数 | 説明 |
+|------|------|
+| `exp()` | e^x |
+| `ln(e: Float)` | ln(x + e)（数値安定用 e） |
+| `pow(n: Int)` | x^n |
+| `sqrt(e: Float = 1e-7f)` | √(x + e) |
+| `softmax()` | D1 のみ。max 安定化済み |
+
+### 比較・マスク
+
+| 関数 | 説明 |
+|------|------|
+| `a eq b` / `a eq 1f` | 要素ごと等値（許容誤差あり）。結果は 0f/1f |
+| `a gt b` / `a gt 1f` | 要素ごと大なり |
+| `a lt b` / `a lt 1f` | 要素ごと小なり |
+| `where(condition, onTrue, onFalse)` | 条件マスクによる値選択 |
+| `a.where(condition, onTrue, onFalse=this)` | レシーバー版 |
+
+### 集約（reduction）
+
+D1 の例。D2/D3 は `axis: Int` 引数を取るバリアントも存在する。
+
+| 関数 | 戻り値 | 説明 |
+|------|--------|------|
+| `sum()` | D0 | 全要素の和 |
+| `average()` | D0 | 全要素の平均 |
+| `max()` | D0 | 最大値 |
+| `min()` | D0 | 最小値 |
+| `maxIndex()` | D0（D1→D0）/ D1（D2→D1）/ D2（D3→D2） | 最大値のインデックス |
+| `topK(k)` | D0 | 上位 k 個からサンプリング |
+| `topP(p)` | D0 | 累積確率 p 以内からサンプリング |
+
+### 線形代数
+
+| 関数 | 入力 | 出力 | 備考 |
+|------|------|------|------|
+| `matMul(other: D1, trans?)` | D2 × D1 | D1 | trans=true で転置 |
+| `matMul(other: D2, transA?, transB?)` | D2 × D2 | D2 | — |
+
+### 形状変換
+
+| 関数 | 説明 |
+|------|------|
+| `broadcastToD2(axis, size)` | D1 → D2 に broadcast |
+| `slice(indices: IntProgression)` | D1 の部分取り出し |
+| `interleave(other: D1)` | 2つの D1 を交互に結合 |
+
+---
+
+## 必要な import まとめ
+
+```kotlin
+// Process / Compute
+import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.compute.Compute
+
+// Output
+import com.wsr.knist.network.output.Output
+import com.wsr.knist.network.output.TResult
+
+// Optimizer
+import com.wsr.knist.network.optimizer.Optimizer
+
+// WeightInitializer
+import com.wsr.knist.network.initializer.WeightInitializer
+
+// IOType / IOScope
+import com.wsr.knist.core.IOScope
+import com.wsr.knist.core.IOType
+
+// Batch
+import com.wsr.knist.batch.Batch
+
+// DataBuffer（WeightInitializer 実装時）
+import com.wsr.knist.base.data.DataBuffer
+
+// NetworkBuilder（拡張関数追加時）
+import com.wsr.knist.network.NetworkBuilder
+```
