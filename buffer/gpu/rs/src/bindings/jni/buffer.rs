@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use jni::{JNIEnv};
 use jni::objects::{JClass, JFloatArray, ReleaseMode};
 use jni::sys::{jfloat, jfloatArray, jint, jlong};
@@ -15,7 +17,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_allocate(
 ) -> jlong {
     let runtime = unsafe { &*(runtime as *const Runtime) };
     let buffer = ops::buffer::create(size as usize, runtime);
-    Box::into_raw(Box::new(buffer)) as jlong
+    Arc::into_raw(Arc::new(buffer)) as jlong
 }
 
 #[unsafe(no_mangle)]
@@ -28,7 +30,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_init(
     let value = unsafe { env.get_array_elements(&value, ReleaseMode::NoCopyBack).unwrap() };
     let runtime = unsafe { &*(runtime as *const Runtime) };
     let buffer = ops::buffer::init(&value, runtime);
-    Box::into_raw(Box::new(buffer)) as jlong
+    Arc::into_raw(Arc::new(buffer)) as jlong
 }
 
 #[unsafe(no_mangle)]
@@ -37,7 +39,7 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_release(
     _class: JClass,
     ptr: jlong,
 ) {
-    let _ = unsafe { Box::from_raw(ptr as *mut GPUBuffer) };
+    let _ = unsafe { Arc::from_raw(ptr as *const GPUBuffer) };
 }
 
 #[unsafe(no_mangle)]
