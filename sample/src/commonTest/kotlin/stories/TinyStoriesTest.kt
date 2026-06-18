@@ -2,6 +2,8 @@
 
 package stories
 
+import com.wsr.knist.Backend
+import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.word.WordD2
@@ -55,6 +57,7 @@ class TinyStoriesTest {
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)
+        Backend.set(gpu)
 
         println("学習開始")
         FileSystem.SYSTEM.resource(TRAIN_PATH).buffer().use {

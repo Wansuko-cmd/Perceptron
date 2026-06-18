@@ -744,6 +744,7 @@ object KotlinBackend : IBackend {
         x.reduce(xi = xi, xj = xj, xk = xk, axis = axis) { acc, i -> acc + i }
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
+        val x = x.toFloatArray()
         var index = 0
         var max = x[0]
         for (i in 1 until x.size) {
@@ -755,107 +756,114 @@ object KotlinBackend : IBackend {
         return Default(1).apply { this[0] = index.toFloat() }
     }
 
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = when (axis) {
-        0 -> {
-            val result = Default(size = xj)
-            for (j in 0 until xj) {
-                var maxIndex = 0
-                var max = x[j]
-                for (i in 1 until xi) {
-                    val value = x[i * xj + j]
-                    if (max < value) {
-                        maxIndex = i
-                        max = value
-                    }
-                }
-                result[j] = maxIndex.toFloat()
-            }
-            result
-        }
-
-        1 -> {
-            val result = Default(size = xi)
-            for (i in 0 until xi) {
-                var maxIndex = 0
-                var max = x[i * xj]
-
-                for (j in 1 until xj) {
-                    val value = x[i * xj + j]
-                    if (max < value) {
-                        maxIndex = j
-                        max = value
-                    }
-                }
-                result[i] = maxIndex.toFloat()
-            }
-            result
-        }
-
-        else -> throw IllegalArgumentException()
-    }
-
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer = when (axis) {
-        0 -> {
-            val result = Default(xj * xk)
-            for (j in 0 until xj) {
-                for (k in 0 until xk) {
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val x = x.toFloatArray()
+        return when (axis) {
+            0 -> {
+                val result = Default(size = xj)
+                for (j in 0 until xj) {
                     var maxIndex = 0
-                    var max = x[j * xk + k]
+                    var max = x[j]
                     for (i in 1 until xi) {
-                        val value = x[(i * xj + j) * xk + k]
+                        val value = x[i * xj + j]
                         if (max < value) {
                             maxIndex = i
                             max = value
                         }
                     }
-                    result[j * xk + k] = maxIndex.toFloat()
+                    result[j] = maxIndex.toFloat()
                 }
+                result
             }
-            result
-        }
 
-        1 -> {
-            val result = Default(xi * xk)
-            for (i in 0 until xi) {
-                for (k in 0 until xk) {
+            1 -> {
+                val result = Default(size = xi)
+                for (i in 0 until xi) {
                     var maxIndex = 0
-                    var max = x[i * xj * xk + k]
+                    var max = x[i * xj]
+
                     for (j in 1 until xj) {
-                        val value = x[(i * xj + j) * xk + k]
+                        val value = x[i * xj + j]
                         if (max < value) {
                             maxIndex = j
                             max = value
                         }
                     }
-                    result[i * xk + k] = maxIndex.toFloat()
+                    result[i] = maxIndex.toFloat()
                 }
+                result
             }
-            result
-        }
 
-        2 -> {
-            val result = Default(xi * xj)
-            for (i in 0 until xi) {
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val x = x.toFloatArray()
+        return when (axis) {
+            0 -> {
+                val result = Default(xj * xk)
                 for (j in 0 until xj) {
-                    var maxIndex = 0
-                    var max = x[(i * xj + j) * xk]
-                    for (k in 1 until xk) {
-                        val value = x[(i * xj + j) * xk + k]
-                        if (max < value) {
-                            maxIndex = k
-                            max = value
+                    for (k in 0 until xk) {
+                        var maxIndex = 0
+                        var max = x[j * xk + k]
+                        for (i in 1 until xi) {
+                            val value = x[(i * xj + j) * xk + k]
+                            if (max < value) {
+                                maxIndex = i
+                                max = value
+                            }
                         }
+                        result[j * xk + k] = maxIndex.toFloat()
                     }
-                    result[i * xj + j] = maxIndex.toFloat()
                 }
+                result
             }
-            result
-        }
 
-        else -> throw IllegalArgumentException()
+            1 -> {
+                val result = Default(xi * xk)
+                for (i in 0 until xi) {
+                    for (k in 0 until xk) {
+                        var maxIndex = 0
+                        var max = x[i * xj * xk + k]
+                        for (j in 1 until xj) {
+                            val value = x[(i * xj + j) * xk + k]
+                            if (max < value) {
+                                maxIndex = j
+                                max = value
+                            }
+                        }
+                        result[i * xk + k] = maxIndex.toFloat()
+                    }
+                }
+                result
+            }
+
+            2 -> {
+                val result = Default(xi * xj)
+                for (i in 0 until xi) {
+                    for (j in 0 until xj) {
+                        var maxIndex = 0
+                        var max = x[(i * xj + j) * xk]
+                        for (k in 1 until xk) {
+                            val value = x[(i * xj + j) * xk + k]
+                            if (max < value) {
+                                maxIndex = k
+                                max = value
+                            }
+                        }
+                        result[i * xj + j] = maxIndex.toFloat()
+                    }
+                }
+                result
+            }
+
+            else -> throw IllegalArgumentException()
+        }
     }
 
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        val x = x.toFloatArray()
         val total = Array(x.size) { x[it] to it }
             .apply { sortWith(compareByDescending { (value, _) -> value }) }
         val index = total
@@ -865,6 +873,7 @@ object KotlinBackend : IBackend {
     }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
+        val x = x.toFloatArray()
         val total = Array(x.size) { x[it] to it }
             .apply { sortWith(compareByDescending { (value, _) -> value }) }
         var sum = 0.0f
