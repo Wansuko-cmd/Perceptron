@@ -84,6 +84,21 @@ class D1ExtTest {
     }
 
     @Test
+    fun `concat=D1バッチを連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d1(listOf(1f, 2f, 3f)),
+            IOType.d1(listOf(4f, 5f, 6f)),
+        )
+        val batch2 = Batch.of(
+            IOType.d1(listOf(7f, 8f)),
+            IOType.d1(listOf(9f, 10f)),
+        )
+        val result = batch1.concat(batch2)
+        assertContentEquals(IOType.d1(listOf(1f, 2f, 3f, 7f, 8f)), result[0])
+        assertContentEquals(IOType.d1(listOf(4f, 5f, 6f, 9f, 10f)), result[1])
+    }
+
+    @Test
     fun `interleave=2つのD1バッチをインターリーブ`() = ioTypeTestRule {
         val batch1 = Batch.of(
             IOType.d1(listOf(0f, 2f)),

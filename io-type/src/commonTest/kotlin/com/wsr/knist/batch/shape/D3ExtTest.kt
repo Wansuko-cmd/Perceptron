@@ -80,6 +80,51 @@ class D3ExtTest {
     }
 
     @Test
+    fun `concat_axis0=D3バッチをaxis0で連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d3(1, 2, 2) { _, j, k -> j * 2f + k },
+            IOType.d3(1, 2, 2) { _, j, k -> j * 2f + k + 8f },
+        )
+        val batch2 = Batch.of(
+            IOType.d3(1, 2, 2) { _, j, k -> j * 2f + k + 4f },
+            IOType.d3(1, 2, 2) { _, j, k -> j * 2f + k + 12f },
+        )
+        val result = batch1.concat(batch2, axis = 0)
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }, result[0])
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f }, result[1])
+    }
+
+    @Test
+    fun `concat_axis1=D3バッチをaxis1で連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d3(2, 1, 2) { i, _, k -> i * 4f + k },
+            IOType.d3(2, 1, 2) { i, _, k -> i * 4f + k + 8f },
+        )
+        val batch2 = Batch.of(
+            IOType.d3(2, 1, 2) { i, _, k -> i * 4f + k + 2f },
+            IOType.d3(2, 1, 2) { i, _, k -> i * 4f + k + 10f },
+        )
+        val result = batch1.concat(batch2, axis = 1)
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }, result[0])
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f }, result[1])
+    }
+
+    @Test
+    fun `concat_axis2=D3バッチをaxis2で連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d3(2, 2, 1) { i, j, _ -> i * 4f + j * 2f },
+            IOType.d3(2, 2, 1) { i, j, _ -> i * 4f + j * 2f + 8f },
+        )
+        val batch2 = Batch.of(
+            IOType.d3(2, 2, 1) { i, j, _ -> i * 4f + j * 2f + 1f },
+            IOType.d3(2, 2, 1) { i, j, _ -> i * 4f + j * 2f + 9f },
+        )
+        val result = batch1.concat(batch2, axis = 2)
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k }, result[0])
+        assertContentEquals(IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k + 8f }, result[1])
+    }
+
+    @Test
     fun `flatten=D3バッチをD1バッチにフラット化`() = ioTypeTestRule {
         val batch = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
