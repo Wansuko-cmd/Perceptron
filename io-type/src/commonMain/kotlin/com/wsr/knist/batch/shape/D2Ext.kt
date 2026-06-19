@@ -65,6 +65,25 @@ fun Batch<IOType.D2>.slice(indices: IntProgression, axis: Int): Batch<IOType.D2.
 }
 
 @ScopeOp
+fun Batch<IOType.D2>.concat(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2.Global> = when (axis) {
+    0 -> {
+        val newI = i + other.i
+        val result = DataBuffer.create(size * newI * j)
+        Backend.copyInto(value, result, yi = size, yj = newI, yk = j, axis = 1, indices = 0 until i)
+        Backend.copyInto(other.value, result, yi = size, yj = newI, yk = j, axis = 1, indices = i until newI)
+        Batch.d2(size, newI, j, result)
+    }
+    1 -> {
+        val newJ = j + other.j
+        val result = DataBuffer.create(size * i * newJ)
+        Backend.copyInto(value, result, yi = size * i, yj = newJ, axis = 1, indices = 0 until j)
+        Backend.copyInto(other.value, result, yi = size * i, yj = newJ, axis = 1, indices = j until newJ)
+        Batch.d2(size, i, newJ, result)
+    }
+    else -> throw IllegalArgumentException("Batch<IOType.D2>.concat axis is $axis, not 0 or 1.")
+}
+
+@ScopeOp
 fun Batch<IOType.D2>.interleave(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2.Global> {
     check(size == other.size && i == other.i && j == other.j)
     val result = DataBuffer.create(value.size + other.value.size)

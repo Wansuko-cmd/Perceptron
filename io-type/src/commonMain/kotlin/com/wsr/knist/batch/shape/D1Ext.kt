@@ -55,6 +55,15 @@ fun Batch<IOType.D1>.slice(indices: IntProgression): Batch<IOType.D1.Global> {
 }
 
 @ScopeOp
+fun Batch<IOType.D1>.concat(other: Batch<IOType.D1>): Batch<IOType.D1.Global> {
+    val newI = i + other.i
+    val result = DataBuffer.create(size * newI)
+    Backend.copyInto(value, result, yi = size, yj = newI, axis = 1, indices = 0 until i)
+    Backend.copyInto(other.value, result, yi = size, yj = newI, axis = 1, indices = i until newI)
+    return Batch.d1(size, newI, result)
+}
+
+@ScopeOp
 fun Batch<IOType.D1>.interleave(other: Batch<IOType.D1>): Batch<IOType.D1.Global> {
     check(size == other.size && i == other.i)
     val newI = i * 2

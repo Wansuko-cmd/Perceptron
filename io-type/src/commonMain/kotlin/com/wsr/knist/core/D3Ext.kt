@@ -93,3 +93,28 @@ operator fun IOType.D3.set(i: Int, element: IOType.D2) {
         indices = start until start + element.value.size,
     )
 }
+
+fun IOType.D3.concat(other: IOType.D3, axis: Int): IOType.D3.Global = when (axis) {
+    0 -> {
+        val newI = i + other.i
+        val result = DataBuffer.create(newI * j * k)
+        Backend.copyInto(value, result, yi = newI, yj = j * k, axis = 0, indices = 0 until i)
+        Backend.copyInto(other.value, result, yi = newI, yj = j * k, axis = 0, indices = i until newI)
+        IOType.D3.Global(value = result, shape = listOf(newI, j, k))
+    }
+    1 -> {
+        val newJ = j + other.j
+        val result = DataBuffer.create(i * newJ * k)
+        Backend.copyInto(value, result, yi = i, yj = newJ, yk = k, axis = 1, indices = 0 until j)
+        Backend.copyInto(other.value, result, yi = i, yj = newJ, yk = k, axis = 1, indices = j until newJ)
+        IOType.D3.Global(value = result, shape = listOf(i, newJ, k))
+    }
+    2 -> {
+        val newK = k + other.k
+        val result = DataBuffer.create(i * j * newK)
+        Backend.copyInto(value, result, yi = i * j, yj = newK, axis = 1, indices = 0 until k)
+        Backend.copyInto(other.value, result, yi = i * j, yj = newK, axis = 1, indices = k until newK)
+        IOType.D3.Global(value = result, shape = listOf(i, j, newK))
+    }
+    else -> throw IllegalArgumentException("IOType.D3.concat axis is $axis, not 0, 1 or 2.")
+}
