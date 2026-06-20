@@ -1,5 +1,6 @@
 package com.wsr.knist.core
 
+import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
 
 @PublishedApi
@@ -23,4 +24,12 @@ operator fun IOType.D1.get(index: Int): IOType.D0 = IOType.d0(value[index])
 
 operator fun IOType.D1.set(index: Int, element: Float) {
     value[index] = element
+}
+
+fun IOType.D1.concat(other: IOType.D1): IOType.D1.Global {
+    val newSize = size + other.size
+    val result = DataBuffer.create(newSize)
+    Backend.copyInto(value, result, 0 until size)
+    Backend.copyInto(other.value, result, size until newSize)
+    return IOType.D1.Global(value = result)
 }

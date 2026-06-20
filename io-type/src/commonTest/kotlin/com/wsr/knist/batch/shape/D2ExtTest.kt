@@ -109,6 +109,36 @@ class D2ExtTest {
     }
 
     @Test
+    fun `concat_axis0=D2バッチをaxis0で連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d2(1, 3) { _, j -> j.toFloat() },
+            IOType.d2(1, 3) { _, j -> j + 6f },
+        )
+        val batch2 = Batch.of(
+            IOType.d2(1, 3) { _, j -> j + 3f },
+            IOType.d2(1, 3) { _, j -> j + 9f },
+        )
+        val result = batch1.concat(batch2, axis = 0)
+        assertContentEquals(IOType.d2(2, 3) { i, j -> i * 3f + j }, result[0])
+        assertContentEquals(IOType.d2(2, 3) { i, j -> i * 3f + j + 6f }, result[1])
+    }
+
+    @Test
+    fun `concat_axis1=D2バッチをaxis1で連結`() = ioTypeTestRule {
+        val batch1 = Batch.of(
+            IOType.d2(2, 2) { i, j -> i * 4f + j },
+            IOType.d2(2, 2) { i, j -> i * 4f + j + 8f },
+        )
+        val batch2 = Batch.of(
+            IOType.d2(2, 2) { i, j -> i * 4f + j + 2f },
+            IOType.d2(2, 2) { i, j -> i * 4f + j + 10f },
+        )
+        val result = batch1.concat(batch2, axis = 1)
+        assertContentEquals(IOType.d2(2, 4) { i, j -> i * 4f + j }, result[0])
+        assertContentEquals(IOType.d2(2, 4) { i, j -> i * 4f + j + 8f }, result[1])
+    }
+
+    @Test
     fun `transpose=D2バッチの転置`() = ioTypeTestRule {
         val batch = Batch.of(
             IOType.d2(2, 3) { i, j -> i * 3f + j },
