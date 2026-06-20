@@ -222,7 +222,7 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
 |------|--------|------|------|-------------|
-| `roPE(waveLength?)` | `com.wsr.knist.network.process.compute.position.roPE` | D2(X, Y) | D2(X, Y) | waveLength=10000f |
+| ~~`roPE(waveLength?)`~~ | `com.wsr.knist.network.process.compute.position.roPE` | D2(X, Y) | D2(X, Y) | waveLength=10000f | **Deprecated**: RoPE は Attention 内部で Q・K に適用するのが正しい設計。現実装は入力全体に適用しており非推奨。代わりに `positionEncode` または `positionEmbedding` を使うこと。 |
 | `positionEncode(waveLength?)` | `com.wsr.knist.network.process.compute.position.positionEncode` | D2(X, Y) | D2(X, Y) | waveLength=10000f |
 | `positionEmbedding()` | `com.wsr.knist.network.process.compute.position.positionEmbedding` | D2(X, Y) | D2(X, Y) | — |
 
@@ -505,7 +505,7 @@ inputD2(PixelConverter(28,28), ...)         → D2(28, 28)
 ```
 wordsD1(maxLength=128, words=..., ...)      → D1(128)
   → tokenEmbedding(vocabSize=3000, 256)     → D2(128, 256)
-  → roPE()
+  → positionEmbedding()
   → repeat(4) {
       skip { layerNorm(1).scale(1).bias(1).attention(4, isCausal=true).dropout(0.9f) }
       skip { layerNorm(1).scale(1).bias(1).affine(1024).bias(1).swish().affine(256).bias(1).dropout(0.9f) }

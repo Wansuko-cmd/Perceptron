@@ -14,7 +14,7 @@ import com.wsr.knist.network.process.compute.bias.d2.bias
 import com.wsr.knist.network.process.compute.dropout.dropout
 import com.wsr.knist.network.process.compute.function.relu.swish
 import com.wsr.knist.network.process.compute.norm.layer.d2.layerNorm
-import com.wsr.knist.network.process.compute.position.roPE
+import com.wsr.knist.network.process.compute.position.positionEmbedding
 import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
@@ -66,7 +66,7 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
             vocabSize = words.size,
             tokenSize = EMBEDDING_DIM,
         )
-        .roPE()
+        .positionEmbedding()
         .repeat(NUM_LAYERS) {
             this
                 .skip {

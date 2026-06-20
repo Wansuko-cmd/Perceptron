@@ -53,6 +53,7 @@ class RoPED2 internal constructor(
     }
 }
 
+@Deprecated("実装ミス。Attentionの中に組み込む必要がある")
 fun <T> NetworkBuilder.D2<T>.roPE(waveLength: Float = 10000f) = addProcess(
     process = RoPED2(
         outputX = inputX,
