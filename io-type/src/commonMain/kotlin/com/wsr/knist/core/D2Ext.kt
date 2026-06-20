@@ -80,6 +80,7 @@ fun IOType.D2.concat(other: IOType.D2, axis: Int): IOType.D2.Global = when (axis
         Backend.copyInto(other.value, result, yi = newI, yj = j, axis = 0, indices = i until newI)
         IOType.D2.Global(value = result, shape = listOf(newI, j))
     }
+
     1 -> {
         val newJ = j + other.j
         val result = DataBuffer.create(i * newJ)
@@ -87,5 +88,6 @@ fun IOType.D2.concat(other: IOType.D2, axis: Int): IOType.D2.Global = when (axis
         Backend.copyInto(other.value, result, yi = i, yj = newJ, axis = 1, indices = j until newJ)
         IOType.D2.Global(value = result, shape = listOf(i, newJ))
     }
+
     else -> throw IllegalArgumentException("IOType.D2.concat axis is $axis, not 0 or 1.")
 }

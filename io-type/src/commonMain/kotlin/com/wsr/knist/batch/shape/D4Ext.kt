@@ -25,6 +25,7 @@ fun Batch<IOType.D4>.concat(other: Batch<IOType.D4>, axis: Int): Batch<IOType.D4
         Backend.copyInto(other.value, result, yi = size, yj = newI, yk = j * k * l, axis = 1, indices = i until newI)
         Batch.d4(size, newI, j, k, l, result)
     }
+
     1 -> {
         val newJ = j + other.j
         val result = DataBuffer.create(size * i * newJ * k * l)
@@ -32,6 +33,7 @@ fun Batch<IOType.D4>.concat(other: Batch<IOType.D4>, axis: Int): Batch<IOType.D4
         Backend.copyInto(other.value, result, yi = size * i, yj = newJ, yk = k * l, axis = 1, indices = j until newJ)
         Batch.d4(size, i, newJ, k, l, result)
     }
+
     2 -> {
         val newK = k + other.k
         val result = DataBuffer.create(size * i * j * newK * l)
@@ -39,6 +41,7 @@ fun Batch<IOType.D4>.concat(other: Batch<IOType.D4>, axis: Int): Batch<IOType.D4
         Backend.copyInto(other.value, result, yi = size * i * j, yj = newK, yk = l, axis = 1, indices = k until newK)
         Batch.d4(size, i, j, newK, l, result)
     }
+
     3 -> {
         val newL = l + other.l
         val result = DataBuffer.create(size * i * j * k * newL)
@@ -46,6 +49,7 @@ fun Batch<IOType.D4>.concat(other: Batch<IOType.D4>, axis: Int): Batch<IOType.D4
         Backend.copyInto(other.value, result, yi = size * i * j * k, yj = newL, axis = 1, indices = l until newL)
         Batch.d4(size, i, j, k, newL, result)
     }
+
     else -> throw IllegalArgumentException("Batch<IOType.D4>.concat axis is $axis, not 0, 1, 2 or 3.")
 }
 

@@ -73,6 +73,7 @@ fun Batch<IOType.D2>.concat(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2
         Backend.copyInto(other.value, result, yi = size, yj = newI, yk = j, axis = 1, indices = i until newI)
         Batch.d2(size, newI, j, result)
     }
+
     1 -> {
         val newJ = j + other.j
         val result = DataBuffer.create(size * i * newJ)
@@ -80,6 +81,7 @@ fun Batch<IOType.D2>.concat(other: Batch<IOType.D2>, axis: Int): Batch<IOType.D2
         Backend.copyInto(other.value, result, yi = size * i, yj = newJ, axis = 1, indices = j until newJ)
         Batch.d2(size, i, newJ, result)
     }
+
     else -> throw IllegalArgumentException("Batch<IOType.D2>.concat axis is $axis, not 0 or 1.")
 }
 

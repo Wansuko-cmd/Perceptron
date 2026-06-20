@@ -103,22 +103,49 @@ fun Batch<IOType.D3>.concat(other: Batch<IOType.D3>, axis: Int): Batch<IOType.D3
         val newI = i + other.i
         val result = DataBuffer.create(size * newI * j * k)
         Backend.copyInto(x = value, y = result, yi = size, yj = newI, yk = j * k, axis = 1, indices = 0 until i)
-        Backend.copyInto(x = other.value, y = result, yi = size, yj = newI, yk = j * k, axis = 1, indices = i until newI)
+        Backend.copyInto(
+            x = other.value,
+            y = result,
+            yi = size,
+            yj = newI,
+            yk = j * k,
+            axis = 1,
+            indices = i until newI,
+        )
         Batch.d3(size, newI, j, k, result)
     }
+
     1 -> {
         val newJ = j + other.j
-        val result = DataBuffer.create(size * i * newJ* k)
+        val result = DataBuffer.create(size * i * newJ * k)
         Backend.copyInto(x = value, y = result, yi = size * i, yj = newJ, yk = k, axis = 1, indices = 0 until j)
-        Backend.copyInto(x = other.value, y = result, yi = size * i, yj = newJ, yk = k, axis = 1, indices = j until newJ)
+        Backend.copyInto(
+            x = other.value,
+            y = result,
+            yi = size * i,
+            yj = newJ,
+            yk = k,
+            axis = 1,
+            indices = j until newJ,
+        )
         Batch.d3(size, i, newJ, k, result)
     }
+
     2 -> {
         val newK = k + other.k
         val result = DataBuffer.create(size * i * j * newK)
         Backend.copyInto(x = value, y = result, yi = size * i, yj = j, yk = newK, axis = 2, indices = 0 until k)
-        Backend.copyInto(x = other.value, y = result, yi = size * i, yj = j, yk = newK, axis = 2, indices = k until newK)
+        Backend.copyInto(
+            x = other.value,
+            y = result,
+            yi = size * i,
+            yj = j,
+            yk = newK,
+            axis = 2,
+            indices = k until newK,
+        )
         Batch.d3(size, i, j, newK, result)
     }
+
     else -> throw IllegalArgumentException("Batch<IOType.D3>.concat axis is $axis, not 0, 1 or 2.")
 }
