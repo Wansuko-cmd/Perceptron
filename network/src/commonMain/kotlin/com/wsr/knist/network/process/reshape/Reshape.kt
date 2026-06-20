@@ -34,7 +34,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D1>,
             context = context,
-            calcDelta = { input: Batch<IOType.D2> -> calcDelta(input) as Batch<IOType.D2> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         )
     }
 
@@ -62,7 +62,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D1>,
             context = context,
-            calcDelta = { input: Batch<IOType.D3> -> calcDelta(input) as Batch<IOType.D3> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         )
     }
 
@@ -90,7 +90,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D2>,
             context = context,
-            calcDelta = { input: Batch<IOType.D1> -> calcDelta(input) as Batch<IOType.D1> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         )
     }
 
@@ -118,7 +118,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D2>,
             context = context,
-            calcDelta = { input: Batch<IOType.D3> -> calcDelta(input) as Batch<IOType.D3> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         )
     }
 
@@ -144,7 +144,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D3>,
             context = context,
-            calcDelta = { input: Batch<IOType.D1> -> calcDelta(input) as Batch<IOType.D1> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         )
     }
 
@@ -171,7 +171,7 @@ sealed interface Reshape : Process {
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D3>,
             context = context,
-            calcDelta = { input: Batch<IOType.D2> -> calcDelta(input) as Batch<IOType.D2> },
+            calcDelta = calcDelta as IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         )
     }
 }

@@ -57,7 +57,6 @@ class TinyStoriesTest {
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)
-        Backend.set(gpu)
 
         println("学習開始")
         FileSystem.SYSTEM.resource(TRAIN_PATH).buffer().use {
