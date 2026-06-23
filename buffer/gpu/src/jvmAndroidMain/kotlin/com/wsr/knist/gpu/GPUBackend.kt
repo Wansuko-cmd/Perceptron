@@ -19,7 +19,8 @@ import com.wsr.knist.gpu.shape.JShape
 import java.lang.ref.Cleaner
 
 class GPUBackend : IBackend by KotlinBackend {
-    private val runtime = JRuntime().allocate()
+    private val jRuntime = JRuntime()
+    private val runtime = jRuntime.allocate()
     private val buffer = JBuffer()
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime, buffer)
 
@@ -1707,6 +1708,8 @@ class GPUBackend : IBackend by KotlinBackend {
         )
         return result
     }
+
+    override fun sync() = jRuntime.sync(runtime)
 
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
         size = size,

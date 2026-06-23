@@ -1401,4 +1401,6 @@ object KotlinBackend : IBackend {
         }
         return result
     }
+
+    override fun sync() {}
 }
