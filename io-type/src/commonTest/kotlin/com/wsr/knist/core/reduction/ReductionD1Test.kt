@@ -11,6 +11,8 @@ import com.wsr.knist.core.reduction.max
 import com.wsr.knist.core.reduction.maxIndex
 import com.wsr.knist.core.reduction.min
 import com.wsr.knist.core.reduction.sum
+import com.wsr.knist.core.reduction.topK
+import com.wsr.knist.core.reduction.topP
 import com.wsr.knist.ioTypeTestRule
 import kotlin.test.Test
 
@@ -59,6 +61,20 @@ class ReductionD1Test {
     fun `1次元最大値インデックス`() = ioTypeTestRule {
         val d1 = IOType.d1(listOf(1f, 4f, 2f, 3f))
         val actual = d1.maxIndex()
+        assertContentEquals(expected = IOType.d0(1f), actual = actual)
+    }
+
+    @Test
+    fun `1次元topK_k=1`() = ioTypeTestRule {
+        val d1 = IOType.d1(listOf(1f, 4f, 2f, 3f))
+        val actual = d1.topK(k = 1)
+        assertContentEquals(expected = IOType.d0(1f), actual = actual)
+    }
+
+    @Test
+    fun `1次元topP_p=0`() = ioTypeTestRule {
+        val d1 = IOType.d1(listOf(1f, 4f, 2f, 3f))
+        val actual = d1.topP(p = 0f)
         assertContentEquals(expected = IOType.d0(1f), actual = actual)
     }
 }

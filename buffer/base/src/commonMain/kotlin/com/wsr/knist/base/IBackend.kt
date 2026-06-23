@@ -387,8 +387,12 @@ interface IBackend {
     fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
 
     fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer
+    fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer
+    fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer
 
     fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer
+    fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer
+    fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer
 
     fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer
     fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer

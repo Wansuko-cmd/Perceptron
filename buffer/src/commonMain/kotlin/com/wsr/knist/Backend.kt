@@ -439,7 +439,19 @@ object Backend : IBackend {
 
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer = instance.topK(x, k, random)
 
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer =
+        instance.topK(x, xi, xj, k, axis, random)
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer =
+        instance.topK(x, xi, xj, xk, k, axis, random)
+
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer = instance.topP(x, p, random)
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer =
+        instance.topP(x, xi, xj, p, axis, random)
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer =
+        instance.topP(x, xi, xj, xk, p, axis, random)
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer = instance.transpose(x, xi, xj)
 

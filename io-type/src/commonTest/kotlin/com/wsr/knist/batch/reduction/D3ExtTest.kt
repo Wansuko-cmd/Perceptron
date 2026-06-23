@@ -105,4 +105,52 @@ class D3ExtTest {
         assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 1f, 0f, 1f, 0f)), result[0])
         assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 0f, 0f, 1f, 1f)), result[1])
     }
+
+    @Test
+    fun `topK_k=1_axis0=D3バッチのaxis0最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topK(k = 1, axis = 0)
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 0f, 1f)), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis1=D3バッチのaxis1最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topK(k = 1, axis = 1)
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(1f, 2f, 0f, 1f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(2f, 0f, 0f, 2f)), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis2=D3バッチのaxis2最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topK(k = 1, axis = 2)
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 1f, 0f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 0f, 0f, 1f, 1f)), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis0=D3バッチのaxis0最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topP(p = 0f, axis = 0)
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(3, 2), value = listOf(1f, 0f, 0f, 1f, 0f, 1f)), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis1=D3バッチのaxis1最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topP(p = 0f, axis = 1)
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(1f, 2f, 0f, 1f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 2), value = listOf(2f, 0f, 0f, 2f)), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis2=D3バッチのaxis2最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d3v0, d3v1)
+        val result = batch.topP(p = 0f, axis = 2)
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 1f, 0f, 1f, 0f)), result[0])
+        assertContentEquals(IOType.d2(shape = listOf(2, 3), value = listOf(1f, 0f, 0f, 0f, 1f, 1f)), result[1])
+    }
 }

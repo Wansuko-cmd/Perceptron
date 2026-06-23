@@ -54,4 +54,26 @@ class D1ExtTest {
         assertContentEquals(IOType.d0(1f), result[0])
         assertContentEquals(IOType.d0(2f), result[1])
     }
+
+    @Test
+    fun `topK_k=1=D1バッチの各要素から最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(
+            IOType.d1(listOf(1f, 4f, 2f, 3f)),
+            IOType.d1(listOf(3f, 1f, 4f, 2f)),
+        )
+        val result = batch.topK(k = 1)
+        assertContentEquals(IOType.d0(1f), result[0])
+        assertContentEquals(IOType.d0(2f), result[1])
+    }
+
+    @Test
+    fun `topP_p=0=D1バッチの各要素から最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(
+            IOType.d1(listOf(1f, 4f, 2f, 3f)),
+            IOType.d1(listOf(3f, 1f, 4f, 2f)),
+        )
+        val result = batch.topP(p = 0f)
+        assertContentEquals(IOType.d0(1f), result[0])
+        assertContentEquals(IOType.d0(2f), result[1])
+    }
 }

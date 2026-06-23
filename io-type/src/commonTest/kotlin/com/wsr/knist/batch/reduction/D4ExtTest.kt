@@ -95,4 +95,105 @@ class D4ExtTest {
             result[1],
         )
     }
+
+    // d4v0: 1..16 (i outer, l inner) → max index は常に 1
+    // d4v1: 16..1 (逆順)              → max index は常に 0
+    private fun d4AllOnes() = IOType.d3(shape = listOf(2, 2, 2), value = List(8) { 1f })
+    private fun d4AllZeros() = IOType.d3(shape = listOf(2, 2, 2), value = List(8) { 0f })
+
+    @Test
+    fun `maxIndex_axis0=D4バッチのaxis0最大値インデックス`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.maxIndex(axis = 0)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis1=D4バッチのaxis1最大値インデックス`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.maxIndex(axis = 1)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis2=D4バッチのaxis2最大値インデックス`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.maxIndex(axis = 2)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `maxIndex_axis3=D4バッチのaxis3最大値インデックス`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.maxIndex(axis = 3)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis0=D4バッチのaxis0最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topK(k = 1, axis = 0)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis1=D4バッチのaxis1最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topK(k = 1, axis = 1)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis2=D4バッチのaxis2最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topK(k = 1, axis = 2)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topK_k=1_axis3=D4バッチのaxis3最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topK(k = 1, axis = 3)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis0=D4バッチのaxis0最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topP(p = 0f, axis = 0)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis1=D4バッチのaxis1最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topP(p = 0f, axis = 1)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis2=D4バッチのaxis2最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topP(p = 0f, axis = 2)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
+
+    @Test
+    fun `topP_p=0_axis3=D4バッチのaxis3最大値インデックスを選択`() = ioTypeTestRule {
+        val batch = Batch.of(d4v0, d4v1)
+        val result = batch.topP(p = 0f, axis = 3)
+        assertContentEquals(d4AllOnes(), result[0])
+        assertContentEquals(d4AllZeros(), result[1])
+    }
 }
