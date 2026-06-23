@@ -772,6 +772,11 @@ object KotlinBackend : IBackend {
             .randomIndex(random)
         return Default(1).apply { this[0] = index.toFloat() }
     }
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer =
+        x.reduceIndex(xi, xj, axis) { topK(it, k, random)[0] }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer =
+        x.reduceIndex(xi, xj, xk, axis) { topK(it, k, random)[0] }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
         val x = x.toFloatArray()
@@ -788,6 +793,12 @@ object KotlinBackend : IBackend {
         val index = total.randomIndex(random)
         return Default(1).apply { this[0] = index.toFloat() }
     }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer =
+        x.reduceIndex(xi, xj, axis) { topP(it, p, random)[0] }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer =
+        x.reduceIndex(xi, xj, xk, axis) { topP(it, p, random)[0] }
 
     private fun Array<Pair<Float, Int>>.randomIndex(random: Random): Int {
         val sum = sumOf { (value, _) -> value.toDouble() }
