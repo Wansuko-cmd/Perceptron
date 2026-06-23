@@ -6,6 +6,7 @@ import com.wsr.knist.base.data.Default
 import com.wsr.knist.base.data.IDataBufferGenerator
 import com.wsr.knist.base.data.indices
 import com.wsr.knist.base.data.size
+import com.wsr.knist.base.reduceIndex
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.pow
@@ -756,111 +757,11 @@ object KotlinBackend : IBackend {
         return Default(1).apply { this[0] = index.toFloat() }
     }
 
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
-        val x = x.toFloatArray()
-        return when (axis) {
-            0 -> {
-                val result = Default(size = xj)
-                for (j in 0 until xj) {
-                    var maxIndex = 0
-                    var max = x[j]
-                    for (i in 1 until xi) {
-                        val value = x[i * xj + j]
-                        if (max < value) {
-                            maxIndex = i
-                            max = value
-                        }
-                    }
-                    result[j] = maxIndex.toFloat()
-                }
-                result
-            }
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer =
+        x.reduceIndex(xi, xj, axis) { maxIndex(it)[0] }
 
-            1 -> {
-                val result = Default(size = xi)
-                for (i in 0 until xi) {
-                    var maxIndex = 0
-                    var max = x[i * xj]
-
-                    for (j in 1 until xj) {
-                        val value = x[i * xj + j]
-                        if (max < value) {
-                            maxIndex = j
-                            max = value
-                        }
-                    }
-                    result[i] = maxIndex.toFloat()
-                }
-                result
-            }
-
-            else -> throw IllegalArgumentException()
-        }
-    }
-
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
-        val x = x.toFloatArray()
-        return when (axis) {
-            0 -> {
-                val result = Default(xj * xk)
-                for (j in 0 until xj) {
-                    for (k in 0 until xk) {
-                        var maxIndex = 0
-                        var max = x[j * xk + k]
-                        for (i in 1 until xi) {
-                            val value = x[(i * xj + j) * xk + k]
-                            if (max < value) {
-                                maxIndex = i
-                                max = value
-                            }
-                        }
-                        result[j * xk + k] = maxIndex.toFloat()
-                    }
-                }
-                result
-            }
-
-            1 -> {
-                val result = Default(xi * xk)
-                for (i in 0 until xi) {
-                    for (k in 0 until xk) {
-                        var maxIndex = 0
-                        var max = x[i * xj * xk + k]
-                        for (j in 1 until xj) {
-                            val value = x[(i * xj + j) * xk + k]
-                            if (max < value) {
-                                maxIndex = j
-                                max = value
-                            }
-                        }
-                        result[i * xk + k] = maxIndex.toFloat()
-                    }
-                }
-                result
-            }
-
-            2 -> {
-                val result = Default(xi * xj)
-                for (i in 0 until xi) {
-                    for (j in 0 until xj) {
-                        var maxIndex = 0
-                        var max = x[(i * xj + j) * xk]
-                        for (k in 1 until xk) {
-                            val value = x[(i * xj + j) * xk + k]
-                            if (max < value) {
-                                maxIndex = k
-                                max = value
-                            }
-                        }
-                        result[i * xj + j] = maxIndex.toFloat()
-                    }
-                }
-                result
-            }
-
-            else -> throw IllegalArgumentException()
-        }
-    }
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
+        x.reduceIndex(xi, xj, xk, axis) { maxIndex(it)[0] }
 
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
         val x = x.toFloatArray()

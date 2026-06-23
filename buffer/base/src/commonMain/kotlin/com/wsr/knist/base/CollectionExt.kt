@@ -795,3 +795,74 @@ internal inline fun DataBuffer.reduce(
 
     else -> throw IllegalArgumentException()
 }
+
+internal inline fun DataBuffer.reduceIndex(xi: Int, xj: Int, axis: Int, operation: (DataBuffer) -> Float): DataBuffer {
+    val x = toFloatArray()
+    return when (axis) {
+        0 -> {
+            val result = Default(xj)
+            for (j in 0 until xj) {
+                val target = Default(FloatArray(xi) { x[it * xj + j] })
+                result[j] = operation(target)
+            }
+            result
+        }
+
+        1 -> {
+            val result = Default(xi)
+            for (i in 0 until xi) {
+                val target = Default(FloatArray(xj) { x[i * xj + it] })
+                result[i] = operation(target)
+            }
+            result
+        }
+
+        else -> throw IllegalArgumentException()
+    }
+}
+
+internal inline fun DataBuffer.reduceIndex(
+    xi: Int,
+    xj: Int,
+    xk: Int,
+    axis: Int,
+    operation: (DataBuffer) -> Float,
+): DataBuffer {
+    val x = toFloatArray()
+    return when (axis) {
+        0 -> {
+            val result = Default(xj * xk)
+            for (j in 0 until xj) {
+                for (k in 0 until xk) {
+                    val target = Default(FloatArray(xi) { x[(it * xj + j) * xk + k] })
+                    result[j * xk + k] = operation(target)
+                }
+            }
+            result
+        }
+
+        1 -> {
+            val result = Default(xi * xk)
+            for (i in 0 until xi) {
+                for (k in 0 until xk) {
+                    val target = Default(FloatArray(xj) { x[(i * xj + it) * xk + k] })
+                    result[i * xk + k] = operation(target)
+                }
+            }
+            result
+        }
+
+        2 -> {
+            val result = Default(xi * xj)
+            for (i in 0 until xi) {
+                for (j in 0 until xj) {
+                    val target = Default(FloatArray(xk) { x[(i * xj + j) * xk + it] })
+                    result[i * xj + j] = operation(target)
+                }
+            }
+            result
+        }
+
+        else -> throw IllegalArgumentException()
+    }
+}
