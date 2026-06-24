@@ -1,9 +1,10 @@
 use crate::core::reduction;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_average_d1(x: *const f32, size: i32) -> f32 {
+pub extern "C" fn com_wsr_cpu_average_d1(x: *const f32, size: i32, result: *mut f32) {
     let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    return reduction::average_d1(x);
+    let result = unsafe { &mut *result };
+    *result = reduction::average_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -34,9 +35,10 @@ pub extern "C" fn com_wsr_cpu_average_d3(x: *const f32, xi: i32, xj: i32, xk: i3
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_max_d1(x: *const f32, size: i32) -> f32 {
+pub extern "C" fn com_wsr_cpu_max_d1(x: *const f32, size: i32, result: *mut f32) {
     let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    return reduction::max_d1(x);
+    let result = unsafe { &mut *result };
+    *result = reduction::max_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -67,9 +69,10 @@ pub extern "C" fn com_wsr_cpu_max_d3(x: *const f32, xi: i32, xj: i32, xk: i32, a
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_min_d1(x: *const f32, size: i32) -> f32 {
+pub extern "C" fn com_wsr_cpu_min_d1(x: *const f32, size: i32, result: *mut f32) {
     let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    return reduction::min_d1(x);
+    let result = unsafe { &mut *result };
+    *result = reduction::min_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -100,9 +103,10 @@ pub extern "C" fn com_wsr_cpu_min_d3(x: *const f32, xi: i32, xj: i32, xk: i32, a
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_sum_d1(x: *const f32, size: i32) -> f32 {
+pub extern "C" fn com_wsr_cpu_sum_d1(x: *const f32, size: i32, result: *mut f32) {
     let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    return reduction::sum_d1(x);
+    let result = unsafe { &mut *result };
+    *result = reduction::sum_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -133,9 +137,10 @@ pub extern "C" fn com_wsr_cpu_sum_d3(x: *const f32, xi: i32, xj: i32, xk: i32, a
 }
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_max_index_d1(x: *const f32, size: i32) -> i32 {
+pub extern "C" fn com_wsr_cpu_max_index_d1(x: *const f32, size: i32, result: *mut f32) {
     let x = unsafe { std::slice::from_raw_parts(x, size as usize) };
-    return reduction::max_index_d1(x) as i32;
+    let result = unsafe { &mut *result };
+    *result = reduction::max_index_d1(x) as f32;
 }
 
 #[unsafe(no_mangle)]
