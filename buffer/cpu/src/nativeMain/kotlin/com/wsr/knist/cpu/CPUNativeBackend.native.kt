@@ -99,6 +99,12 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_times_d3_to_d4
 import com.wsr.knist.cpu.rs.com_wsr_cpu_times_d4_to_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_times_d4_to_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_times_d4_to_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d2
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d2
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_transpose_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_transpose_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_transpose_d4
@@ -110,6 +116,7 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d0_to_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d1_to_d0
 import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d1_to_d1
 import kotlin.math.min
+import kotlin.random.Random
 import kotlinx.cinterop.ExperimentalForeignApi
 
 actual fun loadCPUBackend(): IBackend? = CPUNativeBackend()
@@ -1348,6 +1355,110 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             xj = xj,
             xk = xk,
             axis = axis,
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_top_k_d1(
+            x = x.toCPUBuffer().buffer,
+            size = x.size,
+            k = k,
+            seed = random.nextLong(),
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        com_wsr_cpu_top_k_d2(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            k = k,
+            axis = axis,
+            seed = random.nextLong(),
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        com_wsr_cpu_top_k_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            k = k,
+            axis = axis,
+            seed = random.nextLong(),
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_top_p_d1(
+            x = x.toCPUBuffer().buffer,
+            size = x.size,
+            p = p,
+            seed = random.nextLong(),
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        com_wsr_cpu_top_p_d2(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            p = p,
+            axis = axis,
+            seed = random.nextLong(),
+            result = result.buffer,
+        )
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        com_wsr_cpu_top_p_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            p = p,
+            axis = axis,
+            seed = random.nextLong(),
             result = result.buffer,
         )
         return result
