@@ -156,6 +156,40 @@ pub fn top_k_d3(x: &[f32], xi: usize, xj: usize, xk: usize, k: usize, axis: usiz
     });
 }
 
+pub fn top_p_d1(x: &[f32], p: f32, seed: u64) -> usize {
+    let mut target: Vec<(&f32, usize)> = x.iter().zip(0..x.len()).collect();
+    target.sort_by(|a, b| b.0.partial_cmp(a.0).unwrap_or(std::cmp::Ordering::Equal));
+
+    let mut total = 0f32;
+    let mut nucleus: Vec<(&f32, usize)> = Vec::new();
+    for &item in target.iter() {
+        nucleus.push(item);
+        total += item.0;
+        if total >= p {
+            break;
+        }
+    }
+    return random_index(&nucleus, seed);
+}
+
+pub fn top_p_d2(x: &[f32], xi: usize, xj: usize, p: f32, axis: usize, result: &mut[f32], seed: u64) {
+    let mut count = 0u64;
+    reduce_index_d2(x, xi, xj, axis, result, |slice| {
+        let index = top_p_d1(slice, p, seed + count);
+        count += 1;
+        index as f32
+    });
+}
+
+pub fn top_p_d3(x: &[f32], xi: usize, xj: usize, xk: usize, p: f32, axis: usize, result: &mut[f32], seed: u64) {
+    let mut count = 0u64;
+    reduce_index_d3(x, xi, xj, xk, axis, result, |slice| {
+        let index = top_p_d1(slice, p, seed + count);
+        count += 1;
+        index as f32
+    });
+}
+
 fn reduce_d2<F: Fn(f32, f32) -> f32>(
     x: &[f32],
     xi: usize, xj: usize,
