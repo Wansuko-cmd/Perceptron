@@ -30,12 +30,12 @@ kotlin {
             val lib by creating {
                 val headersDir = "$projectDir/rs/src/native/headers"
                 headers(
-                    "$headersDir/collection_native.h",
                     "$headersDir/compare_native.h",
                     "$headersDir/index_native.h",
                     "$headersDir/mat_mul_native.h",
                     "$headersDir/math_native.h",
                     "$headersDir/operation_native.h",
+                    "$headersDir/reduction_native.h",
                     "$headersDir/shape_native.h",
                 )
                 defFile(project.file("src/nativeMain/lib.def"))

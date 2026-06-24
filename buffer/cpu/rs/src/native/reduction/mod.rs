@@ -1,1 +1,1 @@
-pub mod collection;
+pub mod reduction;
