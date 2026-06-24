@@ -14,7 +14,7 @@ import com.wsr.knist.gpu.elementwise.operation.JPlus
 import com.wsr.knist.gpu.elementwise.operation.JTimes
 import com.wsr.knist.gpu.index.JIndex
 import com.wsr.knist.gpu.linalg.JMatMul
-import com.wsr.knist.gpu.reduction.JCollection
+import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
 import java.lang.ref.Cleaner
 
@@ -26,7 +26,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     private val math = JMath()
     private val matMul = JMatMul()
-    private val collection = JCollection()
+    private val reduction = JReduction()
     private val index = JIndex()
     private val plus = JPlus()
     private val minus = JMinus()
@@ -1154,7 +1154,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun average(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.averageD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
+        reduction.averageD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1165,7 +1165,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.averageD2(
+        reduction.averageD2(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,
@@ -1184,7 +1184,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.averageD3(
+        reduction.averageD3(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,
@@ -1198,7 +1198,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun max(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.maxD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
+        reduction.maxD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1209,7 +1209,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
+        reduction.maxD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1221,7 +1221,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxD3(
+        reduction.maxD3(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,
@@ -1235,7 +1235,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun min(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.minD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
+        reduction.minD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1246,7 +1246,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.minD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
+        reduction.minD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1258,7 +1258,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.minD3(
+        reduction.minD3(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,
@@ -1272,7 +1272,7 @@ class GPUBackend : IBackend by KotlinBackend {
 
     override fun sum(x: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(1)
-        collection.sumD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
+        reduction.sumD1(x = x.toGPUBuffer().ptr, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1283,7 +1283,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.sumD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
+        reduction.sumD2(x = x.toGPUBuffer().ptr, xi = xi, xj = xj, axis = axis, result = result.ptr, runtime = runtime)
         return result
     }
 
@@ -1295,7 +1295,7 @@ class GPUBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.sumD3(
+        reduction.sumD3(
             x = x.toGPUBuffer().ptr,
             xi = xi,
             xj = xj,

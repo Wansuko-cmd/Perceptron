@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.reduction
 
 import java.nio.ByteBuffer
 
-class JCollection {
+class JReduction {
     external fun averageD1(x: ByteBuffer, result: ByteBuffer)
     external fun averageD2(x: ByteBuffer, xi: Int, xj: Int, axis: Int, result: ByteBuffer)
     external fun averageD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, axis: Int, result: ByteBuffer)

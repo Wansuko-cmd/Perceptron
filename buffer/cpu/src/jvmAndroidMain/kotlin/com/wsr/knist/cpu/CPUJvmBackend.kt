@@ -13,13 +13,13 @@ import com.wsr.knist.cpu.elementwise.operation.plus.JPlus
 import com.wsr.knist.cpu.elementwise.operation.times.JTimes
 import com.wsr.knist.cpu.index.JIndex
 import com.wsr.knist.cpu.linalg.JMatMul
-import com.wsr.knist.cpu.reduction.JCollection
+import com.wsr.knist.cpu.reduction.JReduction
 import com.wsr.knist.cpu.shape.JShape
 import kotlin.math.min
 import kotlin.random.Random
 
 class CPUJvmBackend : IBackend by KotlinBackend {
-    private val collection = JCollection()
+    private val reduction = JReduction()
     private val compare = JCompare()
     private val where = JWhere()
     private val index = JIndex()
@@ -1035,7 +1035,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun average(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.averageD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        reduction.averageD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1046,7 +1046,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.averageD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        reduction.averageD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1058,13 +1058,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.averageD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        reduction.averageD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun max(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.maxD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        reduction.maxD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1075,7 +1075,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        reduction.maxD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1087,13 +1087,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        reduction.maxD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun min(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.minD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        reduction.minD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1104,7 +1104,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.minD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        reduction.minD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1116,13 +1116,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.minD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        reduction.minD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun sum(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.sumD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        reduction.sumD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1133,7 +1133,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.sumD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        reduction.sumD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1145,13 +1145,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.sumD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        reduction.sumD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.maxIndexD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        reduction.maxIndexD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1162,7 +1162,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxIndexD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        reduction.maxIndexD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1174,13 +1174,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        reduction.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.topKD1(x.toCPUBuffer().byteBuffer, k, random.nextLong(), result.byteBuffer)
+        reduction.topKD1(x.toCPUBuffer().byteBuffer, k, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1191,7 +1191,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.topKD2(x.toCPUBuffer().byteBuffer, xi, xj, k, axis, random.nextLong(), result.byteBuffer)
+        reduction.topKD2(x.toCPUBuffer().byteBuffer, xi, xj, k, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1203,13 +1203,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.topKD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, k, axis, random.nextLong(), result.byteBuffer)
+        reduction.topKD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, k, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.topPD1(x.toCPUBuffer().byteBuffer, p, random.nextLong(), result.byteBuffer)
+        reduction.topPD1(x.toCPUBuffer().byteBuffer, p, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1220,7 +1220,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.topPD2(x.toCPUBuffer().byteBuffer, xi, xj, p, axis, random.nextLong(), result.byteBuffer)
+        reduction.topPD2(x.toCPUBuffer().byteBuffer, xi, xj, p, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1232,7 +1232,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.topPD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, p, axis, random.nextLong(), result.byteBuffer)
+        reduction.topPD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, p, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
