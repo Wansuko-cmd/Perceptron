@@ -1195,8 +1195,9 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     }
 
     override fun average(x: DataBuffer): DataBuffer {
-        val result = com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, size = x.size)
-        return CPUNativeBuffer.create(floatArrayOf(result))
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        return result
     }
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1230,8 +1231,9 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     }
 
     override fun max(x: DataBuffer): DataBuffer {
-        val result = com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size)
-        return CPUNativeBuffer.create(floatArrayOf(result))
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        return result
     }
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1258,8 +1260,9 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     }
 
     override fun min(x: DataBuffer): DataBuffer {
-        val result = com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, size = x.size)
-        return CPUNativeBuffer.create(floatArrayOf(result))
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        return result
     }
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1286,8 +1289,9 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     }
 
     override fun sum(x: DataBuffer): DataBuffer {
-        val result = com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size)
-        return CPUNativeBuffer.create(floatArrayOf(result))
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        return result
     }
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1314,8 +1318,9 @@ class CPUNativeBackend : IBackend by KotlinBackend {
     }
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
-        val result = com_wsr_cpu_max_index_d1(x = x.toCPUBuffer().buffer, size = x.size)
-        return CPUNativeBuffer.create(floatArrayOf(result.toFloat()))
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_max_index_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        return result
     }
 
     override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {

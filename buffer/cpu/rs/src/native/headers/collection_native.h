@@ -5,31 +5,31 @@
 extern "C" {
 #endif
 
-float com_wsr_cpu_average_d1(const float* x, int size);
+void com_wsr_cpu_average_d1(const float* x, int size, float* result);
 
 void com_wsr_cpu_average_d2(const float* x, int xi, int xj, int axis, float* result);
 
 void com_wsr_cpu_average_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
-float com_wsr_cpu_max_d1(const float* x, int size);
+void com_wsr_cpu_max_d1(const float* x, int size, float* result);
 
 void com_wsr_cpu_max_d2(const float* x, int xi, int xj, int axis, float* result);
 
 void com_wsr_cpu_max_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
-float com_wsr_cpu_min_d1(const float* x, int size);
+void com_wsr_cpu_min_d1(const float* x, int size, float* result);
 
 void com_wsr_cpu_min_d2(const float* x, int xi, int xj, int axis, float* result);
 
 void com_wsr_cpu_min_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
-float com_wsr_cpu_sum_d1(const float* x, int size);
+void com_wsr_cpu_sum_d1(const float* x, int size, float* result);
 
 void com_wsr_cpu_sum_d2(const float* x, int xi, int xj, int axis, float* result);
 
 void com_wsr_cpu_sum_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
-int com_wsr_cpu_max_index_d1(const float* x, int size);
+void com_wsr_cpu_max_index_d1(const float* x, int size, float* result);
 
 void com_wsr_cpu_max_index_d2(const float* x, int xi, int xj, int axis, float* result);
 

@@ -1033,8 +1033,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     }
 
     override fun average(x: DataBuffer): DataBuffer {
-        val result = collection.averageD1(x.toCPUBuffer().byteBuffer)
-        return CPUJvmBuffer.create(floatArrayOf(result))
+        val result = CPUJvmBuffer.create(1)
+        collection.averageD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
     }
 
     override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1061,8 +1062,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     }
 
     override fun max(x: DataBuffer): DataBuffer {
-        val result = collection.maxD1(x.toCPUBuffer().byteBuffer)
-        return CPUJvmBuffer.create(floatArrayOf(result))
+        val result = CPUJvmBuffer.create(1)
+        collection.maxD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
     }
 
     override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1089,8 +1091,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     }
 
     override fun min(x: DataBuffer): DataBuffer {
-        val result = collection.minD1(x.toCPUBuffer().byteBuffer)
-        return CPUJvmBuffer.create(floatArrayOf(result))
+        val result = CPUJvmBuffer.create(1)
+        collection.minD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
     }
 
     override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1117,8 +1120,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     }
 
     override fun sum(x: DataBuffer): DataBuffer {
-        val result = collection.sumD1(x.toCPUBuffer().byteBuffer)
-        return CPUJvmBuffer.create(floatArrayOf(result))
+        val result = CPUJvmBuffer.create(1)
+        collection.sumD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
     }
 
     override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
@@ -1145,8 +1149,9 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     }
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
-        val result = collection.maxIndexD1(x.toCPUBuffer().byteBuffer)
-        return CPUJvmBuffer.create(floatArrayOf(result.toFloat()))
+        val result = CPUJvmBuffer.create(1)
+        collection.maxIndexD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        return result
     }
 
     override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {

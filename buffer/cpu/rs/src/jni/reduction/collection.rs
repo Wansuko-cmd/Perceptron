@@ -1,6 +1,6 @@
 use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
-use jni::sys::{jfloat, jint};
+use jni::sys::jint;
 
 use crate::core::reduction;
 use crate::jni::utils::ByteBufferExt;
@@ -10,9 +10,11 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_averageD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
-) -> jfloat {
+    result: JByteBuffer,
+) {
     let x = unsafe { x.as_f32_slice(&env) };
-    return reduction::average_d1(x);
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::average_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -46,9 +48,11 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
-) -> jfloat {
+    result: JByteBuffer,
+) {
     let x = unsafe { x.as_f32_slice(&env) };
-    return reduction::max_d1(x);
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::max_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -82,9 +86,11 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_minD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
-) -> jfloat {
+    result: JByteBuffer,
+) {
     let x = unsafe { x.as_f32_slice(&env) };
-    return reduction::min_d1(x);
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::min_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -118,9 +124,11 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_sumD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
-) -> jfloat {
+    result: JByteBuffer,
+) {
     let x = unsafe { x.as_f32_slice(&env) };
-    return reduction::sum_d1(x);
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::sum_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -154,9 +162,11 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxIndexD1(
     env: JNIEnv,
     _class: JClass,
     x: JByteBuffer,
-) -> jint {
+    result: JByteBuffer,
+) {
     let x = unsafe { x.as_f32_slice(&env) };
-    return reduction::max_index_d1(x) as jint;
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::max_index_d1(x) as f32;
 }
 
 #[unsafe(no_mangle)]
