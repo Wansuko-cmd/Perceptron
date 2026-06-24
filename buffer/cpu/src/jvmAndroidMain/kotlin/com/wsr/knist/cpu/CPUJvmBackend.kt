@@ -1207,6 +1207,35 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(1)
+        collection.topPD1(x.toCPUBuffer().byteBuffer, p, random.nextLong(), result.byteBuffer)
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.topPD2(x.toCPUBuffer().byteBuffer, xi, xj, p, axis, random.nextLong(), result.byteBuffer)
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.topPD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, p, axis, random.nextLong(), result.byteBuffer)
+        return result
+    }
+
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         shape.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)

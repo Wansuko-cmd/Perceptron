@@ -30,4 +30,8 @@ class JCollection {
     external fun topKD1(x: ByteBuffer, k: Int, seed: Long, result: ByteBuffer)
     external fun topKD2(x: ByteBuffer, xi: Int, xj: Int, k: Int, axis: Int, seed: Long, result: ByteBuffer)
     external fun topKD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, seed: Long, result: ByteBuffer)
+
+    external fun topPD1(x: ByteBuffer, p: Float, seed: Long, result: ByteBuffer)
+    external fun topPD2(x: ByteBuffer, xi: Int, xj: Int, p: Float, axis: Int, seed: Long, result: ByteBuffer)
+    external fun topPD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, seed: Long, result: ByteBuffer)
 }

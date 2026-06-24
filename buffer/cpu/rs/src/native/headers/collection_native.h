@@ -41,6 +41,12 @@ void com_wsr_cpu_top_k_d2(const float* x, int xi, int xj, int k, int axis, long 
 
 void com_wsr_cpu_top_k_d3(const float* x, int xi, int xj, int xk, int k, int axis, long long seed, float* result);
 
+void com_wsr_cpu_top_p_d1(const float* x, int size, float p, long long seed, float* result);
+
+void com_wsr_cpu_top_p_d2(const float* x, int xi, int xj, float p, int axis, long long seed, float* result);
+
+void com_wsr_cpu_top_p_d3(const float* x, int xi, int xj, int xk, float p, int axis, long long seed, float* result);
+
 #ifdef __cplusplus
 }
 #endif

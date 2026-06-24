@@ -50,6 +50,9 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d2
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_p_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d3
@@ -1383,6 +1386,35 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             },
         )
         com_wsr_cpu_top_k_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, k = k, axis = axis, seed = random.nextLong(), result = result.buffer)
+        return result
+    }
+
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_top_p_d1(x = x.toCPUBuffer().buffer, size = x.size, p = p, seed = random.nextLong(), result = result.buffer)
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        com_wsr_cpu_top_p_d2(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, p = p, axis = axis, seed = random.nextLong(), result = result.buffer)
+        return result
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        com_wsr_cpu_top_p_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, p = p, axis = axis, seed = random.nextLong(), result = result.buffer)
         return result
     }
 
