@@ -47,6 +47,9 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_max_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d2
+import com.wsr.knist.cpu.rs.com_wsr_cpu_top_k_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d3
@@ -110,6 +113,7 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d0_to_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d1_to_d0
 import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d1_to_d1
 import kotlin.math.min
+import kotlin.random.Random
 import kotlinx.cinterop.ExperimentalForeignApi
 
 actual fun loadCPUBackend(): IBackend? = CPUNativeBackend()
@@ -1350,6 +1354,35 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             axis = axis,
             result = result.buffer,
         )
+        return result
+    }
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(1)
+        com_wsr_cpu_top_k_d1(x = x.toCPUBuffer().buffer, size = x.size, k = k, seed = random.nextLong(), result = result.buffer)
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        com_wsr_cpu_top_k_d2(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, k = k, axis = axis, seed = random.nextLong(), result = result.buffer)
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        com_wsr_cpu_top_k_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, k = k, axis = axis, seed = random.nextLong(), result = result.buffer)
         return result
     }
 

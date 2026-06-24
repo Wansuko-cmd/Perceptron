@@ -35,6 +35,12 @@ void com_wsr_cpu_max_index_d2(const float* x, int xi, int xj, int axis, float* r
 
 void com_wsr_cpu_max_index_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
+void com_wsr_cpu_top_k_d1(const float* x, int size, int k, long long seed, float* result);
+
+void com_wsr_cpu_top_k_d2(const float* x, int xi, int xj, int k, int axis, long long seed, float* result);
+
+void com_wsr_cpu_top_k_d3(const float* x, int xi, int xj, int xk, int k, int axis, long long seed, float* result);
+
 #ifdef __cplusplus
 }
 #endif

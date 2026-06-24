@@ -16,6 +16,7 @@ import com.wsr.knist.cpu.linalg.JMatMul
 import com.wsr.knist.cpu.reduction.JCollection
 import com.wsr.knist.cpu.shape.JShape
 import kotlin.math.min
+import kotlin.random.Random
 
 class CPUJvmBackend : IBackend by KotlinBackend {
     private val collection = JCollection()
@@ -1174,6 +1175,35 @@ class CPUJvmBackend : IBackend by KotlinBackend {
             },
         )
         collection.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        return result
+    }
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(1)
+        collection.topKD1(x.toCPUBuffer().byteBuffer, k, random.nextLong(), result.byteBuffer)
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.topKD2(x.toCPUBuffer().byteBuffer, xi, xj, k, axis, random.nextLong(), result.byteBuffer)
+        return result
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.topKD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, k, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 

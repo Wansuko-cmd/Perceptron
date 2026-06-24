@@ -26,4 +26,8 @@ class JCollection {
     external fun maxIndexD1(x: ByteBuffer, result: ByteBuffer)
     external fun maxIndexD2(x: ByteBuffer, xi: Int, xj: Int, axis: Int, result: ByteBuffer)
     external fun maxIndexD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, axis: Int, result: ByteBuffer)
+
+    external fun topKD1(x: ByteBuffer, k: Int, seed: Long, result: ByteBuffer)
+    external fun topKD2(x: ByteBuffer, xi: Int, xj: Int, k: Int, axis: Int, seed: Long, result: ByteBuffer)
+    external fun topKD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, seed: Long, result: ByteBuffer)
 }

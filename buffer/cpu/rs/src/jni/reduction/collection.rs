@@ -1,6 +1,6 @@
 use jni::JNIEnv;
 use jni::objects::{JByteBuffer, JClass};
-use jni::sys::jint;
+use jni::sys::{jint, jlong};
 
 use crate::core::reduction;
 use crate::jni::utils::ByteBufferExt;
@@ -193,4 +193,48 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxIndexD3(
     let x = unsafe { x.as_f32_slice(&env) };
     let result = unsafe { result.as_f32_slice_mut(&env) };
     reduction::max_index_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_topKD1(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+    k: jint,
+    seed: jlong,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    result[0] = reduction::top_k_d1(x, k as usize, seed as u64) as f32;
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_topKD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer, xi: jint, xj: jint,
+    k: jint,
+    axis: jint,
+    seed: jlong,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    reduction::top_k_d2(x, xi as usize, xj as usize, k as usize, axis as usize, result, seed as u64);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_topKD3(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer, xi: jint, xj: jint, xk: jint,
+    k: jint,
+    axis: jint,
+    seed: jlong,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    reduction::top_k_d3(x, xi as usize, xj as usize, xk as usize, k as usize, axis as usize, result, seed as u64);
 }
