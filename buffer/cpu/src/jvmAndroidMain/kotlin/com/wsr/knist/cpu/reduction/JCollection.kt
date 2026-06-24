@@ -22,4 +22,8 @@ class JCollection {
     external fun sumD2(x: ByteBuffer, xi: Int, xj: Int, axis: Int, result: ByteBuffer)
     external fun sumD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, axis: Int, result: ByteBuffer)
     external fun sumD4(x: ByteBuffer, xi: Int, xj: Int, xk: Int, xl: Int, axis: Int, result: ByteBuffer)
+
+    external fun maxIndexD1(x: ByteBuffer): Int
+    external fun maxIndexD2(x: ByteBuffer, xi: Int, xj: Int, axis: Int, result: ByteBuffer)
+    external fun maxIndexD3(x: ByteBuffer, xi: Int, xj: Int, xk: Int, axis: Int, result: ByteBuffer)
 }
