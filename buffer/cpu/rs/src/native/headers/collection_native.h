@@ -29,6 +29,12 @@ void com_wsr_cpu_sum_d2(const float* x, int xi, int xj, int axis, float* result)
 
 void com_wsr_cpu_sum_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
 
+int com_wsr_cpu_max_index_d1(const float* x, int size);
+
+void com_wsr_cpu_max_index_d2(const float* x, int xi, int xj, int axis, float* result);
+
+void com_wsr_cpu_max_index_d3(const float* x, int xi, int xj, int xk, int axis, float* result);
+
 #ifdef __cplusplus
 }
 #endif

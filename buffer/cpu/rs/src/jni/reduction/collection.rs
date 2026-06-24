@@ -148,3 +148,39 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_sumD3(
     let result = unsafe { result.as_f32_slice_mut(&env) };
     reduction::sum_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxIndexD1(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer,
+) -> jint {
+    let x = unsafe { x.as_f32_slice(&env) };
+    return reduction::max_index_d1(x) as jint;
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxIndexD2(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer, xi: jint, xj: jint,
+    axis: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    reduction::max_index_d2(x, xi as usize, xj as usize, axis as usize, result);
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JCollection_maxIndexD3(
+    env: JNIEnv,
+    _class: JClass,
+    x: JByteBuffer, xi: jint, xj: jint, xk: jint,
+    axis: jint,
+    result: JByteBuffer,
+) {
+    let x = unsafe { x.as_f32_slice(&env) };
+    let result = unsafe { result.as_f32_slice_mut(&env) };
+    reduction::max_index_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
+}

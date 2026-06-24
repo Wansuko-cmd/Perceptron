@@ -1144,6 +1144,34 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         return result
     }
 
+    override fun maxIndex(x: DataBuffer): DataBuffer {
+        val result = collection.maxIndexD1(x.toCPUBuffer().byteBuffer)
+        return CPUJvmBuffer.create(floatArrayOf(result.toFloat()))
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        collection.maxIndexD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        return result
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = CPUJvmBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        collection.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        return result
+    }
+
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         shape.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)

@@ -44,6 +44,9 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_mat_mul_d2_to_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_max_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d2
+import com.wsr.knist.cpu.rs.com_wsr_cpu_max_index_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_min_d3
@@ -1307,6 +1310,41 @@ class CPUNativeBackend : IBackend by KotlinBackend {
             },
         )
         com_wsr_cpu_sum_d3(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, xk = xk, axis = axis, result = result.buffer)
+        return result
+    }
+
+    override fun maxIndex(x: DataBuffer): DataBuffer {
+        val result = com_wsr_cpu_max_index_d1(x = x.toCPUBuffer().buffer, size = x.size)
+        return CPUNativeBuffer.create(floatArrayOf(result.toFloat()))
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj
+                else -> xi
+            },
+        )
+        com_wsr_cpu_max_index_d2(x = x.toCPUBuffer().buffer, xi = xi, xj = xj, axis = axis, result = result.buffer)
+        return result
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val result = CPUNativeBuffer.create(
+            size = when (axis) {
+                0 -> xj * xk
+                1 -> xi * xk
+                else -> xi * xj
+            },
+        )
+        com_wsr_cpu_max_index_d3(
+            x = x.toCPUBuffer().buffer,
+            xi = xi,
+            xj = xj,
+            xk = xk,
+            axis = axis,
+            result = result.buffer,
+        )
         return result
     }
 

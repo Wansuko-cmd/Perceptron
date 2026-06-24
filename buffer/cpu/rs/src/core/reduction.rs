@@ -1,3 +1,5 @@
+use crate::core::shape::{transpose_d2, transpose_d3};
+
 pub fn average_d1(x: &[f32]) -> f32 {
     return sum_d1(x) / x.len() as f32;
 }
@@ -115,6 +117,21 @@ pub fn sum_d3(
     reduce_d3(x, xi, xj, xk, axis, result, |acc, i| acc + i);
 }
 
+pub fn max_index_d1(x: &[f32]) -> usize {
+    let result = x.iter()
+        .zip(0..x.len())
+        .max_by(|a, b| a.0.partial_cmp(b.0).unwrap_or(std::cmp::Ordering::Equal));
+    return result.unwrap().1;
+}
+
+pub fn max_index_d2(x: &[f32], xi: usize, xj: usize, axis: usize, result: &mut[f32]) {
+    reduce_index_d2(x, xi, xj, axis, result, |a| max_index_d1(a) as f32);
+}
+
+pub fn max_index_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, result: &mut[f32]) {
+    reduce_index_d3(x, xi, xj, xk, axis, result, |a| max_index_d1(a) as f32);
+}
+
 fn reduce_d2<F: Fn(f32, f32) -> f32>(
     x: &[f32],
     xi: usize, xj: usize,
@@ -177,6 +194,56 @@ fn reduce_d3<F: Fn(f32, f32) -> f32>(
                     .fold(*res, |acc, i| block(acc, i));
             }
         }
+        _ => panic!("invalid parameter. [axis: {}]", axis)
+    }
+}
+
+fn reduce_index_d2<F: Fn(&[f32]) -> f32>(
+    x: &[f32],
+    xi: usize, xj: usize,
+    axis: usize,
+    result: &mut[f32],
+    block: F,
+) {
+    assert!(x.len() == xi * xj);
+    match axis {
+        0 => {
+            assert_eq!(result.len(), xj);
+            let mut tmp = vec![0f32; x.len()];
+            transpose_d2(x, xi, xj, &mut tmp);
+            for (res, outer) in result.iter_mut().zip(tmp.chunks_exact(xi)) {
+                *res = block(outer);
+            }
+        }
+        1 => {
+            assert_eq!(result.len(), xi);
+            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xj)) {
+                *res = block(outer);
+            }
+        }
+        _ => panic!("invalid parameter. [axis: {}]", axis)
+    }
+}
+
+fn reduce_index_d3<F: Fn(&[f32]) -> f32>(
+    x: &[f32],
+    xi: usize, xj: usize, xk: usize,
+    axis: usize,
+    result: &mut[f32],
+    block: F,
+) {
+    assert!(x.len() == xi * xj * xk);
+    match axis {
+        0 => reduce_index_d2(x, xi, xj * xk, 0, result, block),
+        1 => {
+            assert_eq!(result.len(), xi * xk);
+            let mut tmp = vec![0f32; x.len()];
+            transpose_d3(x, xi, xj, xk, 0, 2, 1, &mut tmp);
+            for (res, outer) in result.iter_mut().zip(tmp.chunks_exact(xj)) {
+                *res = block(outer);
+            }
+        }
+        2 => reduce_index_d2(x, xi * xj, xk, 1, result, block),
         _ => panic!("invalid parameter. [axis: {}]", axis)
     }
 }
