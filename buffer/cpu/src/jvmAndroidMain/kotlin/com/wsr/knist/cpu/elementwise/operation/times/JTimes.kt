@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.elementwise.operation.times
 
 import java.nio.ByteBuffer
 
-class JTimes {
+object JTimes {
     external fun timesD0ToD1(x: Float, y: ByteBuffer, result: ByteBuffer)
 
     external fun timesD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)

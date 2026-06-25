@@ -13,55 +13,44 @@ import com.wsr.knist.cpu.elementwise.operation.plus.JPlus
 import com.wsr.knist.cpu.elementwise.operation.times.JTimes
 import com.wsr.knist.cpu.index.JIndex
 import com.wsr.knist.cpu.linalg.JMatMul
-import com.wsr.knist.cpu.reduction.JCollection
+import com.wsr.knist.cpu.reduction.JReduction
 import com.wsr.knist.cpu.shape.JShape
 import kotlin.math.min
 import kotlin.random.Random
 
-class CPUJvmBackend : IBackend by KotlinBackend {
-    private val collection = JCollection()
-    private val compare = JCompare()
-    private val where = JWhere()
-    private val index = JIndex()
-    private val math = JMath()
-    private val matMul = JMatMul()
-    private val plus = JPlus()
-    private val minus = JMinus()
-    private val times = JTimes()
-    private val div = JDiv()
-    private val shape = JShape()
+class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
 
     override val generator = CPUJvmBuffer.generator
 
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        plus.plusD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JPlus.plusD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     // 1次元
     override fun plus(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JPlus.plusD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JPlus.plusD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        plus.plusD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
+        JPlus.plusD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
         return result
     }
 
     override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        plus.plusD1ToD3(
+        JPlus.plusD1ToD3(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             yi,
@@ -76,7 +65,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 2次元
     override fun plus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
+        JPlus.plusD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
         return result
     }
 
@@ -92,7 +81,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        plus.plusD2ToD3(
+        JPlus.plusD2ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -110,7 +99,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 3次元
     override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD3ToD1(
+        JPlus.plusD3ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -134,7 +123,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD3ToD2(
+        JPlus.plusD3ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -164,7 +153,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        plus.plusD3ToD4(
+        JPlus.plusD3ToD4(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -185,7 +174,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 4次元
     override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD4ToD1(
+        JPlus.plusD4ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -211,7 +200,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD4ToD2(
+        JPlus.plusD4ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -242,7 +231,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        plus.plusD4ToD3(
+        JPlus.plusD4ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -263,32 +252,32 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 0次元
     override fun minus(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        minus.minusD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JMinus.minusD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     // 1次元
     override fun minus(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JMinus.minusD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JMinus.minusD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        minus.minusD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
+        JMinus.minusD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
         return result
     }
 
     override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        minus.minusD1ToD3(
+        JMinus.minusD1ToD3(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             yi,
@@ -303,7 +292,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 2次元
     override fun minus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
+        JMinus.minusD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
         return result
     }
 
@@ -319,7 +308,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        minus.minusD2ToD3(
+        JMinus.minusD2ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -337,7 +326,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 3次元
     override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD3ToD1(
+        JMinus.minusD3ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -361,7 +350,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD3ToD2(
+        JMinus.minusD3ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -391,7 +380,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        minus.minusD3ToD4(
+        JMinus.minusD3ToD4(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -412,7 +401,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 4次元
     override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD4ToD1(
+        JMinus.minusD4ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -438,7 +427,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD4ToD2(
+        JMinus.minusD4ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -469,7 +458,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        minus.minusD4ToD3(
+        JMinus.minusD4ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -490,32 +479,32 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 0次元
     override fun times(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        times.timesD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JTimes.timesD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     // 1次元
     override fun times(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JTimes.timesD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JTimes.timesD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        times.timesD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
+        JTimes.timesD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
         return result
     }
 
     override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        times.timesD1ToD3(
+        JTimes.timesD1ToD3(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             yi,
@@ -530,7 +519,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 2次元
     override fun times(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
+        JTimes.timesD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
         return result
     }
 
@@ -546,7 +535,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        times.timesD2ToD3(
+        JTimes.timesD2ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -564,7 +553,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 3次元
     override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD3ToD1(
+        JTimes.timesD3ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -588,7 +577,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD3ToD2(
+        JTimes.timesD3ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -618,7 +607,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        times.timesD3ToD4(
+        JTimes.timesD3ToD4(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -639,7 +628,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 4次元
     override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD4ToD1(
+        JTimes.timesD4ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -665,7 +654,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD4ToD2(
+        JTimes.timesD4ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -696,7 +685,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        times.timesD4ToD3(
+        JTimes.timesD4ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -717,32 +706,32 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 0次元
     override fun div(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        div.divD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JDiv.divD0ToD1(x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     // 1次元
     override fun div(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JDiv.divD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JDiv.divD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        div.divD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
+        JDiv.divD1ToD2(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, yi, yj, axis, result.byteBuffer)
         return result
     }
 
     override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        div.divD1ToD3(
+        JDiv.divD1ToD3(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             yi,
@@ -757,7 +746,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 2次元
     override fun div(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
+        JDiv.divD2ToD1(x.toCPUBuffer().byteBuffer, xi, xj, y.toCPUBuffer().byteBuffer, axis, result.byteBuffer)
         return result
     }
 
@@ -773,7 +762,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        div.divD2ToD3(
+        JDiv.divD2ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -791,7 +780,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 3次元
     override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD3ToD1(
+        JDiv.divD3ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -815,7 +804,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD3ToD2(
+        JDiv.divD3ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -845,7 +834,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        div.divD3ToD4(
+        JDiv.divD3ToD4(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -866,7 +855,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     // 4次元
     override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD4ToD1(
+        JDiv.divD4ToD1(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -892,7 +881,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis2: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD4ToD2(
+        JDiv.divD4ToD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -923,7 +912,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axis3: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        div.divD4ToD3(
+        JDiv.divD4ToD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -943,7 +932,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
         val result = CPUJvmBuffer.create(b)
-        matMul.inner(
+        JMatMul.inner(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             b,
@@ -954,7 +943,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer {
         val result = CPUJvmBuffer.create(m)
-        matMul.matMulD2ToD1(
+        JMatMul.matMulD2ToD1(
             x.toCPUBuffer().byteBuffer,
             transX,
             y.toCPUBuffer().byteBuffer,
@@ -967,7 +956,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer {
         val result = CPUJvmBuffer.create(n)
-        matMul.matMulD1ToD2(
+        JMatMul.matMulD1ToD2(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             transY,
@@ -989,7 +978,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         b: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(b * m * n)
-        matMul.matMulD2ToD2(
+        JMatMul.matMulD2ToD2(
             x.toCPUBuffer().byteBuffer,
             transX,
             y.toCPUBuffer().byteBuffer,
@@ -1005,37 +994,37 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun exp(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        math.exp(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JMath.exp(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        math.ln(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
+        JMath.ln(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
         return result
     }
 
     override fun sigmoid(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        math.sigmoid(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JMath.sigmoid(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        math.pow(x.toCPUBuffer().byteBuffer, n, result.byteBuffer)
+        JMath.pow(x.toCPUBuffer().byteBuffer, n, result.byteBuffer)
         return result
     }
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        math.sqrt(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
+        JMath.sqrt(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
         return result
     }
 
     override fun average(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.averageD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JReduction.averageD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1046,7 +1035,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.averageD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        JReduction.averageD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1058,13 +1047,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.averageD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JReduction.averageD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun max(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.maxD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JReduction.maxD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1075,7 +1064,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        JReduction.maxD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1087,13 +1076,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JReduction.maxD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun min(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.minD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JReduction.minD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1104,7 +1093,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.minD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        JReduction.minD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1116,13 +1105,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.minD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JReduction.minD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun sum(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.sumD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JReduction.sumD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1133,7 +1122,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.sumD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        JReduction.sumD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1145,13 +1134,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.sumD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JReduction.sumD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.maxIndexD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JReduction.maxIndexD1(x.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
@@ -1162,7 +1151,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.maxIndexD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
+        JReduction.maxIndexD2(x.toCPUBuffer().byteBuffer, xi, xj, axis, result.byteBuffer)
         return result
     }
 
@@ -1174,13 +1163,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JReduction.maxIndexD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 
     override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.topKD1(x.toCPUBuffer().byteBuffer, k, random.nextLong(), result.byteBuffer)
+        JReduction.topKD1(x.toCPUBuffer().byteBuffer, k, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1191,7 +1180,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.topKD2(x.toCPUBuffer().byteBuffer, xi, xj, k, axis, random.nextLong(), result.byteBuffer)
+        JReduction.topKD2(x.toCPUBuffer().byteBuffer, xi, xj, k, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1203,13 +1192,13 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.topKD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, k, axis, random.nextLong(), result.byteBuffer)
+        JReduction.topKD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, k, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
         val result = CPUJvmBuffer.create(1)
-        collection.topPD1(x.toCPUBuffer().byteBuffer, p, random.nextLong(), result.byteBuffer)
+        JReduction.topPD1(x.toCPUBuffer().byteBuffer, p, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1220,7 +1209,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi
             },
         )
-        collection.topPD2(x.toCPUBuffer().byteBuffer, xi, xj, p, axis, random.nextLong(), result.byteBuffer)
+        JReduction.topPD2(x.toCPUBuffer().byteBuffer, xi, xj, p, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
@@ -1232,19 +1221,19 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj
             },
         )
-        collection.topPD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, p, axis, random.nextLong(), result.byteBuffer)
+        JReduction.topPD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, p, axis, random.nextLong(), result.byteBuffer)
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)
+        JShape.transposeD2(x.toCPUBuffer().byteBuffer, xi, xj, result.byteBuffer)
         return result
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.transposeD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axisI, axisJ, axisK, result.byteBuffer)
+        JShape.transposeD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axisI, axisJ, axisK, result.byteBuffer)
         return result
     }
 
@@ -1260,7 +1249,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axisL: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
+        JShape.transposeD4(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, axisI, axisJ, axisK, axisL, result.byteBuffer)
         return result
     }
 
@@ -1278,7 +1267,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         axisM: Int,
     ): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.transposeD5(
+        JShape.transposeD5(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -1297,7 +1286,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer {
         val result = CPUJvmBuffer.create(min(x.size, indices.size))
-        shape.sliceD1(x.toCPUBuffer().byteBuffer, indices.first, indices.last, indices.step, result.byteBuffer)
+        JShape.sliceD1(x.toCPUBuffer().byteBuffer, indices.first, indices.last, indices.step, result.byteBuffer)
         return result
     }
 
@@ -1308,7 +1297,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * min(xj, indices.size)
             },
         )
-        shape.sliceD2(
+        JShape.sliceD2(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -1329,7 +1318,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
                 else -> xi * xj * min(xk, indices.size)
             },
         )
-        shape.sliceD3(
+        JShape.sliceD3(
             x.toCPUBuffer().byteBuffer,
             xi,
             xj,
@@ -1346,7 +1335,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
         when (y) {
             is CPUJvmBuffer -> {
-                shape.copyIntoD1(
+                JShape.copyIntoD1(
                     x.toCPUBuffer().byteBuffer,
                     y.byteBuffer,
                     indices.first,
@@ -1362,7 +1351,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
         when (y) {
             is CPUJvmBuffer -> {
-                shape.copyIntoD2(
+                JShape.copyIntoD2(
                     x.toCPUBuffer().byteBuffer,
                     y.byteBuffer,
                     yi,
@@ -1381,7 +1370,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
     override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
         when (y) {
             is CPUJvmBuffer -> {
-                shape.copyIntoD3(
+                JShape.copyIntoD3(
                     x.toCPUBuffer().byteBuffer,
                     y.byteBuffer,
                     yi,
@@ -1400,49 +1389,49 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
         val result = CPUJvmBuffer.create(i * x.size * k)
-        index.gather(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
+        JIndex.gather(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, result.byteBuffer)
         return result
     }
 
     override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
         val result = CPUJvmBuffer.create(i * j * k)
-        index.scatterAdd(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, b, result.byteBuffer)
+        JIndex.scatterAdd(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, i, j, k, b, result.byteBuffer)
         return result
     }
 
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.greaterThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JCompare.greaterThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun greaterThan(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.greaterThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JCompare.greaterThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun lessThan(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.lessThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JCompare.lessThanD1ToD0(x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun lessThan(x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.lessThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JCompare.lessThanD1ToD1(x.toCPUBuffer().byteBuffer, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun equals(x: DataBuffer, y: Float, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.equalsD1ToD0(x.toCPUBuffer().byteBuffer, y, absoluteTolerance, relativeTolerance, result.byteBuffer)
+        JCompare.equalsD1ToD0(x.toCPUBuffer().byteBuffer, y, absoluteTolerance, relativeTolerance, result.byteBuffer)
         return result
     }
 
     override fun equals(x: DataBuffer, y: DataBuffer, absoluteTolerance: Float, relativeTolerance: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        compare.equalsD1ToD1(
+        JCompare.equalsD1ToD1(
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
             absoluteTolerance,
@@ -1454,25 +1443,25 @@ class CPUJvmBackend : IBackend by KotlinBackend {
 
     override fun where(condition: DataBuffer, x: Float, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(condition.size)
-        where.whereD0ToD0(condition.toCPUBuffer().byteBuffer, x, y, result.byteBuffer)
+        JWhere.whereD0ToD0(condition.toCPUBuffer().byteBuffer, x, y, result.byteBuffer)
         return result
     }
 
     override fun where(condition: DataBuffer, x: Float, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(y.size)
-        where.whereD0ToD1(condition.toCPUBuffer().byteBuffer, x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
+        JWhere.whereD0ToD1(condition.toCPUBuffer().byteBuffer, x, y.toCPUBuffer().byteBuffer, result.byteBuffer)
         return result
     }
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        where.whereD1ToD0(condition.toCPUBuffer().byteBuffer, x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
+        JWhere.whereD1ToD0(condition.toCPUBuffer().byteBuffer, x.toCPUBuffer().byteBuffer, y, result.byteBuffer)
         return result
     }
 
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        where.whereD1ToD1(
+        JWhere.whereD1ToD1(
             condition.toCPUBuffer().byteBuffer,
             x.toCPUBuffer().byteBuffer,
             y.toCPUBuffer().byteBuffer,
@@ -1495,7 +1484,7 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         val ok = (xk + padding * 2 - window) / stride + 1
         val ww = window * window
         val result = CPUJvmBuffer.create(b * xi * oj * ok * ww)
-        shape.unfoldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, window, stride, padding, result.byteBuffer)
+        JShape.unfoldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, window, stride, padding, result.byteBuffer)
         return result
     }
 
@@ -1513,27 +1502,27 @@ class CPUJvmBackend : IBackend by KotlinBackend {
         val oj = window + (xj - 1) * stride - padding * 2
         val ok = window + (xk - 1) * stride - padding * 2
         val result = CPUJvmBuffer.create(b * xi * oj * ok)
-        shape.foldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, b, stride, padding, result.byteBuffer)
+        JShape.foldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, b, stride, padding, result.byteBuffer)
         return result
     }
 
     override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
         val oj = (xj + padding * 2 - window) / stride + 1
         val result = CPUJvmBuffer.create(b * xi * oj * window)
-        shape.unfoldD1(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
+        JShape.unfoldD1(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
         return result
     }
 
     override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
         val oj = xk + (xj - 1) * stride - padding * 2
         val result = CPUJvmBuffer.create(b * xi * oj)
-        shape.foldD1(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
+        JShape.foldD1(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
         return result
     }
 
     override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
-        shape.flipD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
+        JShape.flipD3(x.toCPUBuffer().byteBuffer, xi, xj, xk, axis, result.byteBuffer)
         return result
     }
 }

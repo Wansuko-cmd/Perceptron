@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.linalg
 
-class JMatMul {
+object JMatMul {
     external fun matMul(
         x: Long,
         transX: Boolean,

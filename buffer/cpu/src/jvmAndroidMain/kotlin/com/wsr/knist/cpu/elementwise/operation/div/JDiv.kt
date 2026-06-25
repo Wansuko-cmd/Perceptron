@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.elementwise.operation.div
 
 import java.nio.ByteBuffer
 
-class JDiv {
+object JDiv {
     external fun divD0ToD1(x: Float, y: ByteBuffer, result: ByteBuffer)
 
     external fun divD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)

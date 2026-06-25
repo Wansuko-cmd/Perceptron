@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.reduction
 
-class JCollection {
+object JReduction {
     external fun averageD1(x: Long, result: Long, runtime: Long)
     external fun averageD2(x: Long, xi: Int, xj: Int, axis: Int, result: Long, runtime: Long)
     external fun averageD3(x: Long, xi: Int, xj: Int, xk: Int, axis: Int, result: Long, runtime: Long)

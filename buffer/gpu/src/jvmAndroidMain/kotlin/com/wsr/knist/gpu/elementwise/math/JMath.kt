@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.elementwise.math
 
-class JMath {
+object JMath {
     external fun exp(x: Long, result: Long, runtime: Long)
     external fun ln(x: Long, e: Float, result: Long, runtime: Long)
     external fun sigmoid(x: Long, result: Long, runtime: Long)

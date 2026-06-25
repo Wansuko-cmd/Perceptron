@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.shape
 
-class JShape {
+object JShape {
     external fun transposeD2(x: Long, xi: Int, xj: Int, result: Long, runtime: Long)
 
     external fun transposeD3(

@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu
 
-class JBuffer {
+object JBuffer {
     external fun allocate(size: Int, runtime: Long): Long
     external fun init(value: FloatArray, runtime: Long): Long
     external fun release(ptr: Long, runtime: Long)

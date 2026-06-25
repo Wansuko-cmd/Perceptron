@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.elementwise.operation
 
-class JPlus {
+object JPlus {
     external fun plusD0ToD1(x: Float, y: Long, result: Long, runtime: Long)
 
     external fun plusD1ToD0(x: Long, y: Float, result: Long, runtime: Long)
