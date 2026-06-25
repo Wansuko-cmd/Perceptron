@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.shape
 
 import java.nio.ByteBuffer
 
-class JShape {
+object JShape {
     external fun transposeD2(x: ByteBuffer, xi: Int, xj: Int, result: ByteBuffer)
 
     external fun transposeD3(

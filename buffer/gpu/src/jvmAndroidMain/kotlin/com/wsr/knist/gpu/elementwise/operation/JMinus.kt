@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.elementwise.operation
 
-class JMinus {
+object JMinus {
     external fun minusD0ToD1(x: Float, y: Long, result: Long, runtime: Long)
 
     external fun minusD1ToD0(x: Long, y: Float, result: Long, runtime: Long)

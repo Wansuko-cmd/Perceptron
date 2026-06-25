@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.elementwise.operation.minus
 
 import java.nio.ByteBuffer
 
-class JMinus {
+object JMinus {
     external fun minusD0ToD1(x: Float, y: ByteBuffer, result: ByteBuffer)
 
     external fun minusD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)

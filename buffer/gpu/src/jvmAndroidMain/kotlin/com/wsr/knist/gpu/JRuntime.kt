@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu
 
-class JRuntime {
+object JRuntime {
     external fun allocate(): Long
     external fun release(ptr: Long)
     external fun sync(runtime: Long)

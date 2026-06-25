@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.elementwise.operation.plus
 
 import java.nio.ByteBuffer
 
-class JPlus {
+object JPlus {
     external fun plusD0ToD1(x: Float, y: ByteBuffer, result: ByteBuffer)
 
     external fun plusD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)

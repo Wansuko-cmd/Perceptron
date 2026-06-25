@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.elementwise.compare
 
 import java.nio.ByteBuffer
 
-class JCompare {
+object JCompare {
     external fun greaterThanD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)
     external fun greaterThanD1ToD1(x: ByteBuffer, y: ByteBuffer, result: ByteBuffer)
 

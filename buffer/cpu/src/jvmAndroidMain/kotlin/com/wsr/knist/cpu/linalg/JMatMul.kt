@@ -2,7 +2,7 @@ package com.wsr.knist.cpu.linalg
 
 import java.nio.ByteBuffer
 
-class JMatMul {
+object JMatMul {
     external fun inner(x: ByteBuffer, y: ByteBuffer, b: Int, result: ByteBuffer)
 
     external fun matMulD1ToD2(x: ByteBuffer, y: ByteBuffer, transY: Boolean, n: Int, k: Int, result: ByteBuffer)

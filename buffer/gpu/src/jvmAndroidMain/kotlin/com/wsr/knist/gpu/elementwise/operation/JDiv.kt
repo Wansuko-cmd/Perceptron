@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.elementwise.operation
 
-class JDiv {
+object JDiv {
     external fun divD0ToD1(x: Float, y: Long, result: Long, runtime: Long)
 
     external fun divD1ToD0(x: Long, y: Float, result: Long, runtime: Long)

@@ -1,6 +1,6 @@
 package com.wsr.knist.gpu.elementwise.compare
 
-class JCompare {
+object JCompare {
     external fun greaterThanD1ToD0(x: Long, y: Float, result: Long, runtime: Long)
     external fun greaterThanD1ToD1(x: Long, y: Long, result: Long, runtime: Long)
 
