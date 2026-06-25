@@ -119,9 +119,9 @@ import kotlin.math.min
 import kotlin.random.Random
 import kotlinx.cinterop.ExperimentalForeignApi
 
-actual fun loadCPUBackend(): IBackend? = CPUNativeBackend()
+actual fun loadCPUBackend(fallback: IBackend): IBackend = CPUNativeBackend(fallback)
 
-class CPUNativeBackend : IBackend by KotlinBackend {
+class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
     override val generator = CPUNativeBuffer.generator
 
     // 0次元

@@ -2,7 +2,7 @@ package com.wsr.knist.gpu
 
 import com.wsr.knist.base.IBackend
 
-actual fun loadGPUBackend(): IBackend? = runCatching<IBackend> {
+actual fun loadGPUBackend(fallback: IBackend): IBackend = runCatching<IBackend> {
     System.loadLibrary("gpu")
-    GPUBackend()
-}.getOrNull()
+    GPUBackend(fallback)
+}.getOrElse { fallback }

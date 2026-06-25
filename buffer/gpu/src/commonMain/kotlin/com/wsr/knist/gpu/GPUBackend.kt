@@ -3,6 +3,6 @@ package com.wsr.knist.gpu
 import com.wsr.knist.base.IBackend
 import com.wsr.knist.base.KotlinBackend
 
-val gpu: IBackend = loadGPUBackend() ?: KotlinBackend
+val gpu: IBackend = loadGPUBackend(KotlinBackend)
 
-expect fun loadGPUBackend(): IBackend?
+expect fun loadGPUBackend(fallback: IBackend): IBackend

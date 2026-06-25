@@ -18,7 +18,7 @@ import com.wsr.knist.cpu.shape.JShape
 import kotlin.math.min
 import kotlin.random.Random
 
-class CPUJvmBackend : IBackend by KotlinBackend {
+class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
 
     override val generator = CPUJvmBuffer.generator
 

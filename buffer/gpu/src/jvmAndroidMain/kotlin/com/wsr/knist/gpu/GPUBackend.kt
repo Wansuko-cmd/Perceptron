@@ -18,7 +18,7 @@ import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
 import java.lang.ref.Cleaner
 
-class GPUBackend : IBackend by KotlinBackend {
+class GPUBackend(fallback: IBackend) : IBackend by fallback {
     private val runtime = JRuntime.allocate()
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime, JBuffer)
 
