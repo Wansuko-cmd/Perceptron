@@ -17,8 +17,9 @@ import com.wsr.knist.gpu.linalg.JMatMul
 import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
 import java.lang.ref.Cleaner
+import kotlin.random.Random
 
-class GPUBackend(fallback: IBackend) : IBackend by fallback {
+class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
     private val runtime = JRuntime.allocate()
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime, JBuffer)
 
@@ -1291,6 +1292,51 @@ class GPUBackend(fallback: IBackend) : IBackend by fallback {
             runtime = runtime,
         )
         return result
+    }
+
+    override fun maxIndex(x: DataBuffer): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.maxIndex(x)
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.maxIndex(x, xi, xj, axis)
+    }
+
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.maxIndex(x, xi, xj, xk, axis)
+    }
+
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topK(x, k, random)
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topK(x, xi, xj, k, axis, random)
+    }
+
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topK(x, xi, xj, xk, k, axis, random)
+    }
+
+    override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topP(x, p, random)
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topP(x, xi, xj, p, axis, random)
+    }
+
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        val x = fallback.generator.create(x.toFloatArray())
+        return fallback.topP(x, xi, xj, xk, p, axis, random)
     }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
