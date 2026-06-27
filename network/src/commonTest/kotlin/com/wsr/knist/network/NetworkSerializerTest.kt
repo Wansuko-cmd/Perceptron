@@ -13,6 +13,7 @@ import com.wsr.knist.network.output.mean.meanSquare
 import com.wsr.knist.network.process.compute.affine.affine
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
 import okio.Buffer
 
 class NetworkSerializerTest {
@@ -33,7 +34,9 @@ class NetworkSerializerTest {
         val original = createNetwork()
         val restored = Network.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(original.toJson())
 
-        assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        runTest {
+            assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        }
     }
 
     @Test
@@ -43,7 +46,9 @@ class NetworkSerializerTest {
         original.toJson(buffer)
         val restored = Network.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
 
-        assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        runTest {
+            assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        }
     }
 
     @Test
@@ -51,7 +56,9 @@ class NetworkSerializerTest {
         val original = createNetwork()
         val restored = Network.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(original.toCbor())
 
-        assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        runTest {
+            assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        }
     }
 
     @Test
@@ -61,7 +68,9 @@ class NetworkSerializerTest {
         original.toCbor(buffer)
         val restored = Network.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
 
-        assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        runTest {
+            assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
+        }
     }
 
     @Test

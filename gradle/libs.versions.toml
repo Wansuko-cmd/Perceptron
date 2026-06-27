@@ -12,6 +12,9 @@ ksp = "2.3.9"
 # serialization
 serialization = "1.11.0"
 
+# coroutines
+coroutines = "1.10.1"
+
 # okio
 okio = "3.17.0"
 
@@ -32,6 +35,10 @@ ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.re
 serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 serialization-okio = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-okio", version.ref = "serialization" }
 serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "serialization" }
+
+# coroutines
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # okio
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }

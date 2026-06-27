@@ -39,12 +39,14 @@ kotlin {
 
                 implementation(libs.serialization)
                 implementation(libs.okio)
+                implementation(libs.coroutines)
             }
         }
 
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation(libs.coroutines.test)
             }
         }
     }

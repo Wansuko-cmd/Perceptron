@@ -21,6 +21,7 @@ import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
 import kotlin.random.Random
 import kotlin.random.nextInt
+import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
@@ -41,7 +42,7 @@ private const val NUM_OF_STORIES = 1000
 private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
 
-fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> {
+fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> = runBlocking {
     NetworkSerializer.apply {
         register(WordsD1::class)
         register(WordD2::class)
@@ -137,10 +138,13 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
     val story = network.createStories(beginning = "One day, a sheep named Bob was very happy.", maxLength = 300)
     println(story)
 
-    return network
+    network
 }
 
-private fun Network<List<List<String>>, List<List<String>>>.createStories(beginning: String, maxLength: Int): String {
+private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
+    beginning: String,
+    maxLength: Int,
+): String {
     val text = tokenize(beginning).take(MAX_LENGTH).toMutableList()
     repeat(maxLength) {
         val input = text.takeLast(MAX_LENGTH)
