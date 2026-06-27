@@ -460,5 +460,6 @@ interface IBackend {
 
     fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer
 
+    fun flush()
     fun sync()
 }

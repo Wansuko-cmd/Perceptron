@@ -1313,5 +1313,6 @@ object KotlinBackend : IBackend {
         return result
     }
 
+    override fun flush() {}
     override fun sync() {}
 }

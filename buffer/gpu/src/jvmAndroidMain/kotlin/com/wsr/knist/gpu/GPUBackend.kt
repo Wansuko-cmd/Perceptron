@@ -1746,6 +1746,7 @@ class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
         return result
     }
 
+    override fun flush() = JRuntime.flush(runtime)
     override fun sync() = JRuntime.sync(runtime)
 
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
