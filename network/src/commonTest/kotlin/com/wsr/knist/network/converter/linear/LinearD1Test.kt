@@ -7,12 +7,11 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkTestRule
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class LinearD1Test {
     @Test
     fun `encode=Batchに変換`() = networkTestRule {
-        val target = LinearD1(outputSize = 3)
+        val target = LinearD1(outputI = 3)
         val input = listOf(IOType.d1(3) { it.toFloat() })
 
         val actual = target.encode(input)
@@ -22,7 +21,7 @@ class LinearD1Test {
 
     @Test
     fun `decode=Listに変換`() = networkTestRule {
-        val target = LinearD1(outputSize = 3)
+        val target = LinearD1(outputI = 3)
         val input = Batch.of(IOType.d1(3) { it.toFloat() })
 
         val actual = target.decode(input)

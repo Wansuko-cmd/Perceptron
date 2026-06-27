@@ -20,7 +20,7 @@ class WordsD1Test {
     fun `encode=単語列を単語IDベクトルに変換`() = networkTestRule {
         val target = WordsD1(
             words = words,
-            outputSize = outputSize,
+            outputI = outputSize,
             paddingIndex = paddingIndex,
             unknownIndex = unknownIndex,
         )
@@ -45,7 +45,7 @@ class WordsD1Test {
     fun `decode=単語IDベクトルを単語列に変換`() = networkTestRule {
         val target = WordsD1(
             words = words,
-            outputSize = outputSize,
+            outputI = outputSize,
             paddingIndex = paddingIndex,
             unknownIndex = unknownIndex,
         )

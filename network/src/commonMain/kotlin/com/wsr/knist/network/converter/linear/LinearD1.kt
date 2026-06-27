@@ -11,7 +11,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD1(override val outputSize: Int) : Converter.D1<IOType.D1>() {
+class LinearD1(override val outputI: Int) : Converter.D1<IOType.D1>() {
     override fun encode(input: List<IOType.D1>): Batch<IOType.D1> = input.toBatch()
     override fun decode(input: Batch<IOType.D1>): List<IOType.D1> = input.toList()
 }

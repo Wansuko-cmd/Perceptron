@@ -14,11 +14,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class CharD1 : Converter.D1<Char>() {
-    override val outputSize = chars.size
+    override val outputI = chars.size
     override fun encode(input: List<Char>): Batch<IOType.D1> = input
         .map { char ->
             val id = charToId[char] ?: 0
-            IOType.d1(outputSize).also { it[id] = 1f }
+            IOType.d1(outputI).also { it[id] = 1f }
         }.toBatch()
 
     override fun decode(input: Batch<IOType.D1>): List<Char> = input
