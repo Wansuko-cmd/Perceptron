@@ -2,7 +2,7 @@
 
 package com.wsr.knist.core
 
-import com.wsr.knist.base.BufferScope
+import com.wsr.knist.BufferScope
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.core.elementwise.operation.plus.plus
 import com.wsr.knist.ioTypeTestRule

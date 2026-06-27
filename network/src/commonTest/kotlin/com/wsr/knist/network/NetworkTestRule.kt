@@ -1,7 +1,7 @@
 package com.wsr.knist.network
 
 import com.wsr.knist.Backend
-import com.wsr.knist.base.BufferScope
+import com.wsr.knist.BufferScope
 import com.wsr.knist.base.KotlinBackend
 import com.wsr.knist.core.IOScope
 import kotlin.time.measureTime

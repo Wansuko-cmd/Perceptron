@@ -3,7 +3,7 @@
 package com.wsr.knist.batch
 
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.base.BufferScope
+import com.wsr.knist.BufferScope
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
