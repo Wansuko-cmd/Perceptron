@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.attention
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -23,8 +22,8 @@ class AttentionD2Test {
 
     val target
         get() = AttentionD2(
-            outputX = outputX,
-            outputY = outputY,
+            outputI = outputX,
+            outputJ = outputY,
             numOfHeads = numOfHeads,
             dim = dim,
             isCausal = true,

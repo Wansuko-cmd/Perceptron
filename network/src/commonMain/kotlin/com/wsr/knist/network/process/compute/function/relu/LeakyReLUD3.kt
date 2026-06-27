@@ -10,9 +10,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LeakyReLUD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val mask = input gt 0f
@@ -32,5 +32,5 @@ class LeakyReLUD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.leakyReLU() = addProcess(
-    process = LeakyReLUD3(outputX = inputX, outputY = inputY, outputZ = inputZ),
+    process = LeakyReLUD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
 )

@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RmsNormD2 internal constructor(override val outputX: Int, override val outputY: Int, private val e: Float) :
+class RmsNormD2 internal constructor(override val outputI: Int, override val outputJ: Int, private val e: Float) :
     Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
@@ -39,14 +39,14 @@ class RmsNormD2 internal constructor(override val outputX: Int, override val out
 fun <T> NetworkBuilder.D2<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> RmsNormD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputX,
+            outputJ = inputY,
             e = e,
         )
 
         0, 1 -> RmsNormAxisD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputX,
+            outputJ = inputY,
             axis = axis,
             e = e,
         )

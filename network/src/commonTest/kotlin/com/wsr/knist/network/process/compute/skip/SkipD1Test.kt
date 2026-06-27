@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.skip
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
@@ -18,17 +17,17 @@ class SkipD1Test {
     val target = SkipD1(
         layers = listOf(
             BiasD1(
-                outputSize = 3,
+                outputI = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d1(3),
                 weight = IOType.d1(3) { it.toFloat() },
             ),
             BiasD1(
-                outputSize = 3,
+                outputI = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d1(3),
                 weight = IOType.d1(3) { it.toFloat() },
             ),
         ),
-        outputSize = 3,
+        outputI = 3,
     )
     val input
         get() = Batch.of(

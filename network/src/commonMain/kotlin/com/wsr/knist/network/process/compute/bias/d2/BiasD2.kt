@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasD2(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
@@ -39,8 +39,8 @@ fun <T> NetworkBuilder.D2<T>.bias(
 ): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> BiasD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputX,
+            outputJ = inputY,
             optimizer = optimizer.d2(inputX, inputY),
             weight = initializer.d2(
                 input = listOf(inputX, inputY),
@@ -53,8 +53,8 @@ fun <T> NetworkBuilder.D2<T>.bias(
         0, 1 -> {
             val inputT = if (axis == 0) inputX else inputY
             BiasAxisD2(
-                outputX = inputX,
-                outputY = inputY,
+                outputI = inputX,
+                outputJ = inputY,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class DropoutD1 internal constructor(
-    override val outputSize: Int,
+    override val outputI: Int,
     private val ratio: Float,
     private val seed: Int? = null,
 ) : Compute.D1() {
@@ -26,7 +26,7 @@ class DropoutD1 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
-        val mask = IOType.d1(outputSize) { if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
+        val mask = IOType.d1(outputI) { if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
         val output = input * mask
         val delta = calcDelta(output)
         return delta * mask
@@ -36,7 +36,7 @@ class DropoutD1 internal constructor(
 fun <T> NetworkBuilder.D1<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
         DropoutD1(
-            outputSize = inputSize,
+            outputI = inputSize,
             ratio = ratio,
             seed = seed,
         ),

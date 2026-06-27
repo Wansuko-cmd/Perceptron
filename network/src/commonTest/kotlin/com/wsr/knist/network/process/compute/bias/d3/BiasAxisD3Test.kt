@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.bias.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -19,9 +18,9 @@ import kotlin.test.Test
 class BiasAxisD3Test {
     val target0
         get() = BiasAxisD3(
-            outputX = 2,
-            outputY = 2,
-            outputZ = 2,
+            outputI = 2,
+            outputJ = 2,
+            outputK = 2,
             axis = 0,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(2),
             weight = IOType.d1(2) { it.toFloat() },
@@ -29,9 +28,9 @@ class BiasAxisD3Test {
 
     val target1
         get() = BiasAxisD3(
-            outputX = 2,
-            outputY = 2,
-            outputZ = 2,
+            outputI = 2,
+            outputJ = 2,
+            outputK = 2,
             axis = 1,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(2),
             weight = IOType.d1(2) { it.toFloat() },
@@ -39,9 +38,9 @@ class BiasAxisD3Test {
 
     val target2
         get() = BiasAxisD3(
-            outputX = 2,
-            outputY = 2,
-            outputZ = 2,
+            outputI = 2,
+            outputJ = 2,
+            outputK = 2,
             axis = 2,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(2),
             weight = IOType.d1(2) { it.toFloat() },

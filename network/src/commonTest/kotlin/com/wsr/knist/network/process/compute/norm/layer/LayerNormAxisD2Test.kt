@@ -3,8 +3,6 @@
 package com.wsr.knist.network.process.compute.norm.layer
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -16,8 +14,8 @@ import com.wsr.knist.network.process.compute.norm.layer.d2.LayerNormAxisD2
 import kotlin.test.Test
 
 class LayerNormAxisD2Test {
-    val target0 get() = LayerNormAxisD2(outputX = 2, outputY = 3, axis = 0, e = 1e-6f)
-    val target1 get() = LayerNormAxisD2(outputX = 2, outputY = 3, axis = 1, e = 1e-6f)
+    val target0 get() = LayerNormAxisD2(outputI = 2, outputJ = 3, axis = 0, e = 1e-6f)
+    val target1 get() = LayerNormAxisD2(outputI = 2, outputJ = 3, axis = 1, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d2(

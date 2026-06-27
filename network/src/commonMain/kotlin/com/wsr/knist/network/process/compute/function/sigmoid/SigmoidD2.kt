@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SigmoidD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
+class SigmoidD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.sigmoid()
 
     override fun IOScope.train(
@@ -23,4 +23,4 @@ class SigmoidD2 internal constructor(override val outputX: Int, override val out
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.sigmoid() = addProcess(SigmoidD2(outputX = inputX, outputY = inputY))
+fun <T> NetworkBuilder.D2<T>.sigmoid() = addProcess(SigmoidD2(outputI = inputX, outputJ = inputY))

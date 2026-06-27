@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SwishD3 internal constructor(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
+class SwishD3 internal constructor(override val outputI: Int, override val outputJ: Int, override val outputK: Int) :
     Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input * input.sigmoid()
 
@@ -26,5 +26,5 @@ class SwishD3 internal constructor(override val outputX: Int, override val outpu
 }
 
 fun <T> NetworkBuilder.D3<T>.swish() = addProcess(
-    process = SwishD3(outputX = inputX, outputY = inputY, outputZ = inputZ),
+    process = SwishD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
 )

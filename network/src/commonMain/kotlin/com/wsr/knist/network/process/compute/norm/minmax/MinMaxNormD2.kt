@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class MinMaxNormD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
@@ -73,8 +73,8 @@ fun <T> NetworkBuilder.D2<T>.minMaxNorm(
 ) = addProcess(
     process =
         MinMaxNormD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputX,
+            outputJ = inputY,
             optimizer = optimizer.d2(inputX, inputY),
             weight = initializer.d2(
                 input = listOf(inputX, inputY),

@@ -10,9 +10,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ScaleAxisD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,

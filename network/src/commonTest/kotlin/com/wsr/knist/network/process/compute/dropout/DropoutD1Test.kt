@@ -3,17 +3,15 @@
 package com.wsr.knist.network.process.compute.dropout
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class DropoutD1Test {
-    val target get() = DropoutD1(outputSize = 3, ratio = 0.8f, seed = 0)
+    val target get() = DropoutD1(outputI = 3, ratio = 0.8f, seed = 0)
     val input
         get() = Batch.of(
             IOType.d1(3) { it * 2f },

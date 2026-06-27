@@ -9,14 +9,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LayerNormAxisD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val axis: Int,
     private val e: Float,
 ) : Compute.D2() {
     private val outputT = when (axis) {
-        0 -> outputX
-        1 -> outputY
+        0 -> outputI
+        1 -> outputJ
         else -> throw IllegalArgumentException("LayerNormAxisD2 axis is $axis, not 0 or 1.")
     }
 

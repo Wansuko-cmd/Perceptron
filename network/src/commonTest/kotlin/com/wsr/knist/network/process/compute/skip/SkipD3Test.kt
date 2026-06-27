@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.skip
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -21,23 +20,23 @@ class SkipD3Test {
     val target = SkipD3(
         layers = listOf(
             BiasD3(
-                outputX = 2,
-                outputY = 2,
-                outputZ = 3,
+                outputI = 2,
+                outputJ = 2,
+                outputK = 3,
                 optimizer = Sgd(Scheduler.Fix(0.01f)).d3(2, 2, 2),
                 weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             ),
             BiasD3(
-                outputX = 2,
-                outputY = 2,
-                outputZ = 3,
+                outputI = 2,
+                outputJ = 2,
+                outputK = 3,
                 optimizer = Sgd(Scheduler.Fix(0.01f)).d3(2, 2, 2),
                 weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             ),
         ),
-        outputX = 2,
-        outputY = 2,
-        outputZ = 2,
+        outputI = 2,
+        outputJ = 2,
+        outputK = 2,
     )
     val input
         get() = Batch.of(

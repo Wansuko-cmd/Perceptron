@@ -17,9 +17,9 @@ class MaxPoolD3 internal constructor(
     val inputY: Int,
     val padding: Int,
 ) : Compute.D3() {
-    override val outputX: Int = channel
-    override val outputY: Int = (inputX + 2 * padding - poolSize) / poolSize + 1
-    override val outputZ: Int = (inputY + 2 * padding - poolSize) / poolSize + 1
+    override val outputI: Int = channel
+    override val outputJ: Int = (inputX + 2 * padding - poolSize) / poolSize + 1
+    override val outputK: Int = (inputY + 2 * padding - poolSize) / poolSize + 1
 
     init {
         check(

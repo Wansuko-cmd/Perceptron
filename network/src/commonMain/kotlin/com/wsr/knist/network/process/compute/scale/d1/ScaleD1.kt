@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ScaleD1 internal constructor(
-    override val outputSize: Int,
+    override val outputI: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
 ) : Compute.D1() {
@@ -40,7 +40,7 @@ class ScaleD1 internal constructor(
 fun <T> NetworkBuilder.D1<T>.scale(optimizer: Optimizer = this.optimizer, initializer: WeightInitializer = Fixed(1f)) =
     addProcess(
         process = ScaleD1(
-            outputSize = inputSize,
+            outputI = inputSize,
             optimizer = optimizer.d1(inputSize),
             weight = initializer.d1(
                 input = listOf(inputSize),

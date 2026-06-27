@@ -9,16 +9,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LayerNormAxisD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val axis: Int,
     private val e: Float,
 ) : Compute.D3() {
     private val outputT = when (axis) {
-        0 -> outputX
-        1 -> outputY
-        2 -> outputZ
+        0 -> outputI
+        1 -> outputJ
+        2 -> outputK
         else -> throw IllegalArgumentException("LayerNormAxisD3 axis is $axis, not 0, 1 or 2.")
     }
     private val axis1 = when (axis) {

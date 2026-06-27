@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.scale.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -19,9 +18,9 @@ import kotlin.test.Test
 class ScaleD3Test {
     val target
         get() = ScaleD3(
-            outputX = 2,
-            outputY = 2,
-            outputZ = 2,
+            outputI = 2,
+            outputJ = 2,
+            outputK = 2,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d3(2, 2, 2),
             weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
         )

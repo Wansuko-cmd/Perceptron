@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LeakyReLUD1 internal constructor(override val outputSize: Int) : Compute.D1() {
+class LeakyReLUD1 internal constructor(override val outputI: Int) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0.01f)
@@ -27,4 +27,4 @@ class LeakyReLUD1 internal constructor(override val outputSize: Int) : Compute.D
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.leakyReLU() = addProcess(LeakyReLUD1(outputSize = inputSize))
+fun <T> NetworkBuilder.D1<T>.leakyReLU() = addProcess(LeakyReLUD1(outputI = inputSize))

@@ -27,7 +27,7 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D1> {
         fun addProcess(process: Compute.D1): D1<I> = copy(
             layers = layers + process,
-            inputSize = process.outputSize,
+            inputSize = process.outputI,
         )
 
         fun addOutput(output: Output.D1) = Network<I, IOType.D1>(
@@ -78,8 +78,8 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D2> {
         fun addProcess(process: Compute.D2): D2<I> = copy(
             layers = layers + process,
-            inputX = process.outputX,
-            inputY = process.outputY,
+            inputX = process.outputI,
+            inputY = process.outputJ,
         )
 
         fun addOutput(output: Output.D2) = Network<I, IOType.D2>(
@@ -130,9 +130,9 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D3> {
         fun addProcess(process: Compute.D3): D3<I> = copy(
             layers = layers + process,
-            inputX = process.outputX,
-            inputY = process.outputY,
-            inputZ = process.outputZ,
+            inputX = process.outputI,
+            inputY = process.outputJ,
+            inputZ = process.outputK,
         )
 
         fun addReshape(reshape: Reshape.D3ToD2): D2<I> = D2(

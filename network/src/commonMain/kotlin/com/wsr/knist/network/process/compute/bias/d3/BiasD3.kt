@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasD3(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
 ) : Compute.D3() {
@@ -40,9 +40,9 @@ fun <T> NetworkBuilder.D3<T>.bias(
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> BiasD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputX,
+            outputJ = inputY,
+            outputK = inputZ,
             optimizer = optimizer.d3(inputX, inputY, inputZ),
             weight = initializer.d3(
                 input = listOf(inputX, inputY, inputZ),
@@ -60,9 +60,9 @@ fun <T> NetworkBuilder.D3<T>.bias(
                 else -> inputZ
             }
             BiasAxisD3(
-                outputX = inputX,
-                outputY = inputY,
-                outputZ = inputZ,
+                outputI = inputX,
+                outputJ = inputY,
+                outputK = inputZ,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

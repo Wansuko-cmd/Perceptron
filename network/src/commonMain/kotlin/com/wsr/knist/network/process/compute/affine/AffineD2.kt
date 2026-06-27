@@ -17,8 +17,8 @@ class AffineD2 internal constructor(
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
-    override val outputX = channel
-    override val outputY = outputSize
+    override val outputI = channel
+    override val outputJ = outputSize
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.matMul(weight)
 

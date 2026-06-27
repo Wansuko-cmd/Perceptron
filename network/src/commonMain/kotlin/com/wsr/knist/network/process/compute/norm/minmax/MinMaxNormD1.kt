@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.compute.norm.minmax
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
@@ -14,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class MinMaxNormD1 internal constructor(
-    override val outputSize: Int,
+    override val outputI: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
 ) : Compute.D1() {
@@ -75,7 +74,7 @@ fun <T> NetworkBuilder.D1<T>.minMaxNorm(
     initializer: WeightInitializer = Fixed(1f),
 ) = addProcess(
     process = MinMaxNormD1(
-        outputSize = inputSize,
+        outputI = inputSize,
         optimizer = optimizer.d1(inputSize),
         weight = initializer.d1(
             input = listOf(inputSize),

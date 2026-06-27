@@ -17,8 +17,8 @@ private typealias CALC_DELTA_D2 = IOScope.(input: Batch<IOType.D2>, context: Con
 class SkipD2 internal constructor(
     // List<Process.D2>だがSerializer対策
     private val layers: List<Process> = emptyList(),
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val scope = this
@@ -68,18 +68,18 @@ fun <T> NetworkBuilder.D2<T>.skip(builder: NetworkBuilder.D2<T>.() -> NetworkBui
         .filterIsInstance<Compute.D2>()
     val last = layers.last()
 
-    check(inputX == last.outputX && inputY == last.outputY) {
+    check(inputX == last.outputI && inputY == last.outputJ) {
         """
             invalid parameter.
             input: ($inputX, $inputY)
-            output: (${last.outputX}, ${last.outputY})
+            output: (${last.outputI}, ${last.outputJ})
         """.trimIndent()
     }
 
     return addProcess(
         process = SkipD2(
-            outputX = last.outputX,
-            outputY = last.outputY,
+            outputI = last.outputI,
+            outputJ = last.outputJ,
             layers = layers,
         ),
     )

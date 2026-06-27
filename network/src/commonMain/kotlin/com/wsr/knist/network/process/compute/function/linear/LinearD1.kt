@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD1 internal constructor(override val outputSize: Int) : Compute.D1() {
+class LinearD1 internal constructor(override val outputI: Int) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input
 
     override fun IOScope.train(
@@ -19,4 +19,4 @@ class LinearD1 internal constructor(override val outputSize: Int) : Compute.D1()
     ): Batch<IOType.D1> = calcDelta(input)
 }
 
-fun <T> NetworkBuilder.D1<T>.linear() = addProcess(LinearD1(outputSize = inputSize))
+fun <T> NetworkBuilder.D1<T>.linear() = addProcess(LinearD1(outputI = inputSize))

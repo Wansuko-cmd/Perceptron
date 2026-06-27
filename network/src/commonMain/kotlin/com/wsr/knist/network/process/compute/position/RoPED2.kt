@@ -14,20 +14,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RoPED2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val waveLength: Float,
 ) : Compute.D2() {
     private val theta by lazy {
-        FloatArray(outputY / 2) { i -> 1f / waveLength.pow(2f * i / outputY) }
+        FloatArray(outputJ / 2) { i -> 1f / waveLength.pow(2f * i / outputJ) }
     }
 
     private val cosCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> cos(x * theta[y]) }
+        IOType.d2(outputI, outputJ / 2) { x, y -> cos(x * theta[y]) }
     }
 
     private val sinCache by lazy {
-        IOType.d2(outputX, outputY / 2) { x, y -> sin(x * theta[y]) }
+        IOType.d2(outputI, outputJ / 2) { x, y -> sin(x * theta[y]) }
     }
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = forward(input)
@@ -56,8 +56,8 @@ class RoPED2 internal constructor(
 @Deprecated("実装ミス。Attentionの中に組み込む必要がある")
 fun <T> NetworkBuilder.D2<T>.roPE(waveLength: Float = 10000f) = addProcess(
     process = RoPED2(
-        outputX = inputX,
-        outputY = inputY,
+        outputI = inputX,
+        outputJ = inputY,
         waveLength = waveLength,
     ),
 )

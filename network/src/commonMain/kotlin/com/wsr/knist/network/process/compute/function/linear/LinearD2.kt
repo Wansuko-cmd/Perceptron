@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
+class LinearD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input
 
     override fun IOScope.train(
@@ -20,5 +20,5 @@ class LinearD2 internal constructor(override val outputX: Int, override val outp
 }
 
 fun <T> NetworkBuilder.D2<T>.linear() = addProcess(
-    process = LinearD2(outputX = inputX, outputY = inputY),
+    process = LinearD2(outputI = inputX, outputJ = inputY),
 )

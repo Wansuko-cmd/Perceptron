@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class MinMaxNormD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
 ) : Compute.D3() {
@@ -75,9 +75,9 @@ fun <T> NetworkBuilder.D3<T>.minMaxNorm(
 ) = addProcess(
     process =
         MinMaxNormD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputX,
+            outputJ = inputY,
+            outputK = inputZ,
             optimizer = optimizer.d3(inputX, inputY, inputZ),
             weight = initializer.d3(
                 input = listOf(inputX, inputY, inputZ),

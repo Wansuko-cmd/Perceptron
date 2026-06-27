@@ -3,8 +3,6 @@
 package com.wsr.knist.network.process.compute.norm.rms
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
@@ -14,7 +12,7 @@ import com.wsr.knist.network.process.compute.norm.rms.d1.RmsNormD1
 import kotlin.test.Test
 
 class RmsNormD1Test {
-    val target get() = RmsNormD1(outputSize = 3, e = 1e-6f)
+    val target get() = RmsNormD1(outputI = 3, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d1(3) { it.toFloat() },

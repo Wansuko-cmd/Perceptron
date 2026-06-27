@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.scale.d2
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -18,8 +17,8 @@ import kotlin.test.Test
 class ScaleAxisD2Test {
     val target0
         get() = ScaleAxisD2(
-            outputX = 2,
-            outputY = 2,
+            outputI = 2,
+            outputJ = 2,
             axis = 0,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(2),
             weight = IOType.d1(2) { it.toFloat() },
@@ -27,8 +26,8 @@ class ScaleAxisD2Test {
 
     val target1
         get() = ScaleAxisD2(
-            outputX = 2,
-            outputY = 2,
+            outputI = 2,
+            outputJ = 2,
             axis = 1,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(2),
             weight = IOType.d1(2) { it.toFloat() },
