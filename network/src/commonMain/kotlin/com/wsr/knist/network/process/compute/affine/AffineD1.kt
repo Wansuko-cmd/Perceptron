@@ -46,8 +46,8 @@ fun <T> NetworkBuilder.D1<T>.affine(
             weight = initializer.d2(
                 input = listOf(inputSize),
                 output = listOf(neuron),
-                x = inputSize,
-                y = neuron,
+                i = inputSize,
+                j = neuron,
             ),
         ),
 )

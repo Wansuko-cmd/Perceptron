@@ -13,11 +13,11 @@ class Random(seed: Int? = null, private val from: Float = -1f, private val until
     override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global =
         IOType.d1(size) { random.nextFloat(from, until) }
 
-    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global =
-        IOType.d2(shape = listOf(x, y)) { _, _ -> random.nextFloat(from, until) }
+    override fun d2(input: List<Int>, output: List<Int>, i: Int, j: Int): IOType.D2.Global =
+        IOType.d2(shape = listOf(i, j)) { _, _ -> random.nextFloat(from, until) }
 
-    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global =
-        IOType.d3(shape = listOf(x, y, z)) { _, _, _ -> random.nextFloat(from, until) }
+    override fun d3(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int): IOType.D3.Global =
+        IOType.d3(shape = listOf(i, j, k)) { _, _, _ -> random.nextFloat(from, until) }
 
     override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global =
         IOType.d4(shape = listOf(i, j, k, l)) { _, _, _, _ -> random.nextFloat(from, until) }

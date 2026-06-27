@@ -23,7 +23,7 @@ class FixedTest {
     fun `d2=指定値で初期化`() = networkTestRule {
         val target = Fixed(value = 0.5f)
 
-        val actual = target.d2(input = listOf(2, 2), output = listOf(2, 2), x = 2, y = 2)
+        val actual = target.d2(input = listOf(2, 2), output = listOf(2, 2), i = 2, j = 2)
 
         for (i in actual.value.indices) {
             assertEquals(expected = 0.5f, actual = actual.value[i])
@@ -34,7 +34,7 @@ class FixedTest {
     fun `d3=指定値で初期化`() = networkTestRule {
         val target = Fixed(value = 0.5f)
 
-        val actual = target.d3(input = listOf(2, 2, 2), output = listOf(2, 2, 2), x = 2, y = 2, z = 2)
+        val actual = target.d3(input = listOf(2, 2, 2), output = listOf(2, 2, 2), i = 2, j = 2, k = 2)
 
         for (i in actual.value.indices) {
             assertEquals(expected = 0.5f, actual = actual.value[i])

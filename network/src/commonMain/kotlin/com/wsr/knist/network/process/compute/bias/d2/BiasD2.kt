@@ -45,8 +45,8 @@ fun <T> NetworkBuilder.D2<T>.bias(
             weight = initializer.d2(
                 input = listOf(inputX, inputY),
                 output = listOf(inputX, inputY),
-                x = inputX,
-                y = inputY,
+                i = inputX,
+                j = inputY,
             ),
         )
 

@@ -53,8 +53,8 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
         weight = initializer.d2(
             input = listOf(vocabSize),
             output = listOf(tokenSize),
-            x = vocabSize,
-            y = tokenSize,
+            i = vocabSize,
+            j = tokenSize,
         ),
     ),
 )

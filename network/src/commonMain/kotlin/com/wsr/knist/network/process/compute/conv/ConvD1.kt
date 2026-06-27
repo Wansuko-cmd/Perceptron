@@ -112,9 +112,9 @@ fun <T> NetworkBuilder.D2<T>.convD1(
             weight = initializer.d3(
                 input = listOf(inputX, kernel),
                 output = listOf(filter, kernel),
-                x = filter,
-                y = inputX,
-                z = kernel,
+                i = filter,
+                j = inputX,
+                k = kernel,
             ),
         ),
 )

@@ -20,22 +20,22 @@ class Xavier(seed: Int? = null) : WeightInitializer {
         return IOType.d1(value = weight)
     }
 
-    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global {
+    override fun d2(input: List<Int>, output: List<Int>, i: Int, j: Int): IOType.D2.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
-            size = x * y,
+            size = i * j,
         )
-        return IOType.d2(shape = listOf(x, y), value = weight)
+        return IOType.d2(shape = listOf(i, j), value = weight)
     }
 
-    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global {
+    override fun d3(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int): IOType.D3.Global {
         val weight = calcWeight(
             fanIn = input.reduce { acc, i -> acc * i },
             fanOut = output.reduce { acc, i -> acc * i },
-            size = x * y * z,
+            size = i * j * k,
         )
-        return IOType.d3(shape = listOf(x, y, z), value = weight)
+        return IOType.d3(shape = listOf(i, j, k), value = weight)
     }
 
     override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global {

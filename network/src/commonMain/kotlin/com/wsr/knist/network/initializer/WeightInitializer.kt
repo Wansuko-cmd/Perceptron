@@ -9,7 +9,7 @@ import com.wsr.knist.core.IOType
  */
 interface WeightInitializer {
     fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global
-    fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global
-    fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global
+    fun d2(input: List<Int>, output: List<Int>, i: Int, j: Int): IOType.D2.Global
+    fun d3(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int): IOType.D3.Global
     fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global
 }

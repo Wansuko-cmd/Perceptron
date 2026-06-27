@@ -47,9 +47,9 @@ fun <T> NetworkBuilder.D3<T>.bias(
             weight = initializer.d3(
                 input = listOf(inputX, inputY, inputZ),
                 output = listOf(inputX, inputY, inputZ),
-                x = inputX,
-                y = inputY,
-                z = inputZ,
+                i = inputX,
+                j = inputY,
+                k = inputZ,
             ),
         )
 
