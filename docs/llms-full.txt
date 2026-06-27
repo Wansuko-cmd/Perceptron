@@ -53,50 +53,49 @@ Backend.set(gpu)
 
 `NetworkBuilder` のDSLでレイヤーを積み上げる。最後に出力層（`softmaxWithLoss` 等）を呼ぶと `Network` オブジェクトが得られる。
 
+`Network<I, O>` の `I`・`O` はバッチ全体の型。`Converter<T>` の `T` がそのままバッチ型として使われる。
+
 ```kotlin
-val network: Network<List<Float>, Int> = NetworkBuilder
-    .inputD2(converter = PixelConverter(28, 28), optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
-    .reshapeToD1()
-    .layerNorm()
+// Batch<IOType.D1> を直接渡す場合（RawD1 を使う）
+val network: Network<Batch<IOType.D1>, Batch<IOType.D1>> = NetworkBuilder
+    .inputD1(32, optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
     .affine(neuron = 256).bias().reLU()
     .affine(neuron = 10)
-    .softmaxWithLoss(converter = { LabelConverter(inputI) })
+    .meanSquare()
+
+// カスタムConverter を使う場合（例: List<List<Float>> → D2）
+val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
+    .inputD2(converter = MyPixelConverter(28, 28), optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
+    .reshapeToD1()
+    .affine(neuron = 10)
+    .softmaxWithLoss(converter = { MyLabelConverter(inputI) })
 ```
 
 ### 学習
 
-4つのオーバーロードがある。
+`I` 自体がバッチ型なので、バッチ単位で渡す。
 
 ```kotlin
-// 単件
-network.train(input = data, label = label)
+// ラベルを直接渡す（戻り値は loss）
+val loss: Float = network.train(input = inputs, label = labels)
 
-// 単件 + ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
-network.train(input = data) { currentOutput -> modifiedLabel }
-
-// バッチ（戻り値は loss）
-val loss: Float = network.train(input = batchInputs, label = batchLabels)
-
-// バッチ + ラベルジェネレータ
-val loss: Float = network.train(input = batchInputs) { currentOutputs -> modifiedLabels }
+// ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
+val loss: Float = network.train(input = inputs) { currentOutput -> modifiedOutput }
 ```
 
 ### loss計算（逆伝播なし）
 
-`train()` と同じ4バリアントがある。検証用途等、重みを更新せずに損失だけ得たい場合に使う。
+`train()` と同じ2バリアントがある。重みを更新せずに損失だけ得たい場合に使う。
 
 ```kotlin
-network.loss(input = data, label = label)
-network.loss(input = data) { currentOutput -> modifiedLabel }
-val loss: Float = network.loss(input = batchInputs, label = batchLabels)
-val loss: Float = network.loss(input = batchInputs) { currentOutputs -> modifiedLabels }
+val loss: Float = network.loss(input = inputs, label = labels)
+val loss: Float = network.loss(input = inputs) { currentOutput -> modifiedOutput }
 ```
 
 ### 推論
 
 ```kotlin
-val result: OutputType = network.expect(input = data)
-val results: List<OutputType> = network.expect(input = listOf(data1, data2))
+val result: O = network.expect(input = inputs)  // inputs: I（バッチ型）
 ```
 
 ---
@@ -105,26 +104,19 @@ val results: List<OutputType> = network.expect(input = listOf(data1, data2))
 
 モデルの先頭で呼び出す。
 
-| 関数 | import | 入力型 | 最初のIO型 |
-|------|--------|--------|-----------|
+| 関数 | import | 入力型(T) | 最初のIO型 |
+|------|--------|----------|-----------|
 | `inputD1(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D1 |
 | `inputD2(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D2 |
 | `inputD3(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D3 |
-| `wordsD1(maxLength, words, unknownIndex, paddingIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordsD1` | `List<String>` | D1(maxLength) |
 
-`wordsD1` の `unknownIndex`・`paddingIndex` は `words` の範囲内でなければならない
+`Batch<IOType.Dx>` をそのまま入力する省略形（RawConverter を使う）:
 
-converter を省略できる省略形（IOType をそのまま入力する場合）:
-
-| 関数 | import | 入力型 | 最初のIO型 |
-|------|--------|--------|-----------|
-| `inputD1(i, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD1` | `IOType.D1` | D1(i) |
-| `inputD2(i, j, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD2` | `IOType.D2` | D2(i, j) |
-| `inputD3(i, j, k, optimizer, initializer)` | `com.wsr.knist.network.converter.linear.LinearD3` | `IOType.D3` | D3(i, j, k) |
-| `wordD1(words, unknownIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordD1` | `String` | D1(vocabSize) |
-| `wordD2(words, length, unknownIndex, optimizer, initializer)` | `com.wsr.knist.network.converter.word.wordD2` | `List<String>` | D2(length, vocabSize) |
-| `charD1(optimizer, initializer)` | `com.wsr.knist.network.converter.char.charD1` | `Char` | D1(34) |
-| `charsD1(maxLength, optimizer, initializer)` | `com.wsr.knist.network.converter.char.charsD1` | `String` | D1(maxLength) |
+| 関数 | import | 入力型(T) | 最初のIO型 |
+|------|--------|----------|-----------|
+| `inputD1(i, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD1` | `Batch<IOType.D1>` | D1(i) |
+| `inputD2(i, j, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD2` | `Batch<IOType.D2>` | D2(i, j) |
+| `inputD3(i, j, k, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD3` | `Batch<IOType.D3>` | D3(i, j, k) |
 
 ---
 
@@ -295,17 +287,17 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数と、`softmaxWithLoss` 等の出力層関数の両方に渡せる。
 
+`Converter<T>` の型パラメータ `T` はバッチ全体の型。`encode(input: T)` がバッチを受け取り、`decode` がバッチを返す。これがそのまま `Network<I, O>` の `I`・`O` になる。
+
 ### 組み込みConverter
 
-| クラス | import | 入力型 | 次元 |
-|--------|--------|--------|------|
-| `LinearD1(outputI)` | `com.wsr.knist.network.converter.linear.LinearD1` | `IOType.D1` | D1 |
-| `LinearD2(outputI, outputJ)` | `com.wsr.knist.network.converter.linear.LinearD2` | `IOType.D2` | D2 |
-| `WordD1(words, unknownIndex)` | `com.wsr.knist.network.converter.word.WordD1` | `String` | D1 |
-| `WordD2(words, length, unknownIndex)` | `com.wsr.knist.network.converter.word.WordD2` | `List<String>` | D2 |
-| `WordsD1(outputI, words, unknownIndex, paddingIndex)` | `com.wsr.knist.network.converter.word.WordsD1` | `List<String>` | D1 |
-| `CharD1()` | `com.wsr.knist.network.converter.char.CharD1` | `Char` | D1(34) |
-| `CharsD1(outputI)` | `com.wsr.knist.network.converter.char.CharsD1` | `String` | D1 |
+| クラス | import | 入力型(T) | 次元 |
+|--------|--------|----------|------|
+| `RawD1(outputI)` | `com.wsr.knist.network.converter.raw.RawD1` | `Batch<IOType.D1>` | D1 |
+| `RawD2(outputI, outputJ)` | `com.wsr.knist.network.converter.raw.RawD2` | `Batch<IOType.D2>` | D2 |
+| `RawD3(outputI, outputJ, outputK)` | `com.wsr.knist.network.converter.raw.RawD3` | `Batch<IOType.D3>` | D3 |
+
+Raw 系は変換なし（`Batch<IOType.Dx>` をそのまま渡す）。カスタム型を使う場合はカスタム Converter を実装する。
 
 ### カスタムConverter実装に必要な import
 
@@ -320,11 +312,13 @@ import com.wsr.knist.network.converter.Converter  // Converter.D1<T> / D2<T>
 
 ### カスタムConverter実装例
 
-**出力ラベル用（Int → One-hot）**
+**出力ラベル用（List<Int> → One-hot）**
+
+T はバッチ型なので `List<Int>`（バッチ分のラベルをまとめて受け取る）。
 
 ```kotlin
 @Serializable
-data class LabelConverter(override val outputI: Int) : Converter.D1<Int>() {
+data class LabelConverter(override val outputI: Int) : Converter.D1<List<Int>>() {
     override fun encode(input: List<Int>): Batch<IOType.D1> {
         val value = FloatArray(input.size * outputI)
         input.forEachIndexed { batchIndex, label ->
@@ -333,21 +327,21 @@ data class LabelConverter(override val outputI: Int) : Converter.D1<Int>() {
         return Batch(size = input.size, shape = listOf(outputI), value = DataBuffer.create(value))
     }
     override fun decode(input: Batch<IOType.D1>): List<Int> =
-        input.toList().map { it.maxIndex() }
+        input.maxIndex().value.toFloatArray().map { it.toInt() }
 }
 ```
 
-**入力特徴量用（List<Float> → D1）**
+**入力特徴量用（List<List<Float>> → D2）**
 
 ```kotlin
 @Serializable
-data class FloatListConverter(override val outputI: Int) : Converter.D1<List<Float>>() {
-    override fun encode(input: List<List<Float>>): Batch<IOType.D1> {
+data class PixelConverter(override val outputI: Int, override val outputJ: Int) : Converter.D2<List<List<Float>>>() {
+    override fun encode(input: List<List<Float>>): Batch<IOType.D2> {
         val value = input.flatten().toFloatArray()
-        return Batch(size = input.size, shape = listOf(outputI), value = DataBuffer.create(value))
+        return Batch(size = input.size, shape = listOf(outputI, outputJ), value = DataBuffer.create(value))
     }
-    override fun decode(input: Batch<IOType.D1>): List<List<Float>> =
-        input.value.toFloatArray().toList().chunked(outputI)
+    override fun decode(input: Batch<IOType.D2>): List<List<Float>> =
+        input.value.toFloatArray().toList().chunked(outputI * outputJ)
 }
 ```
 
@@ -400,7 +394,7 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 ### カスタムConverterを保存する場合のビルド設定
 
-組み込みConverter（`LinearD1` 等）のみ使う場合は不要。カスタムConverterを保存・読み込みする場合のみ、以下の設定が必要。
+組み込みConverter（`RawD1` 等）のみ使う場合は不要。カスタムConverterを保存・読み込みする場合のみ、以下の設定が必要。
 
 ```kotlin
 // build.gradle.kts
@@ -486,8 +480,10 @@ inputD1(converter, optimizer, initializer)  → D1(n)
 
 ### 画像分類（CNN）
 
+`PixelConverter` / `LabelConverter` はカスタム実装（Converter実装例を参照）。
+
 ```
-inputD2(PixelConverter(28,28), ...)         → D2(28, 28)
+inputD2(PixelConverter(28,28), ...)         → D2(28, 28)   // Network<List<List<Float>>, List<Int>>
   → convD1(32, kernel=3, padding=1)         → D2(32, 28)   // outY=(28-3+2)/1+1=28
   → bias() → reLU()
   → maxPool(size=2)                         → D2(32, 14)   // 28/2=14
@@ -497,13 +493,15 @@ inputD2(PixelConverter(28,28), ...)         → D2(28, 28)
   → reshapeToD1()                           → D1(448)      // 64*7=448
   → layerNorm() → affine(128) → bias() → reLU()
   → affine(10)
-  → softmaxWithLoss(converter = { ... })   → Network<List<Float>, Int>
+  → softmaxWithLoss(converter = { LabelConverter(inputI) })
 ```
 
 ### Transformer言語モデル
 
+`WordsD1` / `WordD2` はカスタム実装（組み込みには含まれない）。
+
 ```
-wordsD1(maxLength=128, words=..., ...)      → D1(128)
+wordsD1(maxLength=128, words=..., ...)      → D1(128)      // Network<List<List<String>>, List<List<String>>>
   → tokenEmbedding(vocabSize=3000, 256)     → D2(128, 256)
   → positionEmbedding()
   → repeat(4) {
