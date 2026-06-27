@@ -6,9 +6,6 @@ import com.wsr.knist.Backend
 import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
-import dataset.stories.WordD2
-import dataset.stories.WordsD1
-import dataset.stories.wordsD1
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -24,10 +21,13 @@ import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
+import dataset.stories.WordD2
+import dataset.stories.WordsD1
 import dataset.stories.createWordList
 import dataset.stories.generateStories
 import dataset.stories.toData
 import dataset.stories.tokenize
+import dataset.stories.wordsD1
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
@@ -167,7 +167,10 @@ class TinyStoriesTest {
             maskValue = PAD_INDEX,
         )
 
-    private fun Network<List<List<String>>, List<List<String>>>.createStories(beginning: String, maxLength: Int): String {
+    private fun Network<List<List<String>>, List<List<String>>>.createStories(
+        beginning: String,
+        maxLength: Int,
+    ): String {
         val text = tokenize(beginning).take(MAX_LENGTH).toMutableList()
         repeat(maxLength) {
             val input = text.takeLast(MAX_LENGTH)
