@@ -47,8 +47,8 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D1ToD2): D2<I> = D2(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
+            inputX = reshape.outputI,
+            inputY = reshape.outputJ,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -56,9 +56,9 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D1ToD3): D3<I> = D3(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
-            inputZ = reshape.outputZ,
+            inputX = reshape.outputI,
+            inputY = reshape.outputJ,
+            inputZ = reshape.outputK,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -99,7 +99,7 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D2ToD1): D1<I> = D1(
             input = input,
             layers = layers + reshape,
-            inputSize = reshape.outputSize,
+            inputSize = reshape.outputI,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -107,9 +107,9 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D2ToD3): D3<I> = D3(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
-            inputZ = reshape.outputZ,
+            inputX = reshape.outputI,
+            inputY = reshape.outputJ,
+            inputZ = reshape.outputK,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -138,8 +138,8 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D3ToD2): D2<I> = D2(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
+            inputX = reshape.outputI,
+            inputY = reshape.outputJ,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -147,7 +147,7 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D3ToD1): D1<I> = D1(
             input = input,
             layers = layers + reshape,
-            inputSize = reshape.outputSize,
+            inputSize = reshape.outputI,
             optimizer = optimizer,
             initializer = initializer,
         )

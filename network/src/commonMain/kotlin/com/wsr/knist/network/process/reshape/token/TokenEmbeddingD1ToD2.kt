@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class TokenEmbeddingD1ToD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val vocabSize: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
@@ -46,8 +46,8 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
     initializer: WeightInitializer = this.initializer,
 ): NetworkBuilder.D2<T> = addReshape(
     reshape = TokenEmbeddingD1ToD2(
-        outputX = inputSize,
-        outputY = tokenSize,
+        outputI = inputSize,
+        outputJ = tokenSize,
         vocabSize = vocabSize,
         optimizer = optimizer.d2(vocabSize, tokenSize),
         weight = initializer.d2(

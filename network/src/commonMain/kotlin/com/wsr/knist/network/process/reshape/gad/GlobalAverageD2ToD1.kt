@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class GlobalAverageD2ToD1(private val inputX: Int, private val inputY: Int) : Reshape.D2ToD1() {
-    override val outputSize: Int = inputX
+    override val outputI: Int = inputX
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.average(axis = 1)
 
