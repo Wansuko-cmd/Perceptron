@@ -2,7 +2,6 @@
 
 package com.wsr.knist.core
 
-import com.wsr.knist.base.BufferScope
 import com.wsr.knist.base.data.DataBuffer
 import kotlin.jvm.JvmName
 import kotlinx.serialization.Serializable
@@ -157,7 +156,7 @@ sealed class IOType {
         fun d1(value: FloatArray): D1.Local = d1Impl(value).toLocal()
 
         context(_: IOScope)
-        inline fun d1(size: Int, init: (Int) -> Float = { 0f }): D1.Local = d1Impl(size, init).toLocal()
+        inline fun d1(i: Int, init: (Int) -> Float = { 0f }): D1.Local = d1Impl(i, init).toLocal()
 
         context(_: IOScope)
         inline fun d1(shape: List<Int>, init: (Int) -> Float = { 0f }): D1.Local = d1Impl(shape, init).toLocal()
@@ -254,7 +253,7 @@ fun IOType.Companion.d0(value: FloatArray): IOType.D0.Global = d0Impl(value)
 
 fun IOType.Companion.d1(value: FloatArray): IOType.D1.Global = d1Impl(value)
 
-inline fun IOType.Companion.d1(size: Int, init: (Int) -> Float = { 0f }): IOType.D1.Global = d1Impl(size, init)
+inline fun IOType.Companion.d1(i: Int, init: (Int) -> Float = { 0f }): IOType.D1.Global = d1Impl(i, init)
 
 inline fun IOType.Companion.d1(shape: List<Int>, init: (Int) -> Float = { 0f }): IOType.D1.Global = d1Impl(shape, init)
 

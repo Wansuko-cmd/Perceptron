@@ -10,88 +10,88 @@ import kotlin.jvm.JvmName
 class Batch<out T : IOType>(val value: DataBuffer, val size: Int, val shape: List<Int>) {
     companion object {
         fun <T : IOType> of(vararg elements: T): Batch<T> {
-            val batchSize = elements.size
+            val size = elements.size
             val shape = elements.first().shape
             val step = shape.reduce { acc, i -> acc * i }
-            val batchValue = DataBuffer.create(batchSize * step)
+            val batchValue = DataBuffer.create(size * step)
             elements.forEachIndexed { index, item ->
                 val start = index * step
                 Backend.copyInto(item.value, batchValue, start until start + item.value.size)
             }
             return Batch(
                 value = batchValue,
-                size = batchSize,
+                size = size,
                 shape = shape,
             )
         }
 
         context(_: IOScope)
-        inline fun d0(batchSize: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0.Local> =
-            d0Impl(batchSize, init).toLocal()
+        inline fun d0(size: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0.Local> =
+            d0Impl(size, init).toLocal()
 
         context(_: IOScope)
-        inline fun d1(batchSize: Int, size: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Local> =
-            d1Impl(batchSize, size, init).toLocal()
+        inline fun d1(size: Int, i: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Local> =
+            d1Impl(size, i, init).toLocal()
 
         context(_: IOScope)
-        inline fun d1(batchSize: Int, shape: List<Int>, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Local> =
-            d1Impl(batchSize, shape, init).toLocal()
+        inline fun d1(size: Int, shape: List<Int>, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Local> =
+            d1Impl(size, shape, init).toLocal()
 
         context(_: IOScope)
-        fun d1(batchSize: Int, size: Int, value: FloatArray): Batch<IOType.D1.Local> =
-            d1Impl(batchSize, size, value).toLocal()
+        fun d1(size: Int, i: Int, value: FloatArray): Batch<IOType.D1.Local> =
+            d1Impl(size, i, value).toLocal()
 
         context(_: IOScope)
         inline fun d2(
-            batchSize: Int,
+            size: Int,
             i: Int,
             j: Int,
             init: (Int, Int) -> Float = { _, _ -> 0f },
-        ): Batch<IOType.D2.Local> = d2Impl(batchSize, i, j, init).toLocal()
+        ): Batch<IOType.D2.Local> = d2Impl(size, i, j, init).toLocal()
 
         context(_: IOScope)
         inline fun d2(
-            batchSize: Int,
+            size: Int,
             shape: List<Int>,
             init: (Int, Int) -> Float = { _, _ -> 0f },
-        ): Batch<IOType.D2.Local> = d2Impl(batchSize, shape, init).toLocal()
+        ): Batch<IOType.D2.Local> = d2Impl(size, shape, init).toLocal()
 
         context(_: IOScope)
-        fun d2(batchSize: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Local> =
-            d2Impl(batchSize, i, j, value).toLocal()
+        fun d2(size: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Local> =
+            d2Impl(size, i, j, value).toLocal()
 
         context(_: IOScope)
         inline fun d3(
-            batchSize: Int,
+            size: Int,
             i: Int,
             j: Int,
             k: Int,
             init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
-        ): Batch<IOType.D3.Local> = d3Impl(batchSize, i, j, k, init).toLocal()
+        ): Batch<IOType.D3.Local> = d3Impl(size, i, j, k, init).toLocal()
 
         context(_: IOScope)
         inline fun d3(
-            batchSize: Int,
+            size: Int,
             shape: List<Int>,
             init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
-        ): Batch<IOType.D3.Local> = d3Impl(batchSize, shape, init).toLocal()
+        ): Batch<IOType.D3.Local> = d3Impl(size, shape, init).toLocal()
 
         context(_: IOScope)
         inline fun d4(
-            batchSize: Int,
+            size: Int,
             i: Int,
             j: Int,
             k: Int,
             l: Int,
             init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-        ): Batch<IOType.D4.Local> = d4Impl(batchSize, i, j, k, l, init).toLocal()
+        ): Batch<IOType.D4.Local> = d4Impl(size, i, j, k, l, init).toLocal()
 
         context(_: IOScope)
         inline fun d4(
-            batchSize: Int,
+            size: Int,
             shape: List<Int>,
             init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-        ): Batch<IOType.D4.Local> = d4Impl(batchSize, shape, init).toLocal()
+        ): Batch<IOType.D4.Local> = d4Impl(size, shape, init).toLocal()
     }
 
     val step = shape.reduce { acc, i -> acc * i }
@@ -189,90 +189,90 @@ context(scope: IOScope)
 fun Batch<IOType.D4>.toGlobal(): Batch<IOType.D4.Global> =
     Batch<IOType.D4.Global>(value, size, shape).also { scope.bufferScope.remove(value) }
 
-inline fun Batch.Companion.d0(batchSize: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0.Global> =
-    d0Impl(batchSize, init)
+inline fun Batch.Companion.d0(size: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D0.Global> =
+    d0Impl(size, init)
 
-inline fun Batch.Companion.d1(batchSize: Int, size: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Global> =
-    d1Impl(batchSize, size, init)
+inline fun Batch.Companion.d1(size: Int, i: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Global> =
+    d1Impl(size, i, init)
 
 inline fun Batch.Companion.d1(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int) -> Float = {
         0f
     },
-): Batch<IOType.D1.Global> = d1Impl(batchSize, shape, init)
+): Batch<IOType.D1.Global> = d1Impl(size, shape, init)
 
-fun Batch.Companion.d1(batchSize: Int, size: Int, value: FloatArray): Batch<IOType.D1.Global> =
-    d1Impl(batchSize, size, value)
+fun Batch.Companion.d1(size: Int, i: Int, value: FloatArray): Batch<IOType.D1.Global> =
+    d1Impl(size, i, value)
 
 inline fun Batch.Companion.d2(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     init: (Int, Int) -> Float = { _, _ -> 0f },
-): Batch<IOType.D2.Global> = d2Impl(batchSize, i, j, init)
+): Batch<IOType.D2.Global> = d2Impl(size, i, j, init)
 
 inline fun Batch.Companion.d2(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int, Int) -> Float = { _, _ -> 0f },
-): Batch<IOType.D2.Global> = d2Impl(batchSize, shape, init)
+): Batch<IOType.D2.Global> = d2Impl(size, shape, init)
 
-fun Batch.Companion.d2(batchSize: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Global> =
-    d2Impl(batchSize, i, j, value)
+fun Batch.Companion.d2(size: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Global> =
+    d2Impl(size, i, j, value)
 
 inline fun Batch.Companion.d3(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     k: Int,
     init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
-): Batch<IOType.D3.Global> = d3Impl(batchSize, i, j, k, init)
+): Batch<IOType.D3.Global> = d3Impl(size, i, j, k, init)
 
 inline fun Batch.Companion.d3(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
-): Batch<IOType.D3.Global> = d3Impl(batchSize, shape, init)
+): Batch<IOType.D3.Global> = d3Impl(size, shape, init)
 
 inline fun Batch.Companion.d4(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     k: Int,
     l: Int,
     init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-): Batch<IOType.D4.Global> = d4Impl(batchSize, i, j, k, l, init)
+): Batch<IOType.D4.Global> = d4Impl(size, i, j, k, l, init)
 
 inline fun Batch.Companion.d4(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-): Batch<IOType.D4.Global> = d4Impl(batchSize, shape, init)
+): Batch<IOType.D4.Global> = d4Impl(size, shape, init)
 
-fun Batch.Companion.d0(batchSize: Int, value: DataBuffer): Batch<IOType.D0.Global> = d0Impl(batchSize, value)
+fun Batch.Companion.d0(size: Int, value: DataBuffer): Batch<IOType.D0.Global> = d0Impl(size, value)
 
-fun Batch.Companion.d1(batchSize: Int, size: Int, value: DataBuffer): Batch<IOType.D1.Global> =
-    d1Impl(batchSize, size, value)
+fun Batch.Companion.d1(size: Int, i: Int, value: DataBuffer): Batch<IOType.D1.Global> =
+    d1Impl(size, i, value)
 
-fun Batch.Companion.d1(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D1.Global> =
-    d1Impl(batchSize, shape, value)
+fun Batch.Companion.d1(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D1.Global> =
+    d1Impl(size, shape, value)
 
-fun Batch.Companion.d2(batchSize: Int, i: Int, j: Int, value: DataBuffer): Batch<IOType.D2.Global> =
-    d2Impl(batchSize, i, j, value)
+fun Batch.Companion.d2(size: Int, i: Int, j: Int, value: DataBuffer): Batch<IOType.D2.Global> =
+    d2Impl(size, i, j, value)
 
-fun Batch.Companion.d2(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D2.Global> =
-    d2Impl(batchSize, shape, value)
+fun Batch.Companion.d2(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D2.Global> =
+    d2Impl(size, shape, value)
 
-fun Batch.Companion.d3(batchSize: Int, i: Int, j: Int, k: Int, value: DataBuffer): Batch<IOType.D3.Global> =
-    d3Impl(batchSize, i, j, k, value)
+fun Batch.Companion.d3(size: Int, i: Int, j: Int, k: Int, value: DataBuffer): Batch<IOType.D3.Global> =
+    d3Impl(size, i, j, k, value)
 
-fun Batch.Companion.d3(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D3.Global> =
-    d3Impl(batchSize, shape, value)
+fun Batch.Companion.d3(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D3.Global> =
+    d3Impl(size, shape, value)
 
-fun Batch.Companion.d4(batchSize: Int, i: Int, j: Int, k: Int, l: Int, value: DataBuffer): Batch<IOType.D4.Global> =
-    d4Impl(batchSize, i, j, k, l, value)
+fun Batch.Companion.d4(size: Int, i: Int, j: Int, k: Int, l: Int, value: DataBuffer): Batch<IOType.D4.Global> =
+    d4Impl(size, i, j, k, l, value)
 
-fun Batch.Companion.d4(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4.Global> =
-    d4Impl(batchSize, shape, value)
+fun Batch.Companion.d4(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4.Global> =
+    d4Impl(size, shape, value)

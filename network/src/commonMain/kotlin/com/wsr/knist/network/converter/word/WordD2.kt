@@ -5,7 +5,6 @@ import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.get
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -32,7 +31,7 @@ class WordD2(private val words: List<String>, private val length: Int, private v
                 result[offset + index * outputY] = 1f
             }
         }
-        return Batch.d2(batchSize = input.size, i = outputX, j = outputY, value = result)
+        return Batch.d2(size = input.size, i = outputX, j = outputY, value = result)
     }
 
     override fun decode(input: Batch<IOType.D2>): List<List<String>> = input.maxIndex(axis = 1).toList()

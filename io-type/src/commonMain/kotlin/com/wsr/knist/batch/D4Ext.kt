@@ -10,32 +10,32 @@ import kotlin.jvm.JvmName
 
 @PublishedApi
 internal inline fun Batch.Companion.d4Impl(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     k: Int,
     l: Int,
     init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-): Batch<IOType.D4.Global> = Batch(batchSize) { IOType.d4(i, j, k, l, init) }
+): Batch<IOType.D4.Global> = Batch(size) { IOType.d4(i, j, k, l, init) }
 
 @PublishedApi
 internal inline fun Batch.Companion.d4Impl(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int, Int, Int, Int) -> Float = { _, _, _, _ -> 0f },
-): Batch<IOType.D4.Global> = d4Impl(batchSize, shape[0], shape[1], shape[2], shape[3], init)
+): Batch<IOType.D4.Global> = d4Impl(size, shape[0], shape[1], shape[2], shape[3], init)
 
 internal fun Batch.Companion.d4Impl(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     k: Int,
     l: Int,
     value: DataBuffer,
-): Batch<IOType.D4.Global> = Batch(value = value, size = batchSize, shape = listOf(i, j, k, l))
+): Batch<IOType.D4.Global> = Batch(value = value, size = size, shape = listOf(i, j, k, l))
 
-internal fun Batch.Companion.d4Impl(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4.Global> =
-    Batch(value = value, size = batchSize, shape = shape)
+internal fun Batch.Companion.d4Impl(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D4.Global> =
+    Batch(value = value, size = size, shape = shape)
 
 val Batch<IOType.D4>.i get() = shape[0]
 
