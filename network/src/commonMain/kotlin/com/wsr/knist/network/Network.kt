@@ -19,8 +19,8 @@ private typealias TrainLambda = IOScope.(input: Batch<IOType>, context: Context)
 
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> internal constructor(
-    val inputConverter: Converter,
-    val outputConverter: Converter,
+    val inputConverter: Converter<I>,
+    val outputConverter: Converter<O>,
     val layers: List<Process>,
     val output: Output,
 ) {
@@ -29,17 +29,15 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return モデルの出力
      */
-    fun expect(input: I): O = expect(input = listOf(input))[0]
-
-    fun expect(input: List<I>): List<O> {
-        val input = inputConverter._encode(input)
-        val context = Context(input = input)
-        val output = IOScope.launch {
+    fun expect(input: I): O {
+        val encoded = inputConverter._encode(input)
+        val context = Context(input = encoded)
+        val result = IOScope.launch {
             layers
-                .fold(input) { acc, process -> with(process) { _expect(acc, context) } }
+                .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
                 .let { with(output) { _expect(it) } }
         }
-        return outputConverter._decode(output) as List<O>
+        return outputConverter._decode(result)
     }
 
     /**
@@ -47,31 +45,27 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun loss(input: I, label: O) = loss(input = listOf(input), label = listOf(label))
-
-    fun loss(input: I, label: (O) -> O) = loss(input = listOf(input)) { listOf(label(it[0])) }
-
-    fun loss(input: List<I>, label: List<O>): Float = _loss(input) {
+    fun loss(input: I, label: O): Float = _loss(input) {
         outputConverter._encode(label)
     }
 
-    fun loss(input: List<I>, label: (List<O>) -> List<O>): Float = _loss(input) {
-        val output = outputConverter._decode(it) as List<O>
-        val label = label(output)
-        outputConverter._encode(label)
+    inline fun loss(input: I, crossinline label: (O) -> O): Float = _loss(input) {
+        val decoded = outputConverter._decode(it)
+        outputConverter._encode( label(decoded))
     }
 
     @Suppress("FunctionName")
-    private inline fun _loss(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
-        val input = inputConverter._encode(input)
-        val context = Context(input = input)
-        val output = IOScope.launch {
-            val result = layers
-                .fold(input) { acc, process -> with(process) { _expect(acc, context) } }
+    @PublishedApi
+    internal inline fun _loss(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
+        val encoded = inputConverter._encode(input)
+        val context = Context(input = encoded)
+        val result = IOScope.launch {
+            val out = layers
+                .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
                 .let { i -> with(output) { _train(i, { label(it) }) } }
-            result.loss
+            out.loss
         }
-        return output.unwrap()
+        return result.unwrap()
     }
 
     /**
@@ -79,37 +73,35 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun train(input: I, label: O) = train(input = listOf(input), label = listOf(label))
-
-    fun train(input: I, label: (O) -> O) = train(input = listOf(input)) { listOf(label(it[0])) }
-
-    fun train(input: List<I>, label: List<O>): Float = _train(input) {
+    fun train(input: I, label: O): Float = _train(input) {
         outputConverter._encode(label)
     }
 
-    fun train(input: List<I>, label: (List<O>) -> List<O>): Float = _train(input) {
-        val output = outputConverter._decode(it) as List<O>
-        val label = label(output)
-        outputConverter._encode(label)
+    inline fun train(input: I, crossinline label: (O) -> O): Float = _train(input) {
+        val decoded = outputConverter._decode(it)
+        val labeled = label(decoded)
+        outputConverter._encode(labeled)
     }
 
     @Suppress("FunctionName")
-    private inline fun _train(input: List<I>, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
+    @PublishedApi
+    internal inline fun _train(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
         var loss = 0f
-        val output: TrainLambda = { input: Batch<IOType>, context: Context ->
-            val output = with(output) { _train(input) { label(it) } }
-            loss = output.loss.unwrap()
-            output.delta
+        val outputFn: TrainLambda = { encoded: Batch<IOType>, context: Context ->
+            val out = with(output) { _train(encoded) { label(it) } }
+            loss = out.loss.unwrap()
+            out.delta
         }
         IOScope.launch {
-            val input = inputConverter._encode(input)
-            val context = Context(input = input)
-            trainLambda(output).invoke(this, input, context)
+            val encoded = inputConverter._encode(input)
+            val context = Context(input = encoded)
+            trainLambda(outputFn).invoke(this, encoded, context)
         }
         return loss
     }
 
-    private val trainLambda: (TrainLambda) -> TrainLambda = run {
+    @PublishedApi
+    internal val trainLambda: (TrainLambda) -> TrainLambda = run {
         val initial: (TrainLambda) -> TrainLambda = { it }
         layers.foldRight(initial) { layer: Process, acc: (TrainLambda) -> TrainLambda ->
             { final: TrainLambda ->
