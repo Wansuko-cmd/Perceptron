@@ -3,6 +3,7 @@
 package stories
 
 import com.wsr.knist.Backend
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
@@ -76,7 +77,7 @@ class TinyStoriesTest {
                     println(
                         "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
                     )
-                    network.train(inputs, labels).also { println("loss: $it") }
+                    network.train(inputs, labels).also { println("loss: ${it.unwrap()}") }
                 }
         }
 

@@ -6,7 +6,6 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Context
@@ -45,27 +44,26 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun loss(input: I, label: O): Float = _loss(input) {
+    fun loss(input: I, label: O): IOType.D0.Global = _loss(input) {
         outputConverter._encode(label)
     }
 
-    inline fun loss(input: I, crossinline label: (O) -> O): Float = _loss(input) {
+    inline fun loss(input: I, crossinline label: (O) -> O): IOType.D0.Global = _loss(input) {
         val decoded = outputConverter._decode(it)
         outputConverter._encode(label(decoded))
     }
 
     @Suppress("FunctionName")
     @PublishedApi
-    internal inline fun _loss(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
+    internal inline fun _loss(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): IOType.D0.Global {
         val encoded = inputConverter._encode(input)
         val context = Context(input = encoded)
-        val result = IOScope.launch {
+        return IOScope.launch {
             val out = layers
                 .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
                 .let { i -> with(output) { _train(i, { label(it) }) } }
-            out.loss
+            out.loss.toGlobal()
         }
-        return result.unwrap()
     }
 
     /**
@@ -73,11 +71,11 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun train(input: I, label: O): Float = _train(input) {
+    fun train(input: I, label: O): IOType.D0.Global = _train(input) {
         outputConverter._encode(label)
     }
 
-    inline fun train(input: I, crossinline label: (O) -> O): Float = _train(input) {
+    inline fun train(input: I, crossinline label: (O) -> O): IOType.D0.Global = _train(input) {
         val decoded = outputConverter._decode(it)
         val labeled = label(decoded)
         outputConverter._encode(labeled)
@@ -85,11 +83,11 @@ class Network<I, O> internal constructor(
 
     @Suppress("FunctionName")
     @PublishedApi
-    internal inline fun _train(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
-        var loss = 0f
+    internal inline fun _train(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): IOType.D0.Global {
+        var loss: IOType.D0.Global? = null
         val outputFn: TrainLambda = { encoded: Batch<IOType>, context: Context ->
             val out = with(output) { _train(encoded) { label(it) } }
-            loss = out.loss.unwrap()
+            loss = out.loss.toGlobal()
             out.delta
         }
         IOScope.launch {
@@ -97,7 +95,7 @@ class Network<I, O> internal constructor(
             val context = Context(input = encoded)
             trainLambda(outputFn).invoke(this, encoded, context)
         }
-        return loss
+        return loss!!
     }
 
     @PublishedApi

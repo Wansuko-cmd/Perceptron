@@ -1,5 +1,6 @@
 package dataset.stories
 
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.NetworkSerializer
@@ -122,7 +123,7 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
                     """.trimIndent(),
                 )
 
-                val loss = network.train(inputs, labels)
+                val loss = network.train(inputs, labels).unwrap()
                 println(
                     """
                             loss: $loss
