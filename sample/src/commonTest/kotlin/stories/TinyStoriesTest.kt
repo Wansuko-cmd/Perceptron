@@ -166,12 +166,12 @@ class TinyStoriesTest {
             maskValue = PAD_INDEX,
         )
 
-    private fun Network<List<String>, List<String>>.createStories(beginning: String, maxLength: Int): String {
+    private fun Network<List<List<String>>, List<List<String>>>.createStories(beginning: String, maxLength: Int): String {
         val text = tokenize(beginning).take(MAX_LENGTH).toMutableList()
         repeat(maxLength) {
             val input = text.takeLast(MAX_LENGTH)
             if (input.last() == "<EOS>") return@repeat
-            val expect = this.expect(input)[input.lastIndex]
+            val expect = this.expect(listOf(input))[0][input.lastIndex]
             text.add(expect)
         }
         return text.joinToString(" ")

@@ -41,7 +41,7 @@ private const val NUM_OF_STORIES = 1000
 private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
 
-fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String>> {
+fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> {
     println("単語リスト生成開始")
     val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 
@@ -135,12 +135,12 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<String>, List<String
     return network
 }
 
-private fun Network<List<String>, List<String>>.createStories(beginning: String, maxLength: Int): String {
+private fun Network<List<List<String>>, List<List<String>>>.createStories(beginning: String, maxLength: Int): String {
     val text = tokenize(beginning).take(MAX_LENGTH).toMutableList()
     repeat(maxLength) {
         val input = text.takeLast(MAX_LENGTH)
         if (input.last() == "<EOS>") return@repeat
-        val expect = this.expect(input)[input.lastIndex]
+        val expect = this.expect(listOf(input))[0][input.lastIndex]
         text.add(expect)
     }
     return text.joinToString(" ")

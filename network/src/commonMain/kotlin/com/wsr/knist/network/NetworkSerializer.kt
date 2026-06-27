@@ -5,9 +5,6 @@ package com.wsr.knist.network
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.char.CharD1
 import com.wsr.knist.network.converter.char.CharsD1
-import com.wsr.knist.network.converter.list.LinearD2
-import com.wsr.knist.network.converter.list.LinearD3
-import com.wsr.knist.network.converter.list.ListD1
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.converter.raw.RawD3
@@ -461,11 +458,6 @@ private val buildInSerializersModule = SerializersModule {
         // Char
         subclass(CharD1::class)
         subclass(CharsD1::class)
-
-        // Linear
-        subclass(ListD1::class)
-        subclass(LinearD2::class)
-        subclass(LinearD3::class)
 
         // Raw
         subclass(RawD1::class)
