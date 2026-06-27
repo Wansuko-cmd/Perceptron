@@ -8,6 +8,9 @@ import com.wsr.knist.network.converter.char.CharsD1
 import com.wsr.knist.network.converter.linear.LinearD1
 import com.wsr.knist.network.converter.linear.LinearD2
 import com.wsr.knist.network.converter.linear.LinearD3
+import com.wsr.knist.network.converter.raw.RawD1
+import com.wsr.knist.network.converter.raw.RawD2
+import com.wsr.knist.network.converter.raw.RawD3
 import com.wsr.knist.network.converter.word.WordD1
 import com.wsr.knist.network.converter.word.WordD2
 import com.wsr.knist.network.converter.word.WordsD1
@@ -465,6 +468,11 @@ private val buildInSerializersModule = SerializersModule {
         subclass(LinearD1::class)
         subclass(LinearD2::class)
         subclass(LinearD3::class)
+
+        // Raw
+        subclass(RawD1::class)
+        subclass(RawD2::class)
+        subclass(RawD3::class)
 
         // Word
         subclass(WordD1::class)
