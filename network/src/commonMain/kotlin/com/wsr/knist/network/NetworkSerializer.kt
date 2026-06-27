@@ -133,8 +133,9 @@ import kotlinx.serialization.modules.subclass
 import okio.BufferedSink
 import okio.BufferedSource
 
+@Suppress("UNCHECKED_CAST")
 class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
-    private val converterSerializer = PolymorphicSerializer(Converter::class)
+    private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
     private val layerSerializer = ListSerializer(PolymorphicSerializer(Process::class))
     private val outputSerializer = PolymorphicSerializer(Output::class)
 
@@ -148,8 +149,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
 
     override fun serialize(encoder: Encoder, value: Network<I, O>) {
         encoder.encodeStructure(descriptor) {
-            encodeSerializableElement(descriptor, 0, converterSerializer, value.inputConverter)
-            encodeSerializableElement(descriptor, 1, converterSerializer, value.outputConverter)
+            encodeSerializableElement(descriptor, 0, converterSerializer, value.inputConverter as Converter<Any?>)
+            encodeSerializableElement(descriptor, 1, converterSerializer, value.outputConverter as Converter<Any?>)
             encodeSerializableElement(descriptor, 2, layerSerializer, value.layers)
             encodeSerializableElement(descriptor, 3, outputSerializer, value.output)
         }
@@ -158,14 +159,14 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     override fun deserialize(decoder: Decoder): Network<I, O> = decoder.decodeStructure(descriptor) {
         if (decodeSequentially()) {
             Network(
-                inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer),
-                outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer),
+                inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer) as Converter<I>,
+                outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<O>,
                 layers = decodeSerializableElement(descriptor, 2, layerSerializer),
                 output = decodeSerializableElement(descriptor, 3, outputSerializer),
             )
         } else {
-            var inputConverter: Converter? = null
-            var outputConverter: Converter? = null
+            var inputConverter: Converter<Any?>? = null
+            var outputConverter: Converter<Any?>? = null
             var layers: List<Process>? = null
             var output: Output? = null
             while (true) {
@@ -179,8 +180,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
                 }
             }
             Network(
-                inputConverter = checkNotNull(inputConverter),
-                outputConverter = checkNotNull(outputConverter),
+                inputConverter = checkNotNull(inputConverter) as Converter<I>,
+                outputConverter = checkNotNull(outputConverter) as Converter<O>,
                 layers = checkNotNull(layers),
                 output = checkNotNull(output),
             )
@@ -231,7 +232,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
         }
 
         @JvmName("registerConverter")
-        inline fun <reified T : Converter> register(clazz: KClass<T>) {
+        inline fun <reified T : Converter<*>> register(clazz: KClass<T>) {
             val module = SerializersModule {
                 polymorphic(Converter::class) {
                     subclass(clazz)
