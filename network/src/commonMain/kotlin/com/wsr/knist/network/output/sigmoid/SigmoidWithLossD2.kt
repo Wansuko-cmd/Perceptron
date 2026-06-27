@@ -30,13 +30,6 @@ internal class SigmoidWithLossD2 internal constructor(val outputI: Int, val outp
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.sigmoidWithLoss() = addOutput(
-    output = SigmoidWithLossD2(
-        outputI = inputI,
-        outputJ = inputJ,
-    ),
-)
-
 fun <I, O> NetworkBuilder.D2<I>.sigmoidWithLoss(converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>) = addOutput(
     output = SigmoidWithLossD2(
         outputI = inputI,
