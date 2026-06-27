@@ -84,7 +84,7 @@ val avg: Batch<IOType.D0> = batchOfD1.average()
 ```kotlin
 @Serializable
 class MyLayerD1 internal constructor(
-    override val outputSize: Int,
+    override val outputI: Int,
     // 重みがある場合: private var weight: IOType.D1.Global
 ) : Compute.D1() {
 
@@ -112,8 +112,8 @@ class MyLayerD1 internal constructor(
 ```kotlin
 @Serializable
 class MyLayerD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> { ... }
     override fun IOScope.train(
@@ -129,9 +129,9 @@ class MyLayerD2 internal constructor(
 ```kotlin
 @Serializable
 class MyLayerD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> { ... }
     override fun IOScope.train(
@@ -145,11 +145,11 @@ class MyLayerD3 internal constructor(
 ### NetworkBuilder への登録
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myLayer() = addProcess(MyLayerD1(outputSize = inputSize))
-fun <T> NetworkBuilder.D2<T>.myLayer() = addProcess(MyLayerD2(outputX = inputX, outputY = inputY))
+fun <T> NetworkBuilder.D1<T>.myLayer() = addProcess(MyLayerD1(outputI = inputI))
+fun <T> NetworkBuilder.D2<T>.myLayer() = addProcess(MyLayerD2(outputI = inputI, outputJ = inputJ))
 ```
 
-`inputSize`（D1）・`inputX` / `inputY`（D2）・`inputX` / `inputY` / `inputZ`（D3）が前の層の出力サイズ。
+`inputI`（D1）・`inputI` / `inputJ`（D2）・`inputI` / `inputJ` / `inputK`（D3）が前の層の出力サイズ。
 `optimizer` / `initializer` は `NetworkBuilder` のプロパティとして参照できる（`this.optimizer` / `this.initializer`）。
 
 ### 重みを持つ層の実装例
@@ -157,7 +157,7 @@ fun <T> NetworkBuilder.D2<T>.myLayer() = addProcess(MyLayerD2(outputX = inputX, 
 ```kotlin
 @Serializable
 class WeightedD1 internal constructor(
-    override val outputSize: Int,
+    override val outputI: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,  // Global で保持する
 ) : Compute.D1() {
@@ -180,12 +180,12 @@ class WeightedD1 internal constructor(
 
 fun <T> NetworkBuilder.D1<T>.weightedLayer() = addProcess(
     WeightedD1(
-        outputSize = inputSize,
-        optimizer = optimizer.d1(inputSize),
+        outputI = inputI,
+        optimizer = optimizer.d1(inputI),
         weight = initializer.d1(
-            input = listOf(inputSize),
-            output = listOf(inputSize),
-            size = inputSize,
+            input = listOf(inputI),
+            output = listOf(inputI),
+            size = inputI,
         ),
     ),
 )
@@ -205,7 +205,7 @@ fun <T> NetworkBuilder.D1<T>.weightedLayer() = addProcess(
 
 ```kotlin
 @Serializable
-class MyOutputD1 internal constructor(val outputSize: Int) : Output.D1() {
+class MyOutputD1 internal constructor(val outputI: Int) : Output.D1() {
 
     // 推論時の出力（softmax 等の変換のみ。損失計算不要）
     override fun IOScope.expect(input: Batch<IOType.D1>): Batch<IOType.D1> {
@@ -236,11 +236,11 @@ class MyOutputD1 internal constructor(val outputSize: Int) : Output.D1() {
 NetworkBuilder への登録:
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myOutput() = addOutput(MyOutputD1(outputSize = inputSize))
+fun <T> NetworkBuilder.D1<T>.myOutput() = addOutput(MyOutputD1(outputI = inputI))
 
 // converter を使う場合（出力を任意型に変換）
 fun <I, O> NetworkBuilder.D1<I>.myOutput(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) =
-    addOutput(output = MyOutputD1(outputSize = inputSize), converter = converter)
+    addOutput(output = MyOutputD1(outputI = inputI), converter = converter)
 ```
 
 ---
@@ -290,12 +290,12 @@ class MyInitializer : WeightInitializer {
         return IOType.D1.Global(DataBuffer.create(data))
     }
 
-    override fun d2(input: List<Int>, output: List<Int>, x: Int, y: Int): IOType.D2.Global {
-        val data = FloatArray(x * y) { /* 初期値 */ 0f }
-        return IOType.D2.Global(value = DataBuffer.create(data), shape = listOf(x, y))
+    override fun d2(input: List<Int>, output: List<Int>, i: Int, j: Int): IOType.D2.Global {
+        val data = FloatArray(i * j) { /* 初期値 */ 0f }
+        return IOType.D2.Global(value = DataBuffer.create(data), shape = listOf(i, j))
     }
 
-    override fun d3(input: List<Int>, output: List<Int>, x: Int, y: Int, z: Int): IOType.D3.Global { ... }
+    override fun d3(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int): IOType.D3.Global { ... }
     override fun d4(input: List<Int>, output: List<Int>, i: Int, j: Int, k: Int, l: Int): IOType.D4.Global { ... }
 }
 ```
