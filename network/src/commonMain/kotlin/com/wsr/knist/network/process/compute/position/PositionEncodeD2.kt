@@ -14,16 +14,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class PositionEncodeD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val waveLength: Float,
 ) : Compute.D2() {
     private val position by lazy {
-        IOType.d2(outputX, outputY) { x, y ->
+        IOType.d2(outputI, outputJ) { x, y ->
             if (y % 2 == 0) {
-                sin(x / waveLength.pow(y / outputY.toFloat()))
+                sin(x / waveLength.pow(y / outputJ.toFloat()))
             } else {
-                cos(x / waveLength.pow((y - 1) / outputY.toFloat()))
+                cos(x / waveLength.pow((y - 1) / outputJ.toFloat()))
             }
         }
     }
@@ -42,8 +42,8 @@ class PositionEncodeD2 internal constructor(
 
 fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f) = addProcess(
     process = PositionEncodeD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputI = inputI,
+        outputJ = inputJ,
         waveLength = waveLength,
     ),
 )

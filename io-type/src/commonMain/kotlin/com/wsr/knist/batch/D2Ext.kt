@@ -10,27 +10,27 @@ import kotlin.jvm.JvmName
 
 @PublishedApi
 internal inline fun Batch.Companion.d2Impl(
-    batchSize: Int,
+    size: Int,
     i: Int,
     j: Int,
     init: (Int, Int) -> Float = { _, _ -> 0f },
-): Batch<IOType.D2.Global> = Batch(batchSize) { IOType.d2(i, j, init) }
+): Batch<IOType.D2.Global> = Batch(size) { IOType.d2(i, j, init) }
 
 @PublishedApi
 internal inline fun Batch.Companion.d2Impl(
-    batchSize: Int,
+    size: Int,
     shape: List<Int>,
     init: (Int, Int) -> Float = { _, _ -> 0f },
-): Batch<IOType.D2.Global> = d2Impl(batchSize, shape[0], shape[1], init)
+): Batch<IOType.D2.Global> = d2Impl(size, shape[0], shape[1], init)
 
-internal fun Batch.Companion.d2Impl(batchSize: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Global> =
-    Batch(value = DataBuffer.create(value), size = batchSize, shape = listOf(i, j))
+internal fun Batch.Companion.d2Impl(size: Int, i: Int, j: Int, value: FloatArray): Batch<IOType.D2.Global> =
+    Batch(value = DataBuffer.create(value), size = size, shape = listOf(i, j))
 
-internal fun Batch.Companion.d2Impl(batchSize: Int, i: Int, j: Int, value: DataBuffer): Batch<IOType.D2.Global> =
-    Batch(value = value, size = batchSize, shape = listOf(i, j))
+internal fun Batch.Companion.d2Impl(size: Int, i: Int, j: Int, value: DataBuffer): Batch<IOType.D2.Global> =
+    Batch(value = value, size = size, shape = listOf(i, j))
 
-internal fun Batch.Companion.d2Impl(batchSize: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D2.Global> =
-    Batch(value = value, size = batchSize, shape = shape)
+internal fun Batch.Companion.d2Impl(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D2.Global> =
+    Batch(value = value, size = size, shape = shape)
 
 val Batch<IOType.D2>.i get() = shape[0]
 

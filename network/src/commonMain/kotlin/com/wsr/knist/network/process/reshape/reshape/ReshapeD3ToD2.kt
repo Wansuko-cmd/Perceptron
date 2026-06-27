@@ -11,36 +11,36 @@ import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD3ToD2(override val outputX: Int, override val outputY: Int) : Reshape.D3ToD2() {
+internal class ReshapeD3ToD2(override val outputI: Int, override val outputJ: Int) : Reshape.D3ToD2() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> =
-        input.reshapeToD2(i = outputX, j = outputY)
+        input.reshapeToD2(i = outputI, j = outputJ)
 
     override fun IOScope.train(
         input: Batch<IOType.D3>,
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D3> {
-        val output = input.reshapeToD2(i = outputX, j = outputY)
+        val output = input.reshapeToD2(i = outputI, j = outputJ)
         val delta = calcDelta(output)
         return delta.reshapeToD3(input.shape)
     }
 }
 
 fun <T> NetworkBuilder.D3<T>.reshapeToD2(i: Int, j: Int): NetworkBuilder.D2<T> {
-    check(inputX * inputY * inputZ == i * j) {
+    check(inputI * inputJ * inputK == i * j) {
         """
             invalid parameter.
-            inputX: $inputX
-            inputY: $inputY
-            inputZ: $inputZ
-            outputX: $i
-            outputY: $j
+            inputI: $inputI
+            inputJ: $inputJ
+            inputK: $inputK
+            outputI: $i
+            outputJ: $j
         """.trimIndent()
     }
     return addReshape(
         reshape = ReshapeD3ToD2(
-            outputX = i,
-            outputY = j,
+            outputI = i,
+            outputJ = j,
         ),
     )
 }

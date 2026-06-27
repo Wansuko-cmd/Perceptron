@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ReLUD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
+class ReLUD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0f)
@@ -27,4 +27,4 @@ class ReLUD2 internal constructor(override val outputX: Int, override val output
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.reLU() = addProcess(ReLUD2(outputX = inputX, outputY = inputY))
+fun <T> NetworkBuilder.D2<T>.reLU() = addProcess(ReLUD2(outputI = inputI, outputJ = inputJ))

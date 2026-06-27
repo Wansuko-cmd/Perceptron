@@ -11,7 +11,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD3(override val outputX: Int, override val outputY: Int, override val outputZ: Int) :
+class LinearD3(override val outputI: Int, override val outputJ: Int, override val outputK: Int) :
     Converter.D3<IOType.D3>() {
     override fun encode(input: List<IOType.D3>): Batch<IOType.D3> = input.toBatch()
     override fun decode(input: Batch<IOType.D3>): List<IOType.D3> = input.toList()

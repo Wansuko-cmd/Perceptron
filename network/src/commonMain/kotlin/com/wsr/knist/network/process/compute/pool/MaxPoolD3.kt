@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.shape.broadcastToD4
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
@@ -13,27 +12,27 @@ import kotlinx.serialization.Serializable
 class MaxPoolD3 internal constructor(
     val poolSize: Int,
     val channel: Int,
-    val inputX: Int,
-    val inputY: Int,
+    val inputI: Int,
+    val inputJ: Int,
     val padding: Int,
 ) : Compute.D3() {
-    override val outputX: Int = channel
-    override val outputY: Int = (inputX + 2 * padding - poolSize) / poolSize + 1
-    override val outputZ: Int = (inputY + 2 * padding - poolSize) / poolSize + 1
+    override val outputI: Int = channel
+    override val outputJ: Int = (inputI + 2 * padding - poolSize) / poolSize + 1
+    override val outputK: Int = (inputJ + 2 * padding - poolSize) / poolSize + 1
 
     init {
         check(
-            (inputX + 2 * padding - poolSize) % poolSize == 0 &&
-                (inputY + 2 * padding - poolSize) % poolSize == 0,
+            (inputI + 2 * padding - poolSize) % poolSize == 0 &&
+                (inputJ + 2 * padding - poolSize) % poolSize == 0,
         ) {
             """
             invalid parameter.
-            inputX: $inputX
-            inputY: $inputY
+            inputI: $inputI
+            inputJ: $inputJ
             poolSize: $poolSize
             padding: $padding
-            outputY: ${(inputX + 2 * padding - poolSize) / poolSize.toFloat() + 1}
-            outputZ: ${(inputY + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            outputJ: ${(inputI + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            outputK: ${(inputJ + 2 * padding - poolSize) / poolSize.toFloat() + 1}
             """.trimIndent()
         }
     }
@@ -65,9 +64,9 @@ class MaxPoolD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
     process = MaxPoolD3(
         poolSize = size,
-        channel = inputX,
-        inputX = inputY,
-        inputY = inputZ,
+        channel = inputI,
+        inputI = inputJ,
+        inputJ = inputK,
         padding = padding,
     ),
 )

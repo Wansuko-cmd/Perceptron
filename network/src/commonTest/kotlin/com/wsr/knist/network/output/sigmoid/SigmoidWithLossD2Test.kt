@@ -3,9 +3,7 @@
 package com.wsr.knist.network.output.sigmoid
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkScopeTestRule
@@ -15,7 +13,7 @@ import kotlin.test.assertEquals
 class SigmoidWithLossD2Test {
     @Test
     fun `expect=sigmoidを計算`() = networkScopeTestRule {
-        val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
+        val target = SigmoidWithLossD2(outputI = 2, outputJ = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
         val actual = with(target) { _expect(input) } as Batch<IOType.D2>
@@ -28,7 +26,7 @@ class SigmoidWithLossD2Test {
 
     @Test
     fun `train=sigmoidの逆伝播`() = networkScopeTestRule {
-        val target = SigmoidWithLossD2(outputX = 2, outputY = 2)
+        val target = SigmoidWithLossD2(outputI = 2, outputJ = 2)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 

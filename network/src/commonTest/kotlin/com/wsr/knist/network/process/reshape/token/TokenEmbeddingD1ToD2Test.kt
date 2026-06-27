@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.reshape.token
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -17,8 +16,8 @@ import kotlin.test.Test
 
 class TokenEmbeddingD1ToD2Test {
     val target = TokenEmbeddingD1ToD2(
-        outputX = 3,
-        outputY = 5,
+        outputI = 3,
+        outputJ = 5,
         vocabSize = 5,
         optimizer = Sgd(Scheduler.Fix(0.1f)).d2(5, 5),
         weight = IOType.d2(5, 5) { i, j -> i * 2f + j },

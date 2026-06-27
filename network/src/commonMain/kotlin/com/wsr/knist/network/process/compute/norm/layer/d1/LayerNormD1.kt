@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LayerNormD1 internal constructor(override val outputSize: Int, private val e: Float) : Compute.D1() {
+class LayerNormD1 internal constructor(override val outputI: Int, private val e: Float) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val average = input.average()
         val numerator = input - average
@@ -41,7 +41,7 @@ class LayerNormD1 internal constructor(override val outputSize: Int, private val
         val dx1 = dNumerator
 
         // dy/x <- average(x)のx
-        val dx2 = -1f * dNumerator.sum() / outputSize.toFloat()
+        val dx2 = -1f * dNumerator.sum() / outputI.toFloat()
 
         // dy/x <- variance(x)のx
         val dx3 = run {
@@ -57,7 +57,7 @@ class LayerNormD1 internal constructor(override val outputSize: Int, private val
              *   = -sum(delta * output) / (denominator^2 * outputSize)
              */
             val dvn = -1f * (delta * output).sum()
-            val dvd = 2f * denominator.pow(2) * outputSize.toFloat()
+            val dvd = 2f * denominator.pow(2) * outputI.toFloat()
             val dVariance = dvn / dvd
 
             // dy/[x-average(x)]
@@ -66,7 +66,7 @@ class LayerNormD1 internal constructor(override val outputSize: Int, private val
             // dy/[x]
             val dx1 = dSquared
             // dy/[-average(x)]
-            val dx2 = -1f * dSquared.sum() / outputSize.toFloat()
+            val dx2 = -1f * dSquared.sum() / outputI.toFloat()
 
             dx1 + dx2
         }
@@ -76,5 +76,4 @@ class LayerNormD1 internal constructor(override val outputSize: Int, private val
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f) =
-    addProcess(process = LayerNormD1(outputSize = inputSize, e = e))
+fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f) = addProcess(process = LayerNormD1(outputI = inputI, e = e))

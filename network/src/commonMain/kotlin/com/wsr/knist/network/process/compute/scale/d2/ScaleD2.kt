@@ -13,8 +13,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ScaleD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
@@ -45,25 +45,25 @@ fun <T> NetworkBuilder.D2<T>.scale(
 ): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> ScaleD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             optimizer = optimizer.d2(
-                inputX,
-                inputY,
+                inputI,
+                inputJ,
             ),
             weight = initializer.d2(
-                input = listOf(inputX, inputY),
-                output = listOf(inputX, inputY),
-                x = inputX,
-                y = inputY,
+                input = listOf(inputI, inputJ),
+                output = listOf(inputI, inputJ),
+                i = inputI,
+                j = inputJ,
             ),
         )
 
         0, 1 -> {
-            val inputT = if (axis == 0) inputX else inputY
+            val inputT = if (axis == 0) inputI else inputJ
             ScaleAxisD2(
-                outputX = inputX,
-                outputY = inputY,
+                outputI = inputI,
+                outputJ = inputJ,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

@@ -10,7 +10,7 @@ import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class SigmoidWithLossD1 internal constructor(val outputSize: Int) : Output.D1() {
+internal class SigmoidWithLossD1 internal constructor(val outputI: Int) : Output.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>): Batch<IOType.D1> = input.sigmoid()
 
     override fun IOScope.train(
@@ -19,7 +19,7 @@ internal class SigmoidWithLossD1 internal constructor(val outputSize: Int) : Out
     ): TResult<IOType.D1> {
         val output = input.sigmoid()
         val label = label(output)
-        val one = Batch.d1(label.size, outputSize) { 1f }
+        val one = Batch.d1(label.size, outputI) { 1f }
         val loss = run {
             val y = label * output.ln(1e-7f)
             val p = (one - label) * (one - output).ln(1e-7f)
@@ -30,9 +30,9 @@ internal class SigmoidWithLossD1 internal constructor(val outputSize: Int) : Out
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.sigmoidWithLoss() = addOutput(SigmoidWithLossD1(inputSize))
+fun <T> NetworkBuilder.D1<T>.sigmoidWithLoss() = addOutput(SigmoidWithLossD1(inputI))
 
 fun <I, O> NetworkBuilder.D1<I>.sigmoidWithLoss(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) = addOutput(
-    output = SigmoidWithLossD1(inputSize),
+    output = SigmoidWithLossD1(inputI),
     converter = converter,
 )

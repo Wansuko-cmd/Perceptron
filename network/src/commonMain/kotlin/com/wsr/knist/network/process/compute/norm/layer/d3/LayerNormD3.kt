@@ -1,14 +1,6 @@
 package com.wsr.knist.network.process.compute.norm.layer.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.math.sqrt
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.plus.plus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.average
-import com.wsr.knist.batch.reduction.sum
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
@@ -18,12 +10,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LayerNormD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val e: Float,
 ) : Compute.D3() {
-    private val outputSize = outputX * outputY * outputZ
+    private val outputSize = outputI * outputJ * outputK
 
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val average = input.average()
@@ -94,16 +86,16 @@ class LayerNormD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> LayerNormD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             e = e,
         )
 
         0, 1, 2 -> LayerNormAxisD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             axis = axis,
             e = e,
         )

@@ -11,8 +11,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int, val padding: Int) :
     Compute.D2() {
-    override val outputX: Int = channel
-    override val outputY: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
+    override val outputI: Int = channel
+    override val outputJ: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 
     init {
         check((inputSize + 2 * padding - poolSize) % poolSize == 0) {
@@ -52,8 +52,8 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
 fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
     process = MaxPoolD2(
         poolSize = size,
-        channel = inputX,
-        inputSize = inputY,
+        channel = inputI,
+        inputSize = inputJ,
         padding = padding,
     ),
 )

@@ -2,8 +2,6 @@
 
 package com.wsr.knist.batch
 import com.wsr.knist.assertContentEquals
-import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.d0
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d0
 import com.wsr.knist.core.d1
@@ -31,7 +29,7 @@ class BatchTest {
 
     @Test
     fun `Batch init=初期化関数でバッチ作成`() = ioTypeTestRule {
-        val batch = Batch.d0(batchSize = 3) { i -> i.toFloat() }
+        val batch = Batch.d0(size = 3) { i -> i.toFloat() }
         assertEquals(3, batch.size)
         assertContentEquals(IOType.d0(0f), batch[0])
         assertContentEquals(IOType.d0(1f), batch[1])

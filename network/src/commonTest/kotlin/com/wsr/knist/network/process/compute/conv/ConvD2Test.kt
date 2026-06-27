@@ -3,10 +3,7 @@
 package com.wsr.knist.network.process.compute.conv
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
-import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
 import com.wsr.knist.core.get
@@ -25,8 +22,8 @@ class ConvD2Test {
             kernel = 2,
             stride = 1,
             padding = 0,
-            inputX = 3,
-            inputY = 3,
+            inputI = 3,
+            inputJ = 3,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d4(i = 2, j = 2, k = 2, l = 2),
             weight = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l },
         )

@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.bias.d2
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -18,8 +17,8 @@ import kotlin.test.Test
 class BiasD2Test {
     val target
         get() = BiasD2(
-            outputX = 2,
-            outputY = 2,
+            outputI = 2,
+            outputJ = 2,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d2(2, 2),
             weight = IOType.d2(2, 2) { i, j -> i * 2f + j },
         )

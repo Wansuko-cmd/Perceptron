@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 @Serializable
-class DebugD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
+class DebugD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
     @Transient
     var onInput: (Batch<IOType.D2>) -> Unit = {}
 
@@ -38,8 +38,8 @@ class DebugD2 internal constructor(override val outputX: Int, override val outpu
 fun <T> NetworkBuilder.D2<T>.debug(onInput: (Batch<IOType.D2>) -> Unit = {}, onDelta: (Batch<IOType.D2>) -> Unit = {}) =
     addProcess(
         process = DebugD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
         ).apply {
             this.onInput = onInput
             this.onDelta = onDelta

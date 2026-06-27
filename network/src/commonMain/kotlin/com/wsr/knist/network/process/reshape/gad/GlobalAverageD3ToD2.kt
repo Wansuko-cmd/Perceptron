@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.reshape.gad
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.reduction.average.average
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
@@ -11,10 +10,10 @@ import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class GlobalAverageD3ToD2(private val inputX: Int, private val inputY: Int, private val inputZ: Int) :
+internal class GlobalAverageD3ToD2(private val inputI: Int, private val inputJ: Int, private val inputK: Int) :
     Reshape.D3ToD2() {
-    override val outputX: Int = inputY
-    override val outputY: Int = inputZ
+    override val outputI: Int = inputJ
+    override val outputJ: Int = inputK
 
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> = forward(input)
 
@@ -25,15 +24,15 @@ internal class GlobalAverageD3ToD2(private val inputX: Int, private val inputY: 
     ): Batch<IOType.D3> {
         val output = forward(input)
         val delta = calcDelta(output)
-        return (delta / inputX.toFloat()).broadcastToD3(axis = 0, size = inputX)
+        return (delta / inputI.toFloat()).broadcastToD3(axis = 0, size = inputI)
     }
 
     private fun IOScope.forward(input: Batch<IOType.D3>) = input
-        .reshapeToD2(i = inputX, j = inputY * inputZ)
+        .reshapeToD2(i = inputI, j = inputJ * inputK)
         .average(axis = 0)
-        .reshapeToD2(i = inputY, j = inputZ)
+        .reshapeToD2(i = inputJ, j = inputK)
 }
 
 fun <T> NetworkBuilder.D3<T>.globalAverageToD2() = addReshape(
-    reshape = GlobalAverageD3ToD2(inputX, inputY, inputZ),
+    reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK),
 )

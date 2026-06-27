@@ -9,7 +9,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SoftmaxD2 internal constructor(override val outputX: Int, override val outputY: Int) : Compute.D2() {
+class SoftmaxD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.softmax()
 
     override fun IOScope.train(
@@ -24,5 +24,5 @@ class SoftmaxD2 internal constructor(override val outputX: Int, override val out
 }
 
 fun <T> NetworkBuilder.D2<T>.softmax() = addProcess(
-    process = SoftmaxD2(outputX = inputX, outputY = inputY),
+    process = SoftmaxD2(outputI = inputI, outputJ = inputJ),
 )

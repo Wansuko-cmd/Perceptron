@@ -8,5 +8,5 @@ import com.wsr.knist.scope.ScopeOp
 @ScopeOp
 fun IOType.D1.gather(other: IOType.D2): IOType.D2.Global {
     val result = Backend.gather(x = value, y = other.value, i = 1, j = other.i, k = other.j)
-    return IOType.D2(shape = listOf(size, other.j), value = result)
+    return IOType.D2(shape = listOf(i, other.j), value = result)
 }

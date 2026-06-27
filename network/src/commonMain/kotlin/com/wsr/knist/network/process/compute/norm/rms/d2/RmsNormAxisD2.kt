@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RmsNormAxisD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val axis: Int,
     private val e: Float,
 ) : Compute.D2() {

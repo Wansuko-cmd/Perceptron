@@ -24,7 +24,7 @@ class HeTest {
     fun `d2=Heアルゴリズムで初期化`() = networkTestRule {
         val target = He(seed = 0)
 
-        val actual = target.d2(input = listOf(2, 2), output = listOf(2, 2), x = 2, y = 2)
+        val actual = target.d2(input = listOf(2, 2), output = listOf(2, 2), i = 2, j = 2)
 
         assertEquals(expected = 0.1215f, actual = actual[0][0].unwrap(), absoluteTolerance = 1e-4f)
         assertEquals(expected = 0.8545f, actual = actual[0][1].unwrap(), absoluteTolerance = 1e-4f)
@@ -36,7 +36,7 @@ class HeTest {
     fun `d3=Heアルゴリズムで初期化`() = networkTestRule {
         val target = He(seed = 0)
 
-        val actual = target.d3(input = listOf(2, 2, 2), output = listOf(2, 2, 2), x = 2, y = 2, z = 2)
+        val actual = target.d3(input = listOf(2, 2, 2), output = listOf(2, 2, 2), i = 2, j = 2, k = 2)
 
         assertEquals(expected = 0.0859f, actual = actual[0][0][0].unwrap(), absoluteTolerance = 1e-4f)
         assertEquals(expected = 0.6042f, actual = actual[0][0][1].unwrap(), absoluteTolerance = 1e-4f)

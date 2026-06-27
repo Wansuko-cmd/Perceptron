@@ -11,8 +11,8 @@ import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD2ToD1(override val outputSize: Int) : Reshape.D2ToD1() {
-    constructor(inputX: Int, inputY: Int) : this(outputSize = inputX * inputY)
+internal class ReshapeD2ToD1(override val outputI: Int) : Reshape.D2ToD1() {
+    constructor(inputI: Int, inputJ: Int) : this(outputI = inputI * inputJ)
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.flatten()
 
@@ -28,5 +28,5 @@ internal class ReshapeD2ToD1(override val outputSize: Int) : Reshape.D2ToD1() {
 }
 
 fun <T> NetworkBuilder.D2<T>.reshapeToD1() = addReshape(
-    reshape = ReshapeD2ToD1(inputX = inputX, inputY = inputY),
+    reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ),
 )

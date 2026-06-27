@@ -1,12 +1,6 @@
 package com.wsr.knist.network.process.compute.norm.rms.d3
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.math.pow
-import com.wsr.knist.batch.elementwise.math.sqrt
-import com.wsr.knist.batch.elementwise.operation.div.div
-import com.wsr.knist.batch.elementwise.operation.minus.minus
-import com.wsr.knist.batch.elementwise.operation.times.times
-import com.wsr.knist.batch.reduction.average.average
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
@@ -16,9 +10,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RmsNormD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val e: Float,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
@@ -49,16 +43,16 @@ class RmsNormD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> RmsNormD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             e = e,
         )
 
         0, 1 -> RmsNormAxisD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             axis = axis,
             e = e,
         )

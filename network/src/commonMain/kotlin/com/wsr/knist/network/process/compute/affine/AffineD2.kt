@@ -17,8 +17,8 @@ class AffineD2 internal constructor(
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
-    override val outputX = channel
-    override val outputY = outputSize
+    override val outputI = channel
+    override val outputJ = outputSize
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.matMul(weight)
 
@@ -45,14 +45,14 @@ fun <T> NetworkBuilder.D2<T>.affine(
 ) = addProcess(
     process =
         AffineD2(
-            channel = inputX,
+            channel = inputI,
             outputSize = neuron,
-            optimizer = optimizer.d2(inputY, neuron),
+            optimizer = optimizer.d2(inputJ, neuron),
             weight = initializer.d2(
-                input = listOf(inputY),
+                input = listOf(inputJ),
                 output = listOf(neuron),
-                x = inputY,
-                y = neuron,
+                i = inputJ,
+                j = neuron,
             ),
         ),
 )

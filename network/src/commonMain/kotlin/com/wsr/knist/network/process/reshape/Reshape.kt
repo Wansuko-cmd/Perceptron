@@ -11,8 +11,8 @@ import kotlinx.serialization.Serializable
 sealed interface Reshape : Process {
     @Serializable
     abstract class D1ToD2 : Reshape {
-        abstract val outputX: Int
-        abstract val outputY: Int
+        abstract val outputI: Int
+        abstract val outputJ: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2>
 
@@ -40,9 +40,9 @@ sealed interface Reshape : Process {
 
     @Serializable
     abstract class D1ToD3 : Reshape {
-        abstract val outputX: Int
-        abstract val outputY: Int
-        abstract val outputZ: Int
+        abstract val outputI: Int
+        abstract val outputJ: Int
+        abstract val outputK: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D3>
 
@@ -68,7 +68,7 @@ sealed interface Reshape : Process {
 
     @Serializable
     abstract class D2ToD1 : Reshape {
-        abstract val outputSize: Int
+        abstract val outputI: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1>
 
@@ -96,9 +96,9 @@ sealed interface Reshape : Process {
 
     @Serializable
     abstract class D2ToD3 : Reshape {
-        abstract val outputX: Int
-        abstract val outputY: Int
-        abstract val outputZ: Int
+        abstract val outputI: Int
+        abstract val outputJ: Int
+        abstract val outputK: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D3>
 
@@ -124,7 +124,7 @@ sealed interface Reshape : Process {
 
     @Serializable
     abstract class D3ToD1 : Reshape {
-        abstract val outputSize: Int
+        abstract val outputI: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1>
 
@@ -150,8 +150,8 @@ sealed interface Reshape : Process {
 
     @Serializable
     abstract class D3ToD2 : Reshape {
-        abstract val outputX: Int
-        abstract val outputY: Int
+        abstract val outputI: Int
+        abstract val outputJ: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2>
 

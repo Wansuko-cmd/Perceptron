@@ -19,7 +19,7 @@ sealed interface NetworkBuilder<I, O> {
 
     @ConsistentCopyVisibility
     data class D1<I> internal constructor(
-        val inputSize: Int,
+        val inputI: Int,
         override val input: Converter,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
@@ -27,12 +27,12 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D1> {
         fun addProcess(process: Compute.D1): D1<I> = copy(
             layers = layers + process,
-            inputSize = process.outputSize,
+            inputI = process.outputI,
         )
 
         fun addOutput(output: Output.D1) = Network<I, IOType.D1>(
             inputConverter = input,
-            outputConverter = LinearD1(inputSize),
+            outputConverter = LinearD1(inputI),
             layers = layers,
             output = output,
         )
@@ -47,8 +47,8 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D1ToD2): D2<I> = D2(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
+            inputI = reshape.outputI,
+            inputJ = reshape.outputJ,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -56,9 +56,9 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D1ToD3): D3<I> = D3(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
-            inputZ = reshape.outputZ,
+            inputI = reshape.outputI,
+            inputJ = reshape.outputJ,
+            inputK = reshape.outputK,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -69,8 +69,8 @@ sealed interface NetworkBuilder<I, O> {
 
     @ConsistentCopyVisibility
     data class D2<I> internal constructor(
-        val inputX: Int,
-        val inputY: Int,
+        val inputI: Int,
+        val inputJ: Int,
         override val input: Converter,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
@@ -78,13 +78,13 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D2> {
         fun addProcess(process: Compute.D2): D2<I> = copy(
             layers = layers + process,
-            inputX = process.outputX,
-            inputY = process.outputY,
+            inputI = process.outputI,
+            inputJ = process.outputJ,
         )
 
         fun addOutput(output: Output.D2) = Network<I, IOType.D2>(
             inputConverter = input,
-            outputConverter = LinearD2(inputX, inputY),
+            outputConverter = LinearD2(inputI, inputJ),
             layers = layers,
             output = output,
         )
@@ -99,7 +99,7 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D2ToD1): D1<I> = D1(
             input = input,
             layers = layers + reshape,
-            inputSize = reshape.outputSize,
+            inputI = reshape.outputI,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -107,9 +107,9 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D2ToD3): D3<I> = D3(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
-            inputZ = reshape.outputZ,
+            inputI = reshape.outputI,
+            inputJ = reshape.outputJ,
+            inputK = reshape.outputK,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -120,9 +120,9 @@ sealed interface NetworkBuilder<I, O> {
 
     @ConsistentCopyVisibility
     data class D3<I> internal constructor(
-        val inputX: Int,
-        val inputY: Int,
-        val inputZ: Int,
+        val inputI: Int,
+        val inputJ: Int,
+        val inputK: Int,
         override val input: Converter,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
@@ -130,16 +130,16 @@ sealed interface NetworkBuilder<I, O> {
     ) : NetworkBuilder<I, IOType.D3> {
         fun addProcess(process: Compute.D3): D3<I> = copy(
             layers = layers + process,
-            inputX = process.outputX,
-            inputY = process.outputY,
-            inputZ = process.outputZ,
+            inputI = process.outputI,
+            inputJ = process.outputJ,
+            inputK = process.outputK,
         )
 
         fun addReshape(reshape: Reshape.D3ToD2): D2<I> = D2(
             input = input,
             layers = layers + reshape,
-            inputX = reshape.outputX,
-            inputY = reshape.outputY,
+            inputI = reshape.outputI,
+            inputJ = reshape.outputJ,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -147,7 +147,7 @@ sealed interface NetworkBuilder<I, O> {
         fun addReshape(reshape: Reshape.D3ToD1): D1<I> = D1(
             input = input,
             layers = layers + reshape,
-            inputSize = reshape.outputSize,
+            inputI = reshape.outputI,
             optimizer = optimizer,
             initializer = initializer,
         )
@@ -158,7 +158,7 @@ sealed interface NetworkBuilder<I, O> {
 
     companion object {
         fun <T> inputD1(converter: Converter.D1<T>, optimizer: Optimizer, initializer: WeightInitializer) = D1<T>(
-            inputSize = converter.outputSize,
+            inputI = converter.outputI,
             optimizer = optimizer,
             initializer = initializer,
             input = converter,
@@ -166,8 +166,8 @@ sealed interface NetworkBuilder<I, O> {
         )
 
         fun <T> inputD2(converter: Converter.D2<T>, optimizer: Optimizer, initializer: WeightInitializer) = D2<T>(
-            inputX = converter.outputX,
-            inputY = converter.outputY,
+            inputI = converter.outputI,
+            inputJ = converter.outputJ,
             optimizer = optimizer,
             initializer = initializer,
             input = converter,
@@ -175,9 +175,9 @@ sealed interface NetworkBuilder<I, O> {
         )
 
         fun <T> inputD3(converter: Converter.D3<T>, optimizer: Optimizer, initializer: WeightInitializer) = D3<T>(
-            inputX = converter.outputX,
-            inputY = converter.outputY,
-            inputZ = converter.outputZ,
+            inputI = converter.outputI,
+            inputJ = converter.outputJ,
+            inputK = converter.outputK,
             optimizer = optimizer,
             initializer = initializer,
             input = converter,

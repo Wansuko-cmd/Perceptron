@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class DropoutD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val ratio: Float,
     private val seed: Int? = null,
 ) : Compute.D2() {
@@ -27,7 +27,7 @@ class DropoutD2 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val mask = IOType.d2(outputX, outputY) { _, _ ->
+        val mask = IOType.d2(outputI, outputJ) { _, _ ->
             if (random.nextFloat(0f, 1f) <= ratio) q else 0f
         }
         val output = input * mask
@@ -39,8 +39,8 @@ class DropoutD2 internal constructor(
 fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
         DropoutD2(
-            outputX = inputX,
-            outputY = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             ratio = ratio,
             seed = seed,
         ),

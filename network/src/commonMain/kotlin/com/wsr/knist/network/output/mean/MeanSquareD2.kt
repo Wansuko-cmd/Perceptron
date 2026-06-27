@@ -10,7 +10,7 @@ import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class MeanSquareD2 internal constructor(val outputX: Int, val outputY: Int) : Output.D2() {
+internal class MeanSquareD2 internal constructor() : Output.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> = input
 
     override fun IOScope.train(
@@ -25,17 +25,9 @@ internal class MeanSquareD2 internal constructor(val outputX: Int, val outputY: 
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.meanSquare() = addOutput(
-    output = MeanSquareD2(
-        outputX = inputX,
-        outputY = inputY,
-    ),
-)
+fun <T> NetworkBuilder.D2<T>.meanSquare() = addOutput(output = MeanSquareD2())
 
 fun <I, O> NetworkBuilder.D2<I>.meanSquare(converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>) = addOutput(
-    output = MeanSquareD2(
-        outputX = inputX,
-        outputY = inputY,
-    ),
+    output = MeanSquareD2(),
     converter = converter,
 )

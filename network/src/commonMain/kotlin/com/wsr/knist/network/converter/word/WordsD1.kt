@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class WordsD1(
-    override val outputSize: Int,
+    override val outputI: Int,
     private val words: List<String>,
     private val unknownIndex: Int,
     private val paddingIndex: Int,
@@ -23,10 +23,10 @@ class WordsD1(
 
     override fun encode(input: List<List<String>>): Batch<IOType.D1> = input.map { sentence ->
         val tokenIds = sentence
-            .take(outputSize)
+            .take(outputI)
             .map { wordToId[it] ?: unknownIndex.toFloat() }
 
-        FloatArray(outputSize) { paddingIndex.toFloat() }
+        FloatArray(outputI) { paddingIndex.toFloat() }
             .apply { tokenIds.toFloatArray().copyInto(this) }
             .let { IOType.d1(it) }
     }.toBatch()
@@ -54,7 +54,7 @@ fun NetworkBuilder.Companion.wordsD1(
 
     return inputD1(
         converter = WordsD1(
-            outputSize = maxLength,
+            outputI = maxLength,
             words = words,
             unknownIndex = unknownIndex,
             paddingIndex = paddingIndex,

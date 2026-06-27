@@ -13,9 +13,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ScaleD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
 ) : Compute.D3() {
@@ -46,33 +46,33 @@ fun <T> NetworkBuilder.D3<T>.scale(
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> ScaleD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             optimizer = optimizer.d3(
-                inputX,
-                inputY,
-                inputZ,
+                inputI,
+                inputJ,
+                inputK,
             ),
             weight = initializer.d3(
-                input = listOf(inputX, inputY, inputZ),
-                output = listOf(inputX, inputY, inputZ),
-                x = inputX,
-                y = inputY,
-                z = inputZ,
+                input = listOf(inputI, inputJ, inputK),
+                output = listOf(inputI, inputJ, inputK),
+                i = inputI,
+                j = inputJ,
+                k = inputK,
             ),
         )
 
         0, 1, 2 -> {
             val inputT = when (axis) {
-                0 -> inputX
-                1 -> inputY
-                else -> inputZ
+                0 -> inputI
+                1 -> inputJ
+                else -> inputK
             }
             ScaleAxisD3(
-                outputX = inputX,
-                outputY = inputY,
-                outputZ = inputZ,
+                outputI = inputI,
+                outputJ = inputJ,
+                outputK = inputK,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class PositionEmbeddingD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
 ) : Compute.D2() {
@@ -36,14 +36,14 @@ fun <T> NetworkBuilder.D2<T>.positionEmbedding(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process = PositionEmbeddingD2(
-        outputX = inputX,
-        outputY = inputY,
-        optimizer = optimizer.d2(inputX, inputY),
+        outputI = inputI,
+        outputJ = inputJ,
+        optimizer = optimizer.d2(inputI, inputJ),
         weight = initializer.d2(
-            input = listOf(inputX, inputY),
-            output = listOf(inputX, inputY),
-            x = inputX,
-            y = inputY,
+            input = listOf(inputI, inputJ),
+            output = listOf(inputI, inputJ),
+            i = inputI,
+            j = inputJ,
         ),
     ),
 )

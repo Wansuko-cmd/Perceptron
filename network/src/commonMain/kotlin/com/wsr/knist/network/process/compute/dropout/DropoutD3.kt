@@ -12,9 +12,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class DropoutD3 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
     private val ratio: Float,
     private val seed: Int? = null,
 ) : Compute.D3() {
@@ -29,9 +29,9 @@ class DropoutD3 internal constructor(
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val mask = IOType.d3(
-            i = outputX,
-            j = outputY,
-            k = outputZ,
+            i = outputI,
+            j = outputJ,
+            k = outputK,
         ) { _, _, _ -> if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
         val output = input * mask
         val delta = calcDelta(output)
@@ -42,9 +42,9 @@ class DropoutD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
         DropoutD3(
-            outputX = inputX,
-            outputY = inputY,
-            outputZ = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             ratio = ratio,
             seed = seed,
         ),

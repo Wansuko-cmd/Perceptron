@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.scale.d1
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
@@ -12,12 +11,11 @@ import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 
 class ScaleD1Test {
     val target
         get() = ScaleD1(
-            outputSize = 3,
+            outputI = 3,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(3),
             weight = IOType.d1(3) { it.toFloat() },
         )

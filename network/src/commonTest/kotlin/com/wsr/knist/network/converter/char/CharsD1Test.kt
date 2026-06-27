@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 class CharsD1Test {
     @Test
     fun `encode=文字列を文字IDベクトルに変換`() = networkTestRule {
-        val target = CharsD1(outputSize = 5)
+        val target = CharsD1(outputI = 5)
         val input = listOf("boo")
 
         val actual = target.encode(input)
@@ -25,7 +25,7 @@ class CharsD1Test {
 
     @Test
     fun `decode=文字IDベクトルを文字列に変換`() = networkTestRule {
-        val target = CharsD1(outputSize = 5)
+        val target = CharsD1(outputI = 5)
         val input = Batch.of(IOType.d1(2f, 15f, 15f))
 
         val actual = target.decode(input)

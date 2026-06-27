@@ -3,7 +3,6 @@
 package com.wsr.knist.network.process.compute.position
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
@@ -18,8 +17,8 @@ import kotlin.test.Test
 class PositionEmbeddingD2Test {
     val target
         get() = PositionEmbeddingD2(
-            outputX = 2,
-            outputY = 3,
+            outputI = 2,
+            outputJ = 3,
             optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)).d2(2, 3),
             weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
         )

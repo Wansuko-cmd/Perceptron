@@ -23,22 +23,22 @@ class ConvD2 internal constructor(
     private val kernel: Int,
     private val stride: Int,
     private val padding: Int,
-    private val inputX: Int,
-    private val inputY: Int,
+    private val inputI: Int,
+    private val inputJ: Int,
     private val optimizer: Optimizer.D4,
     private var weight: IOType.D4.Global,
 ) : Compute.D3() {
-    override val outputX: Int = filter
-    override val outputY: Int = (inputX - kernel + 2 * padding) / stride + 1
-    override val outputZ: Int = (inputY - kernel + 2 * padding) / stride + 1
+    override val outputI: Int = filter
+    override val outputJ: Int = (inputI - kernel + 2 * padding) / stride + 1
+    override val outputK: Int = (inputJ - kernel + 2 * padding) / stride + 1
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
-            .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)
+            .reshapeToD3(i = channel, j = outputJ * outputK, k = kernel * kernel)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
-            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
-        return (weight.reshapeToD2(outputX, channel * kernel * kernel).matMul(col))
-            .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
+            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputJ * outputK)
+        return (weight.reshapeToD2(outputI, channel * kernel * kernel).matMul(col))
+            .reshapeToD4(i = filter, j = input.size, k = outputJ, l = outputK)
             .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
             .toBatch()
     }
@@ -49,12 +49,12 @@ class ConvD2 internal constructor(
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
-            .reshapeToD3(i = channel, j = outputY * outputZ, k = kernel * kernel)
+            .reshapeToD3(i = channel, j = outputJ * outputK, k = kernel * kernel)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
-            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputY * outputZ)
-        val output = (weight.reshapeToD2(i = outputX, j = channel * kernel * kernel).matMul(col))
-            .reshapeToD4(i = filter, j = input.size, k = outputY, l = outputZ)
+            .reshapeToD2(i = channel * kernel * kernel, j = input.size * outputJ * outputK)
+        val output = (weight.reshapeToD2(i = outputI, j = channel * kernel * kernel).matMul(col))
+            .reshapeToD4(i = filter, j = input.size, k = outputJ, l = outputK)
             .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
             .toBatch()
 
@@ -67,12 +67,12 @@ class ConvD2 internal constructor(
             .transpose()
         val deltaCol = delta.toD4()
             .transpose(axisI = 1, axisJ = 0, axisK = 3, axisL = 2)
-            .reshapeToD2(i = filter, j = input.size * outputY * outputZ)
+            .reshapeToD2(i = filter, j = input.size * outputJ * outputK)
         val dx = (reversed.matMul(deltaCol))
-            .reshapeToD4(i = channel, j = kernel * kernel, k = input.size, l = outputY * outputZ)
+            .reshapeToD4(i = channel, j = kernel * kernel, k = input.size, l = outputJ * outputK)
             .transpose(axisI = 2, axisJ = 0, axisK = 3, axisL = 1)
             .toBatch()
-            .reshapeToD4(i = channel, j = outputY, k = outputZ, l = kernel * kernel)
+            .reshapeToD4(i = channel, j = outputJ, k = outputK, l = kernel * kernel)
             .fold(stride = stride, padding = padding)
 
         val dw = deltaCol.matMul(col.transpose())
@@ -94,18 +94,18 @@ fun <T> NetworkBuilder.D3<T>.convD2(
     process =
         ConvD2(
             filter = filter,
-            channel = inputX,
+            channel = inputI,
             kernel = kernel,
             stride = stride,
             padding = padding,
-            inputX = inputY,
-            inputY = inputZ,
-            optimizer = optimizer.d4(filter, inputX, kernel, kernel),
+            inputI = inputJ,
+            inputJ = inputK,
+            optimizer = optimizer.d4(filter, inputI, kernel, kernel),
             weight = initializer.d4(
-                input = listOf(inputX, kernel, kernel),
+                input = listOf(inputI, kernel, kernel),
                 output = listOf(filter, kernel, kernel),
                 i = filter,
-                j = inputX,
+                j = inputI,
                 k = kernel,
                 l = kernel,
             ),

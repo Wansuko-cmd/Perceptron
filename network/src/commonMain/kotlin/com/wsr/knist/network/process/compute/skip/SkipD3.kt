@@ -17,9 +17,9 @@ private typealias CALC_DELTA_D3 = IOScope.(input: Batch<IOType.D3>, context: Con
 class SkipD3 internal constructor(
     // List<Process.D3>だがSerializer対策
     private val layers: List<Process> = emptyList(),
-    override val outputX: Int,
-    override val outputY: Int,
-    override val outputZ: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val scope = this
@@ -69,19 +69,19 @@ fun <T> NetworkBuilder.D3<T>.skip(builder: NetworkBuilder.D3<T>.() -> NetworkBui
         .filterIsInstance<Compute.D3>()
     val last = layers.last()
 
-    check(inputX == last.outputX && inputY == last.outputY && inputZ == last.outputZ) {
+    check(inputI == last.outputI && inputJ == last.outputJ && inputK == last.outputK) {
         """
             invalid parameter.
-            input: ($inputX, $inputY, $inputZ)
-            output: (${last.outputX}, ${last.outputY}. ${last.outputZ})
+            input: ($inputI, $inputJ, $inputK)
+            output: (${last.outputI}, ${last.outputJ}. ${last.outputK})
         """.trimIndent()
     }
 
     return addProcess(
         process = SkipD3(
-            outputX = last.outputX,
-            outputY = last.outputY,
-            outputZ = last.outputZ,
+            outputI = last.outputI,
+            outputJ = last.outputJ,
+            outputK = last.outputK,
             layers = layers,
         ),
     )

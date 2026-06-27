@@ -19,8 +19,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class AttentionD2 internal constructor(
-    override val outputX: Int,
-    override val outputY: Int,
+    override val outputI: Int,
+    override val outputJ: Int,
     private val numOfHeads: Int,
     private val dim: Int,
     private val isCausal: Boolean = false,
@@ -34,18 +34,18 @@ class AttentionD2 internal constructor(
     private var weightO: IOType.D2.Global,
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
-    private val causalMask by lazy { IOType.d2(outputX, outputX) { x, y -> if (x < y) -1e9f else 0f } }
+    private val causalMask by lazy { IOType.d2(outputI, outputI) { x, y -> if (x < y) -1e9f else 0f } }
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
 
         val key = input.matMul(weightK)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 2, axisK = 0)
 
         val value = input.matMul(weightV)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
 
         val mul = query.matMul(key)
@@ -55,7 +55,7 @@ class AttentionD2 internal constructor(
         val heads = softmax.matMul(value)
         val concat = heads
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
-            .reshapeToD2(i = outputX, j = numOfHeads * dim)
+            .reshapeToD2(i = outputI, j = numOfHeads * dim)
         return concat.matMul(weightO)
     }
 
@@ -65,15 +65,15 @@ class AttentionD2 internal constructor(
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
 
         val key = input.matMul(weightK)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 2, axisK = 0)
 
         val value = input.matMul(weightV)
-            .reshapeToD3(i = outputX, j = numOfHeads, k = dim)
+            .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
 
         val mul = query.matMul(key)
@@ -83,7 +83,7 @@ class AttentionD2 internal constructor(
         val heads = softmax.matMul(value)
         val concat = heads
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
-            .reshapeToD2(i = outputX, j = numOfHeads * dim)
+            .reshapeToD2(i = outputI, j = numOfHeads * dim)
 
         val output = concat.matMul(weightO)
         val delta = calcDelta(output)
@@ -95,7 +95,7 @@ class AttentionD2 internal constructor(
 
         // Concatの逆伝播（各ヘッドへの勾配に分割）
         val dHeads = dConcat
-            .reshapeToD3(outputX, numOfHeads, dim)
+            .reshapeToD3(outputI, numOfHeads, dim)
             .transpose(1, 0, 2)
 
         // 各ヘッドのScaled-Dot-Attentionの逆伝播
@@ -114,19 +114,19 @@ class AttentionD2 internal constructor(
         // Affineの逆伝播（各ヘッドのQ, K, V）
         val dQueryD2 = dQuery
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
-            .reshapeToD2(i = outputX, j = numOfHeads * dim)
+            .reshapeToD2(i = outputI, j = numOfHeads * dim)
         val dxq = dQueryD2.matMul(weightQ, transB = true)
         val dwq = input.matMul(dQueryD2, transA = true)
 
         val dKeyD2 = dKey
             .transpose(axisI = 2, axisJ = 0, axisK = 1)
-            .reshapeToD2(i = outputX, j = numOfHeads * dim)
+            .reshapeToD2(i = outputI, j = numOfHeads * dim)
         val dxk = dKeyD2.matMul(weightK, transB = true)
         val dwk = input.matMul(dKeyD2, transA = true)
 
         val dValueD2 = dValue
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
-            .reshapeToD2(i = outputX, j = numOfHeads * dim)
+            .reshapeToD2(i = outputI, j = numOfHeads * dim)
         val dxv = dValueD2.matMul(weightV, transB = true)
         val dwv = input.matMul(dValueD2, transA = true)
 
@@ -154,46 +154,46 @@ class AttentionD2 internal constructor(
 
 fun <T> NetworkBuilder.D2<T>.attention(
     numOfHeads: Int,
-    dim: Int = inputY / numOfHeads,
+    dim: Int = inputJ / numOfHeads,
     isCausal: Boolean = false,
     maskValue: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
 ): NetworkBuilder.D2<T> = addProcess(
     process = AttentionD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputI = inputI,
+        outputJ = inputJ,
         numOfHeads = numOfHeads,
         dim = dim,
         isCausal = isCausal,
         maskValue = maskValue,
         weightQ = initializer.d2(
-            input = listOf(inputY),
+            input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
-            x = inputY,
-            y = numOfHeads * dim,
+            i = inputJ,
+            j = numOfHeads * dim,
         ),
         weightK = initializer.d2(
-            input = listOf(inputY),
+            input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
-            x = inputY,
-            y = numOfHeads * dim,
+            i = inputJ,
+            j = numOfHeads * dim,
         ),
         weightV = initializer.d2(
-            input = listOf(inputY),
+            input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
-            x = inputY,
-            y = numOfHeads * dim,
+            i = inputJ,
+            j = numOfHeads * dim,
         ),
         weightO = initializer.d2(
             input = listOf(numOfHeads * dim),
-            output = listOf(inputY),
-            x = numOfHeads * dim,
-            y = inputY,
+            output = listOf(inputJ),
+            i = numOfHeads * dim,
+            j = inputJ,
         ),
-        optimizerQ = optimizer.d2(inputY, numOfHeads * dim),
-        optimizerK = optimizer.d2(inputY, numOfHeads * dim),
-        optimizerV = optimizer.d2(inputY, numOfHeads * dim),
-        optimizerO = optimizer.d2(numOfHeads * dim, inputY),
+        optimizerQ = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerK = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerV = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerO = optimizer.d2(numOfHeads * dim, inputJ),
     ),
 )

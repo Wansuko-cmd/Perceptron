@@ -3,6 +3,8 @@ package com.wsr.knist.network.output.softmax
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.core.d1
+import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
@@ -11,11 +13,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class SoftmaxWithLossD2 internal constructor(
-    val outputX: Int,
-    val outputY: Int,
+    val outputJ: Int,
     val temperature: Float,
     val maskValue: Int? = null,
 ) : Output.D2() {
+    private val maskBool: IOType.D2.Global by lazy {
+        IOType.d2(
+            IOType.d1(outputJ) { 1f },
+            IOType.d1(outputJ) { 0f },
+        )
+    }
+
     override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> {
         val input = input / temperature
         return input.softmax(axis = 1)
@@ -35,12 +43,7 @@ internal class SoftmaxWithLossD2 internal constructor(
             else -> {
                 IOType.d0(maskValue.toFloat())
                     .gather(other = label, axis = 1)
-                    .gather(
-                        other = IOType.d2(
-                            IOType.d1(outputY) { 1f },
-                            IOType.d1(outputY) { 0f },
-                        ),
-                    )
+                    .gather(other = maskBool)
             }
         }
 
@@ -59,8 +62,7 @@ internal class SoftmaxWithLossD2 internal constructor(
 
 fun <T> NetworkBuilder.D2<T>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(
     output = SoftmaxWithLossD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputJ = inputJ,
         temperature = temperature,
         maskValue = maskValue,
     ),
@@ -72,8 +74,7 @@ fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
     maskValue: Int? = null,
 ) = addOutput(
     output = SoftmaxWithLossD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputJ = inputJ,
         temperature = temperature,
         maskValue = maskValue,
     ),
