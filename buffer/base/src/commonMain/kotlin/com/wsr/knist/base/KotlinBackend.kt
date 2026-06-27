@@ -6,7 +6,6 @@ import com.wsr.knist.base.data.Default
 import com.wsr.knist.base.data.IDataBufferGenerator
 import com.wsr.knist.base.data.indices
 import com.wsr.knist.base.data.size
-import com.wsr.knist.base.reduceIndex
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.pow
@@ -1227,11 +1226,11 @@ object KotlinBackend : IBackend {
                     for (oy in 0 until ok) {
                         for (wy in 0 until window) {
                             for (wx in 0 until window) {
-                                val inputX = ox * stride + wx - padding
-                                val inputY = oy * stride + wy - padding
-                                if (inputX in 0 until xj && inputY in 0 until xk) {
+                                val inputI = ox * stride + wx - padding
+                                val inputJ = oy * stride + wy - padding
+                                if (inputI in 0 until xj && inputJ in 0 until xk) {
                                     val resultIndex = (((xb * xi + i) * oj + ox) * ok + oy) * ww + wy * window + wx
-                                    val xIndex = ((xb * xi + i) * xj + inputX) * xk + inputY
+                                    val xIndex = ((xb * xi + i) * xj + inputI) * xk + inputJ
                                     result[resultIndex] = x[xIndex]
                                 }
                             }
@@ -1283,11 +1282,11 @@ object KotlinBackend : IBackend {
                     for (oy in 0 until xk) {
                         for (wy in 0 until window) {
                             for (wx in 0 until window) {
-                                val inputX = ox * stride + wx - padding
-                                val inputY = oy * stride + wy - padding
-                                if (inputX in 0 until oj && inputY in 0 until ok) {
+                                val inputI = ox * stride + wx - padding
+                                val inputJ = oy * stride + wy - padding
+                                if (inputI in 0 until oj && inputJ in 0 until ok) {
                                     val xIndex = (((xb * xi + i) * xj + ox) * xk + oy) * xl + wy * window + wx
-                                    val resultIndex = ((xb * xi + i) * oj + inputX) * ok + inputY
+                                    val resultIndex = ((xb * xi + i) * oj + inputI) * ok + inputJ
                                     result[resultIndex] += x[xIndex]
                                 }
                             }

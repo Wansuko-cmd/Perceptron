@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class ReshapeD2ToD1(override val outputI: Int) : Reshape.D2ToD1() {
-    constructor(inputX: Int, inputY: Int) : this(outputI = inputX * inputY)
+    constructor(inputI: Int, inputJ: Int) : this(outputI = inputI * inputJ)
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.flatten()
 
@@ -28,5 +28,5 @@ internal class ReshapeD2ToD1(override val outputI: Int) : Reshape.D2ToD1() {
 }
 
 fun <T> NetworkBuilder.D2<T>.reshapeToD1() = addReshape(
-    reshape = ReshapeD2ToD1(inputX = inputI, inputY = inputJ),
+    reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ),
 )

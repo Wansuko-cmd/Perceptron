@@ -10,9 +10,9 @@ import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class GlobalAverageD3ToD1(private val inputX: Int, private val inputY: Int, private val inputZ: Int) :
+internal class GlobalAverageD3ToD1(private val inputI: Int, private val inputJ: Int, private val inputK: Int) :
     Reshape.D3ToD1() {
-    override val outputI: Int = inputX
+    override val outputI: Int = inputI
 
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1> = forward(input = input)
 
@@ -23,13 +23,13 @@ internal class GlobalAverageD3ToD1(private val inputX: Int, private val inputY: 
     ): Batch<IOType.D3> {
         val output = forward(input = input)
         val delta = calcDelta(output)
-        return (delta / (inputY * inputZ).toFloat())
-            .broadcastToD2(axis = 1, size = inputY)
-            .broadcastToD3(axis = 2, size = inputZ)
+        return (delta / (inputJ * inputK).toFloat())
+            .broadcastToD2(axis = 1, size = inputJ)
+            .broadcastToD3(axis = 2, size = inputK)
     }
 
     private fun IOScope.forward(input: Batch<IOType.D3>) = input
-        .reshapeToD2(i = inputX, j = inputY * inputZ)
+        .reshapeToD2(i = inputI, j = inputJ * inputK)
         .average(axis = 1)
 }
 
