@@ -1,7 +1,6 @@
 ﻿package com.wsr.knist.network.converter.raw
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
@@ -15,8 +14,8 @@ class RawD2(override val outputI: Int, override val outputJ: Int) : Converter.D2
     override fun decode(input: Batch<IOType.D2>): Batch<IOType.D2> = input
 }
 
-fun NetworkBuilder.Companion.inputD2(x: Int, y: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
-    converter = RawD2(x, y),
+fun NetworkBuilder.Companion.rawD2(i: Int, j: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
+    converter = RawD2(i, j),
     optimizer = optimizer,
     initializer = initializer,
 )

@@ -1,4 +1,4 @@
-﻿package com.wsr.knist.network.converter.linear
+﻿package com.wsr.knist.network.converter.list
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.shape.toBatch
@@ -16,8 +16,8 @@ class LinearD2(override val outputI: Int, override val outputJ: Int) : Converter
     override fun decode(input: Batch<IOType.D2>): List<IOType.D2> = input.toList()
 }
 
-fun NetworkBuilder.Companion.inputD2(x: Int, y: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
-    converter = LinearD2(x, y),
+fun NetworkBuilder.Companion.listD2(i: Int, j: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
+    converter = LinearD2(i, j),
     optimizer = optimizer,
     initializer = initializer,
 )

@@ -5,9 +5,9 @@ package com.wsr.knist.network
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.char.CharD1
 import com.wsr.knist.network.converter.char.CharsD1
-import com.wsr.knist.network.converter.linear.LinearD1
-import com.wsr.knist.network.converter.linear.LinearD2
-import com.wsr.knist.network.converter.linear.LinearD3
+import com.wsr.knist.network.converter.list.ListD1
+import com.wsr.knist.network.converter.list.LinearD2
+import com.wsr.knist.network.converter.list.LinearD3
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.converter.raw.RawD3
@@ -117,10 +117,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.cbor.Cbor
-import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -465,7 +463,7 @@ private val buildInSerializersModule = SerializersModule {
         subclass(CharsD1::class)
 
         // Linear
-        subclass(LinearD1::class)
+        subclass(ListD1::class)
         subclass(LinearD2::class)
         subclass(LinearD3::class)
 

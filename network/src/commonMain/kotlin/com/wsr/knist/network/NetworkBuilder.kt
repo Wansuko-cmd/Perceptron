@@ -2,8 +2,6 @@ package com.wsr.knist.network
 
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.converter.linear.LinearD1
-import com.wsr.knist.network.converter.linear.LinearD2
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output

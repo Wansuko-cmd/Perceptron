@@ -1,6 +1,6 @@
 ﻿@file:Suppress("NonAsciiCharacters")
 
-package com.wsr.knist.network.converter.linear
+package com.wsr.knist.network.converter.list
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2

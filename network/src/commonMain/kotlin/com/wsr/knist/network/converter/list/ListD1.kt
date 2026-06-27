@@ -1,4 +1,4 @@
-﻿package com.wsr.knist.network.converter.linear
+﻿package com.wsr.knist.network.converter.list
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.shape.toBatch
@@ -11,13 +11,13 @@ import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD1(override val outputI: Int) : Converter.D1<List<IOType.D1>>() {
+class ListD1(override val outputI: Int) : Converter.D1<List<IOType.D1>>() {
     override fun encode(input: List<IOType.D1>): Batch<IOType.D1> = input.toBatch()
     override fun decode(input: Batch<IOType.D1>): List<IOType.D1> = input.toList()
 }
 
-fun NetworkBuilder.Companion.inputD1(inputSize: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD1(
-    converter = LinearD1(inputSize),
+fun NetworkBuilder.Companion.listD1(i: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD1(
+    converter = ListD1(i),
     optimizer = optimizer,
     initializer = initializer,
 )
