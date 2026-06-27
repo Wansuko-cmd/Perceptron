@@ -51,7 +51,7 @@ class Network<I, O> internal constructor(
 
     inline fun loss(input: I, crossinline label: (O) -> O): Float = _loss(input) {
         val decoded = outputConverter._decode(it)
-        outputConverter._encode( label(decoded))
+        outputConverter._encode(label(decoded))
     }
 
     @Suppress("FunctionName")
