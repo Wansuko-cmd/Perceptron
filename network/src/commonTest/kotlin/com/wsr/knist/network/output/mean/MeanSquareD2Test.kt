@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class MeanSquareD2Test {
     @Test
     fun `expect=そのまま返す`() = networkScopeTestRule {
-        val target = MeanSquareD2(outputI = 2, outputJ = 2)
+        val target = MeanSquareD2()
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
         val actual = with(target) { _expect(input) }
@@ -23,7 +23,7 @@ class MeanSquareD2Test {
 
     @Test
     fun `train=二乗平均誤差`() = networkScopeTestRule {
-        val target = MeanSquareD2(outputI = 2, outputJ = 2)
+        val target = MeanSquareD2()
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
