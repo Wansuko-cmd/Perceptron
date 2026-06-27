@@ -23,4 +23,4 @@ class SigmoidD2 internal constructor(override val outputI: Int, override val out
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.sigmoid() = addProcess(SigmoidD2(outputI = inputX, outputJ = inputY))
+fun <T> NetworkBuilder.D2<T>.sigmoid() = addProcess(SigmoidD2(outputI = inputI, outputJ = inputJ))

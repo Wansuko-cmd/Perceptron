@@ -37,7 +37,7 @@ class DebugD1 internal constructor(override val outputI: Int) : Compute.D1() {
  */
 fun <T> NetworkBuilder.D1<T>.debug(onInput: (Batch<IOType.D1>) -> Unit = {}, onDelta: (Batch<IOType.D1>) -> Unit = {}) =
     addProcess(
-        process = DebugD1(outputI = inputSize)
+        process = DebugD1(outputI = inputI)
             .apply {
                 this.onInput = onInput
                 this.onDelta = onDelta

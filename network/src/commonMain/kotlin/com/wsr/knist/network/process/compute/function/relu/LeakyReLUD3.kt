@@ -32,5 +32,5 @@ class LeakyReLUD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.leakyReLU() = addProcess(
-    process = LeakyReLUD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
+    process = LeakyReLUD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
 )

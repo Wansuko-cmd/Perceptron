@@ -82,14 +82,14 @@ class LayerNormD2 internal constructor(override val outputI: Int, override val o
 fun <T> NetworkBuilder.D2<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> LayerNormD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             e = e,
         )
 
         0, 1 -> LayerNormAxisD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             axis = axis,
             e = e,
         )

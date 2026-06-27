@@ -42,9 +42,9 @@ class DropoutD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
         DropoutD3(
-            outputI = inputX,
-            outputJ = inputY,
-            outputK = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             ratio = ratio,
             seed = seed,
         ),

@@ -103,17 +103,17 @@ fun <T> NetworkBuilder.D2<T>.convD1(
     process =
         ConvD1(
             filter = filter,
-            channel = inputX,
+            channel = inputI,
             kernel = kernel,
             stride = stride,
             padding = padding,
-            inputSize = inputY,
-            optimizer = optimizer.d3(filter, inputX, kernel),
+            inputSize = inputJ,
+            optimizer = optimizer.d3(filter, inputI, kernel),
             weight = initializer.d3(
-                input = listOf(inputX, kernel),
+                input = listOf(inputI, kernel),
                 output = listOf(filter, kernel),
                 i = filter,
-                j = inputX,
+                j = inputI,
                 k = kernel,
             ),
         ),

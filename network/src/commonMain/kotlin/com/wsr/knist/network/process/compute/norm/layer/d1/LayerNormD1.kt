@@ -77,4 +77,4 @@ class LayerNormD1 internal constructor(override val outputI: Int, private val e:
 }
 
 fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f) =
-    addProcess(process = LayerNormD1(outputI = inputSize, e = e))
+    addProcess(process = LayerNormD1(outputI = inputI, e = e))

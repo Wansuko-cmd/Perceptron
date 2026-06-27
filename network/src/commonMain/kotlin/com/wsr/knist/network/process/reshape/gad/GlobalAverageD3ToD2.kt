@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.reshape.gad
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.reduction.average.average
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
@@ -35,5 +34,5 @@ internal class GlobalAverageD3ToD2(private val inputX: Int, private val inputY: 
 }
 
 fun <T> NetworkBuilder.D3<T>.globalAverageToD2() = addReshape(
-    reshape = GlobalAverageD3ToD2(inputX, inputY, inputZ),
+    reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK),
 )

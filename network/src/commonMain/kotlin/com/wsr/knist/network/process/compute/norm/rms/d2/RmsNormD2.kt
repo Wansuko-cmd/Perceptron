@@ -39,14 +39,14 @@ class RmsNormD2 internal constructor(override val outputI: Int, override val out
 fun <T> NetworkBuilder.D2<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> RmsNormD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             e = e,
         )
 
         0, 1 -> RmsNormAxisD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             axis = axis,
             e = e,
         )

@@ -38,8 +38,8 @@ class DebugD2 internal constructor(override val outputI: Int, override val outpu
 fun <T> NetworkBuilder.D2<T>.debug(onInput: (Batch<IOType.D2>) -> Unit = {}, onDelta: (Batch<IOType.D2>) -> Unit = {}) =
     addProcess(
         process = DebugD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
         ).apply {
             this.onInput = onInput
             this.onDelta = onDelta

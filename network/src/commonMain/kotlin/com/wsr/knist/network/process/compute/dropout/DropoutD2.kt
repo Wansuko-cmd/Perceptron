@@ -39,8 +39,8 @@ class DropoutD2 internal constructor(
 fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
     process =
         DropoutD2(
-            outputI = inputX,
-            outputJ = inputY,
+            outputI = inputI,
+            outputJ = inputJ,
             ratio = ratio,
             seed = seed,
         ),

@@ -35,4 +35,4 @@ class RmsNormD1 internal constructor(override val outputI: Int, private val e: F
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f) = addProcess(process = RmsNormD1(outputI = inputSize, e = e))
+fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f) = addProcess(process = RmsNormD1(outputI = inputI, e = e))

@@ -27,15 +27,15 @@ internal class MeanSquareD2 internal constructor(val outputX: Int, val outputY: 
 
 fun <T> NetworkBuilder.D2<T>.meanSquare() = addOutput(
     output = MeanSquareD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputX = inputI,
+        outputY = inputJ,
     ),
 )
 
 fun <I, O> NetworkBuilder.D2<I>.meanSquare(converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>) = addOutput(
     output = MeanSquareD2(
-        outputX = inputX,
-        outputY = inputY,
+        outputX = inputI,
+        outputY = inputJ,
     ),
     converter = converter,
 )

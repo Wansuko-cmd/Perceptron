@@ -21,5 +21,5 @@ class LinearD3 internal constructor(override val outputI: Int, override val outp
 }
 
 fun <T> NetworkBuilder.D3<T>.linear() = addProcess(
-    process = LinearD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
+    process = LinearD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
 )

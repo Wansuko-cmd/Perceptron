@@ -25,5 +25,5 @@ class SigmoidD3 internal constructor(override val outputI: Int, override val out
 }
 
 fun <T> NetworkBuilder.D3<T>.sigmoid() = addProcess(
-    process = SigmoidD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
+    process = SigmoidD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
 )

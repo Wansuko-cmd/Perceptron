@@ -88,5 +88,5 @@ class MnistTest {
         .layerNorm().affine(neuron = 512).bias().swish()
         .layerNorm().affine(neuron = 128).bias().swish()
         .affine(neuron = 10)
-        .softmaxWithLoss(converter = { LabelConverter(inputSize) })
+        .softmaxWithLoss(converter = { LabelConverter(inputI) })
 }

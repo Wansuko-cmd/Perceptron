@@ -40,29 +40,29 @@ fun <T> NetworkBuilder.D3<T>.bias(
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> BiasD3(
-            outputI = inputX,
-            outputJ = inputY,
-            outputK = inputZ,
-            optimizer = optimizer.d3(inputX, inputY, inputZ),
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
+            optimizer = optimizer.d3(inputI, inputJ, inputK),
             weight = initializer.d3(
-                input = listOf(inputX, inputY, inputZ),
-                output = listOf(inputX, inputY, inputZ),
-                i = inputX,
-                j = inputY,
-                k = inputZ,
+                input = listOf(inputI, inputJ, inputK),
+                output = listOf(inputI, inputJ, inputK),
+                i = inputI,
+                j = inputJ,
+                k = inputK,
             ),
         )
 
         0, 1, 2 -> {
             val inputT = when (axis) {
-                0 -> inputX
-                1 -> inputY
-                else -> inputZ
+                0 -> inputI
+                1 -> inputJ
+                else -> inputK
             }
             BiasAxisD3(
-                outputI = inputX,
-                outputJ = inputY,
-                outputK = inputZ,
+                outputI = inputI,
+                outputJ = inputJ,
+                outputK = inputK,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

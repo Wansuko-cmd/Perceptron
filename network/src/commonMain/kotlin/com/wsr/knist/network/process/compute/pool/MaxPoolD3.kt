@@ -1,7 +1,6 @@
 package com.wsr.knist.network.process.compute.pool
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.shape.broadcastToD4
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
@@ -65,9 +64,9 @@ class MaxPoolD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
     process = MaxPoolD3(
         poolSize = size,
-        channel = inputX,
-        inputX = inputY,
-        inputY = inputZ,
+        channel = inputI,
+        inputX = inputJ,
+        inputY = inputK,
         padding = padding,
     ),
 )

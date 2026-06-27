@@ -46,7 +46,7 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
     initializer: WeightInitializer = this.initializer,
 ): NetworkBuilder.D2<T> = addReshape(
     reshape = TokenEmbeddingD1ToD2(
-        outputI = inputSize,
+        outputI = inputI,
         outputJ = tokenSize,
         vocabSize = vocabSize,
         optimizer = optimizer.d2(vocabSize, tokenSize),

@@ -69,10 +69,10 @@ fun <T> NetworkBuilder.D3<T>.skip(builder: NetworkBuilder.D3<T>.() -> NetworkBui
         .filterIsInstance<Compute.D3>()
     val last = layers.last()
 
-    check(inputX == last.outputI && inputY == last.outputJ && inputZ == last.outputK) {
+    check(inputI == last.outputI && inputJ == last.outputJ && inputK == last.outputK) {
         """
             invalid parameter.
-            input: ($inputX, $inputY, $inputZ)
+            input: ($inputI, $inputJ, $inputK)
             output: (${last.outputI}, ${last.outputJ}. ${last.outputK})
         """.trimIndent()
     }

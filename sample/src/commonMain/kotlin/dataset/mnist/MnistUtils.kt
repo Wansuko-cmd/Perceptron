@@ -39,7 +39,7 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<Float>, Int> {
         .affine(neuron = 256).bias().reLU()
         .affine(neuron = 128).bias().reLU()
         .affine(neuron = 10)
-        .softmaxWithLoss(converter = { LabelConverter(inputSize) })
+        .softmaxWithLoss(converter = { LabelConverter(inputI) })
 
     println("データ読み込み")
     val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)

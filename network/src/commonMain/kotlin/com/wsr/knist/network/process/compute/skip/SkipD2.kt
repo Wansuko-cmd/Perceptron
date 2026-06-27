@@ -68,10 +68,10 @@ fun <T> NetworkBuilder.D2<T>.skip(builder: NetworkBuilder.D2<T>.() -> NetworkBui
         .filterIsInstance<Compute.D2>()
     val last = layers.last()
 
-    check(inputX == last.outputI && inputY == last.outputJ) {
+    check(inputI == last.outputI && inputJ == last.outputJ) {
         """
             invalid parameter.
-            input: ($inputX, $inputY)
+            input: ($inputI, $inputJ)
             output: (${last.outputI}, ${last.outputJ})
         """.trimIndent()
     }

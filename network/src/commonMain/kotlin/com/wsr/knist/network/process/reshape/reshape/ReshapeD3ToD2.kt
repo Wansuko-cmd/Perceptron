@@ -27,12 +27,12 @@ internal class ReshapeD3ToD2(override val outputI: Int, override val outputJ: In
 }
 
 fun <T> NetworkBuilder.D3<T>.reshapeToD2(i: Int, j: Int): NetworkBuilder.D2<T> {
-    check(inputX * inputY * inputZ == i * j) {
+    check(inputI * inputJ * inputK == i * j) {
         """
             invalid parameter.
-            inputX: $inputX
-            inputY: $inputY
-            inputZ: $inputZ
+            inputX: $inputI
+            inputY: $inputJ
+            inputZ: $inputK
             outputX: $i
             outputY: $j
         """.trimIndent()

@@ -75,16 +75,16 @@ fun <T> NetworkBuilder.D3<T>.minMaxNorm(
 ) = addProcess(
     process =
         MinMaxNormD3(
-            outputI = inputX,
-            outputJ = inputY,
-            outputK = inputZ,
-            optimizer = optimizer.d3(inputX, inputY, inputZ),
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
+            optimizer = optimizer.d3(inputI, inputJ, inputK),
             weight = initializer.d3(
-                input = listOf(inputX, inputY, inputZ),
-                output = listOf(inputX, inputY, inputZ),
-                i = inputX,
-                j = inputY,
-                k = inputZ,
+                input = listOf(inputI, inputJ, inputK),
+                output = listOf(inputI, inputJ, inputK),
+                i = inputI,
+                j = inputJ,
+                k = inputK,
             ),
         ),
 )

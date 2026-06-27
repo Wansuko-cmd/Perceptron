@@ -45,13 +45,13 @@ fun <T> NetworkBuilder.D2<T>.affine(
 ) = addProcess(
     process =
         AffineD2(
-            channel = inputX,
+            channel = inputI,
             outputSize = neuron,
-            optimizer = optimizer.d2(inputY, neuron),
+            optimizer = optimizer.d2(inputJ, neuron),
             weight = initializer.d2(
-                input = listOf(inputY),
+                input = listOf(inputJ),
                 output = listOf(neuron),
-                i = inputY,
+                i = inputJ,
                 j = neuron,
             ),
         ),

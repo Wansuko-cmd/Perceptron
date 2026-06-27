@@ -42,8 +42,8 @@ class PositionEncodeD2 internal constructor(
 
 fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f) = addProcess(
     process = PositionEncodeD2(
-        outputI = inputX,
-        outputJ = inputY,
+        outputI = inputI,
+        outputJ = inputJ,
         waveLength = waveLength,
     ),
 )

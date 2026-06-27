@@ -43,16 +43,16 @@ class RmsNormD3 internal constructor(
 fun <T> NetworkBuilder.D3<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> RmsNormD3(
-            outputI = inputX,
-            outputJ = inputY,
-            outputK = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             e = e,
         )
 
         0, 1 -> RmsNormAxisD3(
-            outputI = inputX,
-            outputJ = inputY,
-            outputK = inputZ,
+            outputI = inputI,
+            outputJ = inputJ,
+            outputK = inputK,
             axis = axis,
             e = e,
         )

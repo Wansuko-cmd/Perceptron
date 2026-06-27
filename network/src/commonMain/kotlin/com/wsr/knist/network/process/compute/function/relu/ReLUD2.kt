@@ -27,4 +27,4 @@ class ReLUD2 internal constructor(override val outputI: Int, override val output
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.reLU() = addProcess(ReLUD2(outputI = inputX, outputJ = inputY))
+fun <T> NetworkBuilder.D2<T>.reLU() = addProcess(ReLUD2(outputI = inputI, outputJ = inputJ))

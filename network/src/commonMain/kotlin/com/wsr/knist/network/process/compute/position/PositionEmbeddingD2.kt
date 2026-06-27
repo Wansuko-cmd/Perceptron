@@ -36,14 +36,14 @@ fun <T> NetworkBuilder.D2<T>.positionEmbedding(
     initializer: WeightInitializer = this.initializer,
 ) = addProcess(
     process = PositionEmbeddingD2(
-        outputI = inputX,
-        outputJ = inputY,
-        optimizer = optimizer.d2(inputX, inputY),
+        outputI = inputI,
+        outputJ = inputJ,
+        optimizer = optimizer.d2(inputI, inputJ),
         weight = initializer.d2(
-            input = listOf(inputX, inputY),
-            output = listOf(inputX, inputY),
-            i = inputX,
-            j = inputY,
+            input = listOf(inputI, inputJ),
+            output = listOf(inputI, inputJ),
+            i = inputI,
+            j = inputJ,
         ),
     ),
 )

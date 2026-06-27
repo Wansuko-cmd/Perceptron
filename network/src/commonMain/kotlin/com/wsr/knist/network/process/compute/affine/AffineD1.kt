@@ -42,11 +42,11 @@ fun <T> NetworkBuilder.D1<T>.affine(
     process =
         AffineD1(
             outputI = neuron,
-            optimizer = optimizer.d2(inputSize, neuron),
+            optimizer = optimizer.d2(inputI, neuron),
             weight = initializer.d2(
-                input = listOf(inputSize),
+                input = listOf(inputI),
                 output = listOf(neuron),
-                i = inputSize,
+                i = inputI,
                 j = neuron,
             ),
         ),

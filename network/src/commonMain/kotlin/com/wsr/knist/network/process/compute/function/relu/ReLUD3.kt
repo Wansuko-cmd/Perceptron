@@ -29,5 +29,5 @@ class ReLUD3 internal constructor(override val outputI: Int, override val output
 }
 
 fun <T> NetworkBuilder.D3<T>.reLU() = addProcess(
-    process = ReLUD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
+    process = ReLUD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
 )

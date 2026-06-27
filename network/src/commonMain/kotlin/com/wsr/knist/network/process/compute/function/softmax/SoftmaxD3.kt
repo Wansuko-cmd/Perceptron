@@ -25,5 +25,5 @@ class SoftmaxD3 internal constructor(override val outputI: Int, override val out
 }
 
 fun <T> NetworkBuilder.D3<T>.softmax() = addProcess(
-    process = SoftmaxD3(outputI = inputX, outputJ = inputY, outputK = inputZ),
+    process = SoftmaxD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
 )

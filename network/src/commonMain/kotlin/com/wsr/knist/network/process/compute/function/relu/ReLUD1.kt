@@ -27,4 +27,4 @@ class ReLUD1 internal constructor(override val outputI: Int) : Compute.D1() {
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.reLU() = addProcess(ReLUD1(outputI = inputSize))
+fun <T> NetworkBuilder.D1<T>.reLU() = addProcess(ReLUD1(outputI = inputI))

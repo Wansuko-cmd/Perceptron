@@ -24,4 +24,4 @@ class SwishD1 internal constructor(override val outputI: Int) : Compute.D1() {
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.swish() = addProcess(SwishD1(outputI = inputSize))
+fun <T> NetworkBuilder.D1<T>.swish() = addProcess(SwishD1(outputI = inputI))

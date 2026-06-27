@@ -40,12 +40,12 @@ class ScaleD1 internal constructor(
 fun <T> NetworkBuilder.D1<T>.scale(optimizer: Optimizer = this.optimizer, initializer: WeightInitializer = Fixed(1f)) =
     addProcess(
         process = ScaleD1(
-            outputI = inputSize,
-            optimizer = optimizer.d1(inputSize),
+            outputI = inputI,
+            optimizer = optimizer.d1(inputI),
             weight = initializer.d1(
-                input = listOf(inputSize),
-                output = listOf(inputSize),
-                size = inputSize,
+                input = listOf(inputI),
+                output = listOf(inputI),
+                size = inputI,
             ),
         ),
     )
