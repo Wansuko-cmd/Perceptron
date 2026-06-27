@@ -17,7 +17,7 @@ class WordsD1(
     private val words: List<String>,
     private val unknownIndex: Int,
     private val paddingIndex: Int,
-) : Converter.D1<List<String>>() {
+) : Converter.D1<List<List<String>>>() {
     val vocabSize = words.size
     private val wordToId = words.mapIndexed { index, word -> word to index.toFloat() }.toMap()
 
@@ -48,7 +48,7 @@ fun NetworkBuilder.Companion.wordsD1(
     paddingIndex: Int,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-): NetworkBuilder.D1<List<String>> {
+): NetworkBuilder.D1<List<List<String>>> {
     check(unknownIndex in words.indices) { "unknownIndex must be within words range." }
     check(paddingIndex in words.indices) { "paddingIndex must be within words range." }
 

@@ -13,7 +13,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
-class CharD1 : Converter.D1<Char>() {
+class CharD1 : Converter.D1<List<Char>>() {
     override val outputI = chars.size
     override fun encode(input: List<Char>): Batch<IOType.D1> = input
         .map { char ->

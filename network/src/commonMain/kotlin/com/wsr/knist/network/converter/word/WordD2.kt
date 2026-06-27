@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class WordD2(private val words: List<String>, private val length: Int, private val unknownIndex: Int) :
-    Converter.D2<List<String>>() {
+    Converter.D2<List<List<String>>>() {
     override val outputI = length
     override val outputJ = words.size
     private val wordToId = words.mapIndexed { index, word -> word to index }.toMap()
@@ -47,7 +47,7 @@ fun NetworkBuilder.Companion.wordD2(
     unknownIndex: Int,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-): NetworkBuilder.D2<List<String>> {
+): NetworkBuilder.D2<List<List<String>>> {
     check(unknownIndex in words.indices) { "unknownIndex must be within words range." }
 
     return inputD2(
