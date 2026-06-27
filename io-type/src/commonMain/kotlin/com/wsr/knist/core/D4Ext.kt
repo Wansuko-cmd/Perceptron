@@ -61,7 +61,7 @@ internal fun IOType.Companion.d4Impl(shape: List<Int>, value: FloatArray): IOTyp
     IOType.D4.Global(shape = shape, value = DataBuffer.create(value))
 
 operator fun IOType.D4.get(i: Int, j: Int, k: Int, l: Int): IOType.D0 {
-    val index =  ((i * shape[1] + j) * shape[2] + k) * shape[3] + l
+    val index = ((i * shape[1] + j) * shape[2] + k) * shape[3] + l
     return IOType.d0(value[index])
 }
 
@@ -123,7 +123,7 @@ fun IOType.D4.concat(other: IOType.D4, axis: Int): IOType.D4.Global = when (axis
         val newL = l + other.l
         val result = DataBuffer.create(i * j * k * newL)
         Backend.copyInto(x = value, y = result, yi = i * j * k, yj = newL, axis = 1, indices = 0 until l)
-        Backend.copyInto(x = other.value,y =  result, yi = i * j * k, yj = newL, axis = 1, indices = l until newL)
+        Backend.copyInto(x = other.value, y = result, yi = i * j * k, yj = newL, axis = 1, indices = l until newL)
         IOType.D4.Global(value = result, shape = listOf(i, j, k, newL))
     }
 

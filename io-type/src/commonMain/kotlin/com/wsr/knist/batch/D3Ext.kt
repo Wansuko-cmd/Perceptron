@@ -24,13 +24,8 @@ internal inline fun Batch.Companion.d3Impl(
     init: (Int, Int, Int) -> Float = { _, _, _ -> 0f },
 ): Batch<IOType.D3.Global> = d3Impl(size, shape[0], shape[1], shape[2], init)
 
-internal fun Batch.Companion.d3Impl(
-    size: Int,
-    i: Int,
-    j: Int,
-    k: Int,
-    value: DataBuffer,
-): Batch<IOType.D3.Global> = Batch(value = value, size = size, shape = listOf(i, j, k))
+internal fun Batch.Companion.d3Impl(size: Int, i: Int, j: Int, k: Int, value: DataBuffer): Batch<IOType.D3.Global> =
+    Batch(value = value, size = size, shape = listOf(i, j, k))
 
 internal fun Batch.Companion.d3Impl(size: Int, shape: List<Int>, value: DataBuffer): Batch<IOType.D3.Global> =
     Batch(value = value, size = size, shape = shape)

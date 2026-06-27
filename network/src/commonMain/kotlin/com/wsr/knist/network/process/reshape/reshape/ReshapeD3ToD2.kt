@@ -30,11 +30,11 @@ fun <T> NetworkBuilder.D3<T>.reshapeToD2(i: Int, j: Int): NetworkBuilder.D2<T> {
     check(inputI * inputJ * inputK == i * j) {
         """
             invalid parameter.
-            inputX: $inputI
-            inputY: $inputJ
-            inputZ: $inputK
-            outputX: $i
-            outputY: $j
+            inputI: $inputI
+            inputJ: $inputJ
+            inputK: $inputK
+            outputI: $i
+            outputJ: $j
         """.trimIndent()
     }
     return addReshape(

@@ -108,7 +108,7 @@ fun IOType.D3.concat(other: IOType.D3, axis: Int): IOType.D3.Global = when (axis
     1 -> {
         val newJ = j + other.j
         val result = DataBuffer.create(i * newJ * k)
-        Backend.copyInto(x = value, y =result, yi = i, yj = newJ, yk = k, axis = 1, indices = 0 until j)
+        Backend.copyInto(x = value, y = result, yi = i, yj = newJ, yk = k, axis = 1, indices = 0 until j)
         Backend.copyInto(x = other.value, y = result, yi = i, yj = newJ, yk = k, axis = 1, indices = j until newJ)
         IOType.D3.Global(value = result, shape = listOf(i, newJ, k))
     }

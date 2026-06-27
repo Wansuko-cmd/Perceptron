@@ -15,26 +15,26 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class AttentionD2Test {
-    private val outputX = 3
-    private val outputY = 4
+    private val outputI = 3
+    private val outputJ = 4
     private val numOfHeads = 2
-    private val dim = outputY / numOfHeads
+    private val dim = outputJ / numOfHeads
 
     val target
         get() = AttentionD2(
-            outputI = outputX,
-            outputJ = outputY,
+            outputI = outputI,
+            outputJ = outputJ,
             numOfHeads = numOfHeads,
             dim = dim,
             isCausal = true,
             weightQ = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 1f + j * 0.1f },
             weightK = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 2f + j * 0.2f },
             weightV = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 3f + j * 0.3f },
-            weightO = IOType.d2(numOfHeads * dim, outputY) { i, j -> -i * 4f + j * 0.4f },
-            optimizerQ = Sgd(Scheduler.Fix(0.01f)).d2(outputY, numOfHeads * dim),
-            optimizerK = Sgd(Scheduler.Fix(0.01f)).d2(outputY, numOfHeads * dim),
-            optimizerV = Sgd(Scheduler.Fix(0.01f)).d2(outputY, numOfHeads * dim),
-            optimizerO = Sgd(Scheduler.Fix(0.01f)).d2(numOfHeads * dim, outputY),
+            weightO = IOType.d2(numOfHeads * dim, outputJ) { i, j -> -i * 4f + j * 0.4f },
+            optimizerQ = Sgd(Scheduler.Fix(0.01f)).d2(outputJ, numOfHeads * dim),
+            optimizerK = Sgd(Scheduler.Fix(0.01f)).d2(outputJ, numOfHeads * dim),
+            optimizerV = Sgd(Scheduler.Fix(0.01f)).d2(outputJ, numOfHeads * dim),
+            optimizerO = Sgd(Scheduler.Fix(0.01f)).d2(numOfHeads * dim, outputJ),
         )
 
     val input

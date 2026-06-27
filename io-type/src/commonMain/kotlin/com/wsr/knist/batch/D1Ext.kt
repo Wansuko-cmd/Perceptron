@@ -9,11 +9,8 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @PublishedApi
-internal inline fun Batch.Companion.d1Impl(
-    size: Int,
-    i: Int,
-    init: (Int) -> Float = { 0f },
-): Batch<IOType.D1.Global> = Batch(size) { IOType.d1(i, init) }
+internal inline fun Batch.Companion.d1Impl(size: Int, i: Int, init: (Int) -> Float = { 0f }): Batch<IOType.D1.Global> =
+    Batch(size) { IOType.d1(i, init) }
 
 @PublishedApi
 internal inline fun Batch.Companion.d1Impl(
