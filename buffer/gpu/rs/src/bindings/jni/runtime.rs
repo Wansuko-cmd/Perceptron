@@ -24,12 +24,22 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_release(
 }
 
 #[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_flush(
+    _: JNIEnv,
+    _class: JClass,
+    runtime_ptr: jlong,
+) {
+    let runtime = unsafe { &*(runtime_ptr as *const Runtime) };
+    runtime.flush();
+}
+
+#[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_sync(
     _: JNIEnv,
     _class: JClass,
     runtime_ptr: jlong,
 ) {
     let runtime = unsafe { &*(runtime_ptr as *const Runtime) };
-    runtime.submit();
+    runtime.flush();
     runtime.wait();
 }

@@ -55,7 +55,7 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine()
         sb.appendLine("package com.wsr.knist.core")
         sb.appendLine()
-        sb.appendLine("import com.wsr.knist.base.BufferScope")
+        sb.appendLine("import com.wsr.knist.BufferScope")
         sb.appendLine("import com.wsr.knist.batch.toLocal")
         // 名前衝突回避の為(FQNは使えない)
         indexed.forEach { (i, data) ->

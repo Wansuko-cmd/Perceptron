@@ -1,4 +1,4 @@
-package com.wsr.knist.base
+package com.wsr.knist
 
 import com.wsr.knist.base.data.DataBuffer
 
@@ -12,6 +12,7 @@ class BufferScope(val buffers: MutableSet<DataBuffer> = mutableSetOf()) : AutoCl
     }
 
     override fun close() {
+        Backend.flush()
         buffers.forEach { it.release() }
     }
 }
