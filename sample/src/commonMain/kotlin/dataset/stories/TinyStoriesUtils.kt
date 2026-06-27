@@ -2,8 +2,7 @@ package dataset.stories
 
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
-import com.wsr.knist.network.converter.word.WordD2
-import com.wsr.knist.network.converter.word.wordsD1
+import com.wsr.knist.network.NetworkSerializer
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -42,6 +41,11 @@ private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
 
 fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> {
+    NetworkSerializer.apply {
+        register(WordsD1::class)
+        register(WordD2::class)
+    }
+
     println("単語リスト生成開始")
     val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 

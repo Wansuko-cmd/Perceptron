@@ -1,4 +1,4 @@
-﻿package com.wsr.knist.network.converter.word
+package dataset.stories
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.shape.toBatch

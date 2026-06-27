@@ -3,14 +3,9 @@
 package com.wsr.knist.network
 
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.converter.char.CharD1
-import com.wsr.knist.network.converter.char.CharsD1
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.converter.raw.RawD3
-import com.wsr.knist.network.converter.word.WordD1
-import com.wsr.knist.network.converter.word.WordD2
-import com.wsr.knist.network.converter.word.WordsD1
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamD1
@@ -455,18 +450,9 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Converter::class) {
-        // Char
-        subclass(CharD1::class)
-        subclass(CharsD1::class)
-
         // Raw
         subclass(RawD1::class)
         subclass(RawD2::class)
         subclass(RawD3::class)
-
-        // Word
-        subclass(WordD1::class)
-        subclass(WordD2::class)
-        subclass(WordsD1::class)
     }
 }

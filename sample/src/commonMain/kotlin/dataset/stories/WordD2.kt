@@ -1,14 +1,11 @@
-﻿package com.wsr.knist.network.converter.word
+package dataset.stories
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.d2
 import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.initializer.WeightInitializer
-import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,24 +36,4 @@ class WordD2(private val words: List<String>, private val length: Int, private v
             val input = input.value.toFloatArray()
             (0 until length).map { words[input[it].toInt()] }
         }
-}
-
-fun NetworkBuilder.Companion.wordD2(
-    words: List<String>,
-    length: Int,
-    unknownIndex: Int,
-    optimizer: Optimizer,
-    initializer: WeightInitializer,
-): NetworkBuilder.D2<List<List<String>>> {
-    check(unknownIndex in words.indices) { "unknownIndex must be within words range." }
-
-    return inputD2(
-        converter = WordD2(
-            words = words,
-            length = length,
-            unknownIndex = unknownIndex,
-        ),
-        optimizer = optimizer,
-        initializer = initializer,
-    )
 }

@@ -6,8 +6,9 @@ import com.wsr.knist.Backend
 import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
-import com.wsr.knist.network.converter.word.WordD2
-import com.wsr.knist.network.converter.word.wordsD1
+import dataset.stories.WordD2
+import dataset.stories.WordsD1
+import dataset.stories.wordsD1
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
