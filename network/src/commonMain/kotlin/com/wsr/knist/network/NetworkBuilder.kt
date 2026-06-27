@@ -2,8 +2,6 @@ package com.wsr.knist.network
 
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.converter.linear.LinearD1
-import com.wsr.knist.network.converter.linear.LinearD2
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
@@ -12,7 +10,7 @@ import com.wsr.knist.network.process.compute.Compute
 import com.wsr.knist.network.process.reshape.Reshape
 
 sealed interface NetworkBuilder<I, O> {
-    val input: Converter
+    val input: Converter<I>
     val layers: List<Process>
     val optimizer: Optimizer
     val initializer: WeightInitializer
@@ -20,7 +18,7 @@ sealed interface NetworkBuilder<I, O> {
     @ConsistentCopyVisibility
     data class D1<I> internal constructor(
         val inputI: Int,
-        override val input: Converter,
+        override val input: Converter<I>,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
@@ -28,13 +26,6 @@ sealed interface NetworkBuilder<I, O> {
         fun addProcess(process: Compute.D1): D1<I> = copy(
             layers = layers + process,
             inputI = process.outputI,
-        )
-
-        fun addOutput(output: Output.D1) = Network<I, IOType.D1>(
-            inputConverter = input,
-            outputConverter = LinearD1(inputI),
-            layers = layers,
-            output = output,
         )
 
         fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network<I, O>(
@@ -71,7 +62,7 @@ sealed interface NetworkBuilder<I, O> {
     data class D2<I> internal constructor(
         val inputI: Int,
         val inputJ: Int,
-        override val input: Converter,
+        override val input: Converter<I>,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
@@ -80,13 +71,6 @@ sealed interface NetworkBuilder<I, O> {
             layers = layers + process,
             inputI = process.outputI,
             inputJ = process.outputJ,
-        )
-
-        fun addOutput(output: Output.D2) = Network<I, IOType.D2>(
-            inputConverter = input,
-            outputConverter = LinearD2(inputI, inputJ),
-            layers = layers,
-            output = output,
         )
 
         fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network<I, O>(
@@ -123,7 +107,7 @@ sealed interface NetworkBuilder<I, O> {
         val inputI: Int,
         val inputJ: Int,
         val inputK: Int,
-        override val input: Converter,
+        override val input: Converter<I>,
         override val layers: List<Process>,
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,

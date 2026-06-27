@@ -11,7 +11,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PixelConverter(override val outputI: Int, override val outputJ: Int) : Converter.D2<List<Float>>() {
+data class PixelConverter(override val outputI: Int, override val outputJ: Int) : Converter.D2<List<List<Float>>>() {
     override fun encode(input: List<List<Float>>): Batch<IOType.D2> {
         val value = input.flatten().toFloatArray()
         return Batch(
@@ -33,7 +33,7 @@ fun NetworkBuilder.Companion.inputPx(x: Int, y: Int, optimizer: Optimizer, initi
 )
 
 @Serializable
-data class LabelConverter(override val outputI: Int) : Converter.D1<Int>() {
+data class LabelConverter(override val outputI: Int) : Converter.D1<List<Int>>() {
     override fun encode(input: List<Int>): Batch<IOType.D1> {
         val value = FloatArray(input.size * outputI)
         repeat(input.size) { batchIndex ->

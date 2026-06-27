@@ -5,6 +5,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
@@ -25,7 +26,10 @@ internal class MeanSquareD1 internal constructor() : Output.D1() {
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.meanSquare() = addOutput(MeanSquareD1())
+fun <I> NetworkBuilder.D1<I>.meanSquare() = addOutput(
+    output = MeanSquareD1(),
+    converter = { RawD1(inputI) },
+)
 
 fun <I, O> NetworkBuilder.D1<I>.meanSquare(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) = addOutput(
     output = MeanSquareD1(),

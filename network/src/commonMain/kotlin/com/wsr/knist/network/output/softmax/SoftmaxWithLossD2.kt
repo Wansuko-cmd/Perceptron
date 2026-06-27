@@ -7,6 +7,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
@@ -60,18 +61,19 @@ internal class SoftmaxWithLossD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(
+fun <I> NetworkBuilder.D2<I>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(
     output = SoftmaxWithLossD2(
         outputJ = inputJ,
         temperature = temperature,
         maskValue = maskValue,
     ),
+    converter = { RawD2(inputI, inputJ) },
 )
 
 fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
-    converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
     temperature: Float = 1f,
     maskValue: Int? = null,
+    converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
 ) = addOutput(
     output = SoftmaxWithLossD2(
         outputJ = inputJ,

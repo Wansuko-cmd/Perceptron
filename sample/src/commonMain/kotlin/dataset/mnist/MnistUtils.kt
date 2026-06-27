@@ -19,7 +19,7 @@ private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
 private const val TEST_IMAGE_PATH = "mnist/t10k-images-idx3-ubyte.gz"
 private const val TEST_LABEL_PATH = "mnist/t10k-labels-idx1-ubyte.gz"
 
-fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<Float>, Int> {
+fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<List<Float>>, List<Int>> {
     // カスタムした層をSerializerに登録
     NetworkSerializer.apply {
         register(PixelConverter::class)
