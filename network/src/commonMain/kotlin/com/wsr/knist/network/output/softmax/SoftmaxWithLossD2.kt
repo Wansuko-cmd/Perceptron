@@ -75,9 +75,9 @@ fun <I> NetworkBuilder.D2<I>.softmaxWithLoss(
 
 
 fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
-    converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
     temperature: Float = 1f,
     maskValue: Int? = null,
+    converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
 ) = addOutput(
     output = SoftmaxWithLossD2(
         outputJ = inputJ,
