@@ -28,7 +28,7 @@ sealed interface NetworkBuilder<I, O> {
             inputI = process.outputI,
         )
 
-        fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network<I, O>(
+        fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
             layers = layers,
@@ -73,7 +73,7 @@ sealed interface NetworkBuilder<I, O> {
             inputJ = process.outputJ,
         )
 
-        fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network<I, O>(
+        fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
             layers = layers,
@@ -137,11 +137,11 @@ sealed interface NetworkBuilder<I, O> {
         )
 
         fun repeat(times: Int, builder: D3<I>.(index: Int) -> D3<I>): D3<I> =
-            (0 until times).fold(this) { acc, i -> this.builder(i) }
+            (0 until times).fold(this) { acc, i -> acc.builder(i) }
     }
 
     companion object {
-        fun <T> inputD1(converter: Converter.D1<T>, optimizer: Optimizer, initializer: WeightInitializer) = D1<T>(
+        fun <T> inputD1(converter: Converter.D1<T>, optimizer: Optimizer, initializer: WeightInitializer) = D1(
             inputI = converter.outputI,
             optimizer = optimizer,
             initializer = initializer,
@@ -149,7 +149,7 @@ sealed interface NetworkBuilder<I, O> {
             layers = emptyList(),
         )
 
-        fun <T> inputD2(converter: Converter.D2<T>, optimizer: Optimizer, initializer: WeightInitializer) = D2<T>(
+        fun <T> inputD2(converter: Converter.D2<T>, optimizer: Optimizer, initializer: WeightInitializer) = D2(
             inputI = converter.outputI,
             inputJ = converter.outputJ,
             optimizer = optimizer,
@@ -158,7 +158,7 @@ sealed interface NetworkBuilder<I, O> {
             layers = emptyList(),
         )
 
-        fun <T> inputD3(converter: Converter.D3<T>, optimizer: Optimizer, initializer: WeightInitializer) = D3<T>(
+        fun <T> inputD3(converter: Converter.D3<T>, optimizer: Optimizer, initializer: WeightInitializer) = D3(
             inputI = converter.outputI,
             inputJ = converter.outputJ,
             inputK = converter.outputK,
