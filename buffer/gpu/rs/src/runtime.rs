@@ -78,7 +78,7 @@ impl Runtime {
         }
     }
 
-    pub fn submit(&self) {
+    pub fn flush(&self) {
         self.dispatcher.lock().unwrap().submit(&self.queue);
     }
 
