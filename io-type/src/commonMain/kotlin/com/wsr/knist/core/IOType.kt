@@ -35,7 +35,8 @@ sealed class IOType {
     @Serializable
     sealed class D1 : IOType() {
         override val size get() = value.size
-        override val shape get() = listOf(size)
+        override val shape get() = listOf(value.size)
+        val i get() = value.size
 
         @PublishedApi
         context(scope: IOScope)

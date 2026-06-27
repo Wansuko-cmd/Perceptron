@@ -31,7 +31,7 @@ fun Batch<IOType.D1>.broadcastToD2(axis: Int, size: Int): Batch<IOType.D2.Global
 
 fun Batch<IOType.D1>.toD2(): IOType.D2 = IOType.D2(shape = listOf(size, i), value = value)
 
-fun IOType.D2.toBatch(): Batch<IOType.D1.Global> = Batch.d1(i, j, value)
+fun IOType.D2.toBatch(): Batch<IOType.D1.Global> = Batch.d1(batchSize = i, j, value)
 
 @JvmName("batchD1sToList")
 fun Batch<IOType.D1>.toList(): List<IOType.D1> = List(size) { get(it) }

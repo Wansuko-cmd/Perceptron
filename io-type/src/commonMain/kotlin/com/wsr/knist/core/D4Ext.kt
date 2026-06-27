@@ -2,6 +2,7 @@ package com.wsr.knist.core
 
 import com.wsr.knist.Backend
 import com.wsr.knist.base.data.DataBuffer
+import com.wsr.knist.scope.ScopeOp
 import kotlin.jvm.JvmName
 
 @PublishedApi
@@ -98,36 +99,37 @@ operator fun IOType.D4.set(i: Int, j: Int, k: Int, l: Int, element: Float) {
     value[((i * shape[1] + j) * shape[2] + k) * shape[3] + l] = element
 }
 
+@ScopeOp
 fun IOType.D4.concat(other: IOType.D4, axis: Int): IOType.D4.Global = when (axis) {
     0 -> {
         val newI = i + other.i
         val result = DataBuffer.create(newI * j * k * l)
-        Backend.copyInto(value, result, yi = newI, yj = j * k * l, axis = 0, indices = 0 until i)
-        Backend.copyInto(other.value, result, yi = newI, yj = j * k * l, axis = 0, indices = i until newI)
+        Backend.copyInto(x = value, y = result, yi = newI, yj = j * k * l, axis = 0, indices = 0 until i)
+        Backend.copyInto(x = other.value, y = result, yi = newI, yj = j * k * l, axis = 0, indices = i until newI)
         IOType.D4.Global(value = result, shape = listOf(newI, j, k, l))
     }
 
     1 -> {
         val newJ = j + other.j
         val result = DataBuffer.create(i * newJ * k * l)
-        Backend.copyInto(value, result, yi = i, yj = newJ, yk = k * l, axis = 1, indices = 0 until j)
-        Backend.copyInto(other.value, result, yi = i, yj = newJ, yk = k * l, axis = 1, indices = j until newJ)
+        Backend.copyInto(x = value, y = result, yi = i, yj = newJ, yk = k * l, axis = 1, indices = 0 until j)
+        Backend.copyInto(x = other.value, y = result, yi = i, yj = newJ, yk = k * l, axis = 1, indices = j until newJ)
         IOType.D4.Global(value = result, shape = listOf(i, newJ, k, l))
     }
 
     2 -> {
         val newK = k + other.k
         val result = DataBuffer.create(i * j * newK * l)
-        Backend.copyInto(value, result, yi = i * j, yj = newK, yk = l, axis = 1, indices = 0 until k)
-        Backend.copyInto(other.value, result, yi = i * j, yj = newK, yk = l, axis = 1, indices = k until newK)
+        Backend.copyInto(x = value, y = result, yi = i * j, yj = newK, yk = l, axis = 1, indices = 0 until k)
+        Backend.copyInto(x = other.value, y = result, yi = i * j, yj = newK, yk = l, axis = 1, indices = k until newK)
         IOType.D4.Global(value = result, shape = listOf(i, j, newK, l))
     }
 
     3 -> {
         val newL = l + other.l
         val result = DataBuffer.create(i * j * k * newL)
-        Backend.copyInto(value, result, yi = i * j * k, yj = newL, axis = 1, indices = 0 until l)
-        Backend.copyInto(other.value, result, yi = i * j * k, yj = newL, axis = 1, indices = l until newL)
+        Backend.copyInto(x = value, y = result, yi = i * j * k, yj = newL, axis = 1, indices = 0 until l)
+        Backend.copyInto(x = other.value,y =  result, yi = i * j * k, yj = newL, axis = 1, indices = l until newL)
         IOType.D4.Global(value = result, shape = listOf(i, j, k, newL))
     }
 
