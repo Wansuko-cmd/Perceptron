@@ -128,6 +128,8 @@ class Network<I, O> internal constructor(
 
     fun toCbor(sink: BufferedSink) = NetworkSerializer.encodeToCborSink(this, sink)
 
+    fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
+
     companion object {
         fun <I, O> fromJson(value: String) = NetworkSerializer.decodeFromString<I, O>(value)
 
