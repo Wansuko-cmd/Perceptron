@@ -3,9 +3,7 @@
 package com.wsr.knist.network.output.mean
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
 import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.networkScopeTestRule
@@ -15,7 +13,7 @@ import kotlin.test.assertEquals
 class MeanSquareD1Test {
     @Test
     fun `expect=そのまま返す`() = networkScopeTestRule {
-        val target = MeanSquareD1(outputSize = 3)
+        val target = MeanSquareD1()
         val input = Batch.of(IOType.d1(1f, 2f, 3f))
 
         val actual = with(target) { _expect(input) }
@@ -25,7 +23,7 @@ class MeanSquareD1Test {
 
     @Test
     fun `train=二乗平均誤差`() = networkScopeTestRule {
-        val target = MeanSquareD1(outputSize = 3)
+        val target = MeanSquareD1()
         val input = Batch.of(IOType.d1(1f, 2f, 3f))
         val label = Batch.of(IOType.d1(1f, 3f, 5f))
 
