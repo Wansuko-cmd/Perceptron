@@ -67,6 +67,9 @@ tasks.withType<KotlinNativeCompile>().configureEach {
 tasks.matching { it.name.contains("CommonMainSourceSet") }.configureEach {
     dependsOn("kspCommonMainKotlinMetadata")
 }
+tasks.matching { it.name.contains("SourcesJar", ignoreCase = true) }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
 
 afterEvaluate {
     publishing {
