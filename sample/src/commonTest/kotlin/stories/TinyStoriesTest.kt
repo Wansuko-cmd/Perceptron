@@ -4,7 +4,6 @@ package stories
 
 import com.wsr.knist.Backend
 import com.wsr.knist.core.unwrap
-import kotlinx.coroutines.test.runTest
 import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
@@ -33,6 +32,7 @@ import dataset.stories.wordsD1
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
+import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
