@@ -3,6 +3,7 @@
 package stories
 
 import com.wsr.knist.Backend
+import com.wsr.knist.core.unwrap
 import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
@@ -31,6 +32,7 @@ import dataset.stories.wordsD1
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
+import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
@@ -54,7 +56,7 @@ private const val UNK_INDEX = 1
 
 class TinyStoriesTest {
     @Test
-    fun `TinyStoriesモデルの出力を確認`() {
+    fun `TinyStoriesモデルの出力を確認`() = runBlocking {
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)
@@ -76,7 +78,7 @@ class TinyStoriesTest {
                     println(
                         "train line: $lineIndex, batch size: ${inputs.size}, input: ${inputs[random]}, label: ${labels[random]}",
                     )
-                    network.train(inputs, labels).also { println("loss: $it") }
+                    network.train(inputs, labels).also { println("loss: ${it.unwrap()}") }
                 }
         }
 
@@ -167,7 +169,7 @@ class TinyStoriesTest {
             maskValue = PAD_INDEX,
         )
 
-    private fun Network<List<List<String>>, List<List<String>>>.createStories(
+    private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
         beginning: String,
         maxLength: Int,
     ): String {
@@ -175,7 +177,7 @@ class TinyStoriesTest {
         repeat(maxLength) {
             val input = text.takeLast(MAX_LENGTH)
             if (input.last() == "<EOS>") return@repeat
-            val expect = this.expect(listOf(input))[0][input.lastIndex]
+            val expect = expect(listOf(input))[0][input.lastIndex]
             text.add(expect)
         }
         return text.joinToString(" ")

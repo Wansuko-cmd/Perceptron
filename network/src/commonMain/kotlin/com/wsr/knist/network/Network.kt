@@ -6,11 +6,15 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
-import com.wsr.knist.core.unwrap
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.BufferedSource
@@ -24,20 +28,25 @@ class Network<I, O> internal constructor(
     val layers: List<Process>,
     val output: Output,
 ) {
+    @PublishedApi
+    internal val mutex = Mutex()
+
     /**
      * 推論用の関数
      * @param モデルへの入力
      * @return モデルの出力
      */
-    fun expect(input: I): O {
-        val encoded = inputConverter._encode(input)
-        val context = Context(input = encoded)
-        val result = IOScope.launch {
-            layers
-                .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
-                .let { with(output) { _expect(it) } }
+    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
+        mutex.withLock {
+            val encoded = inputConverter._encode(input)
+            val context = Context(input = encoded)
+            val result = IOScope.launch {
+                layers
+                    .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
+                    .let { with(output) { _expect(it) } }
+            }
+            outputConverter._decode(result)
         }
-        return outputConverter._decode(result)
     }
 
     /**
@@ -45,27 +54,39 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun loss(input: I, label: O): Float = _loss(input) {
-        outputConverter._encode(label)
-    }
+    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
+        withContext(dispatcher) {
+            mutex.withLock {
+                _loss(input) {
+                    outputConverter._encode(label)
+                }
+            }
+        }
 
-    inline fun loss(input: I, crossinline label: (O) -> O): Float = _loss(input) {
-        val decoded = outputConverter._decode(it)
-        outputConverter._encode(label(decoded))
+    suspend inline fun loss(
+        input: I,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        crossinline label: (O) -> O,
+    ): IOType.D0.Global = withContext(dispatcher) {
+        mutex.withLock {
+            _loss(input) {
+                val decoded = outputConverter._decode(it)
+                outputConverter._encode(label(decoded))
+            }
+        }
     }
 
     @Suppress("FunctionName")
     @PublishedApi
-    internal inline fun _loss(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
+    internal inline fun _loss(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): IOType.D0.Global {
         val encoded = inputConverter._encode(input)
         val context = Context(input = encoded)
-        val result = IOScope.launch {
+        return IOScope.launch {
             val out = layers
                 .fold(encoded) { acc, process -> with(process) { _expect(acc, context) } }
                 .let { i -> with(output) { _train(i, { label(it) }) } }
-            out.loss
+            out.loss.toGlobal()
         }
-        return result.unwrap()
     }
 
     /**
@@ -73,23 +94,35 @@ class Network<I, O> internal constructor(
      * @param モデルへの入力
      * @return 損失関数の値
      */
-    fun train(input: I, label: O): Float = _train(input) {
-        outputConverter._encode(label)
-    }
-
-    inline fun train(input: I, crossinline label: (O) -> O): Float = _train(input) {
-        val decoded = outputConverter._decode(it)
-        val labeled = label(decoded)
-        outputConverter._encode(labeled)
+    suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
+        withContext(dispatcher) {
+            mutex.withLock {
+                _train(input) {
+                    outputConverter._encode(label)
+                }
+            }
+        }
+    suspend inline fun train(
+        input: I,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+        crossinline label: (O) -> O,
+    ): IOType.D0.Global = withContext(dispatcher) {
+        mutex.withLock {
+            _train(input) {
+                val decoded = outputConverter._decode(it)
+                val labeled = label(decoded)
+                outputConverter._encode(labeled)
+            }
+        }
     }
 
     @Suppress("FunctionName")
     @PublishedApi
-    internal inline fun _train(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): Float {
-        var loss = 0f
+    internal inline fun _train(input: I, crossinline label: (Batch<IOType>) -> Batch<IOType>): IOType.D0.Global {
+        var loss: IOType.D0.Global? = null
         val outputFn: TrainLambda = { encoded: Batch<IOType>, context: Context ->
             val out = with(output) { _train(encoded) { label(it) } }
-            loss = out.loss.unwrap()
+            loss = out.loss.toGlobal()
             out.delta
         }
         IOScope.launch {
@@ -97,7 +130,7 @@ class Network<I, O> internal constructor(
             val context = Context(input = encoded)
             trainLambda(outputFn).invoke(this, encoded, context)
         }
-        return loss
+        return loss!!
     }
 
     @PublishedApi

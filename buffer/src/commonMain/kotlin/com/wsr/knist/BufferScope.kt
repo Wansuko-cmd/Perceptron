@@ -12,7 +12,7 @@ class BufferScope(val buffers: MutableSet<DataBuffer> = mutableSetOf()) : AutoCl
     }
 
     override fun close() {
-        Backend.flush()
+        Backend.sync()
         buffers.forEach { it.release() }
     }
 }
