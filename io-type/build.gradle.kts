@@ -38,7 +38,7 @@ kotlin {
                 api(projects.buffer)
 
                 implementation(libs.serialization)
-                implementation(projects.ioType.scopeAnnotation)
+                compileOnly(projects.ioType.scopeAnnotation)
             }
         }
 
