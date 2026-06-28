@@ -32,7 +32,7 @@ import dataset.stories.wordsD1
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.test.Test
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
@@ -56,7 +56,7 @@ private const val UNK_INDEX = 1
 
 class TinyStoriesTest {
     @Test
-    fun `TinyStoriesモデルの出力を確認`() = runTest {
+    fun `TinyStoriesモデルの出力を確認`() = runBlocking {
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)

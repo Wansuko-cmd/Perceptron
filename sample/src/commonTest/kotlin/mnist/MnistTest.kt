@@ -22,7 +22,7 @@ import dataset.mnist.PixelConverter
 import dataset.mnist.inputPx
 import kotlin.test.Test
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.runBlocking
 
 private const val TRAIN_IMAGE_PATH = "mnist/train-images-idx3-ubyte.gz"
 private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
@@ -32,7 +32,7 @@ private const val TEST_LABEL_PATH = "mnist/t10k-labels-idx1-ubyte.gz"
 
 class MnistTest {
     @Test
-    fun `Mnistモデルの精度が落ちていないか確認`() = runTest {
+    fun `Mnistモデルの精度が落ちていないか確認`() = runBlocking {
         NetworkSerializer.apply {
             register(PixelConverter::class)
             register(LabelConverter::class)
