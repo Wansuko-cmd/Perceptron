@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 // build.gradle.kts
 dependencies {
     implementation("com.github.Wansuko-cmd.knist:network:<version>")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:<version>")  // train / loss / expect が suspend 関数のため必須
 }
 ```
 
@@ -73,14 +74,18 @@ val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
 
 ### 学習
 
-`I` 自体がバッチ型なので、バッチ単位で渡す。
+`I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。
 
 ```kotlin
-// ラベルを直接渡す（戻り値は loss）
-val loss: Float = network.train(input = inputs, label = labels)
+// suspend スコープ内での典型的な使い方
+coroutineScope.launch {
+    // ラベルを直接渡す（戻り値は IOType.D0.Global）
+    val loss: IOType.D0.Global = network.train(input = inputs, label = labels)
+    val lossValue: Float = loss.unwrap()  // Float として読み出す場合
 
-// ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
-val loss: Float = network.train(input = inputs) { currentOutput -> modifiedOutput }
+    // ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
+    val loss: IOType.D0.Global = network.train(input = inputs) { currentOutput -> modifiedOutput }
+}
 ```
 
 ### loss計算（逆伝播なし）
@@ -88,14 +93,14 @@ val loss: Float = network.train(input = inputs) { currentOutput -> modifiedOutpu
 `train()` と同じ2バリアントがある。重みを更新せずに損失だけ得たい場合に使う。
 
 ```kotlin
-val loss: Float = network.loss(input = inputs, label = labels)
-val loss: Float = network.loss(input = inputs) { currentOutput -> modifiedOutput }
+val loss: IOType.D0.Global = network.loss(input = inputs, label = labels)
+val loss: IOType.D0.Global = network.loss(input = inputs) { currentOutput -> modifiedOutput }
 ```
 
 ### 推論
 
 ```kotlin
-val result: O = network.expect(input = inputs)  // inputs: I（バッチ型）
+val result: O = network.expect(input = inputs)  // suspend。inputs: I（バッチ型）
 ```
 
 ---
@@ -124,6 +129,7 @@ val result: O = network.expect(input = inputs)  // inputs: I（バッチ型）
 
 | 型 | 形状 | 意味 |
 |----|------|------|
+| `D0` | スカラー | 損失値など単一値 |
 | `D1(i)` | [i] | ベクトル |
 | `D2(i, j)` | [i, j] | 行列 |
 | `D3(i, j, k)` | [i, j, k] | 3次元テンソル |
@@ -137,6 +143,12 @@ val result: O = network.expect(input = inputs)  // inputs: I（バッチ型）
 
 `IOScope` 外で演算すると `Global` が返る。`IOScope` 内（`with(ioScope) { }` または `IOScope.launch { }` 内）で演算すると `Local` が返る。
 `Local` → `Global` 変換: `local.toGlobal()`（スコープ内でのみ呼び出し可）
+
+`IOType.D0.Global` から `Float` を取り出すには `.unwrap()` を使う:
+
+```kotlin
+val lossValue: Float = loss.unwrap()
+```
 
 ---
 
@@ -448,6 +460,14 @@ network.toCbor(sink)  // Sink版
 val network: Network<I, O> = Network.fromCbor(bytes)
 val network: Network<I, O> = Network.fromCbor(source)  // Source版
 ```
+
+### クローン
+
+```kotlin
+val copy: Network<I, O> = network.clone()
+```
+
+内部で CBOR シリアライズ→デシリアライズを行う。重みを含む完全なコピーが得られる。カスタム Converter を使う場合は事前に `NetworkSerializer.register()` が必要。
 
 ---
 
