@@ -14,6 +14,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
 
@@ -157,6 +158,7 @@ fun <T> NetworkBuilder.D2<T>.attention(
     dim: Int = inputJ / numOfHeads,
     isCausal: Boolean = false,
     maskValue: Int? = null,
+    biases: AttentionBiasD2Builder.() -> AttentionBiasD2Builder = { this },
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
 ): NetworkBuilder.D2<T> = addProcess(

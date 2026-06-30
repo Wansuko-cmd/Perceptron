@@ -9,3 +9,10 @@ sealed interface AttentionBiasD2 {
     fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3>
     fun IOScope.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3>
 }
+
+data class AttentionBiasD2Builder(
+    val inputI: Int,
+    val inputJ: Int,
+    val numOfHeads: Int,
+    val biases: List<AttentionBiasD2>,
+)
