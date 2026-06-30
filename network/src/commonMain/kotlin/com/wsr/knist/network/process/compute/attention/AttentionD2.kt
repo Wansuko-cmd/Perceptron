@@ -14,6 +14,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
@@ -26,6 +27,7 @@ class AttentionD2 internal constructor(
     private val dim: Int,
     private val isCausal: Boolean = false,
     private val maskValue: Int? = null,
+    private val biases: List<AttentionBiasD2>,
     private var weightQ: IOType.D2.Global,
     private var weightK: IOType.D2.Global,
     private var weightV: IOType.D2.Global,
@@ -169,6 +171,7 @@ fun <T> NetworkBuilder.D2<T>.attention(
         dim = dim,
         isCausal = isCausal,
         maskValue = maskValue,
+        biases = AttentionBiasD2Builder(inputI = inputI, inputJ = inputJ, numOfHeads = numOfHeads).biases().biases,
         weightQ = initializer.d2(
             input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
