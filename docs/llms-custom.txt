@@ -1,11 +1,12 @@
 # knist カスタム実装リファレンス
 
-knist の拡張ポイントは4つある。いずれも `@Serializable` を付けることで保存・読み込みに対応できる。
+knist の拡張ポイントは5つある。`Compute`・`Output`・`Optimizer`・`AttentionBiasD2` は `@Serializable` を付けて `NetworkSerializer.register()` することで保存・読み込みに対応できる。`WeightInitializer` はシリアライズ対象外。
 
 - `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
 - `Output` — 出力層（損失計算）
 - `Optimizer` — 重み更新アルゴリズム
-- `WeightInitializer` — 重み初期化
+- `WeightInitializer` — 重み初期化（シリアライズ不要）
+- `AttentionBiasD2` — アテンションバイアス（Causal・Padding・ALiBi 等）
 
 ---
 
@@ -302,6 +303,48 @@ class MyInitializer : WeightInitializer {
 
 `DataBuffer.create(floatArray)` で `DataBuffer` を生成する。
 import: `com.wsr.knist.base.data.DataBuffer`
+
+---
+
+## AttentionBiasD2（カスタムアテンションバイアス）
+
+`attention()` 関数の `biases` ラムダで使われる interface。`forward` だけ実装すれば動作する（`backward` は加算バイアスの場合 delta 素通りがデフォルト）。
+
+```kotlin
+@Serializable
+data class MyBias(...) : AttentionBiasD2 {
+    override fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+        // scaled: (numOfHeads, seqLen, seqLen) のスケール済みアテンションスコア
+        // バイアスを加算して返す
+        return scaled + myBiasMatrix
+    }
+
+    // 加算以外の操作（乗算等）を行う場合のみ override する
+    override fun IOScope.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+        return delta  // 加算バイアスは素通り（デフォルト実装と同じ）
+    }
+}
+```
+
+import:
+```kotlin
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
+import com.wsr.knist.network.process.Context
+```
+
+### シリアライズ対応
+
+保存・読み込みを使う場合は `@Serializable` を付けて登録する:
+```kotlin
+NetworkSerializer.apply { register(MyBias::class) }
+```
+
+### AttentionBiasD2Builder への追加
+
+`attention(biases = { myBias() })` のように DSL から使いたい場合は、`AttentionBiasD2Builder` を拡張関数で拡張する:
+```kotlin
+fun AttentionBiasD2Builder.myBias() = copy(biases = biases + MyBias(...))
+```
 
 ---
 

@@ -39,6 +39,7 @@ import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.compute.affine.AffineD1
 import com.wsr.knist.network.process.compute.affine.AffineD2
 import com.wsr.knist.network.process.compute.attention.AttentionD2
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import com.wsr.knist.network.process.compute.bias.d1.BiasD1
 import com.wsr.knist.network.process.compute.bias.d2.BiasAxisD2
 import com.wsr.knist.network.process.compute.bias.d2.BiasD2
@@ -218,6 +219,16 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
         inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
             val module = SerializersModule {
                 polymorphic(Optimizer.D3::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerAttentionBiasD2")
+        inline fun <reified T : AttentionBiasD2> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(AttentionBiasD2::class) {
                     subclass(clazz)
                 }
             }
@@ -454,5 +465,11 @@ private val buildInSerializersModule = SerializersModule {
         subclass(RawD1::class)
         subclass(RawD2::class)
         subclass(RawD3::class)
+    }
+
+    polymorphic(AttentionBiasD2::class) {
+        subclass(AttentionBiasD2.Causal::class)
+        subclass(AttentionBiasD2.Mask::class)
+        subclass(AttentionBiasD2.ALiBi::class)
     }
 }
