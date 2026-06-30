@@ -20,8 +20,6 @@ import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
-import dataset.stories.NUM_HEADS
-import dataset.stories.PAD_INDEX
 import dataset.stories.WordD2
 import dataset.stories.createWordList
 import dataset.stories.generateStories
