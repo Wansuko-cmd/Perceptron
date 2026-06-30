@@ -12,6 +12,7 @@ import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import kotlin.test.Test
 
 class AttentionD2Test {
@@ -26,7 +27,7 @@ class AttentionD2Test {
             outputJ = outputJ,
             numOfHeads = numOfHeads,
             dim = dim,
-            isCausal = true,
+            biases = listOf(AttentionBiasD2.Causal(outputI)),
             weightQ = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 1f + j * 0.1f },
             weightK = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 2f + j * 0.2f },
             weightV = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 3f + j * 0.3f },

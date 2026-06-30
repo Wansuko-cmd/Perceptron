@@ -2,9 +2,7 @@
 
 package stories
 
-import com.wsr.knist.Backend
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.gpu.gpu
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Xavier
@@ -23,7 +21,6 @@ import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
 import dataset.stories.WordD2
-import dataset.stories.WordsD1
 import dataset.stories.createWordList
 import dataset.stories.generateStories
 import dataset.stories.toData
@@ -145,7 +142,7 @@ class TinyStoriesTest {
                 .skip {
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS, maskValue = PAD_INDEX, isCausal = true)
+                        .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
                         .dropout(0.9f)
                 }
                 .skip {

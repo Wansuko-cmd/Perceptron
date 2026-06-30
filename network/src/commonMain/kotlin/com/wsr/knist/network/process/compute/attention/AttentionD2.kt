@@ -1,19 +1,19 @@
 package com.wsr.knist.network.process.compute.attention
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
+import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
+import com.wsr.knist.network.process.compute.attention.bias.backward
+import com.wsr.knist.network.process.compute.attention.bias.forward
 import kotlin.math.sqrt
 import kotlinx.serialization.Serializable
 
@@ -23,8 +23,7 @@ class AttentionD2 internal constructor(
     override val outputJ: Int,
     private val numOfHeads: Int,
     private val dim: Int,
-    private val isCausal: Boolean = false,
-    private val maskValue: Int? = null,
+    private val biases: List<AttentionBiasD2>,
     private var weightQ: IOType.D2.Global,
     private var weightK: IOType.D2.Global,
     private var weightV: IOType.D2.Global,
@@ -34,7 +33,6 @@ class AttentionD2 internal constructor(
     private var weightO: IOType.D2.Global,
     private val optimizerO: Optimizer.D2,
 ) : Compute.D2() {
-    private val causalMask by lazy { IOType.d2(outputI, outputI) { x, y -> if (x < y) -1e9f else 0f } }
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
@@ -50,7 +48,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled.plusMasks(context)
+        val masked = biases.forward(scaled, context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = heads
@@ -78,7 +76,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = scaled.plusMasks(context)
+        val masked = biases.forward(scaled, context)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = heads
@@ -105,7 +103,7 @@ class AttentionD2 internal constructor(
         val sum = (dSoftmax * softmax).sum(axis = 2)
         val dMasked = softmax * dSoftmax.minus(other = sum, axis1 = 0, axis2 = 1)
 
-        val dScaled = dMasked
+        val dScaled = biases.backward(dMasked, context)
         val dMul = dScaled / sqrt(dim.toFloat())
 
         val dQuery = dMul.matMul(key, transB = true)
@@ -136,27 +134,12 @@ class AttentionD2 internal constructor(
 
         return dxq + dxk + dxv
     }
-
-    private fun Batch<IOType.D3>.plusMasks(context: Context): Batch<IOType.D3> {
-        var result = this
-        if (isCausal) {
-            result += causalMask
-        }
-        if (maskValue != null) {
-            @Suppress("UNCHECKED_CAST")
-            val input = context.input as Batch<IOType.D1>
-            val mask = input.where(onTrue = -1e9f, onFalse = 0f) { it eq maskValue.toFloat() }
-            result = result.plus(other = mask, axis = 2)
-        }
-        return result
-    }
 }
 
 fun <T> NetworkBuilder.D2<T>.attention(
     numOfHeads: Int,
     dim: Int = inputJ / numOfHeads,
-    isCausal: Boolean = false,
-    maskValue: Int? = null,
+    biases: AttentionBiasD2Builder.() -> AttentionBiasD2Builder = { this },
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
 ): NetworkBuilder.D2<T> = addProcess(
@@ -165,8 +148,7 @@ fun <T> NetworkBuilder.D2<T>.attention(
         outputJ = inputJ,
         numOfHeads = numOfHeads,
         dim = dim,
-        isCausal = isCausal,
-        maskValue = maskValue,
+        biases = AttentionBiasD2Builder(inputI = inputI, inputJ = inputJ, numOfHeads = numOfHeads).biases().biases,
         weightQ = initializer.d2(
             input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
