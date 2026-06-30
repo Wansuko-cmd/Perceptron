@@ -4,7 +4,10 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
+import com.wsr.knist.core.d3
 import com.wsr.knist.network.process.Context
+import kotlin.math.abs
+import kotlin.math.pow
 import kotlinx.serialization.Serializable
 
 context(scope: IOScope)
@@ -42,6 +45,18 @@ sealed interface AttentionBiasD2 {
             return scaled.plus(other = mask, axis = 2)
         }
     }
+
+    @Serializable
+    data class ALiBi(val numOfHeads: Int, val inputI: Int) : AttentionBiasD2 {
+        private val bias by lazy {
+            IOType.d3(numOfHeads, inputI, inputI) { i, j, k ->
+                val slope = 2f.pow(-8f * (i + 1) / numOfHeads)
+                -slope * abs(j - k)
+            }
+        }
+
+        override fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = scaled + bias
+    }
 }
 
 data class AttentionBiasD2Builder(
@@ -52,4 +67,5 @@ data class AttentionBiasD2Builder(
 ) {
     fun causal() = copy(biases = biases + AttentionBiasD2.Causal(inputI))
     fun mask(value: Float) = copy(biases = biases + AttentionBiasD2.Mask(value))
+    fun alibi() = copy(biases = biases + AttentionBiasD2.ALiBi(numOfHeads, inputI))
 }
