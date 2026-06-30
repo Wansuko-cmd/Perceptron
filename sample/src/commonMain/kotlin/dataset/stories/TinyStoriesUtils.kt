@@ -78,7 +78,7 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
                 .skip {
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS, maskValue = PAD_INDEX, isCausal = true)
+                        .attention(numOfHeads = NUM_HEADS)
                         .dropout(ratio = 0.9f)
                 }
                 .skip {

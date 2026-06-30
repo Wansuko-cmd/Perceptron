@@ -1,14 +1,23 @@
 package com.wsr.knist.network.process.compute.attention.bias
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.elementwise.compare.eq
-import com.wsr.knist.batch.elementwise.compare.where.where
-import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.process.Context
 import kotlinx.serialization.Serializable
+
+context(scope: IOScope)
+fun List<AttentionBiasD2>.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
+    fold(scaled) { batch, bias ->
+        with(bias) { scope.forward(batch, context) }
+    }
+
+context(scope: IOScope)
+fun List<AttentionBiasD2>.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
+    fold(delta) { batch, bias ->
+        with(bias) { scope.backward(batch, context) }
+    }
 
 @Serializable
 sealed interface AttentionBiasD2 {

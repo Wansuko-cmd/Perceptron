@@ -26,7 +26,6 @@ class AttentionD2Test {
             outputJ = outputJ,
             numOfHeads = numOfHeads,
             dim = dim,
-            isCausal = true,
             weightQ = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 1f + j * 0.1f },
             weightK = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 2f + j * 0.2f },
             weightV = IOType.d2(4, numOfHeads * dim) { i, j -> -i * 3f + j * 0.3f },
