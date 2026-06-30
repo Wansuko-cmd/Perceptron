@@ -15,6 +15,7 @@ import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Build
 import com.wsr.knist.network.process.compute.attention.bias.backward
 import com.wsr.knist.network.process.compute.attention.bias.forward
 import kotlin.math.sqrt
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,7 +24,7 @@ class AttentionD2 internal constructor(
     override val outputJ: Int,
     private val numOfHeads: Int,
     private val dim: Int,
-    private val biases: List<AttentionBiasD2>,
+    private val biases: List<@Polymorphic AttentionBiasD2>,
     private var weightQ: IOType.D2.Global,
     private var weightK: IOType.D2.Global,
     private var weightV: IOType.D2.Global,
