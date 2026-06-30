@@ -40,4 +40,7 @@ data class AttentionBiasD2Builder(
     val inputJ: Int,
     val numOfHeads: Int,
     val biases: List<AttentionBiasD2> = emptyList(),
-)
+) {
+    fun casual() = copy(biases = biases + AttentionBiasD2.Casual(inputI))
+    fun mask(value: Float) = copy(biases = biases + AttentionBiasD2.Mask(value))
+}
