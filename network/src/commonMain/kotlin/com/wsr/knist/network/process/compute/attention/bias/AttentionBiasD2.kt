@@ -1,6 +1,9 @@
 package com.wsr.knist.network.process.compute.attention.bias
 
 import com.wsr.knist.batch.Batch
+import com.wsr.knist.batch.elementwise.compare.eq
+import com.wsr.knist.batch.elementwise.compare.where.where
+import com.wsr.knist.batch.elementwise.operation.plus.plus
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
@@ -19,6 +22,16 @@ sealed interface AttentionBiasD2 {
         }
 
         override fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = scaled + mask
+    }
+
+    @Serializable
+    data class Mask(val value: Float) : AttentionBiasD2 {
+        override fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+            @Suppress("UNCHECKED_CAST")
+            val input = context.input as Batch<IOType.D1>
+            val mask = input.where(onTrue = -1e9f, onFalse = 0f) { it eq value }
+            return scaled.plus(other = mask, axis = 2)
+        }
     }
 }
 
