@@ -15,7 +15,7 @@ fun List<AttentionBiasD2>.forward(scaled: Batch<IOType.D3>, context: Context): B
 
 context(scope: IOScope)
 fun List<AttentionBiasD2>.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
-    fold(delta) { batch, bias ->
+    foldRight(delta) { bias, batch ->
         with(bias) { scope.backward(batch, context) }
     }
 
@@ -25,7 +25,7 @@ sealed interface AttentionBiasD2 {
     fun IOScope.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = delta
 
     @Serializable
-    data class Casual(val inputI: Int) : AttentionBiasD2 {
+    data class Causal(val inputI: Int) : AttentionBiasD2 {
         private val mask by lazy {
             IOType.d2(inputI, inputI) { x, y -> if (x < y) -1e9f else 0f }
         }
@@ -50,6 +50,6 @@ data class AttentionBiasD2Builder(
     val numOfHeads: Int,
     val biases: List<AttentionBiasD2> = emptyList(),
 ) {
-    fun casual() = copy(biases = biases + AttentionBiasD2.Casual(inputI))
+    fun causal() = copy(biases = biases + AttentionBiasD2.Causal(inputI))
     fun mask(value: Float) = copy(biases = biases + AttentionBiasD2.Mask(value))
 }

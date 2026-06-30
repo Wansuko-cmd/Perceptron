@@ -144,7 +144,7 @@ class TinyStoriesTest {
                 .skip {
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS, biases = { casual().mask(PAD_INDEX.toFloat()) })
+                        .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
                         .dropout(0.9f)
                 }
                 .skip {
