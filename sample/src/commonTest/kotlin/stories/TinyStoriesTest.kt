@@ -20,6 +20,8 @@ import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
+import dataset.stories.NUM_HEADS
+import dataset.stories.PAD_INDEX
 import dataset.stories.WordD2
 import dataset.stories.createWordList
 import dataset.stories.generateStories
@@ -142,7 +144,7 @@ class TinyStoriesTest {
                 .skip {
                     this
                         .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS)
+                        .attention(numOfHeads = NUM_HEADS, biases = { casual().mask(PAD_INDEX.toFloat()) })
                         .dropout(0.9f)
                 }
                 .skip {
