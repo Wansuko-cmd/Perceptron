@@ -191,10 +191,29 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 | 関数 | import | 入力 | 出力 |
 |------|--------|------|------|
-| `attention(numOfHeads, dim?, isCausal?, maskValue?)` | `com.wsr.knist.network.process.compute.attention.attention` | D2(i, j) | D2(i, j) |
+| `attention(numOfHeads, dim?, biases?)` | `com.wsr.knist.network.process.compute.attention.attention` | D2(i, j) | D2(i, j) |
 
-デフォルト値: `dim = inputJ / numOfHeads`, `isCausal = false`, `maskValue = null`
+デフォルト値: `dim = inputJ / numOfHeads`, `biases = { this }`（バイアスなし）
 制約: j が numOfHeads で割り切れること
+
+`biases` ラムダで `AttentionBiasD2Builder` をチェーンして適用するバイアスを指定する。
+
+| メソッド | 説明 |
+|---------|------|
+| `causal()` | Causal mask（未来トークンへの注目を -1e9 でマスク） |
+| `mask(value: Float)` | Padding mask（`context.input` が `value` の位置を -1e9 でマスク。入力が D1 であること） |
+| `alibi()` | ALiBi（ヘッドごとに異なる傾きで距離に比例した罰則を加算） |
+
+```kotlin
+// Causal のみ
+.attention(numOfHeads = 8, biases = { causal() })
+
+// Causal + Padding mask
+.attention(numOfHeads = 8, biases = { causal().mask(0f) })
+
+// ALiBi + Padding mask
+.attention(numOfHeads = 8, biases = { alibi().mask(0f) })
+```
 
 ### 活性化関数
 
@@ -525,7 +544,7 @@ wordsD1(maxLength=128, words=..., ...)      → D1(128)      // Network<List<Lis
   → tokenEmbedding(vocabSize=3000, 256)     → D2(128, 256)
   → positionEmbedding()
   → repeat(4) {
-      skip { layerNorm(1).scale(1).bias(1).attention(4, isCausal=true).dropout(0.9f) }
+      skip { layerNorm(1).scale(1).bias(1).attention(4, biases = { causal() }).dropout(0.9f) }
       skip { layerNorm(1).scale(1).bias(1).affine(1024).bias(1).swish().affine(256).bias(1).dropout(0.9f) }
     }
   → layerNorm(1).scale(1).bias(1)

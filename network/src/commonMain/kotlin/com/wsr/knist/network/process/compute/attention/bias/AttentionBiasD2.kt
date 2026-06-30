@@ -22,8 +22,7 @@ fun List<AttentionBiasD2>.backward(delta: Batch<IOType.D3>, context: Context): B
         with(bias) { scope.backward(batch, context) }
     }
 
-@Serializable
-sealed interface AttentionBiasD2 {
+interface AttentionBiasD2 {
     fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3>
     fun IOScope.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = delta
 
