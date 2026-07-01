@@ -24,9 +24,6 @@ class WordD2(private val words: List<String>, private val length: Int, private v
                 val id = wordToId[word] ?: unknownIndex
                 result[offset + index * outputJ + id] = 1f
             }
-            for (index in text.size until outputI) {
-                result[offset + index * outputJ] = 1f
-            }
         }
         return Batch.d2(size = input.size, i = outputI, j = outputJ, value = result)
     }

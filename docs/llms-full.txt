@@ -302,15 +302,17 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 | 関数 | import | 入力 | 出力型 |
 |------|--------|------|--------|
-| `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Label>` |
-| `softmaxWithLoss(converter?, temperature?, maskValue?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D2(i, j) | `Network<I, Label>` |
+| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Label>` |
+| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D2(i, j) | `Network<I, Label>` |
 | `sigmoidWithLoss()` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, IOType.D1>` |
 | `sigmoidWithLoss(converter)` | 同上 | D1(n) | `Network<I, O>` |
 | `meanSquare()` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, IOType.D1>` |
 | `meanSquare(converter)` | 同上 | D1(n) | `Network<I, O>` |
 
-`softmaxWithLoss` デフォルト値: `temperature=1f`, `maskValue=null`
+`softmaxWithLoss` デフォルト値: `temperature=1f`
 `softmaxWithLoss` の `converter` ラムダ内では `inputI` が参照可能
+
+ラベルのある行を丸ごとロス計算から除外したい場合（パディング等）は、`maskValue` のような専用パラメータは無く、Converter の `encode` 側でその行を全ゼロベクトルとして出力する。`softmaxWithLoss` は内部でラベル行の合計が 0 かどうかを見て自動的に除外する。
 
 ---
 
@@ -549,7 +551,7 @@ wordsD1(maxLength=128, words=..., ...)      → D1(128)      // Network<List<Lis
     }
   → layerNorm(1).scale(1).bias(1)
   → affine(3000)
-  → softmaxWithLoss(converter = { WordD2(words, 128, 1) }, maskValue=0)
+  → softmaxWithLoss(converter = { WordD2(words, 128, 1) })
 ```
 
 ---

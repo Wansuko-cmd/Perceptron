@@ -163,7 +163,6 @@ class TinyStoriesTest {
                     unknownIndex = UNK_INDEX,
                 )
             },
-            maskValue = PAD_INDEX,
         )
 
     private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(

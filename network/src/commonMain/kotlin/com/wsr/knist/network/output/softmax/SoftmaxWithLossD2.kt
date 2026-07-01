@@ -13,18 +13,7 @@ import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class SoftmaxWithLossD2 internal constructor(
-    val outputJ: Int,
-    val temperature: Float,
-    val maskValue: Int? = null,
-) : Output.D2() {
-    private val maskBool: IOType.D2.Global by lazy {
-        IOType.d2(
-            IOType.d1(outputJ) { 1f },
-            IOType.d1(outputJ) { 0f },
-        )
-    }
-
+internal class SoftmaxWithLossD2 internal constructor(val outputJ: Int, val temperature: Float) : Output.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> {
         val input = input / temperature
         return input.softmax(axis = 1)
@@ -38,47 +27,35 @@ internal class SoftmaxWithLossD2 internal constructor(
         val output = input.softmax(axis = 1)
 
         val label = label(output)
-        val mask = when {
-            maskValue == null -> Batch.d2(label.size, label.shape) { _, _ -> 1f }
-
-            else -> {
-                IOType.d0(maskValue.toFloat())
-                    .gather(other = label, axis = 1)
-                    .gather(other = maskBool)
-            }
-        }
+        val mask = label.sum(axis = 1) gt 0f
 
         // -log(p)
         val losses = -1f * (output * label).sum(axis = 1).ln(1e-7f)
-        val maskD1 = mask.sum(axis = 1)
-        val maskedLosses = losses * maskD1
+        val maskedLosses = losses * mask
 
         // 有効値のみの平均を取る
-        val loss = (maskedLosses.sum() / maskD1.sum()).batchAverage()
+        val loss = (maskedLosses.sum() / mask.sum()).batchAverage()
 
-        val delta = (output - label) * mask
+        val delta = (output - label).times(other = mask, axis = 0)
         return TResult(loss = loss, delta = delta)
     }
 }
 
-fun <I> NetworkBuilder.D2<I>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(
+fun <I> NetworkBuilder.D2<I>.softmaxWithLoss(temperature: Float = 1f) = addOutput(
     output = SoftmaxWithLossD2(
         outputJ = inputJ,
         temperature = temperature,
-        maskValue = maskValue,
     ),
     converter = { RawD2(inputI, inputJ) },
 )
 
 fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
     temperature: Float = 1f,
-    maskValue: Int? = null,
     converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
 ) = addOutput(
     output = SoftmaxWithLossD2(
         outputJ = inputJ,
         temperature = temperature,
-        maskValue = maskValue,
     ),
     converter = converter,
 )

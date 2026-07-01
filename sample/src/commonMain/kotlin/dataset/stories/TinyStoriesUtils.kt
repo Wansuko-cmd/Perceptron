@@ -99,7 +99,6 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
                     unknownIndex = UNK_INDEX,
                 )
             },
-            maskValue = PAD_INDEX,
         )
 
     println("学習開始")
