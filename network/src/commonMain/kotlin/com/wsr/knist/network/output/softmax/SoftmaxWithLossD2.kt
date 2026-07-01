@@ -13,10 +13,7 @@ import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class SoftmaxWithLossD2 internal constructor(
-    val outputJ: Int,
-    val temperature: Float,
-) : Output.D2() {
+internal class SoftmaxWithLossD2 internal constructor(val outputJ: Int, val temperature: Float) : Output.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>): Batch<IOType.D2> {
         val input = input / temperature
         return input.softmax(axis = 1)
