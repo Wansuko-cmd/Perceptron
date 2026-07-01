@@ -21,7 +21,7 @@ import kotlin.random.Random
 
 class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
     private val runtime = JRuntime.allocate()
-    override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime, JBuffer)
+    override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime)
 
     init {
         val ptr = runtime
@@ -1752,10 +1752,9 @@ class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
     private fun GPUJvmBuffer.Companion.create(size: Int) = GPUJvmBuffer.create(
         size = size,
         runtime = runtime,
-        native = JBuffer,
     )
 
-    private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime = runtime, native = JBuffer)
+    private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime = runtime)
 
     companion object {
         private val cleaner = Cleaner.create()
