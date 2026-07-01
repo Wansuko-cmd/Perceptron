@@ -11,8 +11,7 @@ import com.wsr.knist.network.output.TResult
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class SoftmaxWithLossD1 internal constructor(val temperature: Float, val maskValue: Int? = null) :
-    Output.D1() {
+internal class SoftmaxWithLossD1 internal constructor(val temperature: Float) : Output.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>): Batch<IOType.D1> {
         val input = input / temperature
         val max = input.max()
@@ -36,29 +35,20 @@ internal class SoftmaxWithLossD1 internal constructor(val temperature: Float, va
         val loss = 0f - (output * label).sum()
             .ln(1e-7f)
             .batchAverage()
-        val delta = (output - label).let { diff ->
-            if (maskValue == null) diff else diff * label.where(onTrue = 0f) { it eq maskValue.toFloat() }
-        }
+        val delta = output - label
         return TResult(loss = loss, delta = delta)
     }
 }
 
-fun <I> NetworkBuilder.D1<I>.softmaxWithLoss(temperature: Float = 1f, maskValue: Int? = null) = addOutput(
-    output = SoftmaxWithLossD1(
-        temperature = temperature,
-        maskValue = maskValue,
-    ),
+fun <I> NetworkBuilder.D1<I>.softmaxWithLoss(temperature: Float = 1f) = addOutput(
+    output = SoftmaxWithLossD1(temperature = temperature),
     converter = { RawD1(inputI) },
 )
 
 fun <I, O> NetworkBuilder.D1<I>.softmaxWithLoss(
     temperature: Float = 1f,
-    maskValue: Int? = null,
     converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>,
 ) = addOutput(
-    output = SoftmaxWithLossD1(
-        temperature = temperature,
-        maskValue = maskValue,
-    ),
+    output = SoftmaxWithLossD1(temperature = temperature),
     converter = converter,
 )
