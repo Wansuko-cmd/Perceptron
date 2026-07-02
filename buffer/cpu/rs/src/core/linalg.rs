@@ -1,4 +1,5 @@
 use matrixmultiply::sgemm;
+use rayon::prelude::*;
 
 pub fn inner(x: &[f32], y: &[f32], b: usize, result: &mut[f32]) {
     assert_eq!(x.len(), y.len());
@@ -85,7 +86,7 @@ pub fn mat_mul_d2_to_d2(
     m: usize,
     n: usize,
     k: usize,
-    b: usize,
+    _b: usize,
     result: &mut [f32],
 ) {
     let stride_a = m * k;
@@ -103,20 +104,21 @@ pub fn mat_mul_d2_to_d2(
     let rsc = n as isize;
     let csc = 1;
 
-    for i in 0..b {
-        let a_ptr = &x[i * stride_a..];
-        let b_ptr = &y[i * stride_b..];
-        let c_ptr = &mut result[i * stride_c..];
+    result.par_chunks_mut(stride_c)
+        .enumerate()
+        .for_each(|(i, c_ptr)| {
+            let a_ptr = &x[i * stride_a..];
+            let b_ptr = &y[i * stride_b..];
 
-        unsafe {
-            sgemm(
-                m, k, n,
-                1.0,
-                a_ptr.as_ptr(), rsa, csa,
-                b_ptr.as_ptr(), rsb, csb,
-                0.0,
-                c_ptr.as_mut_ptr(), rsc, csc,
-            );
-        }
-    }
+            unsafe {
+                sgemm(
+                    m, k, n,
+                    1.0,
+                    a_ptr.as_ptr(), rsa, csa,
+                    b_ptr.as_ptr(), rsb, csb,
+                    0.0,
+                    c_ptr.as_mut_ptr(), rsc, csc,
+                );
+            }
+        });
 }
