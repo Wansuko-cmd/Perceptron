@@ -74,7 +74,9 @@ val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
 
 ### 学習
 
-`I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。
+`I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。いずれも `dispatcher` 引数（デフォルト: `Dispatchers.Default`）を取る。
+
+`Network` は内部の Mutex により保護されておりスレッドセーフだが、`train` / `loss` / `expect` は相互排他である。複数コルーチンから並列に呼んでも実行は1件ずつ直列化される（推論のみの場合も同様）。
 
 ```kotlin
 // suspend スコープ内での典型的な使い方
@@ -91,6 +93,7 @@ coroutineScope.launch {
 ### loss計算（逆伝播なし）
 
 `train()` と同じ2バリアントがある。重みを更新せずに損失だけ得たい場合に使う。
+順伝播は推論時と同じ経路で行われる（dropout はパススルーになる等）。
 
 ```kotlin
 val loss: IOType.D0.Global = network.loss(input = inputs, label = labels)
@@ -102,6 +105,8 @@ val loss: IOType.D0.Global = network.loss(input = inputs) { currentOutput -> mod
 ```kotlin
 val result: O = network.expect(input = inputs)  // suspend。inputs: I（バッチ型）
 ```
+
+戻り値は出力層の結果（`softmaxWithLoss` なら softmax 後の確率分布）を `Converter.decode` に通したもの。生の確率分布を使いたい場合（温度・top-k 等のサンプリングを自前で行う場合など）は、decode がそれを返すように Converter を実装する。
 
 ---
 
@@ -154,6 +159,8 @@ val lossValue: Float = loss.unwrap()
 
 ## 全層一覧（import パス付き）
 
+重みを持つレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は、表に記載の引数に加えて `optimizer` / `initializer` を省略可能引数として取り、層ごとに個別指定できる（詳細は Optimizer 節）。
+
 ### 畳み込み・プーリング
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
@@ -191,18 +198,21 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 | 関数 | import | 入力 | 出力 |
 |------|--------|------|------|
-| `attention(numOfHeads, dim?, biases?)` | `com.wsr.knist.network.process.compute.attention.attention` | D2(i, j) | D2(i, j) |
+| `attention(numOfHeads, dim?, biases?, optimizer?, initializer?)` | `com.wsr.knist.network.process.compute.attention.attention` | D2(i, j) | D2(i, j) |
 
-デフォルト値: `dim = inputJ / numOfHeads`, `biases = { this }`（バイアスなし）
-制約: j が numOfHeads で割り切れること
+デフォルト値: `dim = inputJ / numOfHeads`（整数除算）, `biases = { this }`（バイアスなし）
+制約: j は numOfHeads で割り切れるようにすること。割り切れなくてもエラーにはならないが、デフォルトの `dim` が切り捨てられ、内部次元（numOfHeads × dim）が j より小さいモデルが黙って出来上がる
+Self-attention 専用（Q・K・V はすべて同一の入力から計算される）。Q/K/V/O の射影にバイアス項は付かない。
 
 `biases` ラムダで `AttentionBiasD2Builder` をチェーンして適用するバイアスを指定する。
 
 | メソッド | 説明 |
 |---------|------|
 | `causal()` | Causal mask（未来トークンへの注目を -1e9 でマスク） |
-| `mask(value: Float)` | Padding mask（`context.input` が `value` の位置を -1e9 でマスク。入力が D1 であること） |
+| `mask(value: Float)` | Padding mask（ネットワークの最初の入力のうち値が `value` の位置を -1e9 でマスク） |
 | `alibi()` | ALiBi（ヘッドごとに異なる傾きで距離に比例した罰則を加算） |
+
+`mask` はネットワークの最初の入力（`Converter.encode` の結果。Context 経由で参照される）が **D1 のトークンID列**であり、かつその長さが attention の系列長と一致している場合のみ使える。`inputD2` / `inputD3` 始まりのモデルでは使用できない（実行時エラーになる）。
 
 ```kotlin
 // Causal のみ
@@ -231,8 +241,8 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 ### 正規化
 
-| 関数 | import | デフォルト値 |
-|------|--------|-------------|
+| 関数 | import | 入出力 | デフォルト値 |
+|------|--------|--------|-------------|
 | `layerNorm(e?)` | `com.wsr.knist.network.process.compute.norm.layer.d1.layerNorm` | D1(n)→D1(n) | e=1e-6f |
 | `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d2.layerNorm` | D2→D2 | axis=null, e=1e-6f |
 | `layerNorm(axis?, e?)` | `com.wsr.knist.network.process.compute.norm.layer.d3.layerNorm` | D3→D3 | axis=null, e=1e-6f |
@@ -245,9 +255,11 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
 |------|--------|------|------|-------------|
-| ~~`roPE(waveLength?)`~~ | `com.wsr.knist.network.process.compute.position.roPE` | D2(i, j) | D2(i, j) | waveLength=10000f | **Deprecated**: RoPE は Attention 内部で Q・K に適用するのが正しい設計。現実装は入力全体に適用しており非推奨。代わりに `positionEncode` または `positionEmbedding` を使うこと。 |
+| ~~`roPE(waveLength?)`~~ | `com.wsr.knist.network.process.compute.position.roPE` | D2(i, j) | D2(i, j) | waveLength=10000f |
 | `positionEncode(waveLength?)` | `com.wsr.knist.network.process.compute.position.positionEncode` | D2(i, j) | D2(i, j) | waveLength=10000f |
-| `positionEmbedding()` | `com.wsr.knist.network.process.compute.position.positionEmbedding` | D2(i, j) | D2(i, j) | — |
+| `positionEmbedding(optimizer?, initializer?)` | `com.wsr.knist.network.process.compute.position.positionEmbedding` | D2(i, j) | D2(i, j) | — |
+
+**`roPE` は Deprecated**: RoPE は Attention 内部で Q・K に適用するのが正しい設計だが、現実装は入力全体に適用しており非推奨。Attention 内部に RoPE を適用する手段は現状無いため、位置情報には `positionEncode` / `positionEmbedding`（または attention の `alibi()`）を使うこと。
 
 注意: `positionEmbedding` はサイズを変えない学習可能な位置バイアスを加算するだけ。
 
@@ -257,7 +269,7 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 |------|--------|-------------|
 | `dropout(ratio, seed?)` | `com.wsr.knist.network.process.compute.dropout.dropout` | seed=null |
 
-`ratio` は**保持確率**（0〜1）。推論時はパススルー。
+`ratio` は**保持確率**（1.0 = 全ユニットを残す）。PyTorch の `p`（ドロップ率）とは意味が**逆**なので注意。`dropout(ratio = 0.9f)` は 10% のユニットを落とす。推論時（`expect` / `loss`）はパススルー。
 
 ### デバッグ
 
@@ -277,6 +289,8 @@ import com.wsr.knist.network.process.compute.bias.d2.bias  // 同名でも競合
 | 関数 | import | 制約 |
 |------|--------|------|
 | `skip { ... }` | `com.wsr.knist.network.process.compute.skip.skip` | ブロック内の出力が入力と同サイズであること |
+
+skip ブロック内に置けるのは**同一次元の Compute 系レイヤーのみ**。ブロック内で `reshapeToD1()` 等により次元を変えて戻す構成はサポートされない。
 
 ### Reshape
 
@@ -310,9 +324,10 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 | `meanSquare(converter)` | 同上 | D1(n) | `Network<I, O>` |
 
 `softmaxWithLoss` デフォルト値: `temperature=1f`
+`temperature` は**構築時に固定**され、学習・推論の両方の softmax に適用される。構築後・読み込み後に変更する手段は無いため、推論時に温度を変えたい場合はモデルを構築し直す必要がある。
 `softmaxWithLoss` の `converter` ラムダ内では `inputI` が参照可能
 
-ラベルのある行を丸ごとロス計算から除外したい場合（パディング等）は、`maskValue` のような専用パラメータは無く、Converter の `encode` 側でその行を全ゼロベクトルとして出力する。`softmaxWithLoss` は内部でラベル行の合計が 0 かどうかを見て自動的に除外する。
+ラベルのある行を丸ごとロス計算から除外したい場合（パディング等）は、`maskValue` のような専用パラメータは無く、Converter の `encode` 側でその行を全ゼロベクトルとして出力する。**D2 版の** `softmaxWithLoss` は内部でラベル行の合計が 0 かどうかを見て自動的に除外する（D1 版にはこの除外機構は無い）。
 
 ---
 
@@ -395,7 +410,14 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 | `Adam(scheduler, momentum?, rms?)` | `com.wsr.knist.network.optimizer.adam.Adam` | momentum=0.9f, rms=0.999f |
 | `AdamW(scheduler, momentum?, rms?, decay?)` | `com.wsr.knist.network.optimizer.adam.AdamW` | momentum=0.9f, rms=0.999f, decay=0.01f |
 
-共通オプション: `maxNorm`（勾配クリッピング）、`stepUnit`（更新頻度）
+共通オプション:
+
+- `maxNorm`: 勾配クリッピング。勾配の L2 ノルムが `maxNorm` を超えた場合にスケールダウンする
+- `stepUnit`: Scheduler に渡す step の進行単位。重み更新 `stepUnit` 回ごとに Scheduler の step が 1 進む。**勾配累積ではない**（重みの更新自体は毎回行われ、学習率スケジュールの進行だけが遅くなる）
+
+Optimizer / Initializer は `inputDx` で渡したものがデフォルトとして全層に配られるが、学習可能なレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は `optimizer` / `initializer` 引数で層ごとに上書きできる。なお `bias` の initializer デフォルトは `Fixed(0f)`、`scale` / `minMaxNorm` は `Fixed(1f)`。
+
+`AdamW` の `decay` は bias / scale を含む**全パラメータに一律に適用される**。特定の層を weight decay から除外したい場合は、その層の `optimizer` 引数に decay の無い Optimizer（`Adam` 等）を個別に渡す。
 
 ### Scheduler
 
@@ -405,6 +427,8 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 | `Scheduler.Step(rate, gamma, stepCount)` | 同上 | Nステップごとに rate *= gamma |
 | `Scheduler.MultiStep(rate, gamma, milestones)` | 同上 | 指定ステップで rate *= gamma |
 | `Scheduler.CosineAnnealing(minRate, maxRate, stepSize, warmUp, initialRate)` | 同上 | 線形ウォームアップ→コサインアニーリング |
+
+Scheduler が受け取る step は「そのパラメータの重み更新回数（÷ `stepUnit`）」で、パラメータごとに独立してカウントされる。全パラメータは `train()` 1回につき1回更新されるため、実用上は「`train()` の呼び出し回数」と読み替えてよい（`stepSize` / `warmUp` / `stepCount` / `milestones` は train 回数を基準に設定する）。
 
 ---
 
@@ -423,6 +447,10 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 `toJson()` / `toCbor()` は `Network` のメンバー関数、`fromJson()` / `fromCbor()` は `Network.Companion` のコンパニオン関数。いずれも import 不要。
 
+保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替える手段は現状無い（変更したい場合はモデルを構築し直す）。
+
+`fromJson` / `fromCbor` の型パラメータ `I`・`O` は実行時に検証されない。保存時と異なる型を指定しても読み込み自体は成功し、`expect` / `train` の呼び出し時に ClassCastException になるため注意。
+
 カスタムConverterを使っている場合は保存前に登録が必要。
 
 ### カスタムConverterを保存する場合のビルド設定
@@ -440,7 +468,7 @@ dependencies {
 }
 ```
 
-設定後、カスタムConverter に `@Serializable` を付けて登録する：
+設定後、カスタムConverter に `@Serializable` を付けて登録する。登録はアプリ起動時などに**各クラスにつき一度だけ**行えばよい（モデルを生成するたびに呼ぶ必要はない）：
 
 ```kotlin
 import com.wsr.knist.network.NetworkSerializer
@@ -495,7 +523,7 @@ val copy: Network<I, O> = network.clone()
 ## repeat / skip
 
 ```kotlin
-// 同じブロックをN回繰り返す
+// 同じブロックをN回繰り返す（ラムダは index: Int を受け取れる）
 builder.repeat(4) {
     this.affine(neuron = 256).bias().reLU()
 }

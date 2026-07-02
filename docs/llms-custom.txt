@@ -196,7 +196,7 @@ fun <T> NetworkBuilder.D1<T>.weightedLayer() = addProcess(
 
 ### Context
 
-`Context(val input: Batch<IOType>)` — 現在の層への入力を保持する。通常は使わないが、入力に依存した処理（skip 接続の合流等）で参照できる。
+`Context(val input: Batch<IOType>)` — **ネットワーク全体への最初の入力**（入力 Converter の `encode` 結果）を保持する。現在の層への入力ではない点に注意（層への入力は `expect` / `train` の `input` 引数で渡される）。すべての層に同一の Context インスタンスが渡されるため、元入力に依存した処理（Attention の padding mask が入力トークンID列を参照する等）で利用できる。
 
 ---
 
@@ -260,7 +260,7 @@ class MyOptimizer(private val rate: Float) : Optimizer {
 ```
 
 各次元の実装。`Optimizer.D1` 〜 `Optimizer.D4` は抽象クラスで、`adapt(weight, dw)` だけ実装すれば良い。
-`maxNorm`（勾配クリッピング）・`stepUnit`（更新頻度）はコンストラクタ引数として基底クラスに渡せる。
+`maxNorm`（勾配クリッピング）・`stepUnit`（`step` プロパティの進行単位。勾配累積ではない）はコンストラクタ引数として基底クラスに渡せる。
 
 ```kotlin
 @Serializable
@@ -275,7 +275,7 @@ class MyD1(
 }
 ```
 
-`step`（更新回数 / stepUnit）が `protected` プロパティとして参照できる。スケジューラ等に使える。
+`step`（= 更新回数 ÷ stepUnit）が `protected` プロパティとして参照できる。スケジューラ等に使える。step はオプティマイザインスタンス（= パラメータ）ごとに独立してカウントされる。
 
 ---
 
