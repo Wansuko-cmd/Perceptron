@@ -35,7 +35,7 @@ class DropoutD2Test {
 
         assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(3.125f, 4.6875f), actual = actual[0][1])
-        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(0f, 3.125f), actual = actual[1][0])
         assertContentEquals(expected = IOType.d1(4.6875f, 7.8125f), actual = actual[1][1])
     }
 }
