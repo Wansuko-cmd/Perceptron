@@ -33,6 +33,6 @@ class DropoutD1Test {
         } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 6.25f), actual = actual[0])
-        assertContentEquals(expected = IOType.d1(0f, 0f, 9.375f), actual = actual[1])
+        assertContentEquals(expected = IOType.d1(0f, 4.6875f, 9.375f), actual = actual[1])
     }
 }

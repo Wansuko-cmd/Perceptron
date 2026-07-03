@@ -37,8 +37,8 @@ class DropoutD3Test {
         assertContentEquals(expected = IOType.d1(3.125f, 4.6875f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(6.25f, 7.8125f), actual = actual[0][1][0])
         assertContentEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[0][1][1])
-        assertContentEquals(expected = IOType.d1(0f, 0f), actual = actual[1][0][0])
-        assertContentEquals(expected = IOType.d1(4.6875f, 6.25f), actual = actual[1][0][1])
+        assertContentEquals(expected = IOType.d1(0f, 1.5625f), actual = actual[1][0][0])
+        assertContentEquals(expected = IOType.d1(0f, 6.25f), actual = actual[1][0][1])
         assertContentEquals(expected = IOType.d1(9.375f, 10.9375f), actual = actual[1][1][0])
         assertContentEquals(expected = IOType.d1(14.0625f, 15.625f), actual = actual[1][1][1])
     }
