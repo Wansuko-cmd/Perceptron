@@ -691,6 +691,11 @@ object KotlinBackend : IBackend {
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = x.map { kotlin.math.sqrt(it + e) }
 
+    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
+        val value = FloatArray(size) { random.nextDouble(from.toDouble(), until.toDouble()).toFloat() }
+        return Default(value)
+    }
+
     override fun average(x: DataBuffer): DataBuffer {
         val sum = sum(x = x)
         return div(sum, x.size.toFloat())
