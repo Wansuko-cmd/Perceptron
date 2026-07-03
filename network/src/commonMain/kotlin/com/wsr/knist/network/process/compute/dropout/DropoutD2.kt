@@ -27,7 +27,11 @@ class DropoutD2 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val mask = IOType.d2(outputI, outputJ) { _, _ ->
+        val mask = Batch.d2(
+            size = input.size,
+            i = outputI,
+            j = outputJ,
+        ) { _, _ ->
             if (random.nextFloat(0f, 1f) <= ratio) q else 0f
         }
         val output = input * mask

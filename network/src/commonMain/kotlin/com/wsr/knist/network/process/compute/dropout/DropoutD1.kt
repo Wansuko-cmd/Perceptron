@@ -26,7 +26,10 @@ class DropoutD1 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
-        val mask = IOType.d1(outputI) { if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
+        val mask = Batch.d1(
+            size = input.size,
+            i = outputI,
+        ) { if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
         val output = input * mask
         val delta = calcDelta(output)
         return delta * mask

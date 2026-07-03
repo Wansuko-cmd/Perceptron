@@ -28,7 +28,8 @@ class DropoutD3 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val mask = IOType.d3(
+        val mask = Batch.d3(
+            size = input.size,
             i = outputI,
             j = outputJ,
             k = outputK,
