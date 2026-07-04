@@ -1,7 +1,7 @@
 use wgpu::Device;
 
 use crate::kernels::{
-    elementwise::{compare::Compare, math::Math, operation::Operation},
+    elementwise::{compare::Compare, generator::Generator, math::Math, operation::Operation},
     index::index::Index,
     linalg::mat_mul::MatMul,
     reduction::Reduction,
@@ -18,6 +18,7 @@ pub mod task;
 pub struct Kernels {
     pub reduction: Reduction,
     pub compare: Compare,
+    pub generator: Generator,
     pub index: Index,
     pub mat_mul: MatMul,
     pub math: Math,
@@ -30,6 +31,7 @@ impl Kernels {
         Kernels {
             reduction: Reduction::new(device),
             compare: Compare::new(device),
+            generator: Generator::new(device),
             index: Index::new(device),
             mat_mul: MatMul::new(device),
             math: Math::new(device),

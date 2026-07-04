@@ -7,6 +7,7 @@ import com.wsr.knist.base.data.IDataBufferGenerator
 import com.wsr.knist.base.data.size
 import com.wsr.knist.gpu.elementwise.compare.JCompare
 import com.wsr.knist.gpu.elementwise.compare.where.JWhere
+import com.wsr.knist.gpu.elementwise.generator.JGenerator
 import com.wsr.knist.gpu.elementwise.math.JMath
 import com.wsr.knist.gpu.elementwise.operation.JDiv
 import com.wsr.knist.gpu.elementwise.operation.JMinus
@@ -1136,6 +1137,12 @@ class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = GPUJvmBuffer.create(x.size)
         JMath.sqrt(x = x.toGPUBuffer().ptr, e = e, result = result.ptr, runtime = runtime)
+        return result
+    }
+
+    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
+        val result = GPUJvmBuffer.create(size)
+        JGenerator.random(from = from, until = until, seed = random.nextLong(), result = result.ptr, runtime = runtime)
         return result
     }
 
