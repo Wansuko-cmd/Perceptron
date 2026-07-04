@@ -1,4 +1,4 @@
-use wgpu::{Device, util::DeviceExt};
+use wgpu::Device;
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
@@ -44,23 +44,13 @@ impl Math {
                     },
                     count: None,
                 },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
             ],
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Math::new"),
             bind_group_layouts: &[&bind_group_layout],
-            immediate_size: 0,
+            immediate_size: std::mem::size_of::<Params>() as u32,
         });
 
         Math {
@@ -187,11 +177,6 @@ impl Math {
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let device = &self.device;
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
@@ -205,10 +190,6 @@ impl Math {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -219,6 +200,7 @@ impl Math {
             pipeline: pipeline,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(params).to_vec()),
         }
     }
 }

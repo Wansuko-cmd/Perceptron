@@ -9,6 +9,7 @@ pub struct ComputeTask<'a> {
     pub pipeline: &'a wgpu::ComputePipeline,
     pub bind_group: wgpu::BindGroup,
     pub workgroups: [u32; 3],
+    pub params: Option<Vec<u8>>,
 }
 
 impl Task for ComputeTask<'_> {
@@ -20,6 +21,9 @@ impl Task for ComputeTask<'_> {
 
         compute_pass.set_pipeline(self.pipeline);
         compute_pass.set_bind_group(0, &self.bind_group, &[]);
+        if let Some(value) = &self.params {
+            compute_pass.set_immediates(0, value);
+        }
 
         compute_pass.dispatch_workgroups(self.workgroups[0], self.workgroups[1], self.workgroups[2]);
     }

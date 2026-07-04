@@ -1,4 +1,4 @@
-use wgpu::{Device, util::DeviceExt};
+use wgpu::Device;
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
@@ -56,23 +56,29 @@ impl Shape {
                     },
                     count: None,
                 },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
             ],
         });
 
+        let immediate_size = [
+            std::mem::size_of::<CopyIntoD1Params>(),
+            std::mem::size_of::<CopyIntoD2Params>(),
+            std::mem::size_of::<CopyIntoD3Params>(),
+            std::mem::size_of::<SliceD1Params>(),
+            std::mem::size_of::<SliceD2Params>(),
+            std::mem::size_of::<SliceD3Params>(),
+            std::mem::size_of::<TransposeD2Params>(),
+            std::mem::size_of::<TransposeD4Params>(),
+            std::mem::size_of::<FlipD2Params>(),
+            std::mem::size_of::<FlipD3Params>(),
+            std::mem::size_of::<UnfoldD1Params>(),
+            std::mem::size_of::<UnfoldD2Params>(),
+            std::mem::size_of::<FoldD1Params>(),
+            std::mem::size_of::<FoldD2Params>(),
+        ].into_iter().max().unwrap();
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Shape::new"),
             bind_group_layouts: &[&binding_group_layout],
-            immediate_size: 0,
+            immediate_size: immediate_size as u32,
         });
 
         let copy_into_d1_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -300,12 +306,6 @@ impl Shape {
             _pad: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -318,10 +318,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -332,6 +328,7 @@ impl Shape {
             pipeline: &self.copy_into_d1,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -403,12 +400,6 @@ impl Shape {
             _pad3: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -421,10 +412,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -435,6 +422,7 @@ impl Shape {
             pipeline: &pipeline,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -473,12 +461,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -491,10 +473,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -505,6 +483,7 @@ impl Shape {
             pipeline: &self.copy_into_d3,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -534,12 +513,6 @@ impl Shape {
             _pad: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -552,10 +525,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -566,6 +535,7 @@ impl Shape {
             pipeline: &self.slice_d1,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -639,12 +609,6 @@ impl Shape {
             _pad3: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -657,10 +621,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -671,6 +631,7 @@ impl Shape {
             pipeline: pipeline,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -709,12 +670,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -727,10 +682,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -741,6 +692,7 @@ impl Shape {
             pipeline: &self.slice_d3,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -770,12 +722,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -788,10 +734,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -802,6 +744,7 @@ impl Shape {
             pipeline: &self.transpose_d2,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -864,12 +807,6 @@ impl Shape {
             permuted_stride: permuted_stride.map(|v| v as u32),
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -882,10 +819,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -896,6 +829,7 @@ impl Shape {
             pipeline: &self.transpose_d4,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -956,12 +890,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -974,10 +902,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -988,6 +912,7 @@ impl Shape {
             pipeline: pipeline,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -1017,12 +942,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -1035,10 +954,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -1049,6 +964,7 @@ impl Shape {
             pipeline: &self.flip_d3,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -1087,12 +1003,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -1105,10 +1015,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -1119,6 +1025,7 @@ impl Shape {
             pipeline: &self.unfold_d1,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -1157,12 +1064,6 @@ impl Shape {
             _pad: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -1175,10 +1076,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -1189,6 +1086,7 @@ impl Shape {
             pipeline: &self.unfold_d2,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -1227,12 +1125,6 @@ impl Shape {
             _pad2: 0u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -1245,10 +1137,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -1259,6 +1147,7 @@ impl Shape {
             pipeline: &self.fold_d1,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
@@ -1297,12 +1186,6 @@ impl Shape {
             stride: stride as u32,
         };
 
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
-
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
             layout: &self.binding_group_layout,
@@ -1315,10 +1198,6 @@ impl Shape {
                     binding: 1,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -1329,6 +1208,7 @@ impl Shape {
             pipeline: &self.fold_d2,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }

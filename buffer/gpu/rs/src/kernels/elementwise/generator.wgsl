@@ -7,7 +7,7 @@ struct Params {
 };
 
 @group(0) @binding(0) var<storage, read_write> result: array<f32>;
-@group(0) @binding(1) var<uniform> params: Params;
+var<immediate> params: Params;
 
 @compute @workgroup_size(64, 1)
 fn random_d1(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups) num_groups: vec3<u32>) {
