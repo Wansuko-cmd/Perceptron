@@ -1,4 +1,4 @@
-use wgpu::{Device, util::DeviceExt};
+use wgpu::Device;
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
@@ -30,23 +30,13 @@ impl Generator {
                     },
                     count: None,
                 },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
             ],
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Generator::new"),
             bind_group_layouts: &[&bind_group_layout],
-            immediate_size: 0,
+            immediate_size: std::mem::size_of::<Params>() as u32,
         });
 
         Generator {
@@ -79,11 +69,6 @@ impl Generator {
     pub fn random_d1<'a>(&'a self, from: f32, until: f32, seed: u32, result: &GPUBuffer) -> ComputeTask<'a> {
         let device = &self.device;
         let params = Params { from: from, until: until, seed: seed, _pad: 0 };
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("random_d1"),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("random_d1"),
@@ -92,10 +77,6 @@ impl Generator {
                 wgpu::BindGroupEntry {
                     binding: 0,
                     resource: result.buffer.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: params_buffer.as_entire_binding(),
                 },
             ],
         });
@@ -107,6 +88,7 @@ impl Generator {
             pipeline: &self.random_d1,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }

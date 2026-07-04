@@ -1,4 +1,4 @@
-use wgpu::{Device, util::DeviceExt};
+use wgpu::Device;
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 

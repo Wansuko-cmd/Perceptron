@@ -1,4 +1,4 @@
-use wgpu::{Device, util::DeviceExt};
+use wgpu::Device;
 
 use crate::{kernels::task::ComputeTask, resource::buffer::GPUBuffer};
 
@@ -55,23 +55,13 @@ impl Index {
                     },
                     count: None,
                 },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 3,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
-                    },
-                    count: None,
-                },
             ],
         });
 
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Index::new"),
             bind_group_layouts: &[&bind_group_layout],
-            immediate_size: 0,
+            immediate_size: std::mem::size_of::<Params>() as u32,
         });
 
         Index {
@@ -119,11 +109,6 @@ impl Index {
         let label = "gather";
         let device = &self.device;
         let params = Params { i: i as u32, j: j as u32, k: k as u32, b: 0 };
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
@@ -141,10 +126,6 @@ impl Index {
                     binding: 2,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -155,6 +136,7 @@ impl Index {
             pipeline: &self.gather,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 
@@ -168,11 +150,6 @@ impl Index {
         let label = "scatter_add";
         let device = &self.device;
         let params = Params { i: i as u32, j: j as u32, k: k as u32, b: b as u32 };
-        let params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some(label),
-            contents: bytemuck::bytes_of(&params),
-            usage: wgpu::BufferUsages::UNIFORM,
-        });
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
@@ -190,10 +167,6 @@ impl Index {
                     binding: 2,
                     resource: result.buffer.as_entire_binding(),
                 },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: params_buffer.as_entire_binding(),
-                },
             ]
         });
 
@@ -204,6 +177,7 @@ impl Index {
             pipeline: &self.scatter_add,
             bind_group: bind_group,
             workgroups: workgroups,
+            params: Some(bytemuck::bytes_of(&params).to_vec()),
         }
     }
 }
