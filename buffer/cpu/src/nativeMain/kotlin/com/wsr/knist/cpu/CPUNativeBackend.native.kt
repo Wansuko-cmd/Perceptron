@@ -77,6 +77,7 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_pow_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_random_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_scatter_add
 import com.wsr.knist.cpu.rs.com_wsr_cpu_sigmoid_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_slice_d1
@@ -1198,6 +1199,12 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
         com_wsr_cpu_sqrt_d1(x = x.toCPUBuffer().buffer, e = e, size = x.size, result = result.buffer)
+        return result
+    }
+
+    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
+        val result = CPUNativeBuffer.create(size)
+        com_wsr_cpu_random_d1(from = from, until = until, seed = random.nextLong(), size = size, result = result.buffer)
         return result
     }
 

@@ -6,6 +6,7 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.cpu.elementwise.compare.JCompare
 import com.wsr.knist.cpu.elementwise.compare.where.JWhere
+import com.wsr.knist.cpu.elementwise.generator.JGenerator
 import com.wsr.knist.cpu.elementwise.math.JMath
 import com.wsr.knist.cpu.elementwise.operation.div.JDiv
 import com.wsr.knist.cpu.elementwise.operation.minus.JMinus
@@ -1019,6 +1020,12 @@ class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUJvmBuffer.create(x.size)
         JMath.sqrt(x.toCPUBuffer().byteBuffer, e, result.byteBuffer)
+        return result
+    }
+
+    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
+        val result = CPUJvmBuffer.create(size)
+        JGenerator.random(from, until, random.nextLong(), result.byteBuffer)
         return result
     }
 

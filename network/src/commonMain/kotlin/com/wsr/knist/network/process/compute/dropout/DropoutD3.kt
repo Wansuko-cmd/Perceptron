@@ -4,7 +4,6 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
-import com.wsr.knist.network.nextFloat
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
 import kotlin.random.Random
@@ -28,12 +27,16 @@ class DropoutD3 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
-        val mask = Batch.d3(
+        val uniform = Batch.random(
             size = input.size,
             i = outputI,
             j = outputJ,
             k = outputK,
-        ) { _, _, _ -> if (random.nextFloat(0f, 1f) <= ratio) q else 0f }
+            from = 0f,
+            until = 1f,
+            random = random,
+        )
+        val mask = uniform.where(condition = uniform lt ratio, onTrue = q, onFalse = 0f)
         val output = input * mask
         val delta = calcDelta(output)
         return delta * mask
