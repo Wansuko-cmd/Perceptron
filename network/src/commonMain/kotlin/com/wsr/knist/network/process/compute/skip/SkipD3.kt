@@ -9,6 +9,7 @@ import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.reshape.Reshape
 import kotlinx.serialization.Serializable
 
 private typealias CALC_DELTA_D3 = IOScope.(input: Batch<IOType.D3>, context: Context) -> Batch<IOType.D3>
@@ -64,24 +65,28 @@ class SkipD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.skip(builder: NetworkBuilder.D3<T>.() -> NetworkBuilder.D3<T>): NetworkBuilder.D3<T> {
-    val layers = builder().layers
-        .drop(layers.size)
-        .filterIsInstance<Compute.D3>()
-    val last = layers.last()
+    val layers = builder().layers.drop(layers.size)
+    val (outputI, outputJ, outputK) = when (val last = layers.lastOrNull()) {
+        is Compute.D3 -> Triple(last.outputI, last.outputJ, last.outputK)
+        is Reshape.D1ToD3 -> Triple(last.outputI, last.outputJ, last.outputK)
+        is Reshape.D2ToD3 -> Triple(last.outputI, last.outputJ, last.outputK)
+        null -> return this
+        else -> throw IllegalArgumentException("invalid last layer. $last")
+    }
 
-    check(inputI == last.outputI && inputJ == last.outputJ && inputK == last.outputK) {
+    check(inputI == outputI && inputJ == outputJ && inputK == outputK) {
         """
             invalid parameter.
             input: ($inputI, $inputJ, $inputK)
-            output: (${last.outputI}, ${last.outputJ}. ${last.outputK})
+            output: ($outputI, $outputJ. $outputK)
         """.trimIndent()
     }
 
     return addProcess(
         process = SkipD3(
-            outputI = last.outputI,
-            outputJ = last.outputJ,
-            outputK = last.outputK,
+            outputI = outputI,
+            outputJ = outputJ,
+            outputK = outputK,
             layers = layers,
         ),
     )

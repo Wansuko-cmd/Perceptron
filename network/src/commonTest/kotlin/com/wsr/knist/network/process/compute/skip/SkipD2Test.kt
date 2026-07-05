@@ -7,13 +7,19 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
+import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.assertContentEquals
+import com.wsr.knist.network.converter.raw.RawD2
+import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.bias.d2.BiasD2
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertSame
 
 class SkipD2Test {
     val target = SkipD2(
@@ -66,5 +72,29 @@ class SkipD2Test {
         assertContentEquals(expected = IOType.d1(8f, 24f, 40f), actual = actual[0][1])
         assertContentEquals(expected = IOType.d1(0f, 20f, 40f), actual = actual[1][0])
         assertContentEquals(expected = IOType.d1(8f, 32f, 56f), actual = actual[1][1])
+    }
+
+    private fun builder() = NetworkBuilder.inputD2(
+        converter = RawD2(2, 3),
+        optimizer = Sgd(Scheduler.Fix(rate = 0.01f)),
+        initializer = Fixed(0.5f),
+    )
+
+    @Test
+    fun `skip=空ブロックは何も追加しない`() {
+        val builder = builder()
+
+        val actual = builder.skip { this }
+
+        assertSame(builder, actual)
+    }
+
+    @Test
+    fun `skip=出力形状が入力と異なる場合は例外を投げる`() {
+        val builder = builder()
+
+        assertFailsWith<IllegalStateException> {
+            builder.skip { this.affine(neuron = 5) }
+        }
     }
 }

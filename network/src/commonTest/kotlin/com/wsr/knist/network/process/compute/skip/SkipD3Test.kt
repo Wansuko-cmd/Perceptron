@@ -8,13 +8,20 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
+import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.assertContentEquals
+import com.wsr.knist.network.converter.raw.RawD3
+import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.bias.d3.BiasD3
+import com.wsr.knist.network.process.reshape.reshape.reshapeToD1
+import com.wsr.knist.network.process.reshape.reshape.reshapeToD3
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
+import kotlin.test.assertSame
 
 class SkipD3Test {
     val target = SkipD3(
@@ -72,5 +79,29 @@ class SkipD3Test {
         assertContentEquals(expected = IOType.d1(8f, 24f), actual = actual[0][0][1])
         assertContentEquals(expected = IOType.d1(16f, 12f), actual = actual[0][1][0])
         assertContentEquals(expected = IOType.d1(24f, 24f), actual = actual[0][1][1])
+    }
+
+    private fun builder() = NetworkBuilder.inputD3(
+        converter = RawD3(2, 3, 4),
+        optimizer = Sgd(Scheduler.Fix(rate = 0.01f)),
+        initializer = Fixed(0.5f),
+    )
+
+    @Test
+    fun `skip=空ブロックは何も追加しない`() {
+        val builder = builder()
+
+        val actual = builder.skip { this }
+
+        assertSame(builder, actual)
+    }
+
+    @Test
+    fun `skip=出力形状が入力と異なる場合は例外を投げる`() {
+        val builder = builder()
+
+        assertFailsWith<IllegalStateException> {
+            builder.skip { this.reshapeToD1().reshapeToD3(i = 4, j = 3, k = 2) }
+        }
     }
 }
