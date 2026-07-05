@@ -1,4 +1,5 @@
 pub mod dispatcher;
+pub mod profiler;
 
 use std::sync::{Arc, Mutex};
 use crate::{kernels::{Kernels, task::Task}, runtime::dispatcher::Dispatcher};
