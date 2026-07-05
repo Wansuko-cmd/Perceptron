@@ -28,7 +28,6 @@ sealed interface Scheduler {
         val minRate: Float,
         val maxRate: Float,
         val stepSize: Int,
-        val stepUnit: Int = 1,
         val warmUp: Int = 0,
         val initialRate: Float = minRate,
     ) : Scheduler {
