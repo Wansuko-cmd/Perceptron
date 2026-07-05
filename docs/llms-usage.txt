@@ -3,7 +3,13 @@
 > Kotlin製ニューラルネットワークライブラリ。DSLでレイヤーを積み上げてモデルを構築する。
 > 型がチェーン全体で追跡され、IO型の不整合はコンパイルエラーになる。
 
-KotlinのMultiplatformライブラリ。JitpackからGradle依存として導入できる。
+**このファイルは約650行しかない。部分読みせず、必ず一度に全体を読み込むこと。** なおこのファイルはライブラリの利用方法のみを扱う。カスタム層・出力層・オプティマイザ等を自作する場合は `docs/llms-custom.txt`（約500行）を追加で読むこと。
+
+Kotlin Multiplatformライブラリ。JitPackからGradle依存として導入できる。
+
+- 対応プラットフォーム: JVM / Android。Kotlin/Native（macOS / Linux / Windows）はJitPackでは配布されておらず、リポジトリをローカルで `publishToMavenLocal` した場合のみ利用できる。JS / wasm は非対応。
+- `<version>` には最新リリースを指定する（https://jitpack.io/#Wansuko-cmd/knist または GitHub Releases で確認）。
+- この文書は v0.0.31-alpha03 時点の API を記述している。
 
 ```kotlin
 // settings.gradle.kts
@@ -72,6 +78,24 @@ val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
     .softmaxWithLoss(converter = { MyLabelConverter(inputI) })
 ```
 
+### Raw入力用の Batch の作り方
+
+`RawD1` 等を使う場合、入力の `Batch<IOType.Dx>` は FloatArray から直接構築する。`value` にはバッチ全サンプルを行優先で連結した配列（長さ = バッチサイズ × 1サンプルの要素数）を渡す。
+
+```kotlin
+import com.wsr.knist.batch.Batch
+import com.wsr.knist.core.IOType
+import com.wsr.knist.base.data.DataBuffer
+
+// バッチサイズ64・1サンプルの形状 [32] の D1 入力バッチ
+val inputs: Batch<IOType.D1> = Batch(
+    size = 64,
+    shape = listOf(32),
+    value = DataBuffer.create(FloatArray(64 * 32) { /* 値 */ 0f }),
+)
+// D2 は shape = listOf(i, j)、D3 は shape = listOf(i, j, k)
+```
+
 ### 学習
 
 `I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。いずれも `dispatcher` 引数（デフォルト: `Dispatchers.Default`）を取る。
@@ -87,6 +111,21 @@ coroutineScope.launch {
 
     // ラベルジェネレータ（現在の出力を受け取って目標値を返す。DQN の Bellman ターゲット等に使える）
     val loss: IOType.D0.Global = network.train(input = inputs) { currentOutput -> modifiedOutput }
+}
+```
+
+典型的なエポックループ（カスタム Converter 使用時の例。`I` = `List<List<Float>>`, `O` = `List<Int>`）:
+
+```kotlin
+runBlocking {
+    repeat(epochs) {
+        dataset.shuffled().chunked(batchSize).forEach { chunk ->
+            network.train(
+                input = chunk.map { it.pixels },
+                label = chunk.map { it.label },
+            )
+        }
+    }
 }
 ```
 
@@ -139,17 +178,11 @@ val result: O = network.expect(input = inputs)  // suspend。inputs: I（バッ�
 | `D2(i, j)` | [i, j] | 行列 |
 | `D3(i, j, k)` | [i, j, k] | 3次元テンソル |
 
-各次元型には `Global` と `Local` の2サブクラスがある。
+各次元型には `Global` と `Local` の2サブクラスがあるが、**ライブラリを利用するだけなら区別を意識する必要はない**。`train` / `loss` 等の API が返すのはすべて `Global`。`Local` はカスタム層等を実装する場合にのみ現れる（`docs/llms-custom.txt` を参照）。
 
-| サブクラス | 意味 |
-|-----------|------|
-| `IOType.Dx.Global` | スコープ外の値。バッファが自動解放されない |
-| `IOType.Dx.Local` | `IOScope` 内の中間値。スコープ終了時に自動解放される |
+`IOType` をユーザーコードで明示的に解放する必要はない。解放は `IOScope` の終了（ライブラリ内部で自動的に行われる）か、GC による回収のいずれかで行われる。
 
-`IOScope` 外で演算すると `Global` が返る。`IOScope` 内（`with(ioScope) { }` または `IOScope.launch { }` 内）で演算すると `Local` が返る。
-`Local` → `Global` 変換: `local.toGlobal()`（スコープ内でのみ呼び出し可）
-
-`IOType.D0.Global` から `Float` を取り出すには `.unwrap()` を使う:
+`IOType.D0.Global` から `Float` を取り出すには `.unwrap()` を使う（import: `com.wsr.knist.core.unwrap`）:
 
 ```kotlin
 val lossValue: Float = loss.unwrap()
@@ -353,7 +386,7 @@ Raw 系は変換なし（`Batch<IOType.Dx>` をそのまま渡す）。カスタ
 import com.wsr.knist.batch.Batch                  // Batch<T>
 import com.wsr.knist.batch.shape.toList           // Batch.toList()
 import com.wsr.knist.core.IOType                  // IOType.D1 / D2 / D3
-import com.wsr.knist.core.reduction.maxIndex      // IOType.D1.maxIndex() / D2.maxIndex(axis) / D3.maxIndex(axis)
+import com.wsr.knist.batch.reduction.maxIndex     // Batch<IOType.D1>.maxIndex() 等（decode で使う。IOType 単体用は com.wsr.knist.core.reduction.maxIndex）
 import com.wsr.knist.base.data.DataBuffer         // DataBuffer.create(floatArray)
 import com.wsr.knist.network.converter.Converter  // Converter.D1<T> / D2<T>
 ```
@@ -538,6 +571,11 @@ builder.skip {
 
 ## 典型的な構成パターンとIOの流れ
 
+完全に動作するコードはリポジトリの `sample/` にある:
+
+- MNIST（3層MLP）: `sample/src/commonMain/kotlin/dataset/mnist/MnistUtils.kt`（`PixelConverter` / `LabelConverter` の実装は同ディレクトリの `MnistConverter.kt`）
+- TinyStories（Transformer言語モデル）: `sample/src/commonMain/kotlin/dataset/stories/TinyStoriesUtils.kt`（`WordsD1` / `WordD2` の実装も同ディレクトリ）
+
 ### MLP（全結合分類）
 
 ```
@@ -586,9 +624,5 @@ wordsD1(maxLength=128, words=..., ...)      → D1(128)      // Network<List<Lis
 
 ## IOScope
 
-`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。スコープ内で生成された中間 `IOType` は、スコープ終了時に自動的にメモリ解放（`release()`）される。ネットワークの学習・推論内部でも使われている。
-
-`IOScope.launch { }` で新しいスコープを作り、ブロック内で演算した中間値を自動解放できる。`with(ioScope) { }` で既存スコープを使って演算することもできる。
-
-カスタム層（`Compute`）・出力層（`Output`）・オプティマイザ（`Optimizer`）を実装する際の詳細な使い方は `docs/llms-custom.txt` を参照。
+`IOScope` は演算中の中間バッファのライフタイムを管理する内部機構。学習・推論の内部で自動的に使われるため、**ライブラリを利用するだけなら意識する必要はない**。カスタム層（`Compute`）・出力層（`Output`）・オプティマイザ（`Optimizer`）を実装する場合は `docs/llms-custom.txt` を参照。
 

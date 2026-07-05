@@ -1,0 +1,21 @@
+# knist
+
+> Kotlin Multiplatform製ニューラルネットワークライブラリ。DSLでレイヤーを積み上げてモデルを構築する。
+> 型がチェーン全体で追跡され、IO型の不整合はコンパイルエラーになる。
+
+- 対応プラットフォーム: JVM / Android（JitPack経由で導入可能）。Kotlin/Native（macOS / Linux / Windows）はJitPackでは配布されておらず、リポジトリをローカルビルドした場合のみ利用できる。JS / wasm は非対応
+- 最新バージョンは https://jitpack.io/#Wansuko-cmd/knist または GitHub Releases で確認する
+
+## Docs
+
+どちらも小さいファイルなので、部分読みせず一度に全体を読み込むこと。
+
+- [llms-usage.txt](llms-usage.txt): ライブラリ利用者向けの完全リファレンス（導入・モデル構築・学習・推論・保存）。約650行。ライブラリを使うだけならこのファイルだけ読めばよい
+- [llms-custom.txt](llms-custom.txt): 拡張実装者向けリファレンス（カスタム層・出力層・オプティマイザ・重み初期化・アテンションバイアスの自作）。約500行。カスタム実装をする場合のみ読む
+
+## Examples
+
+完全に動作するコードはリポジトリの `sample/` にある。
+
+- [MNIST（3層MLP）](../sample/src/commonMain/kotlin/dataset/mnist/): カスタムConverter（`PixelConverter` / `LabelConverter`）の実装例を含む
+- [TinyStories（Transformer言語モデル）](../sample/src/commonMain/kotlin/dataset/stories/): トークナイズと `WordsD1` / `WordD2` Converterの実装例を含む

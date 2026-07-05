@@ -1,5 +1,7 @@
 # knist カスタム実装リファレンス
 
+**このファイルは約500行しかない。部分読みせず、必ず一度に全体を読み込むこと。** ライブラリの基本的な利用方法（モデル構築・学習・推論・保存）は `docs/llms-usage.txt` を参照。
+
 knist の拡張ポイントは5つある。`Compute`・`Output`・`Optimizer`・`AttentionBiasD2` は `@Serializable` を付けて `NetworkSerializer.register()` することで保存・読み込みに対応できる。`WeightInitializer` はシリアライズ対象外。
 
 - `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
@@ -10,9 +12,19 @@ knist の拡張ポイントは5つある。`Compute`・`Output`・`Optimizer`・
 
 ---
 
-## IOScope
+## IOScope と Global / Local
 
-`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。`@ScopeOp` でアノテーションされた演算はすべて `IOScope` のメンバー拡張関数として生成される。
+`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。スコープ内で生成された中間 `IOType` は、スコープ終了時に自動的にメモリ解放（`release()`）される。各 `IOType.Dx` には2つのサブクラスがある:
+
+| サブクラス | 意味 |
+|-----------|------|
+| `IOType.Dx.Global` | スコープ外の値。自動解放されない（重み・API の戻り値など） |
+| `IOType.Dx.Local` | `IOScope` 内の中間値。スコープ終了時に自動解放される |
+
+`IOScope` 外で演算すると `Global` が、スコープ内（`with(ioScope) { }` または `IOScope.launch { }` 内）で演算すると `Local` が返る。
+`Global` はスコープによる自動解放の対象外というだけで、明示的な解放は不要（参照が切れれば GC によって回収される）。カスタム実装内でも `release()` を直接呼ぶ必要はない。
+
+`@ScopeOp` でアノテーションされた演算はすべて `IOScope` のメンバー拡張関数として生成される。
 
 `Compute.expect` / `Compute.train` / `Output.expect` / `Output.train` / `Optimizer.adapt` はすでに `IOScope` をレシーバーとして受け取るため、これらの実装ブロック内では `@ScopeOp` 演算をそのまま呼べる。`IOScope.launch` を明示的に呼ぶ必要はない。
 
@@ -58,10 +70,10 @@ val list: List<T> = batch.toList() // 全要素をリスト化（Converter の d
 // IOType を直接並べて作る（テスト等で便利）
 val batch = Batch.of(iotype1, iotype2, iotype3)
 
-// IOScope 内では factory 関数で直接生成できる（結果は Local）
+// IOScope 内では factory 関数で直接生成できる（結果は Local）。size はバッチサイズ
 context(ioScope)
-val batch: Batch<IOType.D1.Local> = Batch.d1(batchSize = 4, size = 10) { 0f }
-val batch: Batch<IOType.D2.Local> = Batch.d2(batchSize = 4, i = 3, j = 5) { _, _ -> 0f }
+val batch: Batch<IOType.D1.Local> = Batch.d1(size = 4, i = 10) { 0f }
+val batch: Batch<IOType.D2.Local> = Batch.d2(size = 4, i = 3, j = 5) { _, _ -> 0f }
 ```
 
 ### バッチ集約
@@ -404,13 +416,43 @@ D1 の例。D2/D3 は `axis: Int` 引数を取るバリアントも存在する�
 | `matMul(other: D1, trans?)` | D2 × D1 | D1 | trans=true で転置 |
 | `matMul(other: D2, transA?, transB?)` | D2 × D2 | D2 | — |
 
-### 形状変換
+### 形状変換・結合
 
 | 関数 | 説明 |
 |------|------|
-| `broadcastToD2(axis, size)` | D1 → D2 に broadcast |
-| `slice(indices: IntProgression)` | D1 の部分取り出し |
-| `interleave(other: D1)` | 2つの D1 を交互に結合 |
+| `broadcastToD2(axis, size)` | D1 → D2 に broadcast（D2 → D3 は `broadcastToD3(axis, size)`） |
+| `slice(indices: IntProgression)` | D1 の部分取り出し（D2 版は `slice(indices, axis)`） |
+| `interleave(other: D1)` | 2つの D1 を交互に結合（D2 版は `interleave(other, axis)`） |
+| `concat(other)` | D1 の結合（D2/D3 は `concat(other, axis)`） |
+| `transpose()` | D2 の転置（D3/D4 は `transpose(axisI, axisJ, axisK[, axisL])` で軸入れ替え） |
+| `flip(axis)` | D3/D4 の指定軸を反転 |
+| `reshapeToD3(i, j, k)` 等 | コピー無しの形状再解釈（要素数が同一であること） |
+
+### インデックス操作（埋め込み等で使用）
+
+| 関数 | 入力 | 出力 | 説明 |
+|------|------|------|------|
+| `gather(other: D2)` | D1(i) × D2(n, j) | D2(i, j) | レシーバーをインデックス列として `other` の行を取り出す（embedding lookup） |
+| `scatterAdd(other: D1, n)` | D2(i, j) × D1(i) | D2(n, j) | gather の逆。レシーバーの各行を `other` のインデックス位置へ加算集約（embedding の勾配集約） |
+
+import: `com.wsr.knist.core.index.gather` / `com.wsr.knist.core.index.scatterAdd`（Batch 版は `com.wsr.knist.batch.index.*`）
+
+### 生成
+
+| 関数 | 説明 |
+|------|------|
+| `IOType.random(i, from, until)` | 一様乱数の D1 を生成（D2〜D4 版もあり） |
+
+### Batch 固有の操作
+
+| 関数 | 入出力 | 説明 |
+|------|--------|------|
+| `Batch<D2>.unfold(windowSize, stride, padding)` | Batch<D2> → Batch<D3> | スライディングウィンドウ展開（im2col 相当。conv の実装で使用） |
+| `Batch<D3>.fold(stride, padding)` | Batch<D3> → Batch<D2> | unfold の逆操作（重複位置は加算） |
+| `Batch<D2>.flatten()` | Batch<D2> → Batch<D1> | 各サンプルを1次元化 |
+| `IOType.D3.toBatch()` | D3 → Batch<D2> | 先頭軸をバッチ次元として再解釈（D2 → Batch<D1> 等もあり） |
+
+四則演算・数学関数・比較・集約には `Batch<IOType.Dx>` レシーバー版も同名で存在する（import は `com.wsr.knist.batch.elementwise.*` / `com.wsr.knist.batch.reduction.*` 等、`core` を `batch` に読み替える）。ここに載っていない演算が必要な場合は io-type モジュールの `core`（IOType 単体用）/ `batch`（Batch 用）パッケージを確認すること。
 
 ---
 
