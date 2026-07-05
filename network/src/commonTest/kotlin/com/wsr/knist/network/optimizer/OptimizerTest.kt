@@ -50,32 +50,31 @@ class OptimizerTest {
     }
 
     @Test
-    fun `D1_adapt=stepUnitが1より大きい場合はstepUnit回に1回だけ平均勾配で更新しstepは実更新回数を表す`() =
-        networkScopeTestRule {
-            val steps = mutableListOf<Int>()
-            val target = object : Optimizer.D1(_stepUnit = 2) {
-                override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
-                    steps += step
-                    return dw
-                }
+    fun `D1_adapt=stepUnitが1より大きい場合はstepUnit回に1回だけ平均勾配で更新しstepは実更新回数を表す`() = networkScopeTestRule {
+        val steps = mutableListOf<Int>()
+        val target = object : Optimizer.D1(_stepUnit = 2) {
+            override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 {
+                steps += step
+                return dw
             }
-            val weight = IOType.d1(0f, 0f, 0f)
-
-            val first = target.adapt(weight, IOType.d1(1f, 2f, 3f))
-            assertEquals(expected = weight, actual = first)
-
-            val second = target.adapt(weight, IOType.d1(3f, 4f, 5f))
-            assertEquals(expected = 2f, actual = second[0].unwrap())
-            assertEquals(expected = 3f, actual = second[1].unwrap())
-            assertEquals(expected = 4f, actual = second[2].unwrap())
-
-            val third = target.adapt(weight, IOType.d1(1f, 1f, 1f))
-            assertEquals(expected = weight, actual = third)
-
-            target.adapt(weight, IOType.d1(1f, 1f, 1f))
-
-            assertEquals(expected = listOf(0, 1), actual = steps)
         }
+        val weight = IOType.d1(0f, 0f, 0f)
+
+        val first = target.adapt(weight, IOType.d1(1f, 2f, 3f))
+        assertEquals(expected = weight, actual = first)
+
+        val second = target.adapt(weight, IOType.d1(3f, 4f, 5f))
+        assertEquals(expected = 2f, actual = second[0].unwrap())
+        assertEquals(expected = 3f, actual = second[1].unwrap())
+        assertEquals(expected = 4f, actual = second[2].unwrap())
+
+        val third = target.adapt(weight, IOType.d1(1f, 1f, 1f))
+        assertEquals(expected = weight, actual = third)
+
+        target.adapt(weight, IOType.d1(1f, 1f, 1f))
+
+        assertEquals(expected = listOf(0, 1), actual = steps)
+    }
 
     @Test
     fun `D2_adapt=勾配をmaxNormで正規化`() = networkScopeTestRule {
