@@ -29,6 +29,8 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         cleaner.register(this) { JRuntime.release(ptr) }
     }
 
+    fun takeCPUProfileNs(): Long = JRuntime.profileCPUTake(runtime)
+
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)

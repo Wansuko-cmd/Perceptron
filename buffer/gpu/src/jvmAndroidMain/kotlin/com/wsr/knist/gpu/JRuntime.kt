@@ -5,4 +5,6 @@ object JRuntime {
     external fun release(ptr: Long)
     external fun flush(runtime: Long)
     external fun sync(runtime: Long)
+
+    external fun profileCPUTake(runtime: Long): Long
 }

@@ -44,3 +44,13 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_sync(
     runtime.flush();
     runtime.wait();
 }
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_profileCPUTake(
+    _: JNIEnv,
+    _class: JClass,
+    runtime_ptr: jlong,
+) -> jlong {
+    let runtime = unsafe { &*(runtime_ptr as *const Runtime) };
+    runtime.cpu_profiler.take() as jlong
+}
