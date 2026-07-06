@@ -16,6 +16,7 @@ impl CpuProfiler {
         CpuProfiler { enabled, acc: AtomicU64::new(0) }
     }
 
+    #[must_use = "bind to a variable (e.g. `let _t`), or the timer stops immediately"]
     pub fn start(&self) -> Option<OpTimer<'_>> {
         if !self.enabled || CURRENT.get().is_some() {
             return None;

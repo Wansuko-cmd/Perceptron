@@ -6,6 +6,7 @@ pub fn plus_with_d0_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let x = &GPUBuffer::init(&[x], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -22,6 +23,7 @@ pub fn plus_with_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let y = &GPUBuffer::init(&[y], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -38,6 +40,7 @@ pub fn plus_with_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, 1, result.count() as u32];
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
@@ -53,6 +56,7 @@ pub fn plus_with_d1_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, yi, yj].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 0, 1, 0],
@@ -71,6 +75,7 @@ pub fn plus_with_d1_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 1, 0, 0],
@@ -90,6 +95,7 @@ pub fn plus_with_d2_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, xi, xj].map(|v| v as u32);
     let x_stride = [0, 0, xj, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -108,6 +114,7 @@ pub fn plus_with_d2_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match (axis1, axis2) {
         (0, 1) => [0, xj, 1, 0].map(|v| v as u32),
@@ -127,6 +134,7 @@ pub fn plus_with_d3_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -146,6 +154,7 @@ pub fn plus_with_d3_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -165,6 +174,7 @@ pub fn plus_with_d3_to_d4(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [yi, yj, yk, yl].map(|v| v as u32);
     let x_stride = match (axis1, axis2, axis3) {
         (0, 1, 2) => [xj * xk, xk, 1, 0].map(|v| v as u32),
@@ -185,6 +195,7 @@ pub fn plus_with_d4_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -205,6 +216,7 @@ pub fn plus_with_d4_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -227,6 +239,7 @@ pub fn plus_with_d4_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2, axis3) {
@@ -246,6 +259,7 @@ pub fn minus_with_d0_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let x = &GPUBuffer::init(&[x], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -262,6 +276,7 @@ pub fn minus_with_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let y = &GPUBuffer::init(&[y], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -278,6 +293,7 @@ pub fn minus_with_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, 1, result.count() as u32];
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
@@ -293,6 +309,7 @@ pub fn minus_with_d1_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, yi, yj].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 0, 1, 0],
@@ -311,6 +328,7 @@ pub fn minus_with_d1_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 1, 0, 0],
@@ -330,6 +348,7 @@ pub fn minus_with_d2_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, xi, xj].map(|v| v as u32);
     let x_stride = [0, 0, xj, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -348,6 +367,7 @@ pub fn minus_with_d2_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match (axis1, axis2) {
         (0, 1) => [0, xj, 1, 0].map(|v| v as u32),
@@ -367,6 +387,7 @@ pub fn minus_with_d3_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -386,6 +407,7 @@ pub fn minus_with_d3_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -405,6 +427,7 @@ pub fn minus_with_d3_to_d4(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [yi, yj, yk, yl].map(|v| v as u32);
     let x_stride = match (axis1, axis2, axis3) {
         (0, 1, 2) => [xj * xk, xk, 1, 0].map(|v| v as u32),
@@ -425,6 +448,7 @@ pub fn minus_with_d4_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -445,6 +469,7 @@ pub fn minus_with_d4_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -467,6 +492,7 @@ pub fn minus_with_d4_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2, axis3) {
@@ -486,6 +512,7 @@ pub fn times_with_d0_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let x = &GPUBuffer::init(&[x], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -502,6 +529,7 @@ pub fn times_with_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let y = &GPUBuffer::init(&[y], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -518,6 +546,7 @@ pub fn times_with_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, 1, result.count() as u32];
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
@@ -533,6 +562,7 @@ pub fn times_with_d1_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, yi, yj].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 0, 1, 0],
@@ -551,6 +581,7 @@ pub fn times_with_d1_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 1, 0, 0],
@@ -570,6 +601,7 @@ pub fn times_with_d2_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, xi, xj].map(|v| v as u32);
     let x_stride = [0, 0, xj, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -588,6 +620,7 @@ pub fn times_with_d2_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match (axis1, axis2) {
         (0, 1) => [0, xj, 1, 0].map(|v| v as u32),
@@ -607,6 +640,7 @@ pub fn times_with_d3_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -626,6 +660,7 @@ pub fn times_with_d3_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -645,6 +680,7 @@ pub fn times_with_d3_to_d4(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [yi, yj, yk, yl].map(|v| v as u32);
     let x_stride = match (axis1, axis2, axis3) {
         (0, 1, 2) => [xj * xk, xk, 1, 0].map(|v| v as u32),
@@ -665,6 +701,7 @@ pub fn times_with_d4_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -685,6 +722,7 @@ pub fn times_with_d4_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -707,6 +745,7 @@ pub fn times_with_d4_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2, axis3) {
@@ -726,6 +765,7 @@ pub fn div_with_d0_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let x = &GPUBuffer::init(&[x], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -742,6 +782,7 @@ pub fn div_with_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let y = &GPUBuffer::init(&[y], &runtime.device);
 
     let result_shape = [1, 1, 1, result.count() as u32];
@@ -758,6 +799,7 @@ pub fn div_with_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, 1, result.count() as u32];
     let x_stride = [0, 0, 0, 1];
     let y_stride = [0, 0, 0, 1];
@@ -773,6 +815,7 @@ pub fn div_with_d1_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, yi, yj].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 0, 1, 0],
@@ -791,6 +834,7 @@ pub fn div_with_d1_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match axis {
         0 => [0, 1, 0, 0],
@@ -810,6 +854,7 @@ pub fn div_with_d2_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, 1, xi, xj].map(|v| v as u32);
     let x_stride = [0, 0, xj, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -828,6 +873,7 @@ pub fn div_with_d2_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, yi, yj, yk].map(|v| v as u32);
     let x_stride = match (axis1, axis2) {
         (0, 1) => [0, xj, 1, 0].map(|v| v as u32),
@@ -847,6 +893,7 @@ pub fn div_with_d3_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -866,6 +913,7 @@ pub fn div_with_d3_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [1, xi, xj, xk].map(|v| v as u32);
     let x_stride = [0, xj * xk, xk, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -885,6 +933,7 @@ pub fn div_with_d3_to_d4(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [yi, yj, yk, yl].map(|v| v as u32);
     let x_stride = match (axis1, axis2, axis3) {
         (0, 1, 2) => [xj * xk, xk, 1, 0].map(|v| v as u32),
@@ -905,6 +954,7 @@ pub fn div_with_d4_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match axis {
@@ -925,6 +975,7 @@ pub fn div_with_d4_to_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2) {
@@ -947,6 +998,7 @@ pub fn div_with_d4_to_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let result_shape = [xi, xj, xk, xl].map(|v| v as u32);
     let x_stride = [xj * xk * xl, xk * xl, xl, 1].map(|v| v as u32);
     let y_stride = match (axis1, axis2, axis3) {

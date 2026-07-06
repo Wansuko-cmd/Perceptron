@@ -6,6 +6,7 @@ pub fn gt_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.gt_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
@@ -16,6 +17,7 @@ pub fn gt_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.gt_d1_to_d1(x, y, result);
     runtime.dispatch(task);
 }
@@ -26,6 +28,7 @@ pub fn lt_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.lt_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
@@ -36,6 +39,7 @@ pub fn lt_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.lt_d1_to_d1(x, y, result);
     runtime.dispatch(task);
 }
@@ -48,6 +52,7 @@ pub fn eq_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.eq_d1_to_d0(x, y, atol, rtol, result);
     runtime.dispatch(task);
 }
@@ -60,6 +65,7 @@ pub fn eq_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.eq_d1_to_d1(x, y, atol, rtol, result);
     runtime.dispatch(task);
 }
@@ -71,6 +77,7 @@ pub fn where_d0_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.where_d0_to_d0(condition, x, y, result);
     runtime.dispatch(task);
 }
@@ -82,6 +89,7 @@ pub fn where_d0_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.where_d0_to_d1(condition, x, y, result);
     runtime.dispatch(task);
 }
@@ -93,6 +101,7 @@ pub fn where_d1_to_d0(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.where_d1_to_d0(condition, x, y, result);
     runtime.dispatch(task);
 }
@@ -104,6 +113,7 @@ pub fn where_d1_to_d1(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.compare.where_d1_to_d1(condition, x, y, result);
     runtime.dispatch(task);
 }
