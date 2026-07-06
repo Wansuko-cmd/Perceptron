@@ -2,10 +2,12 @@
 use crate::{kernels::task::CopyTask, resource::buffer::GPUBuffer, runtime::Runtime};
 
 pub fn create(size: usize, runtime: &Runtime) -> GPUBuffer {
+    let _t = runtime.cpu_profiler.start();
     GPUBuffer::create(size, &runtime.device)
 }
 
 pub fn init(value: &[f32], runtime: &Runtime) -> GPUBuffer {
+    let _t = runtime.cpu_profiler.start();
     GPUBuffer::init(value, &runtime.device)
 }
 
