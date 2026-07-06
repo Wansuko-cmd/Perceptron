@@ -7,6 +7,7 @@ pub fn gather(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.index.gather(x, y, i, j, k, result);
     runtime.dispatch(task);
 }
@@ -18,6 +19,7 @@ pub fn scatter_add(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.index.scatter_add(x, y, i, j, k, b, result);
     runtime.dispatch(task);
 }

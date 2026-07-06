@@ -20,14 +20,16 @@ import com.wsr.knist.gpu.shape.JShape
 import java.lang.ref.Cleaner
 import kotlin.random.Random
 
-class GPUBackend(private val fallback: IBackend) : IBackend by fallback {
-    private val runtime = JRuntime.allocate()
+class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false) : IBackend by fallback {
+    private val runtime = JRuntime.allocate(enableProfiler)
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime)
 
     init {
         val ptr = runtime
         cleaner.register(this) { JRuntime.release(ptr) }
     }
+
+    fun takeCPUProfileNs(): Long = JProfiler.takeCPU(runtime)
 
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {

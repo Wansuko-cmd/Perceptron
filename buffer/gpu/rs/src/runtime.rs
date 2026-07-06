@@ -1,17 +1,20 @@
 pub mod dispatcher;
+pub mod profiler;
 
 use std::sync::{Arc, Mutex};
-use crate::{kernels::{Kernels, task::Task}, runtime::dispatcher::Dispatcher};
+
+use crate::{kernels::{Kernels, task::Task}, runtime::{dispatcher::Dispatcher, profiler::CpuProfiler}};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
     pub queue: Arc<wgpu::Queue>,
     pub kernels: Kernels,
+    pub cpu_profiler: CpuProfiler,
     dispatcher: Mutex<Dispatcher>,
 }
 
 impl Runtime {
-    pub async fn new() -> Self {
+    pub async fn new(enable_profiler: bool) -> Self {
         let instance = wgpu::Instance::default();
         let request = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -56,12 +59,14 @@ impl Runtime {
         let device = Arc::new(device);
         let queue = Arc::new(queue);
         let kernels = Kernels::new(&device);
+        let cpu_profiler = CpuProfiler::new(enable_profiler);
         let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
             device: device,
             queue: queue,
             kernels: kernels,
+            cpu_profiler: cpu_profiler,
             dispatcher: dispatcher,
         }
     }

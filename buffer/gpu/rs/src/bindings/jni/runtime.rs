@@ -1,6 +1,6 @@
 use jni::{JNIEnv};
 use jni::objects::{JClass};
-use jni::sys::jlong;
+use jni::sys::{jboolean, jlong};
 
 use crate::ops::runtime;
 use crate::runtime::Runtime;
@@ -9,8 +9,9 @@ use crate::runtime::Runtime;
 pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_allocate(
     _: JNIEnv,
     _class: JClass,
+    enable_profiler: jboolean,
 ) -> jlong {
-    let runtime = runtime::allocate();
+    let runtime = runtime::allocate(enable_profiler != 0);
     Box::into_raw(Box::new(runtime)) as jlong
 }
 

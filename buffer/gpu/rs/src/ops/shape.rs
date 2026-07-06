@@ -1,6 +1,7 @@
 use crate::{resource::buffer::GPUBuffer, runtime::Runtime};
 
 pub fn transpose_d2(x: &GPUBuffer, xi: usize, xj: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.transpose_d2(x, xi, xj, result);
     runtime.dispatch(task);
 }
@@ -12,8 +13,10 @@ pub fn transpose_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match(axis_i, axis_j, axis_k) {
         (0, 1, 2) => {
+            drop(_t);
             copy_into_d1(x, &result, 0, x.count(), 1, runtime);
             return;
         },
@@ -31,8 +34,10 @@ pub fn transpose_d4(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match(axis_i, axis_j, axis_k, axis_l) {
         (0, 1, 2, 3) => {
+            drop(_t);
             copy_into_d1(x, &result, 0, x.count(), 1, runtime);
             return;
         },
@@ -45,6 +50,7 @@ pub fn transpose_d4(
 }
 
 pub fn slice_d1(x: &GPUBuffer, start: usize, end: usize, step: isize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.slice_d1(x, start, end, step, result);
     runtime.dispatch(task);
 }
@@ -55,6 +61,7 @@ pub fn slice_d2(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match axis {
         0 => runtime.kernels.shape.slice_d2_axis0(x, xi, xj, start, end, step, result),
         _ => runtime.kernels.shape.slice_d2_axis1(x, xi, xj, start, end, step, result),
@@ -68,6 +75,7 @@ pub fn slice_d3(
     result: &GPUBuffer,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match axis {
         0 => runtime.kernels.shape.slice_d2_axis0(x, xi, xj * xk, start, end, step, result),
         1 => runtime.kernels.shape.slice_d3(x, xi, xj, xk, start, end, step, result),
@@ -77,6 +85,7 @@ pub fn slice_d3(
 }
 
 pub fn copy_into_d1(x: &GPUBuffer, result: &GPUBuffer, start: usize, end: usize, step: isize, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.copy_into_d1(x, result, start, end, step);
     runtime.dispatch(task);
 }
@@ -88,6 +97,7 @@ pub fn copy_into_d2(
     start: usize, end: usize, step: isize,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match axis {
         0 => runtime.kernels.shape.copy_into_d2_axis0(x, result, ri, rj, start, end, step),
         _ => runtime.kernels.shape.copy_into_d2_axis1(x, result, ri, rj, start, end, step),
@@ -102,6 +112,7 @@ pub fn copy_into_d3(
     start: usize, end: usize, step: isize,
     runtime: &mut Runtime,
 ) {
+    let _t = runtime.cpu_profiler.start();
     let task = match axis {
         0 => runtime.kernels.shape.copy_into_d2_axis0(x, result, ri, rj * rk, start, end, step),
         1 => runtime.kernels.shape.copy_into_d3(x, result, ri, rj, rk, start, end, step),
@@ -111,6 +122,7 @@ pub fn copy_into_d3(
 }
 
 pub fn flip_d3(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = match axis {
         0 => runtime.kernels.shape.flip_d2_axis0(x, xi, xj * xk, result),
         1 => runtime.kernels.shape.flip_d3(x, xi, xj, xk, result),
@@ -120,21 +132,25 @@ pub fn flip_d3(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, resu
 }
 
 pub fn unfold_d1(x: &GPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.unfold_d1(x, xi, xj, b, window, stride, padding, result);
     runtime.dispatch(task);
 }
 
 pub fn unfold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, window: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.unfold_d2(x, xi, xj, xk, b, window, stride, padding, result);
     runtime.dispatch(task);
 }
 
 pub fn fold_d1(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.fold_d1(x, xi, xj, xk, b, stride, padding, result);
     runtime.dispatch(task);
 }
 
 pub fn fold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+    let _t = runtime.cpu_profiler.start();
     let task = runtime.kernels.shape.fold_d2(x, xi, xj, xk, xl, b, stride, padding, result);
     runtime.dispatch(task);
 }
