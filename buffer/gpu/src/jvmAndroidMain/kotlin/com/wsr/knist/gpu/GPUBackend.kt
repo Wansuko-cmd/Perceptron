@@ -31,6 +31,11 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
 
     fun takeCPUProfileNs(): Long = JProfiler.takeCPU(runtime)
 
+    fun takeGPUProfileNs(): GPUProfilerResult {
+        val result = JProfiler.takeGPU(runtime)
+        return GPUProfilerResult(busyNs = result[0], spanNs = result[1])
+    }
+
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = GPUJvmBuffer.create(y.size)

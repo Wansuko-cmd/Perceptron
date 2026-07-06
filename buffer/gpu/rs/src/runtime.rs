@@ -3,13 +3,14 @@ pub mod profiler;
 
 use std::sync::{Arc, Mutex};
 
-use crate::{kernels::{Kernels, task::Task}, runtime::{dispatcher::Dispatcher, profiler::CpuProfiler}};
+use crate::{kernels::{Kernels, task::Task}, runtime::{dispatcher::Dispatcher, profiler::{CpuProfiler, GpuProfiler}}};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
     pub queue: Arc<wgpu::Queue>,
     pub kernels: Kernels,
     pub cpu_profiler: CpuProfiler,
+    pub gpu_profiler: GpuProfiler,
     dispatcher: Mutex<Dispatcher>,
 }
 
@@ -39,10 +40,15 @@ impl Runtime {
         };
 
         let limits = adapter.limits();
+        let required_features = if enable_profiler {
+            wgpu::Features::IMMEDIATES | wgpu::Features::TIMESTAMP_QUERY
+        } else {
+            wgpu::Features::IMMEDIATES
+        };
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("Runtime:new"),
-                required_features: wgpu::Features::IMMEDIATES,
+                required_features: required_features,
                 experimental_features: wgpu::ExperimentalFeatures::disabled(),
                 required_limits: wgpu::Limits {
                     max_storage_buffer_binding_size: limits.max_storage_buffer_binding_size,
@@ -60,6 +66,7 @@ impl Runtime {
         let queue = Arc::new(queue);
         let kernels = Kernels::new(&device);
         let cpu_profiler = CpuProfiler::new(enable_profiler);
+        let gpu_profiler = GpuProfiler::new(&device, enable_profiler);
         let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
@@ -67,6 +74,7 @@ impl Runtime {
             queue: queue,
             kernels: kernels,
             cpu_profiler: cpu_profiler,
+            gpu_profiler: gpu_profiler,
             dispatcher: dispatcher,
         }
     }
@@ -78,7 +86,7 @@ impl Runtime {
     pub fn dispatch<T: Task>(&self, task: T) {
         let mut dispatcher = self.dispatcher.lock().unwrap();
 
-        dispatcher.dispatch(task, &self.device);
+        dispatcher.dispatch(task, &self.device, &self.gpu_profiler);
         if dispatcher.count >= Runtime::THREHOLD {
             dispatcher.submit(&self.queue);
         }
