@@ -1,7 +1,7 @@
-use crate::resource::buffer::GPUBuffer;
+use crate::{resource::buffer::GPUBuffer, runtime::profiler::GpuProfiler};
 
 pub trait Task {
-    fn recode(self, encoder: &mut wgpu::CommandEncoder);
+    fn recode(self, encoder: &mut wgpu::CommandEncoder, profiler: &GpuProfiler);
 }
 
 pub struct ComputeTask<'a> {
@@ -13,10 +13,11 @@ pub struct ComputeTask<'a> {
 }
 
 impl Task for ComputeTask<'_> {
-    fn recode(self, encoder: &mut wgpu::CommandEncoder) {
+    fn recode(self, encoder: &mut wgpu::CommandEncoder, profiler: &GpuProfiler) {
+        let timestamp_writes = profiler.start();
         let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some(self.label),
-            timestamp_writes: None,
+            timestamp_writes: timestamp_writes,
         });
 
         compute_pass.set_pipeline(self.pipeline);
@@ -38,7 +39,7 @@ pub struct CopyTask<'a> {
 }
 
 impl Task for CopyTask<'_> {
-    fn recode(self, encoder: &mut wgpu::CommandEncoder) {
+    fn recode(self, encoder: &mut wgpu::CommandEncoder, _profiler: &GpuProfiler) {
         encoder.copy_buffer_to_buffer(
             &self.src.buffer,
             (self.src_offset * GPUBuffer::SIZE_BYTES) as u64,

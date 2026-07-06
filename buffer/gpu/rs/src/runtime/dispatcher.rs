@@ -1,4 +1,4 @@
-use crate::kernels::task::{ Task};
+use crate::{kernels::task::Task, runtime::profiler::GpuProfiler};
 
 pub struct Dispatcher {
     pub count: usize,
@@ -10,12 +10,12 @@ impl Dispatcher {
         Dispatcher { count: 0, active_encoder: None }
     }
 
-    pub fn dispatch<T: Task>(&mut self, task: T, device: &wgpu::Device) {
+    pub fn dispatch<T: Task>(&mut self, task: T, device: &wgpu::Device, profiler: &GpuProfiler) {
         let encoder = self.active_encoder.get_or_insert_with(|| {
             device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("Dispatcher::dispatch") })
         });
 
-        task.recode(encoder);
+        task.recode(encoder, profiler);
         self.count += 1;
     }
 
