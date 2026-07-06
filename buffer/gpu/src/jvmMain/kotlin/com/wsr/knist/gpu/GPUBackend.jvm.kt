@@ -6,7 +6,7 @@ import com.wsr.knist.base.loadNativeLibrary
 private const val LIB_PATH = "gpu"
 private const val LIB_NAME = "gpu"
 
-actual fun loadGPUBackend(fallback: IBackend): IBackend {
+actual fun loadGPUBackend(fallback: IBackend, enableProfiler: Boolean): IBackend {
     val isSuccess = loadNativeLibrary(path = LIB_PATH, name = LIB_NAME)
-    return if (isSuccess) GPUBackend(fallback) else fallback
+    return if (isSuccess) GPUBackend(fallback, enableProfiler) else fallback
 }

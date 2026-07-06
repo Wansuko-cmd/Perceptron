@@ -14,7 +14,7 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub async fn new() -> Self {
+    pub async fn new(enable_profiler: bool) -> Self {
         let instance = wgpu::Instance::default();
         let request = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -59,7 +59,7 @@ impl Runtime {
         let device = Arc::new(device);
         let queue = Arc::new(queue);
         let kernels = Kernels::new(&device);
-        let cpu_profiler = CpuProfiler::new(true);
+        let cpu_profiler = CpuProfiler::new(enable_profiler);
         let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
