@@ -1,4 +1,5 @@
 pub mod dispatcher;
+pub mod pool;
 pub mod profiler;
 
 use std::sync::{Arc, Mutex};
