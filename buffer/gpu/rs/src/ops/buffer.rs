@@ -3,17 +3,17 @@ use crate::{kernels::task::CopyTask, resource::buffer::GPUBuffer, runtime::Runti
 
 pub fn create(size: usize, runtime: &Runtime) -> GPUBuffer {
     let _t = runtime.cpu_profiler.start();
-    GPUBuffer::create(size, &runtime.device)
+    runtime.create_buffer(size)
 }
 
 pub fn init(value: &[f32], runtime: &Runtime) -> GPUBuffer {
     let _t = runtime.cpu_profiler.start();
-    GPUBuffer::init(value, &runtime.device)
+    runtime.init_buffer(value)
 }
 
 pub fn read_all(buffer: &GPUBuffer, runtime: &mut Runtime) -> Vec<f32> {
     let size = buffer.count();
-    let map_buffer = GPUBuffer::create_map_read(size, &runtime.device);
+    let map_buffer = runtime.create_map_read_buffer(size);
     runtime.dispatch(
         CopyTask {
             src: buffer,

@@ -3,7 +3,7 @@ pub mod profiler;
 
 use std::sync::{Arc, Mutex};
 
-use crate::{kernels::{Kernels, task::Task}, runtime::{dispatcher::Dispatcher, profiler::{CpuProfiler, GpuProfiler}}};
+use crate::{kernels::{Kernels, task::Task}, resource::buffer::GPUBuffer, runtime::{dispatcher::Dispatcher, profiler::{CpuProfiler, GpuProfiler}}};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
@@ -98,5 +98,22 @@ impl Runtime {
 
     pub fn wait(&self) {
          let _ = self.device.poll(wgpu::PollType::wait_indefinitely());
+    }
+}
+
+impl Runtime {
+    pub fn create_buffer(&self, size: usize) -> GPUBuffer {
+        GPUBuffer::create(size, &self.device)
+    }
+
+    pub fn release_buffer(&self, _buffer: GPUBuffer) {
+    }
+
+    pub fn init_buffer(&self, value: &[f32]) -> GPUBuffer {
+        GPUBuffer::init(value, &self.device)
+    }
+
+    pub fn create_map_read_buffer(&self, size: usize) -> GPUBuffer {
+        GPUBuffer::create_map_read(size, &self.device)
     }
 }
