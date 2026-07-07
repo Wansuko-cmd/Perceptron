@@ -1,9 +1,13 @@
 pub mod dispatcher;
+pub mod pool;
 pub mod profiler;
 
 use std::sync::{Arc, Mutex};
 
-use crate::{kernels::{Kernels, task::Task}, runtime::{dispatcher::Dispatcher, profiler::{CpuProfiler, GpuProfiler}}};
+use crate::kernels::task::ClearTask;
+use crate::kernels::{Kernels, task::Task};
+use crate::resource::buffer::GPUBuffer;
+use crate::runtime::{dispatcher::Dispatcher, pool::BufferPool, profiler::{CpuProfiler, GpuProfiler}};
 
 pub struct Runtime {
     pub device: Arc<wgpu::Device>,
@@ -11,6 +15,7 @@ pub struct Runtime {
     pub kernels: Kernels,
     pub cpu_profiler: CpuProfiler,
     pub gpu_profiler: GpuProfiler,
+    buffer_pool: BufferPool,
     dispatcher: Mutex<Dispatcher>,
 }
 
@@ -67,6 +72,7 @@ impl Runtime {
         let kernels = Kernels::new(&device);
         let cpu_profiler = CpuProfiler::new(enable_profiler);
         let gpu_profiler = GpuProfiler::new(&device, enable_profiler);
+        let buffer_pool = BufferPool::new();
         let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
@@ -75,6 +81,7 @@ impl Runtime {
             kernels: kernels,
             cpu_profiler: cpu_profiler,
             gpu_profiler: gpu_profiler,
+            buffer_pool: buffer_pool,
             dispatcher: dispatcher,
         }
     }
@@ -98,5 +105,29 @@ impl Runtime {
 
     pub fn wait(&self) {
          let _ = self.device.poll(wgpu::PollType::wait_indefinitely());
+    }
+}
+
+impl Runtime {
+    pub fn create_buffer(&self, size: usize) -> GPUBuffer {
+        match self.buffer_pool.get(size) {
+            Some(buffer) => {
+                self.dispatch(ClearTask { buffer: &buffer });
+                buffer
+            },
+            None => GPUBuffer::create(size, &self.device),
+        }
+    }
+
+    pub fn release_buffer(&self, buffer: GPUBuffer) {
+        self.buffer_pool.release(buffer);
+    }
+
+    pub fn init_buffer(&self, value: &[f32]) -> GPUBuffer {
+        GPUBuffer::init(value, &self.device)
+    }
+
+    pub fn create_map_read_buffer(&self, size: usize) -> GPUBuffer {
+        GPUBuffer::create_map_read(size, &self.device)
     }
 }

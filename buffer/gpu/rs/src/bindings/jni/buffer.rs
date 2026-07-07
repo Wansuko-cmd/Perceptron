@@ -38,8 +38,13 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_release(
     _: JNIEnv,
     _class: JClass,
     ptr: jlong,
+    runtime: jlong,
 ) {
-    let _ = unsafe { Arc::from_raw(ptr as *const GPUBuffer) };
+    let buffer = unsafe { Arc::from_raw(ptr as *const GPUBuffer) };
+    let runtime = unsafe { &*(runtime as *const Runtime) };
+    if let Ok(buffer) = Arc::try_unwrap(buffer) {
+        ops::buffer::release(buffer, runtime);
+    }
 }
 
 #[unsafe(no_mangle)]
@@ -47,10 +52,10 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_readAll(
     env: JNIEnv,
     _class: JClass,
     ptr: jlong,
-    runtime_ptr: jlong,
+    runtime: jlong,
 ) -> jfloatArray {
     let buffer = unsafe { &*(ptr as *const GPUBuffer) };
-    let runtime = unsafe { &mut *(runtime_ptr as *mut Runtime) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
 
     let buffer = ops::buffer::read_all(buffer, runtime);
 
@@ -66,9 +71,9 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_write(
     ptr: jlong,
     index: jint,
     value: jfloat,
-    runtime_ptr: jlong,
+    runtime: jlong,
 ) {
     let buffer = unsafe { &*(ptr as *const GPUBuffer) };
-    let runtime = unsafe { &mut *(runtime_ptr as *mut Runtime) };
+    let runtime = unsafe { &mut *(runtime as *mut Runtime) };
     ops::buffer::write(buffer, index as usize, value, runtime);
 }
