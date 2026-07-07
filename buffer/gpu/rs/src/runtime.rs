@@ -111,7 +111,10 @@ impl Runtime {
 impl Runtime {
     pub fn create_buffer(&self, size: usize) -> GPUBuffer {
         match self.buffer_pool.get(size) {
-            Some(buffer) => buffer,
+            Some(buffer) => {
+                self.dispatch(ClearTask { buffer: &buffer });
+                buffer
+            },
             None => GPUBuffer::create(size, &self.device),
         }
     }

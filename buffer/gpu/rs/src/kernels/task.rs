@@ -49,3 +49,13 @@ impl Task for CopyTask<'_> {
         );
     }
 }
+
+pub struct ClearTask<'a> {
+    pub buffer: &'a GPUBuffer,
+}
+
+impl Task for ClearTask<'_> {
+    fn recode(self, encoder: &mut wgpu::CommandEncoder, _profiler: &GpuProfiler) {
+        encoder.clear_buffer(&self.buffer.buffer, 0, None);
+    }
+}
