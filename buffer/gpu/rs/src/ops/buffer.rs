@@ -11,6 +11,10 @@ pub fn init(value: &[f32], runtime: &Runtime) -> GPUBuffer {
     runtime.init_buffer(value)
 }
 
+pub fn release(buffer: GPUBuffer, runtime: &Runtime) {
+    runtime.release_buffer(buffer);
+}
+
 pub fn read_all(buffer: &GPUBuffer, runtime: &mut Runtime) -> Vec<f32> {
     let size = buffer.count();
     let map_buffer = runtime.create_map_read_buffer(size);

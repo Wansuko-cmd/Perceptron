@@ -40,8 +40,11 @@ pub extern "system" fn Java_com_wsr_knist_gpu_JBuffer_release(
     ptr: jlong,
     runtime: jlong,
 ) {
-    let _ = unsafe { Arc::from_raw(ptr as *const GPUBuffer) };
-    let _ = unsafe { &*(runtime as *const Runtime) };
+    let buffer = unsafe { Arc::from_raw(ptr as *const GPUBuffer) };
+    let runtime = unsafe { &*(runtime as *const Runtime) };
+    if let Ok(buffer) = Arc::try_unwrap(buffer) {
+        ops::buffer::release(buffer, runtime);
+    }
 }
 
 #[unsafe(no_mangle)]
