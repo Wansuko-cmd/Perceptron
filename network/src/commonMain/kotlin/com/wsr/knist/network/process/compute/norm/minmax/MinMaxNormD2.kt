@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,7 @@ class MinMaxNormD2 internal constructor(
     override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val min = input.min()
@@ -70,6 +72,7 @@ class MinMaxNormD2 internal constructor(
 fun <T> NetworkBuilder.D2<T>.minMaxNorm(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
+    id: String = Uuid.random().toString(),
 ) = addProcess(
     process =
         MinMaxNormD2(
@@ -82,5 +85,6 @@ fun <T> NetworkBuilder.D2<T>.minMaxNorm(
                 i = inputI,
                 j = inputJ,
             ),
+            id = id,
         ),
 )

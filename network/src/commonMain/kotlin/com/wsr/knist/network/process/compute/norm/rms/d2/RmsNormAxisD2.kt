@@ -5,6 +5,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,6 +14,7 @@ class RmsNormAxisD2 internal constructor(
     override val outputJ: Int,
     private val axis: Int,
     private val e: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0

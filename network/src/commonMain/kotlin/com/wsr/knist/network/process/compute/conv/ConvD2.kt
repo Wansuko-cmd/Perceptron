@@ -14,6 +14,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,6 +28,7 @@ class ConvD2 internal constructor(
     private val inputJ: Int,
     private val optimizer: Optimizer.D4,
     private var weight: IOType.D4.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override val outputI: Int = filter
     override val outputJ: Int = (inputI - kernel + 2 * padding) / stride + 1
@@ -90,6 +92,7 @@ fun <T> NetworkBuilder.D3<T>.convD2(
     padding: Int = 0,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
 ) = addProcess(
     process =
         ConvD2(
@@ -109,5 +112,6 @@ fun <T> NetworkBuilder.D3<T>.convD2(
                 k = kernel,
                 l = kernel,
             ),
+            id = id,
         ),
 )

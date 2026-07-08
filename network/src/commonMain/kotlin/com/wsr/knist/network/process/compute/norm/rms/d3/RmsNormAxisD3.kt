@@ -5,6 +5,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,6 +15,7 @@ class RmsNormAxisD3 internal constructor(
     override val outputK: Int,
     private val axis: Int,
     private val e: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     private val axis1 = when (axis) {
         0 -> 1

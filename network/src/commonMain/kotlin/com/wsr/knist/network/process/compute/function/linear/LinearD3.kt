@@ -6,11 +6,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD3 internal constructor(override val outputI: Int, override val outputJ: Int, override val outputK: Int) :
-    Compute.D3() {
+class LinearD3 internal constructor(
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input
 
     override fun IOScope.train(
@@ -20,6 +25,6 @@ class LinearD3 internal constructor(override val outputI: Int, override val outp
     ): Batch<IOType.D3> = calcDelta(input)
 }
 
-fun <T> NetworkBuilder.D3<T>.linear() = addProcess(
-    process = LinearD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
+fun <T> NetworkBuilder.D3<T>.linear(id: String = Uuid.random().toString()) = addProcess(
+    process = LinearD3(outputI = inputI, outputJ = inputJ, outputK = inputK, id = id),
 )

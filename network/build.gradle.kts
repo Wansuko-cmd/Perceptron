@@ -51,7 +51,7 @@ kotlin {
     }
 
     compilerOptions {
-        freeCompilerArgs.addAll("-Xcontext-parameters")
+        freeCompilerArgs.addAll("-Xcontext-parameters", "-opt-in=kotlin.uuid.ExperimentalUuidApi")
     }
 }
 

@@ -6,6 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,6 +15,7 @@ class LayerNormD3 internal constructor(
     override val outputJ: Int,
     override val outputK: Int,
     private val e: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     private val outputSize = outputI * outputJ * outputK
 
@@ -83,13 +85,18 @@ class LayerNormD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D3<T> {
+fun <T> NetworkBuilder.D3<T>.layerNorm(
+    axis: Int? = null,
+    e: Float = 1e-6f,
+    id: String = Uuid.random().toString(),
+): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> LayerNormD3(
             outputI = inputI,
             outputJ = inputJ,
             outputK = inputK,
             e = e,
+            id = id,
         )
 
         0, 1, 2 -> LayerNormAxisD3(
@@ -98,6 +105,7 @@ fun <T> NetworkBuilder.D3<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): Net
             outputK = inputK,
             axis = axis,
             e = e,
+            id = id,
         )
 
         else -> throw IllegalStateException(

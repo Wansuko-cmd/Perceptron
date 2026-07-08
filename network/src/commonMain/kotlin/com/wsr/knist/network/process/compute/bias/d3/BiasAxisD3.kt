@@ -6,6 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,7 @@ class BiasAxisD3(
     private val axis: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     private val sumAxis1 = when (axis) {
         0 -> 1

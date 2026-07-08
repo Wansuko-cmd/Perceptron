@@ -10,6 +10,7 @@ import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.compute.Compute
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 private typealias CALC_DELTA_D3 = IOScope.(input: Batch<IOType.D3>, context: Context) -> Batch<IOType.D3>
@@ -21,6 +22,7 @@ class SkipD3 internal constructor(
     override val outputI: Int,
     override val outputJ: Int,
     override val outputK: Int,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val scope = this
@@ -64,7 +66,10 @@ class SkipD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.skip(builder: NetworkBuilder.D3<T>.() -> NetworkBuilder.D3<T>): NetworkBuilder.D3<T> {
+fun <T> NetworkBuilder.D3<T>.skip(
+    id: String = Uuid.random().toString(),
+    builder: NetworkBuilder.D3<T>.() -> NetworkBuilder.D3<T>,
+): NetworkBuilder.D3<T> {
     val layers = builder().layers.drop(layers.size)
     val (outputI, outputJ, outputK) = when (val last = layers.lastOrNull()) {
         is Compute.D3 -> Triple(last.outputI, last.outputJ, last.outputK)
@@ -88,6 +93,7 @@ fun <T> NetworkBuilder.D3<T>.skip(builder: NetworkBuilder.D3<T>.() -> NetworkBui
             outputJ = outputJ,
             outputK = outputK,
             layers = layers,
+            id = id,
         ),
     )
 }

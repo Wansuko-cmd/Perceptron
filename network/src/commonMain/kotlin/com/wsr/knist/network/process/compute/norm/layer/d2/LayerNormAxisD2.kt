@@ -5,6 +5,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,6 +14,7 @@ class LayerNormAxisD2 internal constructor(
     override val outputJ: Int,
     private val axis: Int,
     private val e: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     private val outputT = when (axis) {
         0 -> outputI

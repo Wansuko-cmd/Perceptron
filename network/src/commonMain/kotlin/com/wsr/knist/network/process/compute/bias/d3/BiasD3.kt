@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,6 +19,7 @@ class BiasD3(
     override val outputK: Int,
     private val optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input + weight
 
@@ -37,6 +39,7 @@ fun <T> NetworkBuilder.D3<T>.bias(
     axis: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(0f),
+    id: String = Uuid.random().toString(),
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> BiasD3(
@@ -51,6 +54,7 @@ fun <T> NetworkBuilder.D3<T>.bias(
                 j = inputJ,
                 k = inputK,
             ),
+            id = id,
         )
 
         0, 1, 2 -> {
@@ -70,6 +74,7 @@ fun <T> NetworkBuilder.D3<T>.bias(
                     output = listOf(inputT),
                     size = inputT,
                 ),
+                id = id,
             )
         }
 

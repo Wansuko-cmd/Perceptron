@@ -6,10 +6,15 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SoftmaxD2 internal constructor(override val outputI: Int, override val outputJ: Int) : Compute.D2() {
+class SoftmaxD2 internal constructor(
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.softmax()
 
     override fun IOScope.train(
@@ -23,6 +28,6 @@ class SoftmaxD2 internal constructor(override val outputI: Int, override val out
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.softmax() = addProcess(
-    process = SoftmaxD2(outputI = inputI, outputJ = inputJ),
+fun <T> NetworkBuilder.D2<T>.softmax(id: String = Uuid.random().toString()) = addProcess(
+    process = SoftmaxD2(outputI = inputI, outputJ = inputJ, id = id),
 )

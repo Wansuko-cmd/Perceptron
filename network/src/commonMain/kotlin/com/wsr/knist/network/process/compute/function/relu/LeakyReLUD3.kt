@@ -6,6 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,6 +14,7 @@ class LeakyReLUD3 internal constructor(
     override val outputI: Int,
     override val outputJ: Int,
     override val outputK: Int,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val mask = input gt 0f
@@ -31,6 +33,6 @@ class LeakyReLUD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.leakyReLU() = addProcess(
-    process = LeakyReLUD3(outputI = inputI, outputJ = inputJ, outputK = inputK),
+fun <T> NetworkBuilder.D3<T>.leakyReLU(id: String = Uuid.random().toString()) = addProcess(
+    process = LeakyReLUD3(outputI = inputI, outputJ = inputJ, outputK = inputK, id = id),
 )

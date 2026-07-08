@@ -7,6 +7,7 @@ import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
 import kotlin.random.Random
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,7 @@ class DropoutD3 internal constructor(
     override val outputK: Int,
     private val ratio: Float,
     private val seed: Int? = null,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     private val random by lazy { seed?.let { Random(it) } ?: Random }
     private val q = 1 / ratio
@@ -43,13 +45,15 @@ class DropoutD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null) = addProcess(
-    process =
-        DropoutD3(
-            outputI = inputI,
-            outputJ = inputJ,
-            outputK = inputK,
-            ratio = ratio,
-            seed = seed,
-        ),
-)
+fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) =
+    addProcess(
+        process =
+            DropoutD3(
+                outputI = inputI,
+                outputJ = inputJ,
+                outputK = inputK,
+                ratio = ratio,
+                seed = seed,
+                id = id,
+            ),
+    )
