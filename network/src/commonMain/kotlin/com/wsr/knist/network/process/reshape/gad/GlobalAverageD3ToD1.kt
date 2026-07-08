@@ -7,11 +7,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class GlobalAverageD3ToD1(private val inputI: Int, private val inputJ: Int, private val inputK: Int) :
-    Reshape.D3ToD1() {
+internal class GlobalAverageD3ToD1(
+    private val inputI: Int,
+    private val inputJ: Int,
+    private val inputK: Int,
+    override val id: String = Uuid.random().toString(),
+) : Reshape.D3ToD1() {
     override val outputI: Int = inputI
 
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1> = forward(input = input)
@@ -33,6 +38,6 @@ internal class GlobalAverageD3ToD1(private val inputI: Int, private val inputJ: 
         .average(axis = 1)
 }
 
-fun <T> NetworkBuilder.D3<T>.globalAverageToD1() = addReshape(
-    reshape = GlobalAverageD3ToD1(inputI, inputJ, inputK),
+fun <T> NetworkBuilder.D3<T>.globalAverageToD1(id: String = Uuid.random().toString()) = addReshape(
+    reshape = GlobalAverageD3ToD1(inputI, inputJ, inputK, id),
 )

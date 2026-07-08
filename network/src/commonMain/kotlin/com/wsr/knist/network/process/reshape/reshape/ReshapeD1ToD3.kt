@@ -8,11 +8,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD1ToD3(override val outputI: Int, override val outputJ: Int, override val outputK: Int) :
-    Reshape.D1ToD3() {
+internal class ReshapeD1ToD3(
+    override val outputI: Int,
+    override val outputJ: Int,
+    override val outputK: Int,
+    override val id: String = Uuid.random().toString(),
+) : Reshape.D1ToD3() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D3> =
         input.reshapeToD3(i = outputI, j = outputJ, k = outputK)
 
@@ -27,7 +32,12 @@ internal class ReshapeD1ToD3(override val outputI: Int, override val outputJ: In
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.reshapeToD3(i: Int = 1, j: Int = 1, k: Int = inputI): NetworkBuilder.D3<T> {
+fun <T> NetworkBuilder.D1<T>.reshapeToD3(
+    i: Int = 1,
+    j: Int = 1,
+    k: Int = inputI,
+    id: String = Uuid.random().toString(),
+): NetworkBuilder.D3<T> {
     check(i * j * k == inputI) {
         """
             invalid parameter.
@@ -36,5 +46,5 @@ fun <T> NetworkBuilder.D1<T>.reshapeToD3(i: Int = 1, j: Int = 1, k: Int = inputI
             k: $k
         """.trimIndent()
     }
-    return addReshape(reshape = ReshapeD1ToD3(outputI = i, outputJ = j, outputK = k))
+    return addReshape(reshape = ReshapeD1ToD3(outputI = i, outputJ = j, outputK = k, id = id))
 }

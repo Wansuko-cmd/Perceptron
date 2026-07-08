@@ -8,6 +8,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,7 @@ class TokenEmbeddingD1ToD2 internal constructor(
     private val vocabSize: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Reshape.D1ToD2() {
 
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
@@ -44,6 +46,7 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
     tokenSize: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> = addReshape(
     reshape = TokenEmbeddingD1ToD2(
         outputI = inputI,
@@ -56,5 +59,6 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
             i = vocabSize,
             j = tokenSize,
         ),
+        id = id,
     ),
 )

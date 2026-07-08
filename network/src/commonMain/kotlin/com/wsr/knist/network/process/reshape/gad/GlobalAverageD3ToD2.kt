@@ -7,11 +7,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class GlobalAverageD3ToD2(private val inputI: Int, private val inputJ: Int, private val inputK: Int) :
-    Reshape.D3ToD2() {
+internal class GlobalAverageD3ToD2(
+    private val inputI: Int,
+    private val inputJ: Int,
+    private val inputK: Int,
+    override val id: String = Uuid.random().toString(),
+) : Reshape.D3ToD2() {
     override val outputI: Int = inputJ
     override val outputJ: Int = inputK
 
@@ -33,6 +38,6 @@ internal class GlobalAverageD3ToD2(private val inputI: Int, private val inputJ: 
         .reshapeToD2(i = inputJ, j = inputK)
 }
 
-fun <T> NetworkBuilder.D3<T>.globalAverageToD2() = addReshape(
-    reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK),
+fun <T> NetworkBuilder.D3<T>.globalAverageToD2(id: String = Uuid.random().toString()) = addReshape(
+    reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK, id),
 )
