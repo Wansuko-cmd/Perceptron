@@ -8,11 +8,17 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.reshape.Reshape
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD2ToD1(override val outputI: Int) : Reshape.D2ToD1() {
-    constructor(inputI: Int, inputJ: Int) : this(outputI = inputI * inputJ)
+internal class ReshapeD2ToD1(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+    Reshape.D2ToD1() {
+    constructor(
+        inputI: Int,
+        inputJ: Int,
+        id: String = Uuid.random().toString(),
+    ) : this(outputI = inputI * inputJ, id = id)
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.flatten()
 
@@ -27,6 +33,6 @@ internal class ReshapeD2ToD1(override val outputI: Int) : Reshape.D2ToD1() {
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.reshapeToD1() = addReshape(
-    reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ),
+fun <T> NetworkBuilder.D2<T>.reshapeToD1(id: String = Uuid.random().toString()) = addReshape(
+    reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ, id = id),
 )

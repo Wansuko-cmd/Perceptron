@@ -12,6 +12,7 @@ import com.wsr.knist.network.process.compute.Compute
 import com.wsr.knist.network.process.reshape.Reshape
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD2ToD1
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD1
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 private typealias CALC_DELTA_D1 = IOScope.(input: Batch<IOType.D1>, context: Context) -> Batch<IOType.D1>
@@ -21,6 +22,7 @@ class SkipD1 internal constructor(
     // List<Process.D1>だがSerializer対策
     private val layers: List<Process> = emptyList(),
     override val outputI: Int,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val scope = this
@@ -64,7 +66,10 @@ class SkipD1 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.skip(builder: NetworkBuilder.D1<T>.() -> NetworkBuilder.D1<T>): NetworkBuilder.D1<T> {
+fun <T> NetworkBuilder.D1<T>.skip(
+    id: String = Uuid.random().toString(),
+    builder: NetworkBuilder.D1<T>.() -> NetworkBuilder.D1<T>,
+): NetworkBuilder.D1<T> {
     val layers = builder().layers.drop(layers.size)
     val outputI = when (val last = layers.lastOrNull()) {
         is Compute.D1 -> last.outputI
@@ -86,6 +91,7 @@ fun <T> NetworkBuilder.D1<T>.skip(builder: NetworkBuilder.D1<T>.() -> NetworkBui
         process = SkipD1(
             outputI = outputI,
             layers = layers,
+            id = id,
         ),
     )
 }

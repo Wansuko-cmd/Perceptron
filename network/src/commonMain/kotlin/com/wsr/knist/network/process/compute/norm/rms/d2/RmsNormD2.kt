@@ -6,11 +6,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RmsNormD2 internal constructor(override val outputI: Int, override val outputJ: Int, private val e: Float) :
-    Compute.D2() {
+class RmsNormD2 internal constructor(
+    override val outputI: Int,
+    override val outputJ: Int,
+    private val e: Float,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
@@ -36,12 +41,17 @@ class RmsNormD2 internal constructor(override val outputI: Int, override val out
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D2<T> {
+fun <T> NetworkBuilder.D2<T>.rmsNorm(
+    axis: Int? = null,
+    e: Float = 1e-6f,
+    id: String = Uuid.random().toString(),
+): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> RmsNormD2(
             outputI = inputI,
             outputJ = inputJ,
             e = e,
+            id = id,
         )
 
         0, 1 -> RmsNormAxisD2(
@@ -49,6 +59,7 @@ fun <T> NetworkBuilder.D2<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): Netwo
             outputJ = inputJ,
             axis = axis,
             e = e,
+            id = id,
         )
 
         else -> throw IllegalStateException(

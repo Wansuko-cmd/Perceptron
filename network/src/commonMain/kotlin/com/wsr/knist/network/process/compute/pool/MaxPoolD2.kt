@@ -6,11 +6,17 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val inputSize: Int, val padding: Int) :
-    Compute.D2() {
+class MaxPoolD2 internal constructor(
+    val poolSize: Int,
+    val channel: Int,
+    val inputSize: Int,
+    val padding: Int,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D2() {
     override val outputI: Int = channel
     override val outputJ: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 
@@ -49,11 +55,12 @@ class MaxPoolD2 internal constructor(val poolSize: Int, val channel: Int, val in
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0) = addProcess(
+fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0, id: String = Uuid.random().toString()) = addProcess(
     process = MaxPoolD2(
         poolSize = size,
         channel = inputI,
         inputSize = inputJ,
         padding = padding,
+        id = id,
     ),
 )

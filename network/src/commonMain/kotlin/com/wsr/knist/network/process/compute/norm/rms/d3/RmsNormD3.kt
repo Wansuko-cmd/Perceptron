@@ -6,6 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,6 +15,7 @@ class RmsNormD3 internal constructor(
     override val outputJ: Int,
     override val outputK: Int,
     private val e: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
@@ -40,13 +42,18 @@ class RmsNormD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D3<T> {
+fun <T> NetworkBuilder.D3<T>.rmsNorm(
+    axis: Int? = null,
+    e: Float = 1e-6f,
+    id: String = Uuid.random().toString(),
+): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> RmsNormD3(
             outputI = inputI,
             outputJ = inputJ,
             outputK = inputK,
             e = e,
+            id = id,
         )
 
         0, 1 -> RmsNormAxisD3(
@@ -55,6 +62,7 @@ fun <T> NetworkBuilder.D3<T>.rmsNorm(axis: Int? = null, e: Float = 1e-6f): Netwo
             outputK = inputK,
             axis = axis,
             e = e,
+            id = id,
         )
 
         else -> throw IllegalStateException(

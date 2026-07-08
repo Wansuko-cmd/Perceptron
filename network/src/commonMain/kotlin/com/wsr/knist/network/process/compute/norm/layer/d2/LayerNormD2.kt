@@ -6,11 +6,16 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LayerNormD2 internal constructor(override val outputI: Int, override val outputJ: Int, private val e: Float) :
-    Compute.D2() {
+class LayerNormD2 internal constructor(
+    override val outputI: Int,
+    override val outputJ: Int,
+    private val e: Float,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D2() {
     private val outputSize = outputI * outputJ
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
@@ -79,12 +84,17 @@ class LayerNormD2 internal constructor(override val outputI: Int, override val o
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): NetworkBuilder.D2<T> {
+fun <T> NetworkBuilder.D2<T>.layerNorm(
+    axis: Int? = null,
+    e: Float = 1e-6f,
+    id: String = Uuid.random().toString(),
+): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> LayerNormD2(
             outputI = inputI,
             outputJ = inputJ,
             e = e,
+            id = id,
         )
 
         0, 1 -> LayerNormAxisD2(
@@ -92,6 +102,7 @@ fun <T> NetworkBuilder.D2<T>.layerNorm(axis: Int? = null, e: Float = 1e-6f): Net
             outputJ = inputJ,
             axis = axis,
             e = e,
+            id = id,
         )
 
         else -> throw IllegalStateException(

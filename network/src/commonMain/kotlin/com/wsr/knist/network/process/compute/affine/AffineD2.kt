@@ -8,6 +8,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,7 @@ class AffineD2 internal constructor(
     private val outputSize: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override val outputI = channel
     override val outputJ = outputSize
@@ -42,6 +44,7 @@ fun <T> NetworkBuilder.D2<T>.affine(
     neuron: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
 ) = addProcess(
     process =
         AffineD2(
@@ -54,5 +57,6 @@ fun <T> NetworkBuilder.D2<T>.affine(
                 i = inputJ,
                 j = neuron,
             ),
+            id = id,
         ),
 )

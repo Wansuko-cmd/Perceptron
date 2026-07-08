@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,7 @@ class AffineD1 internal constructor(
     override val outputI: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
         weight.matMul(input, trans = true)
@@ -38,6 +40,7 @@ fun <T> NetworkBuilder.D1<T>.affine(
     neuron: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
 ) = addProcess(
     process =
         AffineD1(
@@ -49,5 +52,6 @@ fun <T> NetworkBuilder.D1<T>.affine(
                 i = inputI,
                 j = neuron,
             ),
+            id = id,
         ),
 )

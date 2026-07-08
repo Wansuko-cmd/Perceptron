@@ -15,6 +15,7 @@ import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Build
 import com.wsr.knist.network.process.compute.attention.bias.backward
 import com.wsr.knist.network.process.compute.attention.bias.forward
 import kotlin.math.sqrt
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
@@ -33,6 +34,7 @@ class AttentionD2 internal constructor(
     private val optimizerV: Optimizer.D2,
     private var weightO: IOType.D2.Global,
     private val optimizerO: Optimizer.D2,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
@@ -143,6 +145,7 @@ fun <T> NetworkBuilder.D2<T>.attention(
     biases: AttentionBiasD2Builder.() -> AttentionBiasD2Builder = { this },
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> = addProcess(
     process = AttentionD2(
         outputI = inputI,
@@ -178,5 +181,6 @@ fun <T> NetworkBuilder.D2<T>.attention(
         optimizerK = optimizer.d2(inputJ, numOfHeads * dim),
         optimizerV = optimizer.d2(inputJ, numOfHeads * dim),
         optimizerO = optimizer.d2(numOfHeads * dim, inputJ),
+        id = id,
     ),
 )

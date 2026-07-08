@@ -10,6 +10,7 @@ import com.wsr.knist.network.process.compute.Compute
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,7 @@ class RoPED2 internal constructor(
     override val outputI: Int,
     override val outputJ: Int,
     private val waveLength: Float,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     private val theta by lazy {
         FloatArray(outputJ / 2) { i -> 1f / waveLength.pow(2f * i / outputJ) }
@@ -54,10 +56,11 @@ class RoPED2 internal constructor(
 }
 
 @Deprecated("実装ミス。Attentionの中に組み込む必要がある")
-fun <T> NetworkBuilder.D2<T>.roPE(waveLength: Float = 10000f) = addProcess(
+fun <T> NetworkBuilder.D2<T>.roPE(waveLength: Float = 10000f, id: String = Uuid.random().toString()) = addProcess(
     process = RoPED2(
         outputI = inputI,
         outputJ = inputJ,
         waveLength = waveLength,
+        id = id,
     ),
 )

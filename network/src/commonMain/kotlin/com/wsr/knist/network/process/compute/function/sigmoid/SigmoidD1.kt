@@ -6,10 +6,12 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SigmoidD1 internal constructor(override val outputI: Int) : Compute.D1() {
+class SigmoidD1 internal constructor(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+    Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input.sigmoid()
 
     override fun IOScope.train(
@@ -23,4 +25,6 @@ class SigmoidD1 internal constructor(override val outputI: Int) : Compute.D1() {
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.sigmoid() = addProcess(SigmoidD1(outputI = inputI))
+fun <T> NetworkBuilder.D1<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
+    SigmoidD1(outputI = inputI, id = id),
+)

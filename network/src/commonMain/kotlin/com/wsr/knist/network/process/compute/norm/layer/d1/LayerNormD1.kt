@@ -6,10 +6,15 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LayerNormD1 internal constructor(override val outputI: Int, private val e: Float) : Compute.D1() {
+class LayerNormD1 internal constructor(
+    override val outputI: Int,
+    private val e: Float,
+    override val id: String = Uuid.random().toString(),
+) : Compute.D1() {
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val average = input.average()
         val numerator = input - average
@@ -76,4 +81,6 @@ class LayerNormD1 internal constructor(override val outputI: Int, private val e:
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f) = addProcess(process = LayerNormD1(outputI = inputI, e = e))
+fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addProcess(
+    process = LayerNormD1(outputI = inputI, e = e, id = id),
+)

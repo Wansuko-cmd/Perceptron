@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.Compute
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,6 +18,7 @@ class ScaleD2 internal constructor(
     override val outputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input * weight
 
@@ -42,6 +44,7 @@ fun <T> NetworkBuilder.D2<T>.scale(
     axis: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
+    id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> ScaleD2(
@@ -57,6 +60,7 @@ fun <T> NetworkBuilder.D2<T>.scale(
                 i = inputI,
                 j = inputJ,
             ),
+            id = id,
         )
 
         0, 1 -> {
@@ -71,6 +75,7 @@ fun <T> NetworkBuilder.D2<T>.scale(
                     output = listOf(inputT),
                     size = inputT,
                 ),
+                id = id,
             )
         }
 
