@@ -10,8 +10,9 @@ import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SigmoidD1 internal constructor(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+class SigmoidD1 internal constructor(override val inputI: Int, override val id: String = Uuid.random().toString()) :
     Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input.sigmoid()
 
     override fun IOScope.train(
@@ -26,5 +27,5 @@ class SigmoidD1 internal constructor(override val outputI: Int, override val id:
 }
 
 fun <T> NetworkBuilder.D1<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
-    SigmoidD1(outputI = inputI, id = id),
+    SigmoidD1(inputI = inputI, id = id),
 )

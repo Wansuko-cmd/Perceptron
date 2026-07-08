@@ -22,8 +22,8 @@ class ConvD2Test {
             kernel = 2,
             stride = 1,
             padding = 0,
-            inputI = 3,
-            inputJ = 3,
+            height = 3,
+            width = 3,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d4(i = 2, j = 2, k = 2, l = 2),
             weight = IOType.d4(2, 2, 2, 2) { i, j, k, l -> i * 8f + j * 4f + k * 2f + l },
         )

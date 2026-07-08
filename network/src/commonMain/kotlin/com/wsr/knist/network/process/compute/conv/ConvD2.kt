@@ -24,15 +24,19 @@ class ConvD2 internal constructor(
     private val kernel: Int,
     private val stride: Int,
     private val padding: Int,
-    private val inputI: Int,
-    private val inputJ: Int,
+    private val height: Int,
+    private val width: Int,
     private val optimizer: Optimizer.D4,
     private var weight: IOType.D4.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val inputI: Int = channel
+    override val inputJ: Int = height
+    override val inputK: Int = width
+
     override val outputI: Int = filter
-    override val outputJ: Int = (inputI - kernel + 2 * padding) / stride + 1
-    override val outputK: Int = (inputJ - kernel + 2 * padding) / stride + 1
+    override val outputJ: Int = (height - kernel + 2 * padding) / stride + 1
+    override val outputK: Int = (width - kernel + 2 * padding) / stride + 1
 
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
@@ -106,8 +110,8 @@ fun <T> NetworkBuilder.D3<T>.convD2(
             kernel = kernel,
             stride = stride,
             padding = padding,
-            inputI = inputJ,
-            inputJ = inputK,
+            height = inputJ,
+            width = inputK,
             optimizer = optimizer.d4(filter, inputI, kernel, kernel),
             weight = initializer.d4(
                 input = listOf(inputI, kernel, kernel),

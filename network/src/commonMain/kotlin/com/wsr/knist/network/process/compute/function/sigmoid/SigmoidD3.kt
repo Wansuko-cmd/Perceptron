@@ -11,11 +11,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SigmoidD3 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.sigmoid()
 
     override fun IOScope.train(
@@ -30,5 +33,5 @@ class SigmoidD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
-    process = SigmoidD3(outputI = inputI, outputJ = inputJ, outputK = inputK, id = id),
+    process = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

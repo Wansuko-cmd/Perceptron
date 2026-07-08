@@ -12,12 +12,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class DropoutD2 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     private val ratio: Float,
     private val seed: Int? = null,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     private val random by lazy { seed?.let { Random(it) } ?: Random }
     private val q = 1 / ratio
 
@@ -47,8 +49,8 @@ fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null, id: String
     addProcess(
         process =
             DropoutD2(
-                outputI = inputI,
-                outputJ = inputJ,
+                inputI = inputI,
+                inputJ = inputJ,
                 ratio = ratio,
                 seed = seed,
                 id = id,

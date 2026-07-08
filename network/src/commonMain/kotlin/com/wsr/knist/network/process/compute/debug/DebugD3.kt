@@ -12,11 +12,15 @@ import kotlinx.serialization.Transient
 
 @Serializable
 class DebugD3 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
+
     @Transient
     var onInput: (Batch<IOType.D3>) -> Unit = {}
 
@@ -47,9 +51,9 @@ fun <T> NetworkBuilder.D3<T>.debug(
     id: String = Uuid.random().toString(),
 ) = addProcess(
     process = DebugD3(
-        outputI = inputI,
-        outputJ = inputJ,
-        outputK = inputK,
+        inputI = inputI,
+        inputJ = inputJ,
+        inputK = inputK,
         id = id,
     ).apply {
         this.onInput = onInput

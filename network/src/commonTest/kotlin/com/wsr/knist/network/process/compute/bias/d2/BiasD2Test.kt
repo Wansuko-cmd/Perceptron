@@ -17,8 +17,8 @@ import kotlin.test.Test
 class BiasD2Test {
     val target
         get() = BiasD2(
-            outputI = 2,
-            outputJ = 2,
+            inputI = 2,
+            inputJ = 2,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d2(2, 2),
             weight = IOType.d2(2, 2) { i, j -> i * 2f + j },
         )

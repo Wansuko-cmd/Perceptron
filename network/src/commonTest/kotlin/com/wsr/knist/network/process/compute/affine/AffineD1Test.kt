@@ -17,6 +17,7 @@ class AffineD1Test {
     val target
         get() = AffineD1(
             outputI = 4,
+            inputI = 3,
             optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)).d2(3, 4),
             weight = IOType.d2(3, 4) { i, j -> i * 2f + j },
         )

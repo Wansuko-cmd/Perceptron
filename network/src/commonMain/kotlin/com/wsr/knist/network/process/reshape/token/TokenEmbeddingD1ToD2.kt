@@ -13,13 +13,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class TokenEmbeddingD1ToD2 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     override val outputJ: Int,
     private val vocabSize: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Reshape.D1ToD2() {
+    override val outputI: Int get() = inputI
+
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
         input.gather(other = weight)
 
@@ -52,7 +54,7 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
     id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> = addReshape(
     reshape = TokenEmbeddingD1ToD2(
-        outputI = inputI,
+        inputI = inputI,
         outputJ = tokenSize,
         vocabSize = vocabSize,
         optimizer = optimizer.d2(vocabSize, tokenSize),

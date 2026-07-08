@@ -12,9 +12,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class GlobalAverageD3ToD1(
-    private val inputI: Int,
-    private val inputJ: Int,
-    private val inputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Reshape.D3ToD1() {
     override val outputI: Int = inputI

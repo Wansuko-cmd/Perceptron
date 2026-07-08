@@ -23,17 +23,17 @@ class SkipD1Test {
     val target = SkipD1(
         layers = listOf(
             BiasD1(
-                outputI = 3,
+                inputI = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d1(3),
                 weight = IOType.d1(3) { it.toFloat() },
             ),
             BiasD1(
-                outputI = 3,
+                inputI = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d1(3),
                 weight = IOType.d1(3) { it.toFloat() },
             ),
         ),
-        outputI = 3,
+        inputI = 3,
     )
     val input
         get() = Batch.of(

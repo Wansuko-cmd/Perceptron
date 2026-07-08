@@ -11,10 +11,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SoftmaxD2 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.softmax()
 
     override fun IOScope.train(
@@ -29,5 +31,5 @@ class SoftmaxD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.softmax(id: String = Uuid.random().toString()) = addProcess(
-    process = SoftmaxD2(outputI = inputI, outputJ = inputJ, id = id),
+    process = SoftmaxD2(inputI = inputI, inputJ = inputJ, id = id),
 )

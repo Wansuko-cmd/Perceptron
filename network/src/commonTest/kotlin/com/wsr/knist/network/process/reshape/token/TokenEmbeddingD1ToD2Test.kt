@@ -16,7 +16,7 @@ import kotlin.test.Test
 
 class TokenEmbeddingD1ToD2Test {
     val target = TokenEmbeddingD1ToD2(
-        outputI = 3,
+        inputI = 3,
         outputJ = 5,
         vocabSize = 5,
         optimizer = Sgd(Scheduler.Fix(0.1f)).d2(5, 5),

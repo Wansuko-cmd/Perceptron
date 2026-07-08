@@ -13,7 +13,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class MinMaxNormD2Test {
-    val target get() = MinMaxNormD2(outputI = 2, outputJ = 3)
+    val target get() = MinMaxNormD2(inputI = 2, inputJ = 3)
     val input
         get() = Batch.of(
             IOType.d2(

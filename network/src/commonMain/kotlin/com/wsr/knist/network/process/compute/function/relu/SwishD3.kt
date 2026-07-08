@@ -11,11 +11,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SwishD3 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input * input.sigmoid()
 
     override fun IOScope.train(
@@ -31,5 +34,5 @@ class SwishD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.swish(id: String = Uuid.random().toString()) = addProcess(
-    process = SwishD3(outputI = inputI, outputJ = inputJ, outputK = inputK, id = id),
+    process = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

@@ -11,13 +11,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasAxisD2(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     private val sumAxis = if (axis == 0) 1 else 0
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =

@@ -14,11 +14,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input + weight
 
     override fun IOScope.train(
@@ -43,7 +44,7 @@ fun <T> NetworkBuilder.D1<T>.bias(
     id: String = Uuid.random().toString(),
 ) = addProcess(
     BiasD1(
-        outputI = inputI,
+        inputI = inputI,
         optimizer = optimizer.d1(inputI),
         weight = initializer.d1(
             input = listOf(inputI),

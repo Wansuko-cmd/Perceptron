@@ -11,10 +11,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RmsNormD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     private val e: Float,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
@@ -41,5 +42,5 @@ class RmsNormD1 internal constructor(
 }
 
 fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addProcess(
-    process = RmsNormD1(outputI = inputI, e = e, id = id),
+    process = RmsNormD1(inputI = inputI, e = e, id = id),
 )

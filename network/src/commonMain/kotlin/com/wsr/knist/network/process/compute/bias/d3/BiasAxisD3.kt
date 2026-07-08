@@ -11,14 +11,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasAxisD3(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     private val axis: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     private val sumAxis1 = when (axis) {
         0 -> 1
         else -> 0

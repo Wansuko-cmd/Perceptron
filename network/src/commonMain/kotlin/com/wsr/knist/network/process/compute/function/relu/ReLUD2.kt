@@ -11,10 +11,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ReLUD2 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0f)
@@ -33,5 +35,5 @@ class ReLUD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.reLU(id: String = Uuid.random().toString()) = addProcess(
-    ReLUD2(outputI = inputI, outputJ = inputJ, id = id),
+    ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

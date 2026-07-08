@@ -17,8 +17,8 @@ import kotlin.test.Test
 class PositionEmbeddingD2Test {
     val target
         get() = PositionEmbeddingD2(
-            outputI = 2,
-            outputJ = 3,
+            inputI = 2,
+            inputJ = 3,
             optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)).d2(2, 3),
             weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
         )

@@ -12,13 +12,12 @@ import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal class ReshapeD2ToD1(override val outputI: Int, override val id: String = Uuid.random().toString()) :
-    Reshape.D2ToD1() {
-    constructor(
-        inputI: Int,
-        inputJ: Int,
-        id: String = Uuid.random().toString(),
-    ) : this(outputI = inputI * inputJ, id = id)
+internal class ReshapeD2ToD1(
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val id: String = Uuid.random().toString(),
+) : Reshape.D2ToD1() {
+    override val outputI: Int = inputI * inputJ
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1> = input.flatten()
 

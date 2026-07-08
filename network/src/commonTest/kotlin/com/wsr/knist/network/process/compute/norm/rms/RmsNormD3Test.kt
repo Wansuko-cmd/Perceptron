@@ -15,7 +15,7 @@ import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormD3
 import kotlin.test.Test
 
 class RmsNormD3Test {
-    val target get() = RmsNormD3(outputI = 2, outputJ = 2, outputK = 3, e = 1e-6f)
+    val target get() = RmsNormD3(inputI = 2, inputJ = 2, inputK = 3, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d3(

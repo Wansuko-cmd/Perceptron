@@ -27,23 +27,23 @@ class SkipD3Test {
     val target = SkipD3(
         layers = listOf(
             BiasD3(
-                outputI = 2,
-                outputJ = 2,
-                outputK = 3,
+                inputI = 2,
+                inputJ = 2,
+                inputK = 3,
                 optimizer = Sgd(Scheduler.Fix(0.01f)).d3(2, 2, 2),
                 weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             ),
             BiasD3(
-                outputI = 2,
-                outputJ = 2,
-                outputK = 3,
+                inputI = 2,
+                inputJ = 2,
+                inputK = 3,
                 optimizer = Sgd(Scheduler.Fix(0.01f)).d3(2, 2, 2),
                 weight = IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
             ),
         ),
-        outputI = 2,
-        outputJ = 2,
-        outputK = 2,
+        inputI = 2,
+        inputJ = 2,
+        inputK = 2,
     )
     val input
         get() = Batch.of(

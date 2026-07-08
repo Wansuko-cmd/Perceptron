@@ -13,28 +13,32 @@ import kotlinx.serialization.Serializable
 class MaxPoolD3 internal constructor(
     val poolSize: Int,
     val channel: Int,
-    val inputI: Int,
-    val inputJ: Int,
+    val height: Int,
+    val width: Int,
     val padding: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val inputI: Int = channel
+    override val inputJ: Int = height
+    override val inputK: Int = width
+
     override val outputI: Int = channel
-    override val outputJ: Int = (inputI + 2 * padding - poolSize) / poolSize + 1
-    override val outputK: Int = (inputJ + 2 * padding - poolSize) / poolSize + 1
+    override val outputJ: Int = (height + 2 * padding - poolSize) / poolSize + 1
+    override val outputK: Int = (width + 2 * padding - poolSize) / poolSize + 1
 
     init {
         check(
-            (inputI + 2 * padding - poolSize) % poolSize == 0 &&
-                (inputJ + 2 * padding - poolSize) % poolSize == 0,
+            (height + 2 * padding - poolSize) % poolSize == 0 &&
+                (width + 2 * padding - poolSize) % poolSize == 0,
         ) {
             """
             invalid parameter.
-            inputI: $inputI
-            inputJ: $inputJ
+            height: $height
+            width: $width
             poolSize: $poolSize
             padding: $padding
-            outputJ: ${(inputI + 2 * padding - poolSize) / poolSize.toFloat() + 1}
-            outputK: ${(inputJ + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            outputJ: ${(height + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            outputK: ${(width + 2 * padding - poolSize) / poolSize.toFloat() + 1}
             """.trimIndent()
         }
     }
@@ -67,8 +71,8 @@ fun <T> NetworkBuilder.D3<T>.maxPool(size: Int, padding: Int = 0, id: String = U
     process = MaxPoolD3(
         poolSize = size,
         channel = inputI,
-        inputI = inputJ,
-        inputJ = inputK,
+        height = inputJ,
+        width = inputK,
         padding = padding,
         id = id,
     ),

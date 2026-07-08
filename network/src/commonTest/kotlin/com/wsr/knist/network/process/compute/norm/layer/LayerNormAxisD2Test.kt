@@ -14,8 +14,8 @@ import com.wsr.knist.network.process.compute.norm.layer.d2.LayerNormAxisD2
 import kotlin.test.Test
 
 class LayerNormAxisD2Test {
-    val target0 get() = LayerNormAxisD2(outputI = 2, outputJ = 3, axis = 0, e = 1e-6f)
-    val target1 get() = LayerNormAxisD2(outputI = 2, outputJ = 3, axis = 1, e = 1e-6f)
+    val target0 get() = LayerNormAxisD2(inputI = 2, inputJ = 3, axis = 0, e = 1e-6f)
+    val target1 get() = LayerNormAxisD2(inputI = 2, inputJ = 3, axis = 1, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d2(

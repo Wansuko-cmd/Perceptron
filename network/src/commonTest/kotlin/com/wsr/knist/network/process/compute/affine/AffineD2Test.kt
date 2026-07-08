@@ -20,6 +20,7 @@ class AffineD2Test {
         get() = AffineD2(
             channel = 2,
             outputSize = 4,
+            inputJ = 3,
             optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)).d2(3, 4),
             weight = IOType.d2(3, 4) { i, j -> i * 2f + j },
         )

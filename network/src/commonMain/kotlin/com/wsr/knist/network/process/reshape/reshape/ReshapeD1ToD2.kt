@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class ReshapeD1ToD2(
+    override val inputI: Int,
     override val outputI: Int,
     override val outputJ: Int,
     override val id: String = Uuid.random().toString(),
@@ -43,5 +44,5 @@ fun <T> NetworkBuilder.D1<T>.reshapeToD2(
             j: $j
         """.trimIndent()
     }
-    return addReshape(reshape = ReshapeD1ToD2(outputI = i, outputJ = j, id = id))
+    return addReshape(reshape = ReshapeD1ToD2(inputI = inputI, outputI = i, outputJ = j, id = id))
 }

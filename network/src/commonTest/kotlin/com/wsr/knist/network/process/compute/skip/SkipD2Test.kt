@@ -25,20 +25,20 @@ class SkipD2Test {
     val target = SkipD2(
         layers = listOf(
             BiasD2(
-                outputI = 2,
-                outputJ = 3,
+                inputI = 2,
+                inputJ = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d2(2, 3),
                 weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
             ),
             BiasD2(
-                outputI = 2,
-                outputJ = 3,
+                inputI = 2,
+                inputJ = 3,
                 optimizer = Sgd(Scheduler.Fix(rate = 0.01f)).d2(2, 3),
                 weight = IOType.d2(2, 3) { i, j -> i * 2f + j },
             ),
         ),
-        outputI = 2,
-        outputJ = 3,
+        inputI = 2,
+        inputJ = 3,
     )
     val input
         get() = Batch.of(

@@ -10,12 +10,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RmsNormAxisD2 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     private val axis: Int,
     private val e: Float,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0
 

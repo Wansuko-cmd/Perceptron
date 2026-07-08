@@ -13,6 +13,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class ReshapeD2ToD3(
+    override val inputI: Int,
+    override val inputJ: Int,
     override val outputI: Int,
     override val outputJ: Int,
     override val outputK: Int,
@@ -46,5 +48,7 @@ fun <T> NetworkBuilder.D2<T>.reshapeToD3(
             k: $k
         """.trimIndent()
     }
-    return addReshape(reshape = ReshapeD2ToD3(outputI = i, outputJ = j, outputK = k, id = id))
+    return addReshape(
+        reshape = ReshapeD2ToD3(inputI = inputI, inputJ = inputJ, outputI = i, outputJ = j, outputK = k, id = id),
+    )
 }

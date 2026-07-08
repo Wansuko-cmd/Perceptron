@@ -10,8 +10,9 @@ import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LeakyReLUD1 internal constructor(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+class LeakyReLUD1 internal constructor(override val inputI: Int, override val id: String = Uuid.random().toString()) :
     Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val mask = input gt 0f
         return input.where(condition = mask, onFalse = 0.01f)
@@ -30,5 +31,5 @@ class LeakyReLUD1 internal constructor(override val outputI: Int, override val i
 }
 
 fun <T> NetworkBuilder.D1<T>.leakyReLU(id: String = Uuid.random().toString()) = addProcess(
-    LeakyReLUD1(outputI = inputI, id = id),
+    LeakyReLUD1(inputI = inputI, id = id),
 )

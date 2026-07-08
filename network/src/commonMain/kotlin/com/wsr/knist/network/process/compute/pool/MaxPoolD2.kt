@@ -17,6 +17,9 @@ class MaxPoolD2 internal constructor(
     val padding: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val inputI: Int = channel
+    override val inputJ: Int = inputSize
+
     override val outputI: Int = channel
     override val outputJ: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
 

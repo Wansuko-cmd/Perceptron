@@ -14,12 +14,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class BiasD2(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input + weight
 
     override fun IOScope.train(
@@ -46,8 +48,8 @@ fun <T> NetworkBuilder.D2<T>.bias(
 ): NetworkBuilder.D2<T> {
     val process = when (axis) {
         null -> BiasD2(
-            outputI = inputI,
-            outputJ = inputJ,
+            inputI = inputI,
+            inputJ = inputJ,
             optimizer = optimizer.d2(inputI, inputJ),
             weight = initializer.d2(
                 input = listOf(inputI, inputJ),
@@ -61,8 +63,8 @@ fun <T> NetworkBuilder.D2<T>.bias(
         0, 1 -> {
             val inputT = if (axis == 0) inputI else inputJ
             BiasAxisD2(
-                outputI = inputI,
-                outputJ = inputJ,
+                inputI = inputI,
+                inputJ = inputJ,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

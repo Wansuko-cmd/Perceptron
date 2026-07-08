@@ -11,12 +11,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RmsNormD3 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     private val e: Float,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val deviation = input.pow(n = 2).average().sqrt(e = e)
         return input / deviation
@@ -49,17 +52,17 @@ fun <T> NetworkBuilder.D3<T>.rmsNorm(
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> RmsNormD3(
-            outputI = inputI,
-            outputJ = inputJ,
-            outputK = inputK,
+            inputI = inputI,
+            inputJ = inputJ,
+            inputK = inputK,
             e = e,
             id = id,
         )
 
         0, 1 -> RmsNormAxisD3(
-            outputI = inputI,
-            outputJ = inputJ,
-            outputK = inputK,
+            inputI = inputI,
+            inputJ = inputJ,
+            inputK = inputK,
             axis = axis,
             e = e,
             id = id,

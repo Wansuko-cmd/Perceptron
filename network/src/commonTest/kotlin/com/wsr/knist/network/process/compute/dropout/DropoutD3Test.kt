@@ -12,7 +12,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class DropoutD3Test {
-    val target get() = DropoutD3(outputI = 2, outputJ = 2, outputK = 2, ratio = 0.8f, seed = 0)
+    val target get() = DropoutD3(inputI = 2, inputJ = 2, inputK = 2, ratio = 0.8f, seed = 0)
     val input
         get() = Batch.of(
             IOType.d3(2, 2, 2) { i, j, k -> i * 4f + j * 2f + k },
