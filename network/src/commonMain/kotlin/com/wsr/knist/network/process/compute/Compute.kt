@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
 sealed interface Compute : Process {
     @Serializable
     abstract class D1 : Compute {
+        abstract val inputI: Int
+
         abstract val outputI: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1>
@@ -40,6 +42,9 @@ sealed interface Compute : Process {
 
     @Serializable
     abstract class D2 : Compute {
+        abstract val inputI: Int
+        abstract val inputJ: Int
+
         abstract val outputI: Int
         abstract val outputJ: Int
 
@@ -69,6 +74,10 @@ sealed interface Compute : Process {
 
     @Serializable
     abstract class D3 : Compute {
+        abstract val inputI: Int
+        abstract val inputJ: Int
+        abstract val inputK: Int
+
         abstract val outputI: Int
         abstract val outputJ: Int
         abstract val outputK: Int
