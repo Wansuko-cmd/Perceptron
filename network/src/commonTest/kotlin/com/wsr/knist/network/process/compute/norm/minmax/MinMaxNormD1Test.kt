@@ -1,0 +1,54 @@
+@file:Suppress("NonAsciiCharacters", "UNCHECKED_CAST")
+
+package com.wsr.knist.network.process.compute.norm.minmax
+
+import com.wsr.knist.batch.Batch
+import com.wsr.knist.core.IOType
+import com.wsr.knist.core.d1
+import com.wsr.knist.network.assertContentEquals
+import com.wsr.knist.network.networkScopeTestRule
+import com.wsr.knist.network.process.Context
+import kotlin.test.Test
+
+class MinMaxNormD1Test {
+    val target get() = MinMaxNormD1(outputI = 3)
+    val input
+        get() = Batch.of(
+            IOType.d1(3) { it.toFloat() },
+            IOType.d1(3) { it * 2f },
+        )
+
+    @Test
+    fun `expect=最小値0最大値1へ正規化`() = networkScopeTestRule {
+        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+
+        assertContentEquals(
+            expected = IOType.d1(0.0000f, 0.5000f, 1.0000f),
+            actual = actual[0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertContentEquals(
+            expected = IOType.d1(0.0000f, 0.5000f, 1.0000f),
+            actual = actual[1],
+            absoluteTolerance = 1e-4f,
+        )
+    }
+
+    @Test
+    fun `train=正規化および勾配を伝播`() = networkScopeTestRule {
+        val actual = with(target) {
+            _train(input = input, context = Context(input), calcDelta = { it })
+        } as Batch<IOType.D1>
+
+        assertContentEquals(
+            expected = IOType.d1(-0.1250f, 0.2500f, -0.1250f),
+            actual = actual[0],
+            absoluteTolerance = 1e-4f,
+        )
+        assertContentEquals(
+            expected = IOType.d1(-0.0625f, 0.1250f, -0.0625f),
+            actual = actual[1],
+            absoluteTolerance = 1e-4f,
+        )
+    }
+}
