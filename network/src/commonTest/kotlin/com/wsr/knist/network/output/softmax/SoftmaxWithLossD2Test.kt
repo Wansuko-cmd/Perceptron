@@ -13,20 +13,20 @@ import kotlin.test.assertEquals
 class SoftmaxWithLossD2Test {
     @Test
     fun `expect=softmaxを計算`() = networkScopeTestRule {
-        val target = SoftmaxWithLossD2(outputJ = 2, temperature = 1f)
+        val target = SoftmaxWithLossD2(outputJ = 2, temperature = 0.8f)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
 
         val actual = with(target) { _expect(input) } as Batch<IOType.D2>
 
-        assertEquals(expected = 0.2689f, actual = actual[0][0][0].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.7310f, actual = actual[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.2689f, actual = actual[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.7310f, actual = actual[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.2227f, actual = actual[0][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.7773f, actual = actual[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.2227f, actual = actual[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.7773f, actual = actual[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 
     @Test
     fun `train=softmaxの逆伝播`() = networkScopeTestRule {
-        val target = SoftmaxWithLossD2(outputJ = 2, temperature = 1f)
+        val target = SoftmaxWithLossD2(outputJ = 2, temperature = 0.8f)
         val input = Batch.of(IOType.d2(2, 2) { i, j -> i * 2f + j })
         val label = Batch.of(IOType.d2(2, 2) { i, j -> i * 4f + j * 2f })
 
@@ -34,10 +34,10 @@ class SoftmaxWithLossD2Test {
         val loss = actual.loss.unwrap()
         val delta = actual.delta as Batch<IOType.D2>
 
-        assertEquals(expected = -1.0388f, actual = loss, absoluteTolerance = 1e-4f)
-        assertEquals(expected = 0.2689f, actual = delta[0][0][0].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -1.2689f, actual = delta[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -3.7310f, actual = delta[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
-        assertEquals(expected = -5.2689f, actual = delta[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.0779f, actual = loss, absoluteTolerance = 1e-4f)
+        assertEquals(expected = 0.2784f, actual = delta[0][0][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -1.5284f, actual = delta[0][0][1].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -4.7216f, actual = delta[0][1][0].unwrap(), absoluteTolerance = 1e-4f)
+        assertEquals(expected = -6.5284f, actual = delta[0][1][1].unwrap(), absoluteTolerance = 1e-4f)
     }
 }

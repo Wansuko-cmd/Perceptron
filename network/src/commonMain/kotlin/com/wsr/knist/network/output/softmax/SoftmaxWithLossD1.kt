@@ -35,7 +35,7 @@ internal class SoftmaxWithLossD1 internal constructor(val temperature: Float) : 
         val loss = 0f - (output * label).sum()
             .ln(1e-7f)
             .batchAverage()
-        val delta = output - label
+        val delta = (output - label) / temperature
         return TResult(loss = loss, delta = delta)
     }
 }

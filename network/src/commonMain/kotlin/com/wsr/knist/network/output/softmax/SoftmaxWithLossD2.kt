@@ -36,7 +36,7 @@ internal class SoftmaxWithLossD2 internal constructor(val outputJ: Int, val temp
         // 有効値のみの平均を取る
         val loss = (maskedLosses.sum() / mask.sum()).batchAverage()
 
-        val delta = (output - label).times(other = mask, axis = 0)
+        val delta = (output - label).times(other = mask, axis = 0) / temperature
         return TResult(loss = loss, delta = delta)
     }
 }
