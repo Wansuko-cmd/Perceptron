@@ -16,4 +16,6 @@ interface Process {
         context: Context,
         calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
     ): Batch<IOType>
+
+    fun freeze(isFrozen: Boolean) {}
 }

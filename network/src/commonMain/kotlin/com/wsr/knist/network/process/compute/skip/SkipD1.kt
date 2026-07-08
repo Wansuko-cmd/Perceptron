@@ -64,6 +64,10 @@ class SkipD1 internal constructor(
 
         return mainDelta + skipDelta!!
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        layers.forEach { it.freeze(isFrozen) }
+    }
 }
 
 fun <T> NetworkBuilder.D1<T>.skip(

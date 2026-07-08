@@ -34,6 +34,10 @@ class AffineD1 internal constructor(
         weight = optimizer.adapt(weight = weight, dw = dw).toGlobal()
         return dx
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
 fun <T> NetworkBuilder.D1<T>.affine(

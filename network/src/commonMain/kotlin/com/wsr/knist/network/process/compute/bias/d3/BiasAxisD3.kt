@@ -41,4 +41,8 @@ class BiasAxisD3(
         weight = optimizer.adapt(weight = weight, dw = delta.sum(sumAxis1).sum(sumAxis2)).toGlobal()
         return delta
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }

@@ -19,6 +19,7 @@ class ScaleAxisD2 internal constructor(
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     private val sumAxis = if (axis == 0) 1 else 0
+
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =
         input.times(other = weight, axis = axis)
 
@@ -37,5 +38,9 @@ class ScaleAxisD2 internal constructor(
         ).toGlobal()
 
         return dx
+    }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
     }
 }

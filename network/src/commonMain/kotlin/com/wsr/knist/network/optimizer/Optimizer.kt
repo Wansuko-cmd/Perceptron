@@ -14,7 +14,11 @@ interface Optimizer {
     fun d4(i: Int, j: Int, k: Int, l: Int): D4
 
     @Serializable
-    abstract class D1(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
+    abstract class D1(
+        private val _maxNorm: Float = Float.MAX_VALUE,
+        private val _stepUnit: Int = 1,
+        var isFrozen: Boolean = false,
+    ) {
         private var acc: IOType.D1.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -24,6 +28,7 @@ interface Optimizer {
 
         context(scope: IOScope)
         fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
+            if (isFrozen) return weight
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -47,11 +52,15 @@ interface Optimizer {
             weight: IOType.D1,
             dw: Batch<IOType.D1>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D1 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D1 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D2(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
+    abstract class D2(
+        private val _maxNorm: Float = Float.MAX_VALUE,
+        private val _stepUnit: Int = 1,
+        var isFrozen: Boolean = false,
+    ) {
         private var acc: IOType.D2.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -61,6 +70,7 @@ interface Optimizer {
 
         context(scope: IOScope)
         fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
+            if (isFrozen) return weight
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -84,11 +94,15 @@ interface Optimizer {
             weight: IOType.D2,
             dw: Batch<IOType.D2>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D2 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D2 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D3(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
+    abstract class D3(
+        private val _maxNorm: Float = Float.MAX_VALUE,
+        private val _stepUnit: Int = 1,
+        var isFrozen: Boolean = false,
+    ) {
         private var acc: IOType.D3.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -98,6 +112,7 @@ interface Optimizer {
 
         context(scope: IOScope)
         fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
+            if (isFrozen) return weight
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -121,11 +136,15 @@ interface Optimizer {
             weight: IOType.D3,
             dw: Batch<IOType.D3>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D3 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D3 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D4(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
+    abstract class D4(
+        private val _maxNorm: Float = Float.MAX_VALUE,
+        private val _stepUnit: Int = 1,
+        var isFrozen: Boolean = false,
+    ) {
         private var acc: IOType.D4.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -135,6 +154,7 @@ interface Optimizer {
 
         context(scope: IOScope)
         fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
+            if (isFrozen) return weight
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -158,6 +178,6 @@ interface Optimizer {
             weight: IOType.D4,
             dw: Batch<IOType.D4>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D4 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D4 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 }

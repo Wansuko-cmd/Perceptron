@@ -38,6 +38,10 @@ class ScaleD2 internal constructor(
 
         return dx
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
 fun <T> NetworkBuilder.D2<T>.scale(

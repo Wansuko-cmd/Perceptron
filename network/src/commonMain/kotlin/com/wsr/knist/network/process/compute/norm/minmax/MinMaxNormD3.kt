@@ -69,6 +69,10 @@ class MinMaxNormD3 internal constructor(
             ),
         )
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
 fun <T> NetworkBuilder.D3<T>.minMaxNorm(
