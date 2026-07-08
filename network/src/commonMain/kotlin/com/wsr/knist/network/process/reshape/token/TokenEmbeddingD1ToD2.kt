@@ -20,7 +20,6 @@ class TokenEmbeddingD1ToD2 internal constructor(
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Reshape.D1ToD2() {
-
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
         input.gather(other = weight)
 
@@ -38,6 +37,10 @@ class TokenEmbeddingD1ToD2 internal constructor(
         // Embedding層は離散的なので、入力への勾配は意味を持たない
         // しかし型の整合性のため、ダミーのD1を返す
         return Batch.d1(input.size, input.shape)
+    }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
     }
 }
 

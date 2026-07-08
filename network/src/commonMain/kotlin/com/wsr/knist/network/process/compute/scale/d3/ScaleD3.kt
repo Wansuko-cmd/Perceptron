@@ -39,6 +39,10 @@ class ScaleD3 internal constructor(
 
         return dx
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
 fun <T> NetworkBuilder.D3<T>.scale(

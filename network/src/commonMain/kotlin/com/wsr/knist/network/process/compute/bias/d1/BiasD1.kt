@@ -31,6 +31,10 @@ class BiasD1 internal constructor(
         weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
         return delta
     }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
 fun <T> NetworkBuilder.D1<T>.bias(

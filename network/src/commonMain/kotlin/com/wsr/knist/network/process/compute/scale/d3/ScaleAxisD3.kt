@@ -27,6 +27,7 @@ class ScaleAxisD3 internal constructor(
         0, 1 -> 1
         else -> 0
     }
+
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> =
         input.times(other = weight, axis = axis)
 
@@ -45,5 +46,9 @@ class ScaleAxisD3 internal constructor(
         ).toGlobal()
 
         return dx
+    }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
     }
 }

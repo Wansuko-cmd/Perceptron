@@ -33,6 +33,7 @@ class ConvD2 internal constructor(
     override val outputI: Int = filter
     override val outputJ: Int = (inputI - kernel + 2 * padding) / stride + 1
     override val outputK: Int = (inputJ - kernel + 2 * padding) / stride + 1
+
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
             .reshapeToD3(i = channel, j = outputJ * outputK, k = kernel * kernel)
@@ -82,6 +83,10 @@ class ConvD2 internal constructor(
         weight = optimizer.adapt(weight = weight, dw = dw / input.size.toFloat()).toGlobal()
 
         return dx
+    }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
     }
 }
 

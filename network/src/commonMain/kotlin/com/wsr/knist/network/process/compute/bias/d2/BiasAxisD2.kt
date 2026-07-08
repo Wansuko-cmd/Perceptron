@@ -19,6 +19,7 @@ class BiasAxisD2(
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     private val sumAxis = if (axis == 0) 1 else 0
+
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> =
         input.plus(other = weight, axis = axis)
 
@@ -31,5 +32,9 @@ class BiasAxisD2(
         val delta = calcDelta(output)
         weight = optimizer.adapt(weight = weight, dw = delta.sum(axis = sumAxis)).toGlobal()
         return delta
+    }
+
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
     }
 }
