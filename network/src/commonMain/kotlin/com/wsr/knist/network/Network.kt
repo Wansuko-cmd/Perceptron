@@ -148,6 +148,10 @@ class Network<I, O> internal constructor(
         }
     }
 
+    fun freeze(block: (Process) -> Boolean) {
+        layers.forEach { layer -> layer.freeze(block(layer)) }
+    }
+
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
