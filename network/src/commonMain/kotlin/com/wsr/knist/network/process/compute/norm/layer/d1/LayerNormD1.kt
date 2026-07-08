@@ -11,10 +11,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LayerNormD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     private val e: Float,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val average = input.average()
         val numerator = input - average
@@ -82,5 +83,5 @@ class LayerNormD1 internal constructor(
 }
 
 fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addProcess(
-    process = LayerNormD1(outputI = inputI, e = e, id = id),
+    process = LayerNormD1(inputI = inputI, e = e, id = id),
 )

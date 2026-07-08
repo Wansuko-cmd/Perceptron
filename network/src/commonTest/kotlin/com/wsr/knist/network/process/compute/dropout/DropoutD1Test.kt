@@ -11,7 +11,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class DropoutD1Test {
-    val target get() = DropoutD1(outputI = 3, ratio = 0.8f, seed = 0)
+    val target get() = DropoutD1(inputI = 3, ratio = 0.8f, seed = 0)
     val input
         get() = Batch.of(
             IOType.d1(3) { it * 2f },

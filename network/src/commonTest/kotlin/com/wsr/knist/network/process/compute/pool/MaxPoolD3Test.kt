@@ -14,7 +14,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class MaxPoolD3Test {
-    val target get() = MaxPoolD3(poolSize = 2, channel = 2, inputI = 2, inputJ = 4, padding = 0)
+    val target get() = MaxPoolD3(poolSize = 2, channel = 2, height = 2, width = 4, padding = 0)
     val input
         get() = Batch.of(
             IOType.d3(

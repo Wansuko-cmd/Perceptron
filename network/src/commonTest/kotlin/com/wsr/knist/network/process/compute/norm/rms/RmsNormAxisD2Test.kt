@@ -14,8 +14,8 @@ import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormAxisD2
 import kotlin.test.Test
 
 class RmsNormAxisD2Test {
-    val target0 get() = RmsNormAxisD2(outputI = 2, outputJ = 3, axis = 0, e = 1e-6f)
-    val target1 get() = RmsNormAxisD2(outputI = 2, outputJ = 3, axis = 1, e = 1e-6f)
+    val target0 get() = RmsNormAxisD2(inputI = 2, inputJ = 3, axis = 0, e = 1e-6f)
+    val target1 get() = RmsNormAxisD2(inputI = 2, inputJ = 3, axis = 1, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d2(

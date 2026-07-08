@@ -15,7 +15,7 @@ import kotlin.test.Test
 class ScaleD1Test {
     val target
         get() = ScaleD1(
-            outputI = 3,
+            inputI = 3,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d1(3),
             weight = IOType.d1(3) { it.toFloat() },
         )

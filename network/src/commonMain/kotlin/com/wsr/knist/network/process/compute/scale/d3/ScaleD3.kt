@@ -14,13 +14,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class ScaleD3 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     private val optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input * weight
 
     override fun IOScope.train(
@@ -53,9 +56,9 @@ fun <T> NetworkBuilder.D3<T>.scale(
 ): NetworkBuilder.D3<T> {
     val process = when (axis) {
         null -> ScaleD3(
-            outputI = inputI,
-            outputJ = inputJ,
-            outputK = inputK,
+            inputI = inputI,
+            inputJ = inputJ,
+            inputK = inputK,
             optimizer = optimizer.d3(
                 inputI,
                 inputJ,
@@ -78,9 +81,9 @@ fun <T> NetworkBuilder.D3<T>.scale(
                 else -> inputK
             }
             ScaleAxisD3(
-                outputI = inputI,
-                outputJ = inputJ,
-                outputK = inputK,
+                inputI = inputI,
+                inputJ = inputJ,
+                inputK = inputK,
                 axis = axis,
                 optimizer = optimizer.d1(inputT),
                 weight = initializer.d1(

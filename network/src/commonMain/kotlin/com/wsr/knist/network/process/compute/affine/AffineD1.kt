@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class AffineD1 internal constructor(
+    override val inputI: Int,
     override val outputI: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
@@ -48,6 +49,7 @@ fun <T> NetworkBuilder.D1<T>.affine(
 ) = addProcess(
     process =
         AffineD1(
+            inputI = inputI,
             outputI = neuron,
             optimizer = optimizer.d2(inputI, neuron),
             weight = initializer.d2(

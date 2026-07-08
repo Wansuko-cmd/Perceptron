@@ -10,8 +10,9 @@ import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class SoftmaxD1 internal constructor(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+class SoftmaxD1 internal constructor(override val inputI: Int, override val id: String = Uuid.random().toString()) :
     Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input.softmax()
 
     override fun IOScope.train(
@@ -26,5 +27,5 @@ class SoftmaxD1 internal constructor(override val outputI: Int, override val id:
 }
 
 fun <T> NetworkBuilder.D1<T>.softmax(id: String = Uuid.random().toString()) = addProcess(
-    SoftmaxD1(outputI = inputI, id = id),
+    SoftmaxD1(inputI = inputI, id = id),
 )

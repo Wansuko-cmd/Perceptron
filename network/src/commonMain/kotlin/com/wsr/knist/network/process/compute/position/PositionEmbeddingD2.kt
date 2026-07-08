@@ -13,12 +13,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class PositionEmbeddingD2 internal constructor(
-    override val outputI: Int,
-    override val outputJ: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
     private val optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input + weight
 
     override fun IOScope.train(
@@ -43,8 +45,8 @@ fun <T> NetworkBuilder.D2<T>.positionEmbedding(
     id: String = Uuid.random().toString(),
 ) = addProcess(
     process = PositionEmbeddingD2(
-        outputI = inputI,
-        outputJ = inputJ,
+        inputI = inputI,
+        inputJ = inputJ,
         optimizer = optimizer.d2(inputI, inputJ),
         weight = initializer.d2(
             input = listOf(inputI, inputJ),

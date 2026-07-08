@@ -19,11 +19,14 @@ private typealias CALC_DELTA_D3 = IOScope.(input: Batch<IOType.D3>, context: Con
 class SkipD3 internal constructor(
     // List<Process.D3>だがSerializer対策
     private val layers: List<Process> = emptyList(),
-    override val outputI: Int,
-    override val outputJ: Int,
-    override val outputK: Int,
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
+    override val outputI: Int get() = inputI
+    override val outputJ: Int get() = inputJ
+    override val outputK: Int get() = inputK
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
         val scope = this
         val main = layers.fold(input) { acc, layer ->
@@ -93,9 +96,9 @@ fun <T> NetworkBuilder.D3<T>.skip(
 
     return addProcess(
         process = SkipD3(
-            outputI = outputI,
-            outputJ = outputJ,
-            outputK = outputK,
+            inputI = outputI,
+            inputJ = outputJ,
+            inputK = outputK,
             layers = layers,
             id = id,
         ),

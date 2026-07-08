@@ -13,7 +13,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class RoPED2Test {
-    val target get() = RoPED2(outputI = 2, outputJ = 4, waveLength = 100f)
+    val target get() = RoPED2(inputI = 2, inputJ = 4, waveLength = 100f)
     val input
         get() = Batch.of(
             IOType.d2(

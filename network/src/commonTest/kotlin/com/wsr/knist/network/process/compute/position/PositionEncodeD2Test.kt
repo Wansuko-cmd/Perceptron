@@ -13,7 +13,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class PositionEncodeD2Test {
-    val target get() = PositionEncodeD2(outputI = 2, outputJ = 3, waveLength = 100f)
+    val target get() = PositionEncodeD2(inputI = 2, inputJ = 3, waveLength = 100f)
     val input
         get() = Batch.of(
             IOType.d2(

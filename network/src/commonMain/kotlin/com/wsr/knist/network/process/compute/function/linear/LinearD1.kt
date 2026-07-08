@@ -10,8 +10,9 @@ import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
-class LinearD1 internal constructor(override val outputI: Int, override val id: String = Uuid.random().toString()) :
+class LinearD1 internal constructor(override val inputI: Int, override val id: String = Uuid.random().toString()) :
     Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> = input
 
     override fun IOScope.train(
@@ -22,4 +23,4 @@ class LinearD1 internal constructor(override val outputI: Int, override val id: 
 }
 
 fun <T> NetworkBuilder.D1<T>.linear(id: String = Uuid.random().toString()) =
-    addProcess(LinearD1(outputI = inputI, id = id))
+    addProcess(LinearD1(inputI = inputI, id = id))

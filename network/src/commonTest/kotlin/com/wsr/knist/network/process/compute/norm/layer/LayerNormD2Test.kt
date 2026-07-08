@@ -14,7 +14,7 @@ import com.wsr.knist.network.process.compute.norm.layer.d2.LayerNormD2
 import kotlin.test.Test
 
 class LayerNormD2Test {
-    val target get() = LayerNormD2(outputI = 2, outputJ = 3, e = 1e-6f)
+    val target get() = LayerNormD2(inputI = 2, inputJ = 3, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d2(

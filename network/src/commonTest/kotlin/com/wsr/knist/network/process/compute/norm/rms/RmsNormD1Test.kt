@@ -12,7 +12,7 @@ import com.wsr.knist.network.process.compute.norm.rms.d1.RmsNormD1
 import kotlin.test.Test
 
 class RmsNormD1Test {
-    val target get() = RmsNormD1(outputI = 3, e = 1e-6f)
+    val target get() = RmsNormD1(inputI = 3, e = 1e-6f)
     val input
         get() = Batch.of(
             IOType.d1(3) { it.toFloat() },

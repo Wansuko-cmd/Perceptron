@@ -14,7 +14,7 @@ import com.wsr.knist.network.process.Context
 import kotlin.test.Test
 
 class MinMaxNormD3Test {
-    val target get() = MinMaxNormD3(outputI = 2, outputJ = 2, outputK = 2)
+    val target get() = MinMaxNormD3(inputI = 2, inputJ = 2, inputK = 2)
     val input
         get() = Batch.of(
             IOType.d3(

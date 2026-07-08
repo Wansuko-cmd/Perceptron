@@ -11,9 +11,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class MinMaxNormD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
+    override val outputI: Int get() = inputI
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
         val min = input.min()
         val max = input.max()
@@ -57,7 +58,7 @@ class MinMaxNormD1 internal constructor(
 
 fun <T> NetworkBuilder.D1<T>.minMaxNorm(id: String = Uuid.random().toString()) = addProcess(
     process = MinMaxNormD1(
-        outputI = inputI,
+        inputI = inputI,
         id = id,
     ),
 )

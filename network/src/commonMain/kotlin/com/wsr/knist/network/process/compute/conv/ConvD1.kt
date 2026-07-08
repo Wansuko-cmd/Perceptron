@@ -29,6 +29,9 @@ class ConvD1 internal constructor(
     private var weight: IOType.D3.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
+    override val inputI: Int = channel
+    override val inputJ: Int = inputSize
+
     override val outputI: Int = filter
     override val outputJ: Int = (inputSize - kernel + 2 * padding) / stride + 1
 
