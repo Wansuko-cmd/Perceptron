@@ -43,7 +43,7 @@ class MinMaxNormD3 internal constructor(
         // 分子側(dy/d[x - min(x)])
         val dNumerator = denominator * delta
 
-        val dMin = dDenominator.broadcastToD3(input.shape)
+        val dMin = dNumerator + dDenominator - denominator * delta.sum()
         val dMax = dNumerator - dDenominator
         return where(
             condition = (input - min) eq 0f,
