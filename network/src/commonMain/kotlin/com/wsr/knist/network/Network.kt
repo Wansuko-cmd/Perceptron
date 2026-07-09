@@ -243,7 +243,7 @@ class Network<I, O> internal constructor(
                         if (after.isEmpty()) continue
                         check(
                             layer.inputShape == after.first().inputShape &&
-                                    layer.outputShape == after.last().outputShape,
+                                layer.outputShape == after.last().outputShape,
                         )
                         layers.addAll(i, after)
                     }
