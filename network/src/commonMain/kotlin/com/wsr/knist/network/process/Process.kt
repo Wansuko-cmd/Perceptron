@@ -6,6 +6,8 @@ import com.wsr.knist.core.IOType
 
 sealed interface Process {
     val id: String
+    val inputShape: List<Int>
+    val outputShape: List<Int>
 
     @Suppress("FunctionName")
     fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType>
