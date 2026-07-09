@@ -13,22 +13,27 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
+import com.wsr.knist.network.optimizer.adam.Adam
 import com.wsr.knist.network.optimizer.adam.AdamD1
 import com.wsr.knist.network.optimizer.adam.AdamD2
 import com.wsr.knist.network.optimizer.adam.AdamD3
 import com.wsr.knist.network.optimizer.adam.AdamD4
+import com.wsr.knist.network.optimizer.adam.AdamW
 import com.wsr.knist.network.optimizer.adam.AdamWD1
 import com.wsr.knist.network.optimizer.adam.AdamWD2
 import com.wsr.knist.network.optimizer.adam.AdamWD3
 import com.wsr.knist.network.optimizer.adam.AdamWD4
+import com.wsr.knist.network.optimizer.momentum.Momentum
 import com.wsr.knist.network.optimizer.momentum.MomentumD1
 import com.wsr.knist.network.optimizer.momentum.MomentumD2
 import com.wsr.knist.network.optimizer.momentum.MomentumD3
 import com.wsr.knist.network.optimizer.momentum.MomentumD4
+import com.wsr.knist.network.optimizer.rms.RmsProp
 import com.wsr.knist.network.optimizer.rms.RmsPropD1
 import com.wsr.knist.network.optimizer.rms.RmsPropD2
 import com.wsr.knist.network.optimizer.rms.RmsPropD3
 import com.wsr.knist.network.optimizer.rms.RmsPropD4
+import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.optimizer.sgd.SgdD1
 import com.wsr.knist.network.optimizer.sgd.SgdD2
 import com.wsr.knist.network.optimizer.sgd.SgdD3
@@ -137,6 +142,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
     private val layerSerializer = ListSerializer(PolymorphicSerializer(Process::class))
     private val outputSerializer = PolymorphicSerializer(Output::class)
+    private val optimizerSerializer = PolymorphicSerializer(Optimizer::class)
+    private val initializerSerializer = PolymorphicSerializer(WeightInitializer::class)
 
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("com.wsr.knist.network.Network") {
@@ -144,6 +151,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             element("outputConverter", converterSerializer.descriptor)
             element("layers", layerSerializer.descriptor)
             element("output", outputSerializer.descriptor)
+            element("optimizer", optimizerSerializer.descriptor)
+            element("initializer", initializerSerializer.descriptor)
         }
 
     override fun serialize(encoder: Encoder, value: Network<I, O>) {
@@ -152,6 +161,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             encodeSerializableElement(descriptor, 1, converterSerializer, value.outputConverter as Converter<Any?>)
             encodeSerializableElement(descriptor, 2, layerSerializer, value.layers)
             encodeSerializableElement(descriptor, 3, outputSerializer, value.output)
+            encodeSerializableElement(descriptor, 4, optimizerSerializer, value.optimizer)
+            encodeSerializableElement(descriptor, 5, initializerSerializer, value.initializer)
         }
     }
 
@@ -162,18 +173,24 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
                 outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<O>,
                 layers = decodeSerializableElement(descriptor, 2, layerSerializer).toMutableList(),
                 output = decodeSerializableElement(descriptor, 3, outputSerializer),
+                optimizer = decodeSerializableElement(descriptor, 4, optimizerSerializer),
+                initializer = decodeSerializableElement(descriptor, 5, initializerSerializer),
             )
         } else {
             var inputConverter: Converter<Any?>? = null
             var outputConverter: Converter<Any?>? = null
             var layers: List<Process>? = null
             var output: Output? = null
+            var optimizer: Optimizer? = null
+            var initializer: WeightInitializer? = null
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer)
                     1 -> outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer)
                     2 -> layers = decodeSerializableElement(descriptor, 2, layerSerializer)
                     3 -> output = decodeSerializableElement(descriptor, 3, outputSerializer)
+                    4 -> optimizer = decodeSerializableElement(descriptor, 4, optimizerSerializer)
+                    5 -> initializer = decodeSerializableElement(descriptor, 5, initializerSerializer)
                     CompositeDecoder.DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
@@ -183,6 +200,8 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
                 outputConverter = checkNotNull(outputConverter) as Converter<O>,
                 layers = checkNotNull(layers).toMutableList(),
                 output = checkNotNull(output),
+                optimizer = checkNotNull(optimizer),
+                initializer = checkNotNull(initializer),
             )
         }
     }
@@ -426,6 +445,14 @@ private val buildInSerializersModule = SerializersModule {
     /*
      * Optimizer
      */
+    polymorphic(Optimizer::class) {
+        subclass(Sgd::class)
+        subclass(Momentum::class)
+        subclass(RmsProp::class)
+        subclass(Adam::class)
+        subclass(AdamW::class)
+    }
+
     polymorphic(Optimizer.D1::class) {
         subclass(SgdD1::class)
         subclass(MomentumD1::class)
