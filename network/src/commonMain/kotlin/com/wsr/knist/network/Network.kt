@@ -252,6 +252,24 @@ class Network<I, O> internal constructor(
         }
     }
 
+    fun <I2> replaceInput(input: Converter<I2>): Network<I2, O> = Network(
+        inputConverter = input,
+        outputConverter = outputConverter,
+        layers = layers.toMutableList(),
+        output = this@Network.output,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+
+    fun <O2> replaceOutput(output: Converter<O2>): Network<I, O2> = Network(
+        inputConverter = inputConverter,
+        outputConverter = output,
+        layers = layers.toMutableList(),
+        output = this@Network.output,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
