@@ -8,8 +8,8 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
-import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Compute
+import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
 import com.wsr.knist.network.process.compute.attention.bias.backward

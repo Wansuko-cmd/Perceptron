@@ -6,9 +6,9 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable

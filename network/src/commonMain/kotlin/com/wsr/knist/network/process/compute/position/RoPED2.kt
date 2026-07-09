@@ -5,8 +5,8 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
-import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Compute
+import com.wsr.knist.network.process.Context
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin

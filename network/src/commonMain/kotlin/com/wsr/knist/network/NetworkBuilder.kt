@@ -5,8 +5,8 @@ import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
-import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Compute
+import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 
 sealed interface NetworkBuilder<I, O> {
