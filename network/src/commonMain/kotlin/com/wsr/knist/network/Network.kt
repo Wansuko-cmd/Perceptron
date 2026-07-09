@@ -270,6 +270,33 @@ class Network<I, O> internal constructor(
         initializer = initializer,
     )
 
+    @JvmName("replaceOutputD1")
+    fun <O2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        block: NetworkBuilder.D1<I>.(Converter<O>) -> Network<I, O2>,
+    ): Network<I, O2> = NetworkBuilder.D1(
+        inputI = layers.last().outputShape[0],
+        input = inputConverter,
+        layers = layers,
+        optimizer = optimizer,
+        initializer = initializer,
+    ).block(outputConverter)
+
+    @JvmName("replaceOutputD2")
+    fun <O2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        block: NetworkBuilder.D2<I>.(Converter<O>) -> Network<I, O2>,
+    ): Network<I, O2> = NetworkBuilder.D2(
+        inputI = layers.last().outputShape[0],
+        inputJ = layers.last().outputShape[1],
+        input = inputConverter,
+        layers = layers,
+        optimizer = optimizer,
+        initializer = initializer,
+    ).block(outputConverter)
+
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
