@@ -90,7 +90,7 @@ val avg: Batch<IOType.D0> = batchOfD1.average()
 
 ## Compute（カスタム層）
 
-`com.wsr.knist.network.process.compute.Compute` の `D1` / `D2` / `D3` を継承する。
+`com.wsr.knist.network.process.Compute` の `D1` / `D2` / `D3` を継承する。
 
 ### Compute.D1
 
@@ -158,8 +158,8 @@ class MyLayerD3 internal constructor(
 ### NetworkBuilder への登録
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myLayer() = addProcess(MyLayerD1(outputI = inputI))
-fun <T> NetworkBuilder.D2<T>.myLayer() = addProcess(MyLayerD2(outputI = inputI, outputJ = inputJ))
+fun <T> NetworkBuilder.D1<T>.myLayer() = addCompute(MyLayerD1(outputI = inputI))
+fun <T> NetworkBuilder.D2<T>.myLayer() = addCompute(MyLayerD2(outputI = inputI, outputJ = inputJ))
 ```
 
 `inputI`（D1）・`inputI` / `inputJ`（D2）・`inputI` / `inputJ` / `inputK`（D3）が前の層の出力サイズ。
@@ -191,7 +191,7 @@ class WeightedD1 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.weightedLayer() = addProcess(
+fun <T> NetworkBuilder.D1<T>.weightedLayer() = addCompute(
     WeightedD1(
         outputI = inputI,
         optimizer = optimizer.d1(inputI),
@@ -461,7 +461,7 @@ import: `com.wsr.knist.core.index.gather` / `com.wsr.knist.core.index.scatterAdd
 ```kotlin
 // Process / Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.Compute
 
 // Output
 import com.wsr.knist.network.output.Output
