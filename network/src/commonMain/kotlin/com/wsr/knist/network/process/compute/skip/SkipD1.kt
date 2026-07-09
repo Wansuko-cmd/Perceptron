@@ -6,12 +6,10 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.compute.Compute
-import com.wsr.knist.network.process.reshape.Reshape
-import com.wsr.knist.network.process.reshape.reshape.ReshapeD2ToD1
-import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD1
+import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -92,8 +90,8 @@ fun <T> NetworkBuilder.D1<T>.skip(
         """.trimIndent()
     }
 
-    return addProcess(
-        process = SkipD1(
+    return addCompute(
+        compute = SkipD1(
             inputI = outputI,
             layers = layers,
             id = id,

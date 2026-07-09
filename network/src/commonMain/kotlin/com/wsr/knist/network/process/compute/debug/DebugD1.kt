@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -43,8 +43,8 @@ fun <T> NetworkBuilder.D1<T>.debug(
     onInput: (Batch<IOType.D1>) -> Unit = {},
     onDelta: (Batch<IOType.D1>) -> Unit = {},
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process = DebugD1(inputI = inputI, id = id)
+) = addCompute(
+    compute = DebugD1(inputI = inputI, id = id)
         .apply {
             this.onInput = onInput
             this.onDelta = onDelta

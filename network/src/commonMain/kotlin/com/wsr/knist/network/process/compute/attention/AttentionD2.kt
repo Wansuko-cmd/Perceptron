@@ -8,8 +8,8 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
 import com.wsr.knist.network.process.compute.attention.bias.backward
@@ -155,8 +155,8 @@ fun <T> NetworkBuilder.D2<T>.attention(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-): NetworkBuilder.D2<T> = addProcess(
-    process = AttentionD2(
+): NetworkBuilder.D2<T> = addCompute(
+    compute = AttentionD2(
         inputI = inputI,
         inputJ = inputJ,
         numOfHeads = numOfHeads,

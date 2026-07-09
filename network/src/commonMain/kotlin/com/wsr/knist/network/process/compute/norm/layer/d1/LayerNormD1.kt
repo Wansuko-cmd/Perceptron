@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -82,6 +82,6 @@ class LayerNormD1 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addProcess(
-    process = LayerNormD1(inputI = inputI, e = e, id = id),
+fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
+    compute = LayerNormD1(inputI = inputI, e = e, id = id),
 )

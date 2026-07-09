@@ -7,8 +7,8 @@ import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -48,8 +48,8 @@ fun <T> NetworkBuilder.D1<T>.scale(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process = ScaleD1(
+) = addCompute(
+    compute = ScaleD1(
         inputI = inputI,
         optimizer = optimizer.d1(inputI),
         weight = initializer.d1(

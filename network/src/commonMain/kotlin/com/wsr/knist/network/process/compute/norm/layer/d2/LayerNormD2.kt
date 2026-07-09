@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -114,5 +114,5 @@ fun <T> NetworkBuilder.D2<T>.layerNorm(
             """.trimIndent(),
         )
     }
-    return addProcess(process = process)
+    return addCompute(compute = process)
 }

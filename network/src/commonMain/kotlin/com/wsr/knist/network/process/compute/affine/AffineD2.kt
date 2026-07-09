@@ -6,8 +6,8 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -52,8 +52,8 @@ fun <T> NetworkBuilder.D2<T>.affine(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process =
+) = addCompute(
+    compute =
         AffineD2(
             channel = inputI,
             inputJ = inputJ,

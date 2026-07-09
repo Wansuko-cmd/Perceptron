@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -34,6 +34,6 @@ class ReLUD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.reLU(id: String = Uuid.random().toString()) = addProcess(
+fun <T> NetworkBuilder.D2<T>.reLU(id: String = Uuid.random().toString()) = addCompute(
     ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

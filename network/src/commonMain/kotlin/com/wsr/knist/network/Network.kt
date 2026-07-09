@@ -12,6 +12,7 @@ import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -23,10 +24,10 @@ private typealias TrainLambda = IOScope.(input: Batch<IOType>, context: Context)
 
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> internal constructor(
-    val inputConverter: Converter<I>,
-    val outputConverter: Converter<O>,
-    val layers: List<Process>,
-    val output: Output,
+    @PublishedApi internal val inputConverter: Converter<I>,
+    @PublishedApi internal val outputConverter: Converter<O>,
+    @PublishedApi internal val layers: MutableList<Process>,
+    @PublishedApi internal val output: Output,
 ) {
     @PublishedApi
     internal val mutex = Mutex()
@@ -148,8 +149,12 @@ class Network<I, O> internal constructor(
         }
     }
 
-    fun freeze(block: (Process) -> Boolean) {
-        layers.forEach { layer -> layer.freeze(block(layer)) }
+    fun freeze(condition: (Process) -> Boolean) {
+        runBlocking {
+            mutex.withLock {
+                layers.forEach { layer -> layer.freeze(condition(layer)) }
+            }
+        }
     }
 
     fun toJson(): String = NetworkSerializer.encodeToString(this)

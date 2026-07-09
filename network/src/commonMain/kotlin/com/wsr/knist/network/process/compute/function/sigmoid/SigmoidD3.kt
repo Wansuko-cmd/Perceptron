@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -32,6 +32,6 @@ class SigmoidD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
-    process = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = addCompute(
+    compute = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

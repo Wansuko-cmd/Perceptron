@@ -5,9 +5,9 @@ import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.compute.Compute
-import com.wsr.knist.network.process.reshape.Reshape
+import com.wsr.knist.network.process.Reshape
 
 sealed interface NetworkBuilder<I, O> {
     val input: Converter<I>
@@ -23,15 +23,15 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D1> {
-        fun addProcess(process: Compute.D1): D1<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
+        fun addCompute(compute: Compute.D1): D1<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
         )
 
         fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
-            layers = layers,
+            layers = layers.toMutableList(),
             output = output,
         )
 
@@ -67,16 +67,16 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D2> {
-        fun addProcess(process: Compute.D2): D2<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
-            inputJ = process.outputJ,
+        fun addCompute(compute: Compute.D2): D2<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
+            inputJ = compute.outputJ,
         )
 
         fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
-            layers = layers,
+            layers = layers.toMutableList(),
             output = output,
         )
 
@@ -112,11 +112,11 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D3> {
-        fun addProcess(process: Compute.D3): D3<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
-            inputJ = process.outputJ,
-            inputK = process.outputK,
+        fun addCompute(compute: Compute.D3): D3<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
+            inputJ = compute.outputJ,
+            inputK = compute.outputK,
         )
 
         fun addReshape(reshape: Reshape.D3ToD2): D2<I> = D2(

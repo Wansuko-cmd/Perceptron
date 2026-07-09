@@ -5,8 +5,8 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -45,8 +45,8 @@ class PositionEncodeD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) =
-    addProcess(
-        process = PositionEncodeD2(
+    addCompute(
+        compute = PositionEncodeD2(
             inputI = inputI,
             inputJ = inputJ,
             waveLength = waveLength,
