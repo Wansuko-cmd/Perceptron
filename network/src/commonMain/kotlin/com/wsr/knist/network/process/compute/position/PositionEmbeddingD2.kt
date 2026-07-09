@@ -7,7 +7,7 @@ import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
-import com.wsr.knist.network.process.compute.Compute
+import com.wsr.knist.network.process.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 

@@ -6,8 +6,8 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.compute.Compute
-import com.wsr.knist.network.process.reshape.Reshape
+import com.wsr.knist.network.process.Compute
+import com.wsr.knist.network.process.Reshape
 
 sealed interface NetworkBuilder<I, O> {
     val input: Converter<I>

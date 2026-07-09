@@ -4,7 +4,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 
-interface Process {
+sealed interface Process {
     val id: String
 
     @Suppress("FunctionName")
