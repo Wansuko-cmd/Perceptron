@@ -5,7 +5,9 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
+import kotlinx.serialization.Serializable
 
+@Serializable
 class Fixed(private val value: Float) : WeightInitializer {
     override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global = IOType.d1(size) { value }
 

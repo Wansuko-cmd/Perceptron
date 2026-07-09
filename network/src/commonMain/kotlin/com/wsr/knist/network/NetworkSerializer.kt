@@ -6,6 +6,11 @@ import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.converter.raw.RawD3
+import com.wsr.knist.network.initializer.Fixed
+import com.wsr.knist.network.initializer.He
+import com.wsr.knist.network.initializer.Random
+import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamD1
@@ -458,6 +463,16 @@ private val buildInSerializersModule = SerializersModule {
         subclass(Scheduler.Step::class)
         subclass(Scheduler.MultiStep::class)
         subclass(Scheduler.CosineAnnealing::class)
+    }
+
+    /*
+     * WeightInitializer
+     */
+    polymorphic(WeightInitializer::class) {
+        subclass(He::class)
+        subclass(Xavier::class)
+        subclass(Random::class)
+        subclass(Fixed::class)
     }
 
     polymorphic(Converter::class) {
