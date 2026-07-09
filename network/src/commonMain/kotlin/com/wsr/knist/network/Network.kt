@@ -149,10 +149,10 @@ class Network<I, O> internal constructor(
         }
     }
 
-    fun freeze(block: (Process) -> Boolean) {
+    fun freeze(condition: (Process) -> Boolean) {
         runBlocking {
             mutex.withLock {
-                layers.forEach { layer -> layer.freeze(block(layer)) }
+                layers.forEach { layer -> layer.freeze(condition(layer)) }
             }
         }
     }
