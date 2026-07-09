@@ -16,7 +16,7 @@ sealed interface NetworkBuilder<I, O> {
     val initializer: WeightInitializer
 
     @ConsistentCopyVisibility
-    data class D1<I> internal constructor(
+    data class D1<I> @PublishedApi internal constructor(
         val inputI: Int,
         override val input: Converter<I>,
         override val layers: List<Process>,
@@ -61,7 +61,7 @@ sealed interface NetworkBuilder<I, O> {
     }
 
     @ConsistentCopyVisibility
-    data class D2<I> internal constructor(
+    data class D2<I> @PublishedApi internal constructor(
         val inputI: Int,
         val inputJ: Int,
         override val input: Converter<I>,
@@ -107,7 +107,7 @@ sealed interface NetworkBuilder<I, O> {
     }
 
     @ConsistentCopyVisibility
-    data class D3<I> internal constructor(
+    data class D3<I> @PublishedApi internal constructor(
         val inputI: Int,
         val inputJ: Int,
         val inputK: Int,

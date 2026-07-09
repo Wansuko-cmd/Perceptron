@@ -10,8 +10,10 @@ import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -157,6 +159,95 @@ class Network<I, O> internal constructor(
         runBlocking {
             mutex.withLock {
                 layers.forEach { layer -> layer.freeze(condition(layer)) }
+            }
+        }
+    }
+
+    @JvmName("replaceD1")
+    inline fun <reified T : Compute.D1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D1<I>.(T) -> NetworkBuilder.D1<I>,
+    ) = replace<T, NetworkBuilder.D1<I>>(
+        seed = { layer ->
+            NetworkBuilder.D1(
+                inputI = layer.inputShape[0],
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceD2")
+    inline fun <reified T : Compute.D2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D2<I>.(T) -> NetworkBuilder.D2<I>,
+    ) = replace<T, NetworkBuilder.D2<I>>(
+        seed = { layer ->
+            NetworkBuilder.D2(
+                inputI = layer.inputShape[0],
+                inputJ = layer.inputShape[1],
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceD3")
+    inline fun <reified T : Compute.D3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D3<I>.(T) -> NetworkBuilder.D3<I>,
+    ) = replace<T, NetworkBuilder.D3<I>>(
+        seed = { layer ->
+            NetworkBuilder.D3(
+                inputI = layer.inputShape[0],
+                inputJ = layer.inputShape[1],
+                inputK = layer.inputShape[2],
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @PublishedApi
+    internal inline fun <reified T : Process, B : NetworkBuilder<*, *>> replace(
+        crossinline seed: (T) -> B,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: B.(T) -> B,
+    ) {
+        runBlocking {
+            mutex.withLock {
+                for (i in layers.indices.reversed()) {
+                    val layer = layers[i]
+                    if (layer is T && condition(layer)) {
+                        layers.removeAt(i)
+
+                        val after = seed(layer).block(layer).layers
+                        if (after.isEmpty()) continue
+                        check(
+                            layer.inputShape == after.first().inputShape &&
+                                    layer.outputShape == after.last().outputShape,
+                        )
+                        layers.addAll(i, after)
+                    }
+                }
             }
         }
     }
