@@ -12,6 +12,7 @@ import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -149,7 +150,11 @@ class Network<I, O> internal constructor(
     }
 
     fun freeze(block: (Process) -> Boolean) {
-        layers.forEach { layer -> layer.freeze(block(layer)) }
+        runBlocking {
+            mutex.withLock {
+                layers.forEach { layer -> layer.freeze(block(layer)) }
+            }
+        }
     }
 
     fun toJson(): String = NetworkSerializer.encodeToString(this)
