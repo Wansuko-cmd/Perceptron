@@ -7,6 +7,8 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
@@ -28,6 +30,8 @@ class Network<I, O> internal constructor(
     @PublishedApi internal val outputConverter: Converter<O>,
     @PublishedApi internal val layers: MutableList<Process>,
     @PublishedApi internal val output: Output,
+    @PublishedApi internal val optimizer: Optimizer,
+    @PublishedApi internal val initializer: WeightInitializer,
 ) {
     @PublishedApi
     internal val mutex = Mutex()

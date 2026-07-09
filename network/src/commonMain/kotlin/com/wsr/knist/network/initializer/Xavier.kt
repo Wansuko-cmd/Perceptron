@@ -8,8 +8,12 @@ import com.wsr.knist.core.d4
 import com.wsr.knist.network.nextFloat
 import kotlin.math.sqrt
 import kotlin.random.Random
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
-class Xavier(seed: Int? = null) : WeightInitializer {
+@Serializable
+class Xavier(private val seed: Int? = null) : WeightInitializer {
+    @Transient
     private val random = seed?.let { Random(it) } ?: Random
     override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global {
         val weight = calcWeight(
