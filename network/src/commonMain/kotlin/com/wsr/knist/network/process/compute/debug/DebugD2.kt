@@ -47,8 +47,8 @@ fun <T> NetworkBuilder.D2<T>.debug(
     onInput: (Batch<IOType.D2>) -> Unit = {},
     onDelta: (Batch<IOType.D2>) -> Unit = {},
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process = DebugD2(
+) = addCompute(
+    compute = DebugD2(
         inputI = inputI,
         inputJ = inputJ,
         id = id,

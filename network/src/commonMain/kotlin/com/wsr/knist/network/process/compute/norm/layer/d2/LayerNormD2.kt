@@ -114,5 +114,5 @@ fun <T> NetworkBuilder.D2<T>.layerNorm(
             """.trimIndent(),
         )
     }
-    return addProcess(process = process)
+    return addCompute(compute = process)
 }

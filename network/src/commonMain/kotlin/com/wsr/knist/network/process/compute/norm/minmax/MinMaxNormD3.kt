@@ -60,8 +60,8 @@ class MinMaxNormD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.minMaxNorm(id: String = Uuid.random().toString()) = addProcess(
-    process =
+fun <T> NetworkBuilder.D3<T>.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
+    compute =
         MinMaxNormD3(
             inputI = inputI,
             inputJ = inputJ,

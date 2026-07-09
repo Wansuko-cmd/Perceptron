@@ -43,8 +43,8 @@ fun <T> NetworkBuilder.D2<T>.positionEmbedding(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process = PositionEmbeddingD2(
+) = addCompute(
+    compute = PositionEmbeddingD2(
         inputI = inputI,
         inputJ = inputJ,
         optimizer = optimizer.d2(inputI, inputJ),

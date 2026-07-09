@@ -71,5 +71,5 @@ fun <T> NetworkBuilder.D2<T>.rmsNorm(
             """.trimIndent(),
         )
     }
-    return addProcess(process = process)
+    return addCompute(compute = process)
 }

@@ -34,6 +34,6 @@ class LeakyReLUD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.leakyReLU(id: String = Uuid.random().toString()) = addProcess(
+fun <T> NetworkBuilder.D2<T>.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
     LeakyReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

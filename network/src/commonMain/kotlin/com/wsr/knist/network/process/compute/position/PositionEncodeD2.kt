@@ -45,8 +45,8 @@ class PositionEncodeD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) =
-    addProcess(
-        process = PositionEncodeD2(
+    addCompute(
+        compute = PositionEncodeD2(
             inputI = inputI,
             inputJ = inputJ,
             waveLength = waveLength,

@@ -26,6 +26,6 @@ class LinearD2 internal constructor(
     ): Batch<IOType.D2> = calcDelta(input)
 }
 
-fun <T> NetworkBuilder.D2<T>.linear(id: String = Uuid.random().toString()) = addProcess(
-    process = LinearD2(inputI = inputI, inputJ = inputJ, id = id),
+fun <T> NetworkBuilder.D2<T>.linear(id: String = Uuid.random().toString()) = addCompute(
+    compute = LinearD2(inputI = inputI, inputJ = inputJ, id = id),
 )

@@ -23,4 +23,4 @@ class LinearD1 internal constructor(override val inputI: Int, override val id: S
 }
 
 fun <T> NetworkBuilder.D1<T>.linear(id: String = Uuid.random().toString()) =
-    addProcess(LinearD1(inputI = inputI, id = id))
+    addCompute(LinearD1(inputI = inputI, id = id))

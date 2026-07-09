@@ -36,6 +36,6 @@ class LeakyReLUD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.leakyReLU(id: String = Uuid.random().toString()) = addProcess(
-    process = LeakyReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
+    compute = LeakyReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

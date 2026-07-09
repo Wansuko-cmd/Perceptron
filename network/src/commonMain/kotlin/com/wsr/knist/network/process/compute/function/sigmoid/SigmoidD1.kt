@@ -26,6 +26,6 @@ class SigmoidD1 internal constructor(override val inputI: Int, override val id: 
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
+fun <T> NetworkBuilder.D1<T>.sigmoid(id: String = Uuid.random().toString()) = addCompute(
     SigmoidD1(inputI = inputI, id = id),
 )

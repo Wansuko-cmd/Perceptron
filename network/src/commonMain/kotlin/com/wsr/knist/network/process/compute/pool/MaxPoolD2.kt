@@ -58,8 +58,8 @@ class MaxPoolD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0, id: String = Uuid.random().toString()) = addProcess(
-    process = MaxPoolD2(
+fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0, id: String = Uuid.random().toString()) = addCompute(
+    compute = MaxPoolD2(
         poolSize = size,
         channel = inputI,
         inputSize = inputJ,

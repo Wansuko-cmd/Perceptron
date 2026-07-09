@@ -155,8 +155,8 @@ fun <T> NetworkBuilder.D2<T>.attention(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-): NetworkBuilder.D2<T> = addProcess(
-    process = AttentionD2(
+): NetworkBuilder.D2<T> = addCompute(
+    compute = AttentionD2(
         inputI = inputI,
         inputJ = inputJ,
         numOfHeads = numOfHeads,

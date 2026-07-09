@@ -52,8 +52,8 @@ fun <T> NetworkBuilder.D2<T>.affine(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process =
+) = addCompute(
+    compute =
         AffineD2(
             channel = inputI,
             inputJ = inputJ,

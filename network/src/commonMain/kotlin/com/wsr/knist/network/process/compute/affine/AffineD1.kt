@@ -46,8 +46,8 @@ fun <T> NetworkBuilder.D1<T>.affine(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process =
+) = addCompute(
+    compute =
         AffineD1(
             inputI = inputI,
             outputI = neuron,

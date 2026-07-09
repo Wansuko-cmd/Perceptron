@@ -102,8 +102,8 @@ fun <T> NetworkBuilder.D3<T>.convD2(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process =
+) = addCompute(
+    compute =
         ConvD2(
             filter = filter,
             channel = inputI,

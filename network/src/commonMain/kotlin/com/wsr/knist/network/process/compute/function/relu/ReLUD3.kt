@@ -36,6 +36,6 @@ class ReLUD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.reLU(id: String = Uuid.random().toString()) = addProcess(
-    process = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.reLU(id: String = Uuid.random().toString()) = addCompute(
+    compute = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

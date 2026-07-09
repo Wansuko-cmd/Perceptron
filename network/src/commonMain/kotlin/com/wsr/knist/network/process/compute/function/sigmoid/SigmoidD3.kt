@@ -32,6 +32,6 @@ class SigmoidD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = addProcess(
-    process = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = addCompute(
+    compute = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

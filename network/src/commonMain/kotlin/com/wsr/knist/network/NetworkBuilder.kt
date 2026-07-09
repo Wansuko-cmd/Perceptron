@@ -23,9 +23,9 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D1> {
-        fun addProcess(process: Compute.D1): D1<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
+        fun addCompute(compute: Compute.D1): D1<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
         )
 
         fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network(
@@ -67,10 +67,10 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D2> {
-        fun addProcess(process: Compute.D2): D2<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
-            inputJ = process.outputJ,
+        fun addCompute(compute: Compute.D2): D2<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
+            inputJ = compute.outputJ,
         )
 
         fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network(
@@ -112,11 +112,11 @@ sealed interface NetworkBuilder<I, O> {
         override val optimizer: Optimizer,
         override val initializer: WeightInitializer,
     ) : NetworkBuilder<I, IOType.D3> {
-        fun addProcess(process: Compute.D3): D3<I> = copy(
-            layers = layers + process,
-            inputI = process.outputI,
-            inputJ = process.outputJ,
-            inputK = process.outputK,
+        fun addCompute(compute: Compute.D3): D3<I> = copy(
+            layers = layers + compute,
+            inputI = compute.outputI,
+            inputJ = compute.outputJ,
+            inputK = compute.outputK,
         )
 
         fun addReshape(reshape: Reshape.D3ToD2): D2<I> = D2(

@@ -57,8 +57,8 @@ class MinMaxNormD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.minMaxNorm(id: String = Uuid.random().toString()) = addProcess(
-    process =
+fun <T> NetworkBuilder.D2<T>.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
+    compute =
         MinMaxNormD2(
             inputI = inputI,
             inputJ = inputJ,

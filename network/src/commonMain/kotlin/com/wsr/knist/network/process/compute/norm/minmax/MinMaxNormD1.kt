@@ -54,8 +54,8 @@ class MinMaxNormD1 internal constructor(override val inputI: Int, override val i
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.minMaxNorm(id: String = Uuid.random().toString()) = addProcess(
-    process = MinMaxNormD1(
+fun <T> NetworkBuilder.D1<T>.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
+    compute = MinMaxNormD1(
         inputI = inputI,
         id = id,
     ),

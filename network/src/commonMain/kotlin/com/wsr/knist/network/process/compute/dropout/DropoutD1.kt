@@ -43,8 +43,8 @@ class DropoutD1 internal constructor(
 }
 
 fun <T> NetworkBuilder.D1<T>.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) =
-    addProcess(
-        process =
+    addCompute(
+        compute =
             DropoutD1(
                 inputI = inputI,
                 ratio = ratio,

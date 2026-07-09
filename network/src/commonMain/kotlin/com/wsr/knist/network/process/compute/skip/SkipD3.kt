@@ -94,8 +94,8 @@ fun <T> NetworkBuilder.D3<T>.skip(
         """.trimIndent()
     }
 
-    return addProcess(
-        process = SkipD3(
+    return addCompute(
+        compute = SkipD3(
             inputI = outputI,
             inputJ = outputJ,
             inputK = outputK,

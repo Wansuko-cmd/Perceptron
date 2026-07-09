@@ -48,8 +48,8 @@ fun <T> NetworkBuilder.D1<T>.scale(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
     id: String = Uuid.random().toString(),
-) = addProcess(
-    process = ScaleD1(
+) = addCompute(
+    compute = ScaleD1(
         inputI = inputI,
         optimizer = optimizer.d1(inputI),
         weight = initializer.d1(

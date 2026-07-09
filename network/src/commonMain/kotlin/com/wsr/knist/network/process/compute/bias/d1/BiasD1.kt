@@ -42,7 +42,7 @@ fun <T> NetworkBuilder.D1<T>.bias(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(0f),
     id: String = Uuid.random().toString(),
-) = addProcess(
+) = addCompute(
     BiasD1(
         inputI = inputI,
         optimizer = optimizer.d1(inputI),

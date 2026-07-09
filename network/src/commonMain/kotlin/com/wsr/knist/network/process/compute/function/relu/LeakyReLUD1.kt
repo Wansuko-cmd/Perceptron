@@ -30,6 +30,6 @@ class LeakyReLUD1 internal constructor(override val inputI: Int, override val id
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.leakyReLU(id: String = Uuid.random().toString()) = addProcess(
+fun <T> NetworkBuilder.D1<T>.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
     LeakyReLUD1(inputI = inputI, id = id),
 )

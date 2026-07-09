@@ -33,6 +33,6 @@ class SwishD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.swish(id: String = Uuid.random().toString()) = addProcess(
-    process = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.swish(id: String = Uuid.random().toString()) = addCompute(
+    compute = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

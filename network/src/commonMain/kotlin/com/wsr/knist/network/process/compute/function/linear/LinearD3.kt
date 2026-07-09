@@ -28,6 +28,6 @@ class LinearD3 internal constructor(
     ): Batch<IOType.D3> = calcDelta(input)
 }
 
-fun <T> NetworkBuilder.D3<T>.linear(id: String = Uuid.random().toString()) = addProcess(
-    process = LinearD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.linear(id: String = Uuid.random().toString()) = addCompute(
+    compute = LinearD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

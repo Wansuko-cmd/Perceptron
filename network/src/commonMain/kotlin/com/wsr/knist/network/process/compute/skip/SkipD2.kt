@@ -92,8 +92,8 @@ fun <T> NetworkBuilder.D2<T>.skip(
         """.trimIndent()
     }
 
-    return addProcess(
-        process = SkipD2(
+    return addCompute(
+        compute = SkipD2(
             inputI = outputI,
             inputJ = outputJ,
             layers = layers,

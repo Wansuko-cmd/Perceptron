@@ -92,5 +92,5 @@ fun <T> NetworkBuilder.D3<T>.bias(
             """.trimIndent(),
         )
     }
-    return addProcess(process = process)
+    return addCompute(compute = process)
 }

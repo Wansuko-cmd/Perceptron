@@ -82,6 +82,6 @@ class LayerNormD1 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addProcess(
-    process = LayerNormD1(inputI = inputI, e = e, id = id),
+fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
+    compute = LayerNormD1(inputI = inputI, e = e, id = id),
 )

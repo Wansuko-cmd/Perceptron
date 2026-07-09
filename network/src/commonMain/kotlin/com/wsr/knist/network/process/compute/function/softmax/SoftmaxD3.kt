@@ -32,6 +32,6 @@ class SoftmaxD3 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D3<T>.softmax(id: String = Uuid.random().toString()) = addProcess(
-    process = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+fun <T> NetworkBuilder.D3<T>.softmax(id: String = Uuid.random().toString()) = addCompute(
+    compute = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

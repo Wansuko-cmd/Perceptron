@@ -83,5 +83,5 @@ fun <T> NetworkBuilder.D2<T>.bias(
             """.trimIndent(),
         )
     }
-    return addProcess(process = process)
+    return addCompute(compute = process)
 }
