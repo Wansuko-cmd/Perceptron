@@ -219,6 +219,26 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             modules.add(module)
         }
 
+        @JvmName("registerOptimizer")
+        inline fun <reified T : Optimizer> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Optimizer::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerWeightInitializer")
+        inline fun <reified T : WeightInitializer> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(WeightInitializer::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
         @JvmName("registerOptimizerD1")
         inline fun <reified T : Optimizer.D1> register(clazz: KClass<T>) {
             val module = SerializersModule {
