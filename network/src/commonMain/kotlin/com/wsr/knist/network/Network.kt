@@ -24,10 +24,10 @@ private typealias TrainLambda = IOScope.(input: Batch<IOType>, context: Context)
 
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> internal constructor(
-    val inputConverter: Converter<I>,
-    val outputConverter: Converter<O>,
-    val layers: List<Process>,
-    val output: Output,
+    @PublishedApi internal val inputConverter: Converter<I>,
+    @PublishedApi internal val outputConverter: Converter<O>,
+    @PublishedApi internal val layers: MutableList<Process>,
+    @PublishedApi internal val output: Output,
 ) {
     @PublishedApi
     internal val mutex = Mutex()

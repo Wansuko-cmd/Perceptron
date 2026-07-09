@@ -155,7 +155,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             Network(
                 inputConverter = decodeSerializableElement(descriptor, 0, converterSerializer) as Converter<I>,
                 outputConverter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<O>,
-                layers = decodeSerializableElement(descriptor, 2, layerSerializer),
+                layers = decodeSerializableElement(descriptor, 2, layerSerializer).toMutableList(),
                 output = decodeSerializableElement(descriptor, 3, outputSerializer),
             )
         } else {
@@ -176,7 +176,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             Network(
                 inputConverter = checkNotNull(inputConverter) as Converter<I>,
                 outputConverter = checkNotNull(outputConverter) as Converter<O>,
-                layers = checkNotNull(layers),
+                layers = checkNotNull(layers).toMutableList(),
                 output = checkNotNull(output),
             )
         }

@@ -31,7 +31,7 @@ sealed interface NetworkBuilder<I, O> {
         fun <O> addOutput(output: Output.D1, converter: D1<I>.() -> Converter.D1<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
-            layers = layers,
+            layers = layers.toMutableList(),
             output = output,
         )
 
@@ -76,7 +76,7 @@ sealed interface NetworkBuilder<I, O> {
         fun <O> addOutput(output: Output.D2, converter: D2<I>.() -> Converter.D2<O>) = Network(
             inputConverter = input,
             outputConverter = converter(),
-            layers = layers,
+            layers = layers.toMutableList(),
             output = output,
         )
 
