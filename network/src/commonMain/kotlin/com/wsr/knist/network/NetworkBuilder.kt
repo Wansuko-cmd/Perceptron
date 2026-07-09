@@ -33,6 +33,8 @@ sealed interface NetworkBuilder<I, O> {
             outputConverter = converter(),
             layers = layers.toMutableList(),
             output = output,
+            optimizer = optimizer,
+            initializer = initializer,
         )
 
         fun addReshape(reshape: Reshape.D1ToD2): D2<I> = D2(
@@ -78,6 +80,8 @@ sealed interface NetworkBuilder<I, O> {
             outputConverter = converter(),
             layers = layers.toMutableList(),
             output = output,
+            optimizer = optimizer,
+            initializer = initializer,
         )
 
         fun addReshape(reshape: Reshape.D2ToD1): D1<I> = D1(
