@@ -17,7 +17,6 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.set
 import kotlinx.cinterop.usePinned
-import platform.posix.free
 import platform.posix.memcpy
 
 internal fun DataBuffer.toCPUBuffer(): CPUNativeBuffer = when (this) {
@@ -36,7 +35,7 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
     @OptIn(ExperimentalNativeApi::class)
     private val cleaner = createCleaner(state) { s ->
         if (s.released.compareAndExchange(0, 1) == 0) {
-            free(s.ptr)
+            nativeHeap.free(s.ptr.rawValue)
         }
     }
 
@@ -57,13 +56,13 @@ class CPUNativeBuffer(val buffer: CPointer<FloatVar>, override val size: Int) : 
 
     override fun release() {
         if (state.released.compareAndExchange(0, 1) == 0) {
-            free(buffer)
+            nativeHeap.free(buffer.rawValue)
         }
     }
 
     companion object {
         fun create(size: Int) = CPUNativeBuffer(
-            buffer = nativeHeap.allocArray(size),
+            buffer = nativeHeap.allocArray<FloatVar>(size),
             size = size,
         )
 
