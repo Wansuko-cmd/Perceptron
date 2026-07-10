@@ -10,8 +10,10 @@ import kotlinx.serialization.Serializable
 sealed interface Compute : Process {
     @Serializable
     abstract class D1 : Compute {
+        override val inputShape: List<Int> get() = listOf(inputI)
         abstract val inputI: Int
 
+        override val outputShape: List<Int> get() = listOf(outputI)
         abstract val outputI: Int
 
         protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1>
@@ -40,9 +42,11 @@ sealed interface Compute : Process {
 
     @Serializable
     abstract class D2 : Compute {
+        override val inputShape: List<Int> get() = listOf(inputI, inputJ)
         abstract val inputI: Int
         abstract val inputJ: Int
 
+        override val outputShape: List<Int> get() = listOf(outputI, outputJ)
         abstract val outputI: Int
         abstract val outputJ: Int
 
@@ -72,10 +76,12 @@ sealed interface Compute : Process {
 
     @Serializable
     abstract class D3 : Compute {
+        override val inputShape: List<Int> get() = listOf(inputI, inputJ, inputK)
         abstract val inputI: Int
         abstract val inputJ: Int
         abstract val inputK: Int
 
+        override val outputShape: List<Int> get() = listOf(outputI, outputJ, outputK)
         abstract val outputI: Int
         abstract val outputJ: Int
         abstract val outputK: Int
