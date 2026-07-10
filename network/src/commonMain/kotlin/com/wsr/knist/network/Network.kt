@@ -16,7 +16,6 @@ import com.wsr.knist.network.process.Process
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -27,10 +26,10 @@ import okio.BufferedSource
 private typealias TrainLambda = IOScope.(input: Batch<IOType>, context: Context) -> Batch<IOType>
 
 @Serializable(with = NetworkSerializer::class)
-class Network<I, O> internal constructor(
+class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val inputConverter: Converter<I>,
     @PublishedApi internal val outputConverter: Converter<O>,
-    @PublishedApi internal val layers: MutableList<Process>,
+    @PublishedApi internal val layers: List<Process>,
     @PublishedApi internal val output: Output,
     @PublishedApi internal val optimizer: Optimizer,
     @PublishedApi internal val initializer: WeightInitializer,
@@ -155,12 +154,8 @@ class Network<I, O> internal constructor(
         }
     }
 
-    fun freeze(condition: (Process) -> Boolean) {
-        runBlocking {
-            mutex.withLock {
-                layers.forEach { layer -> layer.freeze(condition(layer)) }
-            }
-        }
+    fun freeze(condition: (Process) -> Boolean): Network<I, O> = clone().also { copy ->
+        copy.layers.forEach { layer -> layer.freeze(condition(layer)) }
     }
 
     @JvmName("replaceD1")
@@ -169,7 +164,7 @@ class Network<I, O> internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D1<I>.(T) -> NetworkBuilder.D1<I>,
-    ) = replace<T, NetworkBuilder.D1<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D1<I>>(
         seed = { layer ->
             NetworkBuilder.D1(
                 inputI = layer.inputShape[0],
@@ -189,7 +184,7 @@ class Network<I, O> internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D2<I>.(T) -> NetworkBuilder.D2<I>,
-    ) = replace<T, NetworkBuilder.D2<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D2<I>>(
         seed = { layer ->
             NetworkBuilder.D2(
                 inputI = layer.inputShape[0],
@@ -210,7 +205,7 @@ class Network<I, O> internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D3<I>.(T) -> NetworkBuilder.D3<I>,
-    ) = replace<T, NetworkBuilder.D3<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D3<I>>(
         seed = { layer ->
             NetworkBuilder.D3(
                 inputI = layer.inputShape[0],
@@ -231,71 +226,91 @@ class Network<I, O> internal constructor(
         crossinline seed: (T) -> B,
         crossinline condition: (T) -> Boolean,
         crossinline block: B.(T) -> B,
-    ) {
-        runBlocking {
-            mutex.withLock {
-                for (i in layers.indices.reversed()) {
-                    val layer = layers[i]
-                    if (layer is T && condition(layer)) {
-                        layers.removeAt(i)
+    ): Network<I, O> {
+        val copy = clone()
+        val layers = copy.layers
+            .fold(listOf<Process>()) { acc, layer ->
+                when {
+                    layer !is T || !condition(layer) -> acc + layer
 
-                        val after = seed(layer).block(layer).layers
-                        if (after.isEmpty()) continue
-                        check(
-                            layer.inputShape == after.first().inputShape &&
-                                layer.outputShape == after.last().outputShape,
-                        )
-                        layers.addAll(i, after)
+                    else -> {
+                        val next = seed(layer).block(layer).layers
+                        if (next.isEmpty()) {
+                            acc
+                        } else {
+                            check(layer.inputShape == next.first().inputShape)
+                            check(layer.outputShape == next.last().outputShape)
+                            acc + next
+                        }
                     }
                 }
             }
-        }
+        return Network(
+            inputConverter = copy.inputConverter,
+            outputConverter = copy.outputConverter,
+            layers = layers,
+            output = copy.output,
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
     }
 
-    fun <I2> replaceInput(input: Converter<I2>): Network<I2, O> = Network(
-        inputConverter = input,
-        outputConverter = outputConverter,
-        layers = layers.toMutableList(),
-        output = this@Network.output,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
+    fun <I2> replaceInput(input: Converter<I2>): Network<I2, O> {
+        val copy = clone()
+        return Network(
+            inputConverter = input,
+            outputConverter = copy.outputConverter,
+            layers = copy.layers,
+            output = copy.output,
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
+    }
 
-    fun <O2> replaceOutput(output: Converter<O2>): Network<I, O2> = Network(
-        inputConverter = inputConverter,
-        outputConverter = output,
-        layers = layers.toMutableList(),
-        output = this@Network.output,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
+    fun <O2> replaceOutput(output: Converter<O2>): Network<I, O2> {
+        val copy = clone()
+        return Network(
+            inputConverter = copy.inputConverter,
+            outputConverter = output,
+            layers = copy.layers,
+            output = copy.output,
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
+    }
 
     @JvmName("replaceOutputD1")
     fun <O2> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         block: NetworkBuilder.D1<I>.(Converter<O>) -> Network<I, O2>,
-    ): Network<I, O2> = NetworkBuilder.D1(
-        inputI = layers.last().outputShape[0],
-        input = inputConverter,
-        layers = layers,
-        optimizer = optimizer,
-        initializer = initializer,
-    ).block(outputConverter)
+    ): Network<I, O2> {
+        val copy = clone()
+        return NetworkBuilder.D1(
+            inputI = copy.layers.last().outputShape[0],
+            input = copy.inputConverter,
+            layers = copy.layers,
+            optimizer = optimizer,
+            initializer = initializer,
+        ).block(copy.outputConverter)
+    }
 
     @JvmName("replaceOutputD2")
     fun <O2> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         block: NetworkBuilder.D2<I>.(Converter<O>) -> Network<I, O2>,
-    ): Network<I, O2> = NetworkBuilder.D2(
-        inputI = layers.last().outputShape[0],
-        inputJ = layers.last().outputShape[1],
-        input = inputConverter,
-        layers = layers,
-        optimizer = optimizer,
-        initializer = initializer,
-    ).block(outputConverter)
+    ): Network<I, O2> {
+        val copy = clone()
+        return NetworkBuilder.D2(
+            inputI = copy.layers.last().outputShape[0],
+            inputJ = copy.layers.last().outputShape[1],
+            input = copy.inputConverter,
+            layers = copy.layers,
+            optimizer = optimizer,
+            initializer = initializer,
+        ).block(copy.outputConverter)
+    }
 
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
