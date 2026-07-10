@@ -3,7 +3,6 @@
 package com.wsr.knist.cpu
 
 import com.wsr.knist.base.IBackend
-import com.wsr.knist.base.KotlinBackend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.size
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d1
@@ -122,7 +121,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 
 actual fun loadCPUBackend(fallback: IBackend): IBackend = CPUNativeBackend(fallback)
 
-class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
+class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     override val generator = CPUNativeBuffer.generator
 
     // 0次元
@@ -1622,7 +1621,7 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
                 )
             }
 
-            else -> KotlinBackend.copyInto(x, y, indices)
+            else -> fallback.copyInto(x, y, indices)
         }
     }
 
@@ -1642,7 +1641,7 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
                 )
             }
 
-            else -> KotlinBackend.copyInto(x, y, indices)
+            else -> fallback.copyInto(x, y, yi, yj, axis, indices)
         }
     }
 
@@ -1663,7 +1662,7 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
                 )
             }
 
-            else -> KotlinBackend.copyInto(x, y, indices)
+            else -> fallback.copyInto(x, y, yi, yj, yk, axis, indices)
         }
     }
 
