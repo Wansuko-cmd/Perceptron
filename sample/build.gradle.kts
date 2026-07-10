@@ -2,6 +2,8 @@
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     kotlin("multiplatform")
@@ -23,13 +25,26 @@ kotlin {
 
     val hostOs = DefaultNativePlatform.getCurrentOperatingSystem()
     val hostArch = DefaultNativePlatform.getCurrentArchitecture()
-    when {
+    val hostTarget = when {
         hostOs.isMacOsX && hostArch.isAmd64 -> macosX64()
         hostOs.isMacOsX && hostArch.isArm64 -> macosArm64()
         hostOs.isLinux && hostArch.isAmd64 -> linuxX64()
         hostOs.isLinux && hostArch.isArm64 -> linuxArm64()
         hostOs.isWindows && hostArch.isAmd64 -> mingwX64()
         else -> throw GradleException("$hostOs:$hostArch is not supported in Kotlin/Native.")
+    }
+
+    hostTarget.binaries {
+        executable {
+            entryPoint = "main"
+        }
+    }
+
+    targets.withType<KotlinNativeTargetWithHostTests>().configureEach {
+        binaries.test(listOf(NativeBuildType.RELEASE))
+        testRuns.getByName("test") {
+            setExecutionSourceFrom(binaries.getTest(NativeBuildType.RELEASE))
+        }
     }
 
     sourceSets {
