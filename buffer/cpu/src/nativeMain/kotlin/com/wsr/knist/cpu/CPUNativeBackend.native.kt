@@ -1642,7 +1642,7 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
                 )
             }
 
-            else -> KotlinBackend.copyInto(x, y, indices)
+            else -> KotlinBackend.copyInto(x, y, yi, yj, axis, indices)
         }
     }
 
@@ -1663,7 +1663,7 @@ class CPUNativeBackend(fallback: IBackend) : IBackend by fallback {
                 )
             }
 
-            else -> KotlinBackend.copyInto(x, y, indices)
+            else -> KotlinBackend.copyInto(x, y, yi, yj, yk, axis, indices)
         }
     }
 
