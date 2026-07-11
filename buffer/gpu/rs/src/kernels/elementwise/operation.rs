@@ -17,7 +17,7 @@ impl Operation {
     pub fn new(device: &Device) -> Self {
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Operation::new"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("operation.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(include_str!("operation_d4.wgsl").into()),
         });
 
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
