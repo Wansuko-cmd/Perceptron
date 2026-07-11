@@ -7,13 +7,7 @@ pub fn plus_with_d0_to_d1(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let x = &GPUBuffer::init(&[x], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 0];
-    let y_stride = [0, 0, 0, 1];
-
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.plus_d0_to_d1(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -24,13 +18,7 @@ pub fn plus_with_d1_to_d0(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let y = &GPUBuffer::init(&[y], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 1];
-    let y_stride = [0, 0, 0, 0];
-
-    let task = runtime.kernels.operation.plus_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.plus_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -260,13 +248,7 @@ pub fn minus_with_d0_to_d1(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let x = &GPUBuffer::init(&[x], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 0];
-    let y_stride = [0, 0, 0, 1];
-
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.minus_d0_to_d1(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -277,13 +259,7 @@ pub fn minus_with_d1_to_d0(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let y = &GPUBuffer::init(&[y], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 1];
-    let y_stride = [0, 0, 0, 0];
-
-    let task = runtime.kernels.operation.minus_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.minus_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -513,13 +489,7 @@ pub fn times_with_d0_to_d1(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let x = &GPUBuffer::init(&[x], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 0];
-    let y_stride = [0, 0, 0, 1];
-
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.times_d0_to_d1(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -530,13 +500,7 @@ pub fn times_with_d1_to_d0(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let y = &GPUBuffer::init(&[y], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 1];
-    let y_stride = [0, 0, 0, 0];
-
-    let task = runtime.kernels.operation.times_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.times_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -766,13 +730,7 @@ pub fn div_with_d0_to_d1(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let x = &GPUBuffer::init(&[x], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 0];
-    let y_stride = [0, 0, 0, 1];
-
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.div_d0_to_d1(x, y, result);
     runtime.dispatch(task);
 }
 
@@ -783,13 +741,7 @@ pub fn div_with_d1_to_d0(
     runtime: &mut Runtime,
 ) {
     let _t = runtime.cpu_profiler.start();
-    let y = &GPUBuffer::init(&[y], &runtime.device);
-
-    let result_shape = [1, 1, 1, result.count() as u32];
-    let x_stride = [0, 0, 0, 1];
-    let y_stride = [0, 0, 0, 0];
-
-    let task = runtime.kernels.operation.div_d4(x, y, result_shape, x_stride, y_stride, result);
+    let task = runtime.kernels.operation.div_d1_to_d0(x, y, result);
     runtime.dispatch(task);
 }
 
