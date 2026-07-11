@@ -31,7 +31,6 @@ import dataset.mnist.PixelConverter
 import dataset.mnist.inputPx
 import kotlin.test.Test
 import kotlin.test.assertTrue
-import kotlin.time.Duration
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 import kotlinx.coroutines.runBlocking
@@ -60,9 +59,9 @@ class MnistTest {
 
         println("訓練開始")
         val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)
-        val stepTimes = train.chunked(240).mapIndexed { i, data ->
-            if (i % 10 == 0) println("train: $i")
-            measureTime {
+        val trainTime = measureTime {
+            train.chunked(240).forEachIndexed { i, data ->
+                if (i % 10 == 0) println("train: $i")
                 network.train(
                     input = data.map { it.pixels },
                     label = data.map { it.label },
@@ -82,15 +81,7 @@ class MnistTest {
 
         println("${accuracy * 100}%")
 
-        val sortedSteps = stepTimes.sorted()
-        val trainTotal = stepTimes.fold(Duration.ZERO) { acc, time -> acc + time }
-        println(
-            "KNIST_METRIC " +
-                "train_total=${trainTotal.inWholeMilliseconds}ms " +
-                "step_median=${sortedSteps[sortedSteps.size / 2].inWholeMilliseconds}ms " +
-                "step_p90=${sortedSteps[sortedSteps.size * 9 / 10].inWholeMilliseconds}ms " +
-                "eval=${evalTime.inWholeMilliseconds}ms",
-        )
+        println("KNIST_METRIC time_ms=${(trainTime + evalTime).inWholeMilliseconds}")
 
         assertTrue(actual = accuracy > 0.95f, message = "精度が95%を割っています")
     }
