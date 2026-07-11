@@ -142,37 +142,29 @@ impl GpuProfiler {
         let (gpu_busy_ns, gpu_span_ns) = {
             let data = slice.get_mapped_range();
             let ticks: &[u64] = bytemuck::cast_slice(&data);
-            // pass同士はGPU上で並行実行されうるため、Σ(end-begin)では重なりが多重計上される。
-            // 区間をソート・マージした和集合（被覆時間）をbusyとする。
+
+            // 演算時間の重複削除
             let mut intervals: Vec<(u64, u64)> = ticks
                 .chunks(2)
-                .filter(|tick| tick[1] > tick[0])
+                .filter(|tick| tick[0] < tick[1])
                 .map(|tick| (tick[0], tick[1]))
                 .collect();
             intervals.sort_unstable();
 
             let mut busy_ticks: u64 = 0;
-            let mut min_begin = u64::MAX;
-            let mut max_end = 0u64;
-            let mut current: Option<(u64, u64)> = None;
-            for (begin, end) in intervals {
-                min_begin = min_begin.min(begin);
-                max_end = max_end.max(end);
-                current = match current {
-                    Some((c_begin, c_end)) if begin <= c_end => Some((c_begin, c_end.max(end))),
-                    Some((c_begin, c_end)) => {
-                        busy_ticks += c_end - c_begin;
-                        Some((begin, end))
-                    },
-                    None => Some((begin, end)),
-                };
-            }
-            if let Some((c_begin, c_end)) = current {
-                busy_ticks += c_end - c_begin;
+            let mut current_end = 0u64;
+            for &(begin, end) in &intervals {
+                if end > current_end {
+                    busy_ticks += end - begin.max(current_end);
+                    current_end = end;
+                }
             }
 
             let busy_ns = (busy_ticks as f64 * period) as u64;
-            let span_ns = (max_end.saturating_sub(min_begin) as f64 * period) as u64;
+            let span_ns = match intervals.first() {
+                Some(&(min_begin, _)) => ((current_end - min_begin) as f64 * period) as u64,
+                None => 0,
+            };
             (busy_ns, span_ns)
         };
 
