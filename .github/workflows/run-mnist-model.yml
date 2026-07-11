@@ -6,6 +6,10 @@ on:
 
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        index: [ 0, 1, 2, 3, 4 ]
     runs-on: ubuntu-latest
     steps:
       - name: 仮想ブランチにチェックアウト
@@ -44,10 +48,55 @@ jobs:
         run: |
           chmod 777 ${{ github.workspace }}/gradlew
 
-      - name: MNISTテストを実行(JVM)
+      - name: テストコードを事前ビルド
         run: |
-          ${{ github.workspace }}/gradlew sample:jvmTest --tests "mnist.MnistTest" --info
+          ${{ github.workspace }}/gradlew sample:jvmTestClasses sample:linkReleaseTestLinuxX64
+
+      - name: MNISTテストを実行(JVM)
+        shell: bash
+        run: |
+          ${{ github.workspace }}/gradlew sample:jvmTest --tests "mnist.MnistTest" --info | tee jvm-test.log
+          grep -o 'KNIST_METRIC .*' jvm-test.log | sed 's/KNIST_METRIC /jvm_/' >> metrics.txt || true
 
       - name: MNISTテストを実行(Native)
+        working-directory: sample
+        shell: bash
         run: |
-          ${{ github.workspace }}/gradlew sample:linuxX64Test --tests "mnist.MnistTest" --info
+          ./build/bin/linuxX64/releaseTest/test.kexe --ktest_filter='mnist.MnistTest.*' | tee native-test.log
+          grep -o 'KNIST_METRIC .*' native-test.log | sed 's/KNIST_METRIC /native_/' >> "$GITHUB_WORKSPACE/metrics.txt" || true
+
+      - name: 計測値をアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-${{ matrix.index }}
+          path: metrics.txt
+
+  summarize:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: 全ジョブの計測値をダウンロード
+        uses: actions/download-artifact@v4
+        with:
+          pattern: metrics-*
+          path: metrics
+
+      - name: 集計してSummaryに出力
+        shell: bash
+        run: |
+          {
+            echo "# MNIST計測まとめ"
+            echo ""
+            echo "| run | JVM | Native |"
+            echo "|---|---|---|"
+            for f in metrics/metrics-*/metrics.txt; do
+              run=$(basename "$(dirname "$f")")
+              row="| ${run#metrics-} |"
+              for key in jvm_time_ms native_time_ms; do
+                ms=$(grep "^$key=" "$f" | cut -d= -f2)
+                row="$row $((ms / 60000))分$((ms % 60000 / 1000))秒 |"
+              done
+              echo "$row"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"

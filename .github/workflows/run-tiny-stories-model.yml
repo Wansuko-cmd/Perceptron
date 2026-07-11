@@ -58,7 +58,14 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
 
+      - name: テストコードを事前ビルド
+        shell: bash
+        run: |
+          ./gradlew sample:jvmTestClasses
+
       - name: TinyStoriesテストを実行
         shell: bash
         run: |
+          SECONDS=0
           ./gradlew sample:jvmTest --tests "stories.TinyStoriesTest" --info
+          echo "TinyStoriesテスト 実行時間: $((SECONDS / 60))分$((SECONDS % 60))秒" >> "$GITHUB_STEP_SUMMARY"
