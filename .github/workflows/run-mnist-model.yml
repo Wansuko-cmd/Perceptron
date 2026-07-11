@@ -46,8 +46,13 @@ jobs:
 
       - name: MNISTテストを実行(JVM)
         run: |
+          SECONDS=0
           ${{ github.workspace }}/gradlew sample:jvmTest --tests "mnist.MnistTest" --info
+          echo "MNISTテスト(JVM) 実行時間: $((SECONDS / 60))分$((SECONDS % 60))秒" >> "$GITHUB_STEP_SUMMARY"
 
       - name: MNISTテストを実行(Native)
+        working-directory: sample
         run: |
-          ${{ github.workspace }}/gradlew sample:linuxX64Test --tests "mnist.MnistTest" --info
+          SECONDS=0
+          ./build/bin/linuxX64/debugTest/test.kexe --ktest_filter='mnist.MnistTest.*'
+          echo "MNISTテスト(Native) 実行時間: $((SECONDS / 60))分$((SECONDS % 60))秒" >> "$GITHUB_STEP_SUMMARY"
