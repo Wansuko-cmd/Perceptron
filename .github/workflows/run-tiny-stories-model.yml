@@ -58,6 +58,11 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod 777 ${{ github.workspace }}/gradlew
 
+      - name: テストコードを事前ビルド
+        shell: bash
+        run: |
+          ./gradlew sample:jvmTestClasses
+
       - name: TinyStoriesテストを実行
         shell: bash
         run: |

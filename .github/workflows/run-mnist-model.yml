@@ -44,6 +44,10 @@ jobs:
         run: |
           chmod 777 ${{ github.workspace }}/gradlew
 
+      - name: テストコードを事前ビルド
+        run: |
+          ${{ github.workspace }}/gradlew sample:jvmTestClasses sample:linkDebugTestLinuxX64
+
       - name: MNISTテストを実行(JVM)
         run: |
           SECONDS=0
