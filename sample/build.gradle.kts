@@ -17,7 +17,7 @@ kotlin {
         testRuns.named("test") {
             executionTask.configure {
                 minHeapSize = "256M"
-                maxHeapSize = "${1024 * 12}M"
+                maxHeapSize = "${1024 * 6}M"
                 jvmArgs("-XX:MaxMetaspaceSize=1024M")
             }
         }

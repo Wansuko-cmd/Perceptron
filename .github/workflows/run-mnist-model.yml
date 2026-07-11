@@ -6,6 +6,10 @@ on:
 
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        index: [ 0, 1, 2, 3, 4 ]
     runs-on: ubuntu-latest
     steps:
       - name: 仮想ブランチにチェックアウト
@@ -46,7 +50,7 @@ jobs:
 
       - name: テストコードを事前ビルド
         run: |
-          ${{ github.workspace }}/gradlew sample:jvmTestClasses sample:linkDebugTestLinuxX64
+          ${{ github.workspace }}/gradlew sample:jvmTestClasses sample:linkReleaseTestLinuxX64
 
       - name: MNISTテストを実行(JVM)
         run: |
@@ -58,5 +62,5 @@ jobs:
         working-directory: sample
         run: |
           SECONDS=0
-          ./build/bin/linuxX64/debugTest/test.kexe --ktest_filter='mnist.MnistTest.*'
+          ./build/bin/linuxX64/releaseTest/test.kexe --ktest_filter='mnist.MnistTest.*'
           echo "MNISTテスト(Native) 実行時間: $((SECONDS / 60))分$((SECONDS % 60))秒" >> "$GITHUB_STEP_SUMMARY"
