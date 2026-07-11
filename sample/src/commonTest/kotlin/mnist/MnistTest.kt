@@ -60,12 +60,15 @@ class MnistTest {
         println("訓練開始")
         val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)
         val trainTime = measureTime {
-            train.chunked(240).forEachIndexed { i, data ->
-                if (i % 10 == 0) println("train: $i")
-                network.train(
-                    input = data.map { it.pixels },
-                    label = data.map { it.label },
-                )
+            repeat(2) { epoch ->
+                println("epoch: $epoch")
+                train.chunked(240).forEachIndexed { i, data ->
+                    if (i % 10 == 0) println("train: $i")
+                    network.train(
+                        input = data.map { it.pixels },
+                        label = data.map { it.label },
+                    )
+                }
             }
         }
 
