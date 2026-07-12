@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 class BiasD2(
     override val inputI: Int,
     override val inputJ: Int,
-    private val optimizer: Optimizer.D2,
+    private var optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
@@ -37,6 +37,10 @@ class BiasD2(
 
     override fun freeze(isFrozen: Boolean) {
         optimizer.isFrozen = isFrozen
+    }
+
+    override fun update(optimizer: Optimizer) {
+        this.optimizer = optimizer.d2(i = inputI, j = inputJ)
     }
 }
 

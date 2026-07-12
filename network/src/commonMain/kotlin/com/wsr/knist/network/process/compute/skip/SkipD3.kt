@@ -6,6 +6,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
@@ -70,6 +71,10 @@ class SkipD3 internal constructor(
 
     override fun freeze(isFrozen: Boolean) {
         layers.forEach { it.freeze(isFrozen) }
+    }
+
+    override fun update(optimizer: Optimizer) {
+        layers.forEach { it.update(optimizer) }
     }
 }
 

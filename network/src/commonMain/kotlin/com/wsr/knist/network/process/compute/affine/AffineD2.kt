@@ -15,15 +15,14 @@ import kotlinx.serialization.Serializable
 class AffineD2 internal constructor(
     private val channel: Int,
     override val inputJ: Int,
-    private val outputSize: Int,
-    private val optimizer: Optimizer.D2,
+    override val outputJ: Int,
+    private var optimizer: Optimizer.D2,
     private var weight: IOType.D2.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override val inputI: Int get() = channel
 
     override val outputI = channel
-    override val outputJ = outputSize
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.matMul(weight)
 
@@ -45,6 +44,10 @@ class AffineD2 internal constructor(
     override fun freeze(isFrozen: Boolean) {
         optimizer.isFrozen = isFrozen
     }
+
+    override fun update(optimizer: Optimizer) {
+        this.optimizer = optimizer.d2(inputJ, outputJ)
+    }
 }
 
 fun <T> NetworkBuilder.D2<T>.affine(
@@ -57,7 +60,7 @@ fun <T> NetworkBuilder.D2<T>.affine(
         AffineD2(
             channel = inputI,
             inputJ = inputJ,
-            outputSize = neuron,
+            outputJ = neuron,
             optimizer = optimizer.d2(inputJ, neuron),
             weight = initializer.d2(
                 input = listOf(inputJ),

@@ -26,7 +26,7 @@ class ConvD2 internal constructor(
     private val padding: Int,
     private val height: Int,
     private val width: Int,
-    private val optimizer: Optimizer.D4,
+    private var optimizer: Optimizer.D4,
     private var weight: IOType.D4.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
@@ -91,6 +91,10 @@ class ConvD2 internal constructor(
 
     override fun freeze(isFrozen: Boolean) {
         optimizer.isFrozen = isFrozen
+    }
+
+    override fun update(optimizer: Optimizer) {
+        this.optimizer = optimizer.d4(i = filter, j = inputI, k = kernel, l = kernel)
     }
 }
 

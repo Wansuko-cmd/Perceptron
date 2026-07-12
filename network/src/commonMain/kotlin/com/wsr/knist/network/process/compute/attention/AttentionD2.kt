@@ -29,11 +29,11 @@ class AttentionD2 internal constructor(
     private var weightQ: IOType.D2.Global,
     private var weightK: IOType.D2.Global,
     private var weightV: IOType.D2.Global,
-    private val optimizerQ: Optimizer.D2,
-    private val optimizerK: Optimizer.D2,
-    private val optimizerV: Optimizer.D2,
+    private var optimizerQ: Optimizer.D2,
+    private var optimizerK: Optimizer.D2,
+    private var optimizerV: Optimizer.D2,
     private var weightO: IOType.D2.Global,
-    private val optimizerO: Optimizer.D2,
+    private var optimizerO: Optimizer.D2,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override val outputI: Int get() = inputI
@@ -145,6 +145,13 @@ class AttentionD2 internal constructor(
         optimizerK.isFrozen = isFrozen
         optimizerV.isFrozen = isFrozen
         optimizerO.isFrozen = isFrozen
+    }
+
+    override fun update(optimizer: Optimizer) {
+        optimizerQ = optimizer.d2(i = inputJ, j = numOfHeads * dim)
+        optimizerK = optimizer.d2(i = inputJ, j = numOfHeads * dim)
+        optimizerV = optimizer.d2(i = inputJ, j = numOfHeads * dim)
+        optimizerO = optimizer.d2(i = numOfHeads * dim, j = inputJ)
     }
 }
 

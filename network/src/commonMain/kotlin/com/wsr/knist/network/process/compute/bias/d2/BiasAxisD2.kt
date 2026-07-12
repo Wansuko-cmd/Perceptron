@@ -14,7 +14,7 @@ class BiasAxisD2(
     override val inputI: Int,
     override val inputJ: Int,
     private val axis: Int,
-    private val optimizer: Optimizer.D1,
+    private var optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
@@ -38,5 +38,10 @@ class BiasAxisD2(
 
     override fun freeze(isFrozen: Boolean) {
         optimizer.isFrozen = isFrozen
+    }
+
+    override fun update(optimizer: Optimizer) {
+        val inputT = if (axis == 0) inputI else inputJ
+        this.optimizer = optimizer.d1(size = inputT)
     }
 }
