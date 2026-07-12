@@ -1669,7 +1669,16 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
         val rj = (xj - window + padding * 2) / stride + 1
         val result = GPUJvmBuffer.create(b * xi * rj * window)
         JShape.unfoldD1(
@@ -1694,6 +1703,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val rj = (xj - window + padding * 2) / stride + 1
@@ -1714,7 +1724,16 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
         val nj = xk + (xj - 1) * stride - padding * 2
         val result = GPUJvmBuffer.create(b * xi * nj)
         JShape.foldD1(
@@ -1739,6 +1758,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()

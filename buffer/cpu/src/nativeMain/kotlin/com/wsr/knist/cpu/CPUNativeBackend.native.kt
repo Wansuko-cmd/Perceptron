@@ -1815,7 +1815,16 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
         val oj = (xj + padding * 2 - window) / stride + 1
         val result = CPUNativeBuffer.create(b * xi * oj * window)
         com_wsr_cpu_unfold_d1(
@@ -1839,6 +1848,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val oj = (xj + padding * 2 - window) / stride + 1
@@ -1859,7 +1869,16 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
         val oj = xk + (xj - 1) * stride - padding * 2
         val result = CPUNativeBuffer.create(b * xi * oj)
         com_wsr_cpu_fold_d1(
@@ -1883,6 +1902,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
