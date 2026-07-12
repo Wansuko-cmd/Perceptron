@@ -92,14 +92,25 @@ val avg: Batch<IOType.D0> = batchOfD1.average()
 
 `com.wsr.knist.network.process.Compute` の `D1` / `D2` / `D3` を継承する。
 
+override 必須の抽象プロパティ:
+
+- 入力形状: `inputI`（D1）、`inputI` / `inputJ`（D2）、`inputI` / `inputJ` / `inputK`（D3）
+- 出力形状: `outputI`（D1）、`outputI` / `outputJ`（D2）、`outputI` / `outputJ` / `outputK`（D3）
+- `id: String` — 層の識別子。`Network.freeze` / `replace` の `condition` から参照される。`Uuid.random().toString()` をデフォルト値にするのが組み込み層と同じ慣例（import: `kotlin.uuid.Uuid`）
+
+`inputShape` / `outputShape` はこれらから自動導出される（override 不要）。
+
 ### Compute.D1
 
 ```kotlin
 @Serializable
 class MyLayerD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
+    override val id: String = Uuid.random().toString(),
     // 重みがある場合: private var weight: IOType.D1.Global
 ) : Compute.D1() {
+
+    override val outputI: Int get() = inputI  // 形状を変えない層の場合
 
     // 推論（勾配不要）
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
@@ -125,8 +136,11 @@ class MyLayerD1 internal constructor(
 ```kotlin
 @Serializable
 class MyLayerD2 internal constructor(
+    override val inputI: Int,
+    override val inputJ: Int,
     override val outputI: Int,
     override val outputJ: Int,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> { ... }
     override fun IOScope.train(
@@ -142,9 +156,13 @@ class MyLayerD2 internal constructor(
 ```kotlin
 @Serializable
 class MyLayerD3 internal constructor(
+    override val inputI: Int,
+    override val inputJ: Int,
+    override val inputK: Int,
     override val outputI: Int,
     override val outputJ: Int,
     override val outputK: Int,
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
     override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> { ... }
     override fun IOScope.train(
@@ -158,8 +176,11 @@ class MyLayerD3 internal constructor(
 ### NetworkBuilder への登録
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myLayer() = addCompute(MyLayerD1(outputI = inputI))
-fun <T> NetworkBuilder.D2<T>.myLayer() = addCompute(MyLayerD2(outputI = inputI, outputJ = inputJ))
+fun <T> NetworkBuilder.D1<T>.myLayer(id: String = Uuid.random().toString()) =
+    addCompute(MyLayerD1(inputI = inputI, id = id))
+
+fun <T> NetworkBuilder.D2<T>.myLayer(id: String = Uuid.random().toString()) =
+    addCompute(MyLayerD2(inputI = inputI, inputJ = inputJ, outputI = inputI, outputJ = inputJ, id = id))
 ```
 
 `inputI`（D1）・`inputI` / `inputJ`（D2）・`inputI` / `inputJ` / `inputK`（D3）が前の層の出力サイズ。
@@ -170,10 +191,13 @@ fun <T> NetworkBuilder.D2<T>.myLayer() = addCompute(MyLayerD2(outputI = inputI, 
 ```kotlin
 @Serializable
 class WeightedD1 internal constructor(
-    override val outputI: Int,
+    override val inputI: Int,
     private val optimizer: Optimizer.D1,
     private var weight: IOType.D1.Global,  // Global で保持する
+    override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
+
+    override val outputI: Int get() = inputI
 
     override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
         input + weight
@@ -189,22 +213,30 @@ class WeightedD1 internal constructor(
         weight = optimizer.adapt(weight = weight, dw = delta).toGlobal()
         return delta
     }
+
+    // Network.freeze による凍結に対応する場合は override する（デフォルトは何もしない）
+    override fun freeze(isFrozen: Boolean) {
+        optimizer.isFrozen = isFrozen
+    }
 }
 
-fun <T> NetworkBuilder.D1<T>.weightedLayer() = addCompute(
+fun <T> NetworkBuilder.D1<T>.weightedLayer(id: String = Uuid.random().toString()) = addCompute(
     WeightedD1(
-        outputI = inputI,
+        inputI = inputI,
         optimizer = optimizer.d1(inputI),
         weight = initializer.d1(
             input = listOf(inputI),
             output = listOf(inputI),
             size = inputI,
         ),
+        id = id,
     ),
 )
 ```
 
 重みは必ず `IOType.Dx.Global` で保持する。`train` 内で `optimizer.adapt` を呼ぶと `Local` が返るので、`.toGlobal()` でスコープから外して保存する。
+
+`Network.freeze` は各層の `freeze(isFrozen: Boolean)` を呼ぶだけなので、重みを持つカスタム層は上記のように override して `Optimizer.Dx` の `isFrozen` フラグに伝搬させる（`isFrozen = true` の間、`adapt` は重みをそのまま返す）。override しない層は凍結の対象にならない。
 
 ### Context
 
@@ -272,7 +304,7 @@ class MyOptimizer(private val rate: Float) : Optimizer {
 ```
 
 各次元の実装。`Optimizer.D1` 〜 `Optimizer.D4` は抽象クラスで、`adapt(weight, dw)` だけ実装すれば良い。
-`maxNorm`（勾配クリッピング）・`stepUnit`（`step` プロパティの進行単位。勾配累積ではない）はコンストラクタ引数として基底クラスに渡せる。
+`maxNorm`（勾配クリッピング）・`stepUnit`（勾配累積。`stepUnit` 回分の勾配を平均して1回だけ重み更新する）はコンストラクタ引数として基底クラスに渡せる。勾配累積・クリッピング・凍結（`isFrozen` プロパティ）は基底クラスの公開 `adapt` が処理するため、実装側で意識する必要はない。
 
 ```kotlin
 @Serializable
@@ -287,7 +319,7 @@ class MyD1(
 }
 ```
 
-`step`（= 更新回数 ÷ stepUnit）が `protected` プロパティとして参照できる。スケジューラ等に使える。step はオプティマイザインスタンス（= パラメータ）ごとに独立してカウントされる。
+`step`（= 実際の重み更新回数。`stepUnit` 回の `adapt` 呼び出しにつき 1 進む）が `protected` プロパティとして参照できる。スケジューラ等に使える。step はオプティマイザインスタンス（= パラメータ）ごとに独立してカウントされる。
 
 ---
 
@@ -485,4 +517,7 @@ import com.wsr.knist.base.data.DataBuffer
 
 // NetworkBuilder（拡張関数追加時）
 import com.wsr.knist.network.NetworkBuilder
+
+// 層の id 生成（Compute 実装時）
+import kotlin.uuid.Uuid
 ```

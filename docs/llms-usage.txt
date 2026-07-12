@@ -9,7 +9,7 @@ Kotlin Multiplatformライブラリ。JitPackからGradle依存として導入�
 
 - 対応プラットフォーム: JVM / Android。Kotlin/Native（macOS / Linux / Windows）はJitPackでは配布されておらず、リポジトリをローカルで `publishToMavenLocal` した場合のみ利用できる。JS / wasm は非対応。
 - `<version>` には最新リリースを指定する（https://jitpack.io/#Wansuko-cmd/knist または GitHub Releases で確認）。
-- この文書は v0.0.31-alpha03 時点の API を記述している。
+- この文書は v0.0.31-alpha03 以降（2026-07 時点の main）の API を記述している。
 
 ```kotlin
 // settings.gradle.kts
@@ -194,6 +194,8 @@ val lossValue: Float = loss.unwrap()
 
 重みを持つレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は、表に記載の引数に加えて `optimizer` / `initializer` を省略可能引数として取り、層ごとに個別指定できる（詳細は Optimizer 節）。
 
+さらに**すべての**レイヤーの factory 関数は `id: String`（省略時はランダム UUID）を省略可能引数として取る。`id` は層（`Process`）の公開プロパティとして保持され、`freeze` / `replace` の `condition` で特定の層を狙い撃ちするのに使える（「モデルの改修」節を参照）。
+
 ### 畳み込み・プーリング
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
@@ -272,6 +274,14 @@ Self-attention 専用（Q・K・V はすべて同一の入力から計算され�
 
 同パッケージに D1/D2/D3 版が共存するため、import 1行で全次元に対応する。
 
+### 恒等層
+
+| 関数 | import |
+|------|--------|
+| `linear(id?)` | `com.wsr.knist.network.process.compute.function.linear.linear` |
+
+値・形状を変えないパススルー層（D1→D1, D2→D2, D3→D3。import 1行で全次元に対応）。`id` を明示して置いておくことで、`freeze` / `replace` の `condition`（`{ it.id == "..." }`）から狙い撃ちするためのマーカーとして使える。
+
 ### 正規化
 
 | 関数 | import | 入出力 | デフォルト値 |
@@ -347,14 +357,16 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 ### 出力層
 
-| 関数 | import | 入力 | 出力型 |
+いずれも D1 版・D2 版があり、`converter` を渡すと `Network<I, O>`、省略すると Raw 系 Converter が使われて `Network<I, Batch<IOType.Dx>>` になる。
+
+| 関数 | import | 入力 | 出力型（converter 省略時） |
 |------|--------|------|--------|
-| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Label>` |
-| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D2(i, j) | `Network<I, Label>` |
-| `sigmoidWithLoss()` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, IOType.D1>` |
-| `sigmoidWithLoss(converter)` | 同上 | D1(n) | `Network<I, O>` |
-| `meanSquare()` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, IOType.D1>` |
-| `meanSquare(converter)` | 同上 | D1(n) | `Network<I, O>` |
+| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Batch<IOType.D1>>` |
+| `softmaxWithLoss(converter?, temperature?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
+| `sigmoidWithLoss(converter?)` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, Batch<IOType.D1>>` |
+| `sigmoidWithLoss(converter?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
+| `meanSquare(converter?)` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, Batch<IOType.D1>>` |
+| `meanSquare(converter?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
 
 `softmaxWithLoss` デフォルト値: `temperature=1f`
 `temperature` は**構築時に固定**され、学習・推論の両方の softmax に適用される。構築後・読み込み後に変更する手段は無いため、推論時に温度を変えたい場合はモデルを構築し直す必要がある。
@@ -446,11 +458,11 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 共通オプション:
 
 - `maxNorm`: 勾配クリッピング。勾配の L2 ノルムが `maxNorm` を超えた場合にスケールダウンする
-- `stepUnit`: Scheduler に渡す step の進行単位。重み更新 `stepUnit` 回ごとに Scheduler の step が 1 進む。**勾配累積ではない**（重みの更新自体は毎回行われ、学習率スケジュールの進行だけが遅くなる）
+- `stepUnit`: **勾配累積**。`train()` `stepUnit` 回分の勾配を内部に累積し、その平均勾配で1回だけ重みを更新する。累積中の `train()` では重みは変化しない。Scheduler の step も実際の重み更新1回につき1進む
 
 Optimizer / Initializer は `inputDx` で渡したものがデフォルトとして全層に配られるが、学習可能なレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は `optimizer` / `initializer` 引数で層ごとに上書きできる。なお `bias` の initializer デフォルトは `Fixed(0f)`、`scale` / `minMaxNorm` は `Fixed(1f)`。
 
-`inputDx` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replaceD1` / `replaceD2` / `replaceD3` はこれをデフォルト値として使う。
+`inputDx` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replace` はこれをデフォルト値として使う。
 
 `AdamW` の `decay` は bias / scale を含む**全パラメータに一律に適用される**。特定の層を weight decay から除外したい場合は、その層の `optimizer` 引数に decay の無い Optimizer（`Adam` 等）を個別に渡す。
 
@@ -463,7 +475,7 @@ Optimizer / Initializer は `inputDx` で渡したものがデフォルトとし
 | `Scheduler.MultiStep(rate, gamma, milestones)` | 同上 | 指定ステップで rate *= gamma |
 | `Scheduler.CosineAnnealing(minRate, maxRate, stepSize, warmUp, initialRate)` | 同上 | 線形ウォームアップ→コサインアニーリング |
 
-Scheduler が受け取る step は「そのパラメータの重み更新回数（÷ `stepUnit`）」で、パラメータごとに独立してカウントされる。全パラメータは `train()` 1回につき1回更新されるため、実用上は「`train()` の呼び出し回数」と読み替えてよい（`stepSize` / `warmUp` / `stepCount` / `milestones` は train 回数を基準に設定する）。
+Scheduler が受け取る step は「そのパラメータの実際の重み更新回数」（`stepUnit` 回の `train()` につき 1）で、パラメータごとに独立してカウントされる。`stepUnit = 1`（デフォルト）なら実用上は「`train()` の呼び出し回数」と読み替えてよい（`stepSize` / `warmUp` / `stepCount` / `milestones` は重み更新回数を基準に設定する）。
 
 ---
 
@@ -482,7 +494,7 @@ Scheduler が受け取る step は「そのパラメータの重み更新回数�
 
 `toJson()` / `toCbor()` は `Network` のメンバー関数、`fromJson()` / `fromCbor()` は `Network.Companion` のコンパニオン関数。いずれも import 不要。
 
-保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**、および `Network` がデフォルトとして保持する Optimizer / Initializer も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替えたい場合は「モデルの改修」節の `replaceD1` / `replaceD2` / `replaceD3` を使う（層の凍結・差し替え・Converter / Output の差し替えも同節を参照）。
+保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**、および `Network` がデフォルトとして保持する Optimizer / Initializer も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替えたい場合は「モデルの改修」節の `replace` を使う（層の凍結・差し替え・Converter / Output の差し替えも同節を参照）。
 
 `fromJson` / `fromCbor` の型パラメータ `I`・`O` は実行時に検証されない。保存時と異なる型を指定しても読み込み自体は成功し、`expect` / `train` の呼び出し時に ClassCastException になるため注意。
 
@@ -575,33 +587,37 @@ builder.skip {
 
 構築済み・`fromJson` / `fromCbor` で読み込み済みの `Network` に対して、転移学習・ファインチューニング目的で層の凍結や差し替えができる。
 
+**いずれの操作も元の `network` は変更せず、新しい `Network` を返す。** 内部で `clone()`（CBOR 経由の完全コピー）が行われるため、カスタム Converter を使っている場合は事前に `NetworkSerializer.register()` が必要。返された `Network` の層・重みは元の `network` とは独立している。
+
 ### 層の凍結
 
 ```kotlin
-network.freeze { layer -> layer is AffineD2 }  // condition が true を返した層を凍結
+val frozen: Network<I, O> = network.freeze { layer -> layer is AffineD2 }  // condition が true を返した層を凍結
+val frozen2 = network.freeze { it.id == "encoder-ffn" }  // factory 関数の id 引数で狙い撃ちする場合
 ```
 
-凍結された層は `train()` 時に重みの更新（`optimizer.adapt`）だけがスキップされる。逆伝播の delta は通常通り流れるため、凍結した層より前段の学習は継続できる。`network` 自身を書き換える（戻り値なし）。
+凍結された層は `train()` 時に重みの更新（`optimizer.adapt`）だけがスキップされる。逆伝播の delta は通常通り流れるため、凍結した層より前段の学習は継続できる。`condition` は全層に対して評価される（`freeze(condition = { false })` 相当を渡せば全解凍した複製が得られる）。カスタム層は `freeze(isFrozen)` を override していないと凍結に反応しない（`docs/llms-custom.txt` を参照）。
 
 ### 層の差し替え
 
-`replaceD1` / `replaceD2` / `replaceD3` で、型と条件にマッチする層を `NetworkBuilder` と同じ DSL でまるごと差し替えられる。`network` 自身を書き換える（戻り値なし）。
+`replace<T>` で、型と条件にマッチする層を `NetworkBuilder` と同じ DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は次元によらず `replace`（`@JvmName` により JVM 上では `replaceD1` / `replaceD2` / `replaceD3` という名前になっているだけ）。新しい `Network` を返す。
 
 ```kotlin
-network.replaceD2<AffineD2>(
+val newNetwork: Network<I, O> = network.replace<AffineD2>(
     optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
     initializer = He(),                          // 省略時は network が保持する Initializer を使う
-    condition = { it.outputI == 256 },
-) {
+    condition = { it.outputI == 256 },           // id で特定する場合: { it.id == "..." }
+) { old ->
     // this: NetworkBuilder.D2<I>（affine 等の DSL がそのまま使える）
+    // old: マッチした元の層（T 型。元の層のプロパティを参照したい場合に使う）
     affine(neuron = 512).bias().reLU()
 }
 ```
 
-- `condition` に一致した層を末尾から順に、`block` が返す `NetworkBuilder` の `layers` で置き換える
+- `condition` に一致した各層を、`block` が返す `NetworkBuilder` の `layers` で置き換える
 - 置き換え後の層列の入力形状・出力形状は、元の層の入力形状・出力形状（内部的には `Process` の `inputShape` / `outputShape`）と一致していなければならず、一致しない場合は例外になる
 - `block` が何も層を追加しない場合（元の `NetworkBuilder.Dx` をそのまま返す場合）、その層は削除されるだけになる
-- `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3` のいずれかのサブタイプである必要がある（`Reshape` 系は対象外）
+- `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3` のいずれかのサブタイプである必要がある（`Reshape` 系は対象外）。`T` の次元によって D1 / D2 / D3 版のどのオーバーロードが選ばれるかが決まる
 
 ### Converter の差し替え
 
@@ -615,7 +631,7 @@ val network3: Network<I, NewLabel> = network.replaceOutput(newOutputConverter)
 val network4: Network<NewInput, NewLabel> = network.replaceInput(newInputConverter).replaceOutput(newOutputConverter)
 ```
 
-いずれも新しい `Network` を返す（元の `network` は変更されない）。層のインスタンス（重み含む）は共有される。
+いずれも新しい `Network` を返す（元の `network` は変更されない）。内部で `clone()` されるため、層・重みは元の `network` とは独立したコピーになる（共有されない）。
 
 ### Output（損失関数）の差し替え
 
