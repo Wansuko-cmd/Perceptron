@@ -416,6 +416,7 @@ D1 の `plus(other: IOType.D2, axis: Int)` など broadcast 版も存在する�
 | `pow(n: Int)` | x^n |
 | `sqrt(e: Float = 1e-7f)` | √(x + e) |
 | `softmax()` | D1 のみ。max 安定化済み |
+| `tanh()` | 双曲線正接。`Batch<IOType.Dx>` 版のみ存在（IOType 単体版は無い） |
 
 ### 比較・マスク
 
@@ -479,8 +480,9 @@ import: `com.wsr.knist.core.index.gather` / `com.wsr.knist.core.index.scatterAdd
 
 | 関数 | 入出力 | 説明 |
 |------|--------|------|
-| `Batch<D2>.unfold(windowSize, stride, padding)` | Batch<D2> → Batch<D3> | スライディングウィンドウ展開（im2col 相当。conv の実装で使用） |
-| `Batch<D3>.fold(stride, padding)` | Batch<D3> → Batch<D2> | unfold の逆操作（重複位置は加算） |
+| `Batch<D2>.unfold(window, stride, dilation, padding)` | Batch<D2> → Batch<D3> | スライディングウィンドウ展開（im2col 相当。conv の実装で使用。D3→D4 版もあり） |
+| `Batch<D3>.fold(stride, dilation, padding)` | Batch<D3> → Batch<D2> | unfold の逆操作（重複位置は加算。D4→D3 版もあり） |
+| `Batch<D2>.padding(axis, left, right)` | Batch<D2> → Batch<D2> | 指定軸の前後にゼロパディングを追加（axis: 0=i, 1=j） |
 | `Batch<D2>.flatten()` | Batch<D2> → Batch<D1> | 各サンプルを1次元化 |
 | `IOType.D3.toBatch()` | D3 → Batch<D2> | 先頭軸をバッチ次元として再解釈（D2 → Batch<D1> 等もあり） |
 
