@@ -3,6 +3,7 @@ package com.wsr.knist.network.process
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.optimizer.Optimizer
 
 sealed interface Process {
     val id: String
@@ -19,5 +20,5 @@ sealed interface Process {
         calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
     ): Batch<IOType>
 
-    fun freeze(isFrozen: Boolean) {}
+    fun update(optimizer: Optimizer) {}
 }

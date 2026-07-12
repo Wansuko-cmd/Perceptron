@@ -194,7 +194,7 @@ val lossValue: Float = loss.unwrap()
 
 重みを持つレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は、表に記載の引数に加えて `optimizer` / `initializer` を省略可能引数として取り、層ごとに個別指定できる（詳細は Optimizer 節）。
 
-さらに**すべての**レイヤーの factory 関数は `id: String`（省略時はランダム UUID）を省略可能引数として取る。`id` は層（`Process`）の公開プロパティとして保持され、`freeze` / `replace` の `condition` で特定の層を狙い撃ちするのに使える（「モデルの改修」節を参照）。
+さらに**すべての**レイヤーの factory 関数は `id: String`（省略時はランダム UUID）を省略可能引数として取る。`id` は層（`Process`）の公開プロパティとして保持され、`replace`（層の差し替え・Optimizer の差し替え / 凍結）の `condition` で特定の層を狙い撃ちするのに使える（「モデルの改修」節を参照）。
 
 ### 畳み込み・プーリング
 
@@ -280,7 +280,7 @@ Self-attention 専用（Q・K・V はすべて同一の入力から計算され�
 |------|--------|
 | `linear(id?)` | `com.wsr.knist.network.process.compute.function.linear.linear` |
 
-値・形状を変えないパススルー層（D1→D1, D2→D2, D3→D3。import 1行で全次元に対応）。`id` を明示して置いておくことで、`freeze` / `replace` の `condition`（`{ it.id == "..." }`）から狙い撃ちするためのマーカーとして使える。
+値・形状を変えないパススルー層（D1→D1, D2→D2, D3→D3。import 1行で全次元に対応）。`id` を明示して置いておくことで、`replace` の `condition`（`{ it.id == "..." }`）から狙い撃ちするためのマーカーとして使える。
 
 ### 正規化
 
@@ -454,6 +454,9 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 | `RmsProp(scheduler, rms?)` | `com.wsr.knist.network.optimizer.rms.RmsProp` | rms=0.9f |
 | `Adam(scheduler, momentum?, rms?)` | `com.wsr.knist.network.optimizer.adam.Adam` | momentum=0.9f, rms=0.999f |
 | `AdamW(scheduler, momentum?, rms?, decay?)` | `com.wsr.knist.network.optimizer.adam.AdamW` | momentum=0.9f, rms=0.999f, decay=0.01f |
+| `Freeze` | `com.wsr.knist.network.optimizer.freeze.Freeze` | —（引数を取らない object） |
+
+`Freeze` は重みを一切更新しない特殊な Optimizer で、層の凍結に使う（「モデルの改修」節の「Optimizer の差し替え・層の凍結」を参照）。scheduler / 共通オプションも取らない。
 
 共通オプション:
 
@@ -462,7 +465,7 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 
 Optimizer / Initializer は `inputDx` で渡したものがデフォルトとして全層に配られるが、学習可能なレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は `optimizer` / `initializer` 引数で層ごとに上書きできる。なお `bias` の initializer デフォルトは `Fixed(0f)`、`scale` / `minMaxNorm` は `Fixed(1f)`。
 
-`inputDx` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replace` はこれをデフォルト値として使う。
+`inputDx` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replace` はこれをデフォルト値として使う。このデフォルトは `replace` で層や Optimizer を差し替えても変わらない（あくまで構築時に決まる値）。
 
 `AdamW` の `decay` は bias / scale を含む**全パラメータに一律に適用される**。特定の層を weight decay から除外したい場合は、その層の `optimizer` 引数に decay の無い Optimizer（`Adam` 等）を個別に渡す。
 
@@ -589,14 +592,24 @@ builder.skip {
 
 **いずれの操作も元の `network` は変更せず、新しい `Network` を返す。** 内部で `clone()`（CBOR 経由の完全コピー）が行われるため、カスタム Converter を使っている場合は事前に `NetworkSerializer.register()` が必要。返された `Network` の層・重みは元の `network` とは独立している。
 
-### 層の凍結
+### Optimizer の差し替え・層の凍結
+
+学習率の変更・Optimizer の切り替え・層の凍結は、いずれも「`condition` に一致した層の Optimizer を、渡したファクトリから作り直す」一つの操作で行う（`@JvmName` により JVM 上では `replaceOptimizer`）。重みは保持されるが、Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置はリセットされる。
 
 ```kotlin
-val frozen: Network<I, O> = network.freeze { layer -> layer is AffineD2 }  // condition が true を返した層を凍結
-val frozen2 = network.freeze { it.id == "encoder-ffn" }  // factory 関数の id 引数で狙い撃ちする場合
+// 読み込んだモデルを低い学習率で微調整する（重みは保持、モーメント・Scheduler 位置はリセット）
+val tuned: Network<I, O> = network.replace(condition = { true }, optimizer = AdamW(Scheduler.Fix(0.0001f)))
+
+// 層の凍結: Freeze（重みを更新しない Optimizer）を渡す
+val frozen: Network<I, O> = network.replace(condition = { it.id == "backbone" }, optimizer = Freeze)
+
+// 解凍: 通常の Optimizer を渡し直す（新品の状態で学習が再開される）
+val unfrozen: Network<I, O> = frozen.replace(condition = { it.id == "backbone" }, optimizer = AdamW(Scheduler.Fix(0.00001f)))
 ```
 
-凍結された層は `train()` 時に重みの更新（`optimizer.adapt`）だけがスキップされる。逆伝播の delta は通常通り流れるため、凍結した層より前段の学習は継続できる。`condition` は全層に対して評価される（`freeze(condition = { false })` 相当を渡せば全解凍した複製が得られる）。カスタム層は `freeze(isFrozen)` を override していないと凍結に反応しない（`docs/llms-custom.txt` を参照）。
+- `Freeze` で凍結された層は重みの更新だけが行われなくなる。逆伝播の delta は通常通り流れるため、凍結した層より前段の学習は継続できる
+- 重みを持たない層（活性化関数・reshape 等）では何も起きないため、`condition = { true }` で全層を対象にして問題ない
+- カスタム層は `update(optimizer)` を override していないと反応しない（`docs/llms-custom.txt` を参照）
 
 ### 層の差し替え
 
@@ -647,22 +660,24 @@ val network4: Network<NewInput, NewLabel> = network.replaceInput(newInputConvert
 
 ### Output（損失関数）の差し替え
 
-出力層（`softmaxWithLoss` 等）自体を組み直したい場合に使う。層列の末尾の形状に応じて D1 版・D2 版が自動で選ばれる。ブロックの引数として現在の `outputConverter` を受け取れる（再利用したい場合に使う）。
+出力層（`softmaxWithLoss` 等）自体を組み直したい場合に使う。型パラメータに層列の末尾の形状を `Output.D1` / `Output.D2`（import: `com.wsr.knist.network.output.Output`）で明示する。末尾の形状と合わない型を指定した場合は実行時に例外になる。
+
+出力の型 `O` はこの操作では変わらない。ブロックの引数として現在の `outputConverter` が末尾形状に応じた型（`Converter.D1<O>` / `Converter.D2<O>`）で渡ってくるので、新しい出力層にそのまま渡す。`O` 自体を変えたい場合は `replaceOutput` を続けて呼ぶ。
 
 ```kotlin
-// temperature だけ変えたい場合。O は変えないので既存の outputConverter をそのまま再利用する
-val network5: Network<I, O> = network.replace { oldConverter ->
-    // this: NetworkBuilder.D1<I> または D2<I>（末尾の層の形状で決まる）
-    softmaxWithLoss(temperature = 0.5f, converter = { oldConverter as Converter.D1<O> })
+// temperature だけ変えたい場合。引数で渡ってくる既存の outputConverter をそのまま再利用する
+val network5: Network<I, O> = network.replace<Output.D1> { oldConverter ->
+    // this: NetworkBuilder.D1<I>（型パラメータで指定した形状で決まる）
+    softmaxWithLoss(temperature = 0.5f, converter = { oldConverter })
 }
 
-// O 自体も変えたい場合
-val network6: Network<I, NewLabel> = network.replace(
-    optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
-    initializer = He(),
-) {
-    softmaxWithLoss(temperature = 0.5f, converter = { NewLabelConverter(inputI) })
-}
+// O 自体も変えたい場合は replaceOutput とチェーンする
+val network6: Network<I, NewLabel> = network
+    .replace<Output.D1>(
+        optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
+        initializer = He(),
+    ) { oldConverter -> softmaxWithLoss(temperature = 0.5f, converter = { oldConverter }) }
+    .replaceOutput(NewLabelConverter(10))
 ```
 
 ---

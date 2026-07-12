@@ -23,6 +23,11 @@ import com.wsr.knist.network.optimizer.adam.AdamWD1
 import com.wsr.knist.network.optimizer.adam.AdamWD2
 import com.wsr.knist.network.optimizer.adam.AdamWD3
 import com.wsr.knist.network.optimizer.adam.AdamWD4
+import com.wsr.knist.network.optimizer.freeze.Freeze
+import com.wsr.knist.network.optimizer.freeze.FreezeD1
+import com.wsr.knist.network.optimizer.freeze.FreezeD2
+import com.wsr.knist.network.optimizer.freeze.FreezeD3
+import com.wsr.knist.network.optimizer.freeze.FreezeD4
 import com.wsr.knist.network.optimizer.momentum.Momentum
 import com.wsr.knist.network.optimizer.momentum.MomentumD1
 import com.wsr.knist.network.optimizer.momentum.MomentumD2
@@ -466,6 +471,7 @@ private val buildInSerializersModule = SerializersModule {
      * Optimizer
      */
     polymorphic(Optimizer::class) {
+        subclass(Freeze::class)
         subclass(Sgd::class)
         subclass(Momentum::class)
         subclass(RmsProp::class)
@@ -474,6 +480,7 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Optimizer.D1::class) {
+        subclass(FreezeD1::class)
         subclass(SgdD1::class)
         subclass(MomentumD1::class)
         subclass(RmsPropD1::class)
@@ -482,6 +489,7 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Optimizer.D2::class) {
+        subclass(FreezeD2::class)
         subclass(SgdD2::class)
         subclass(MomentumD2::class)
         subclass(RmsPropD2::class)
@@ -490,6 +498,7 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Optimizer.D3::class) {
+        subclass(FreezeD3::class)
         subclass(SgdD3::class)
         subclass(MomentumD3::class)
         subclass(RmsPropD3::class)
@@ -498,6 +507,7 @@ private val buildInSerializersModule = SerializersModule {
     }
 
     polymorphic(Optimizer.D4::class) {
+        subclass(FreezeD4::class)
         subclass(SgdD4::class)
         subclass(MomentumD4::class)
         subclass(RmsPropD4::class)

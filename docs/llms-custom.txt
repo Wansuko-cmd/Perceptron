@@ -96,7 +96,7 @@ override 必須の抽象プロパティ:
 
 - 入力形状: `inputI`（D1）、`inputI` / `inputJ`（D2）、`inputI` / `inputJ` / `inputK`（D3）
 - 出力形状: `outputI`（D1）、`outputI` / `outputJ`（D2）、`outputI` / `outputJ` / `outputK`（D3）
-- `id: String` — 層の識別子。`Network.freeze` / `replace` の `condition` から参照される。`Uuid.random().toString()` をデフォルト値にするのが組み込み層と同じ慣例（import: `kotlin.uuid.Uuid`）
+- `id: String` — 層の識別子。`Network.replace` の `condition` から参照される。`Uuid.random().toString()` をデフォルト値にするのが組み込み層と同じ慣例（import: `kotlin.uuid.Uuid`）
 
 `inputShape` / `outputShape` はこれらから自動導出される（override 不要）。
 
@@ -192,7 +192,7 @@ fun <T> NetworkBuilder.D2<T>.myLayer(id: String = Uuid.random().toString()) =
 @Serializable
 class WeightedD1 internal constructor(
     override val inputI: Int,
-    private val optimizer: Optimizer.D1,
+    private var optimizer: Optimizer.D1,  // update で差し替えるため var
     private var weight: IOType.D1.Global,  // Global で保持する
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
@@ -214,9 +214,9 @@ class WeightedD1 internal constructor(
         return delta
     }
 
-    // Network.freeze による凍結に対応する場合は override する（デフォルトは何もしない）
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
+    // Network.replace(condition, optimizer) による Optimizer 差し替え・凍結に対応する場合は override する（デフォルトは何もしない）
+    override fun update(optimizer: Optimizer) {
+        this.optimizer = optimizer.d1(inputI)  // 自層の重み形状で作り直す
     }
 }
 
@@ -236,7 +236,7 @@ fun <T> NetworkBuilder.D1<T>.weightedLayer(id: String = Uuid.random().toString()
 
 重みは必ず `IOType.Dx.Global` で保持する。`train` 内で `optimizer.adapt` を呼ぶと `Local` が返るので、`.toGlobal()` でスコープから外して保存する。
 
-`Network.freeze` は各層の `freeze(isFrozen: Boolean)` を呼ぶだけなので、重みを持つカスタム層は上記のように override して `Optimizer.Dx` の `isFrozen` フラグに伝搬させる（`isFrozen = true` の間、`adapt` は重みをそのまま返す）。override しない層は凍結の対象にならない。
+`Network.replace(condition, optimizer)`（Optimizer の差し替え・凍結）は、`condition` に一致した各層の `update(optimizer: Optimizer)` を呼ぶ。重みを持つカスタム層は上記のように override し、自層の重み形状で `optimizer.dx(...)` を呼んで作り直したインスタンスに差し替える（Optimizer を保持するフィールドは `var` にしておく）。override しない層は差し替え・凍結の対象にならない。
 
 ### Context
 
@@ -296,7 +296,7 @@ fun <I, O> NetworkBuilder.D1<I>.myOutput(converter: NetworkBuilder.D1<I>.() -> C
 
 ```kotlin
 class MyOptimizer(private val rate: Float) : Optimizer {
-    override fun d1(size: Int): D1 = MyD1(rate)
+    override fun d1(i: Int): D1 = MyD1(rate)
     override fun d2(i: Int, j: Int): D2 = MyD2(rate)
     override fun d3(i: Int, j: Int, k: Int): D3 = MyD3(rate)
     override fun d4(i: Int, j: Int, k: Int, l: Int): D4 = MyD4(rate)
@@ -304,7 +304,7 @@ class MyOptimizer(private val rate: Float) : Optimizer {
 ```
 
 各次元の実装。`Optimizer.D1` 〜 `Optimizer.D4` は抽象クラスで、`adapt(weight, dw)` だけ実装すれば良い。
-`maxNorm`（勾配クリッピング）・`stepUnit`（勾配累積。`stepUnit` 回分の勾配を平均して1回だけ重み更新する）はコンストラクタ引数として基底クラスに渡せる。勾配累積・クリッピング・凍結（`isFrozen` プロパティ）は基底クラスの公開 `adapt` が処理するため、実装側で意識する必要はない。
+`maxNorm`（勾配クリッピング）・`stepUnit`（勾配累積。`stepUnit` 回分の勾配を平均して1回だけ重み更新する）はコンストラクタ引数として基底クラスに渡せる。勾配累積・クリッピングは基底クラスの公開 `adapt` が処理するため、実装側で意識する必要はない。
 
 ```kotlin
 @Serializable

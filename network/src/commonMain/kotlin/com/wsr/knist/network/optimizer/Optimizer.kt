@@ -8,17 +8,13 @@ import com.wsr.knist.core.elementwise.operation.plus.plus
 import kotlinx.serialization.Serializable
 
 interface Optimizer {
-    fun d1(size: Int): D1
+    fun d1(i: Int): D1
     fun d2(i: Int, j: Int): D2
     fun d3(i: Int, j: Int, k: Int): D3
     fun d4(i: Int, j: Int, k: Int, l: Int): D4
 
     @Serializable
-    abstract class D1(
-        private val _maxNorm: Float = Float.MAX_VALUE,
-        private val _stepUnit: Int = 1,
-        var isFrozen: Boolean = false,
-    ) {
+    abstract class D1(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var acc: IOType.D1.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -27,8 +23,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
-            if (isFrozen) return weight
+        open fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -48,19 +43,15 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D1,
             dw: Batch<IOType.D1>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D1 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D1 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D2(
-        private val _maxNorm: Float = Float.MAX_VALUE,
-        private val _stepUnit: Int = 1,
-        var isFrozen: Boolean = false,
-    ) {
+    abstract class D2(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var acc: IOType.D2.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -69,8 +60,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
-            if (isFrozen) return weight
+        open fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -90,19 +80,15 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D2,
             dw: Batch<IOType.D2>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D2 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D2 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D3(
-        private val _maxNorm: Float = Float.MAX_VALUE,
-        private val _stepUnit: Int = 1,
-        var isFrozen: Boolean = false,
-    ) {
+    abstract class D3(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var acc: IOType.D3.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -111,8 +97,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
-            if (isFrozen) return weight
+        open fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -132,19 +117,15 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D3,
             dw: Batch<IOType.D3>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D3 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D3 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 
     @Serializable
-    abstract class D4(
-        private val _maxNorm: Float = Float.MAX_VALUE,
-        private val _stepUnit: Int = 1,
-        var isFrozen: Boolean = false,
-    ) {
+    abstract class D4(private val _maxNorm: Float = Float.MAX_VALUE, private val _stepUnit: Int = 1) {
         private var acc: IOType.D4.Global? = null
         private var pending: Int = 0
         protected var step: Int = 0
@@ -153,8 +134,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
-            if (isFrozen) return weight
+        open fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -174,10 +154,10 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D4,
             dw: Batch<IOType.D4>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
-        ): IOType.D4 = if (isFrozen) weight else with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
+        ): IOType.D4 = with(scope) { adapt(weight, dw.batchAverage(), enableClip) }
     }
 }

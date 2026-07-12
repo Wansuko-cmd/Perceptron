@@ -17,7 +17,7 @@ class BiasD3(
     override val inputI: Int,
     override val inputJ: Int,
     override val inputK: Int,
-    private val optimizer: Optimizer.D3,
+    private var optimizer: Optimizer.D3,
     private var weight: IOType.D3.Global,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
@@ -37,8 +37,8 @@ class BiasD3(
         return delta
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
+    override fun update(optimizer: Optimizer) {
+        this.optimizer = optimizer.d3(i = inputI, j = inputJ, k = inputK)
     }
 }
 
