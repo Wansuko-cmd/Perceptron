@@ -363,6 +363,7 @@ class Network<I, O> @PublishedApi internal constructor(
                     else -> {
                         val next = seed(layer).block(layer).layers
                         if (next.isEmpty()) {
+                            check(layer.inputShape == layer.outputShape)
                             acc
                         } else {
                             check(layer.inputShape == next.first().inputShape)
