@@ -6,12 +6,6 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.d4
-import com.wsr.knist.core.elementwise.math.pow
-import com.wsr.knist.core.elementwise.math.sqrt
-import com.wsr.knist.core.elementwise.operation.div.div
-import com.wsr.knist.core.elementwise.operation.minus.minus
-import com.wsr.knist.core.elementwise.operation.plus.plus
-import com.wsr.knist.core.elementwise.operation.times.times
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
 import kotlin.math.pow
@@ -27,13 +21,13 @@ data class Adam(
     private val maxNorm: Float = Float.MAX_VALUE,
     private val stepUnit: Int = 1,
 ) : Optimizer {
-    override fun d1(size: Int): Optimizer.D1 = AdamD1(
+    override fun d1(i: Int): Optimizer.D1 = AdamD1(
         scheduler = scheduler,
         momentum = momentum,
         rms = rms,
         maxNorm = maxNorm,
         stepUnit = stepUnit,
-        shape = listOf(size),
+        shape = listOf(i),
     )
 
     override fun d2(i: Int, j: Int): Optimizer.D2 = AdamD2(

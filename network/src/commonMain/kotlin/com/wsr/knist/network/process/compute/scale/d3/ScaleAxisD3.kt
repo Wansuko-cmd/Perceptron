@@ -57,6 +57,6 @@ class ScaleAxisD3 internal constructor(
             1 -> inputJ
             else -> inputK
         }
-        this.optimizer = optimizer.d1(size = inputT)
+        this.optimizer = optimizer.d1(i = inputT)
     }
 }

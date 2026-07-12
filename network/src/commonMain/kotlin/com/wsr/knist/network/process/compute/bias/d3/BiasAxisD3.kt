@@ -51,6 +51,6 @@ class BiasAxisD3(
             1 -> inputJ
             else -> inputK
         }
-        this.optimizer = optimizer.d1(size = inputT)
+        this.optimizer = optimizer.d1(i = inputT)
     }
 }

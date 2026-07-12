@@ -44,6 +44,6 @@ class ScaleAxisD2 internal constructor(
 
     override fun update(optimizer: Optimizer) {
         val inputT = if (axis == 0) inputI else inputJ
-        this.optimizer = optimizer.d1(size = inputT)
+        this.optimizer = optimizer.d1(i = inputT)
     }
 }

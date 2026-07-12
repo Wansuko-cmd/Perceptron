@@ -8,7 +8,7 @@ import com.wsr.knist.core.elementwise.operation.plus.plus
 import kotlinx.serialization.Serializable
 
 interface Optimizer {
-    fun d1(size: Int): D1
+    fun d1(i: Int): D1
     fun d2(i: Int, j: Int): D2
     fun d3(i: Int, j: Int, k: Int): D3
     fun d4(i: Int, j: Int, k: Int, l: Int): D4

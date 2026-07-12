@@ -14,7 +14,7 @@ data class Sgd(
     private val maxNorm: Float = Float.MAX_VALUE,
     private val stepUnit: Int = 1,
 ) : Optimizer {
-    override fun d1(size: Int): Optimizer.D1 = SgdD1(scheduler, maxNorm, stepUnit)
+    override fun d1(i: Int): Optimizer.D1 = SgdD1(scheduler, maxNorm, stepUnit)
 
     override fun d2(i: Int, j: Int): Optimizer.D2 = SgdD2(scheduler, maxNorm, stepUnit)
 

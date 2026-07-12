@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data object Freeze : Optimizer {
-    override fun d1(size: Int): Optimizer.D1 = FreezeD1
+    override fun d1(i: Int): Optimizer.D1 = FreezeD1
 
     override fun d2(i: Int, j: Int): Optimizer.D2 = FreezeD2
 

@@ -34,7 +34,7 @@ class BiasD1 internal constructor(
     }
 
     override fun update(optimizer: Optimizer) {
-        this.optimizer = optimizer.d1(size = inputI)
+        this.optimizer = optimizer.d1(i = inputI)
     }
 }
 
