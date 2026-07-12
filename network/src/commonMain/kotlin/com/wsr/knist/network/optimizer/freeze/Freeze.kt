@@ -1,5 +1,6 @@
 package com.wsr.knist.network.optimizer.freeze
 
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.optimizer.Optimizer
@@ -19,19 +20,43 @@ data object Freeze : Optimizer {
 @Serializable
 internal data object FreezeD1 : Optimizer.D1() {
     override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean): IOType.D1 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D1, dw: Batch<IOType.D1>, enableClip: Boolean): IOType.D1 = weight
 }
 
 @Serializable
 internal data object FreezeD2 : Optimizer.D2() {
     override fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean): IOType.D2 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D2, dw: Batch<IOType.D2>, enableClip: Boolean): IOType.D2 = weight
 }
 
 @Serializable
 internal data object FreezeD3 : Optimizer.D3() {
     override fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean): IOType.D3 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D3, dw: Batch<IOType.D3>, enableClip: Boolean): IOType.D3 = weight
 }
 
 @Serializable
 internal data object FreezeD4 : Optimizer.D4() {
     override fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean): IOType.D4 = weight
+
+    context(scope: IOScope)
+    override fun adapt(weight: IOType.D4, dw: Batch<IOType.D4>, enableClip: Boolean): IOType.D4 = weight
 }

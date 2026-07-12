@@ -23,7 +23,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
+        open fun adapt(weight: IOType.D1, dw: IOType.D1, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D1 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -43,7 +43,7 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D1,
             dw: Batch<IOType.D1>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -60,7 +60,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D2, dw: IOType.D2): IOType.D2
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
+        open fun adapt(weight: IOType.D2, dw: IOType.D2, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D2 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -80,7 +80,7 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D2,
             dw: Batch<IOType.D2>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -97,7 +97,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D3, dw: IOType.D3): IOType.D3
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
+        open fun adapt(weight: IOType.D3, dw: IOType.D3, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D3 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -117,7 +117,7 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D3,
             dw: Batch<IOType.D3>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
@@ -134,7 +134,7 @@ interface Optimizer {
         protected abstract fun IOScope.adapt(weight: IOType.D4, dw: IOType.D4): IOType.D4
 
         context(scope: IOScope)
-        fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
+        open fun adapt(weight: IOType.D4, dw: IOType.D4, enableClip: Boolean = _maxNorm != Float.MAX_VALUE): IOType.D4 {
             acc = (if (acc == null) dw else acc!! + dw).toGlobal()
             if (++pending % _stepUnit != 0) return weight
 
@@ -154,7 +154,7 @@ interface Optimizer {
         }
 
         context(scope: IOScope)
-        fun adapt(
+        open fun adapt(
             weight: IOType.D4,
             dw: Batch<IOType.D4>,
             enableClip: Boolean = _maxNorm != Float.MAX_VALUE,
