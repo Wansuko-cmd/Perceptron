@@ -200,13 +200,22 @@ val lossValue: Float = loss.unwrap()
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
 |------|--------|------|------|-------------|
-| `convD1(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(i, j) | D2(filter, outJ) | stride=1, padding=0 |
-| `convD2(filter, kernel, stride?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD2` | D3(i, j, k) | D3(filter, outJ, outK) | stride=1, padding=0 |
+| `convD1(filter, kernel, stride?, dilation?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(i, j) | D2(filter, outJ) | stride=1, dilation=1, padding=0 |
+| `convD2(filter, kernel, stride?, dilation?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD2` | D3(i, j, k) | D3(filter, outJ, outK) | stride=1, dilation=1, padding=0 |
 | `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(i, j) | D2(i, outJ) | padding=0 |
 | `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(i, j, k) | D3(i, outJ, outK) | padding=0 |
 
-制約: `(size - kernel + 2 * padding) % stride == 0` でなければ実行時エラー
+conv の出力サイズ: `out = (size - kernelSize + 2 * padding) / stride + 1`（`kernelSize = (kernel - 1) * dilation + 1`。dilation=1 なら kernelSize=kernel）
+制約: `(size - kernelSize + 2 * padding) % stride == 0` であること。convD1 は違反すると実行時エラー、convD2 はエラーにならず出力サイズが黙って切り捨てられる
 制約: maxPool は `(j + 2*padding - size) % size == 0` でなければ実行時エラー（D3 は j・k 両方）
+
+### パディング
+
+| 関数 | import | 入力 | 出力 | デフォルト値 |
+|------|--------|------|------|-------------|
+| `padding(axis, left?, right?)` | `com.wsr.knist.network.process.compute.padding.padding` | D2(i, j) | axis=0: D2(i+left+right, j) / axis=1: D2(i, j+left+right) | left=0, right=0 |
+
+指定軸の前後にゼロパディングを追加する（D2 のみ。axis: 0=i方向, 1=j方向。それ以外の axis は構築時エラー）。conv の `padding` 引数が両側均等・全軸一律なのに対し、こちらは軸と左右量を個別に指定できる。逆伝播ではパディング部分の delta は切り捨てられる。
 
 ### 全結合・変換系
 
@@ -270,6 +279,7 @@ Self-attention 専用（Q・K・V はすべて同一の入力から計算され�
 | `leakyReLU()` | `com.wsr.knist.network.process.compute.function.relu.leakyReLU` |
 | `swish()` | `com.wsr.knist.network.process.compute.function.relu.swish` |
 | `sigmoid()` | `com.wsr.knist.network.process.compute.function.sigmoid.sigmoid` |
+| `tanh()` | `com.wsr.knist.network.process.compute.function.tanh.tanh` |
 | `softmax()` | `com.wsr.knist.network.process.compute.function.softmax.softmax` |
 
 同パッケージに D1/D2/D3 版が共存するため、import 1行で全次元に対応する。

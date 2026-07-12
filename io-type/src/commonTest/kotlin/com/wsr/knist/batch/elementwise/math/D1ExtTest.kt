@@ -9,6 +9,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.ioTypeTestRule
 import kotlin.math.exp
 import kotlin.math.sqrt
+import kotlin.math.tanh
 import kotlin.test.Test
 
 class D1ExtTest {
@@ -54,5 +55,16 @@ class D1ExtTest {
         val result = batch.ln()
         assertContentEquals(IOType.d1(listOf(0f, 1f)), result[0])
         assertContentEquals(IOType.d1(listOf(2f, 0f)), result[1])
+    }
+
+    @Test
+    fun `tanh=D1バッチの双曲線正接`() = ioTypeTestRule {
+        val batch = Batch.of(
+            IOType.d1(listOf(0f, 1f)),
+            IOType.d1(listOf(-1f, 2f)),
+        )
+        val result = batch.tanh()
+        assertContentEquals(IOType.d1(listOf(tanh(0f), tanh(1f))), result[0])
+        assertContentEquals(IOType.d1(listOf(tanh(-1f), tanh(2f))), result[1])
     }
 }

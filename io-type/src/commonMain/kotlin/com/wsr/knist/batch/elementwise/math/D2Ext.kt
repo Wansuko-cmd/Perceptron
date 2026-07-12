@@ -3,6 +3,8 @@
 import com.wsr.knist.Backend
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.d2
+import com.wsr.knist.batch.elementwise.operation.minus.minus
+import com.wsr.knist.batch.elementwise.operation.times.times
 import com.wsr.knist.batch.i
 import com.wsr.knist.batch.j
 import com.wsr.knist.batch.shape.toBatch
@@ -60,3 +62,7 @@ fun Batch<IOType.D2>.sqrt(@ScopeOpDefault("1e-7f") e: Float = 1e-7f): Batch<IOTy
     val result = Backend.sqrt(x = value, e = e)
     return Batch.d2(size, shape, result)
 }
+
+@JvmName("batchD2sTanh")
+@ScopeOp
+fun Batch<IOType.D2>.tanh(): Batch<IOType.D2.Global> = 2f * (this * 2f).sigmoid() - 1f
