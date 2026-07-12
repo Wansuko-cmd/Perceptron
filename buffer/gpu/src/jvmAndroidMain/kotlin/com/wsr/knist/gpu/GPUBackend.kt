@@ -1679,7 +1679,8 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val rj = (xj - window + padding * 2) / stride + 1
+        val windowSize = (window - 1) * dilation + 1
+        val rj = (xj - windowSize + padding * 2) / stride + 1
         val result = GPUJvmBuffer.create(b * xi * rj * window)
         JShape.unfoldD1(
             x = x.toGPUBuffer().ptr,
@@ -1688,6 +1689,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
             b = b,
             window = window,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.ptr,
             runtime = runtime,
@@ -1706,8 +1708,9 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val rj = (xj - window + padding * 2) / stride + 1
-        val rk = (xk - window + padding * 2) / stride + 1
+        val windowSize = (window - 1) * dilation + 1
+        val rj = (xj - windowSize + padding * 2) / stride + 1
+        val rk = (xk - windowSize + padding * 2) / stride + 1
         val result = GPUJvmBuffer.create(b * xi * rj * rk * window * window)
         JShape.unfoldD2(
             x = x.toGPUBuffer().ptr,
@@ -1717,6 +1720,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
             b = b,
             window = window,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.ptr,
             runtime = runtime,
@@ -1734,7 +1738,8 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val nj = xk + (xj - 1) * stride - padding * 2
+        val windowSize = (xk - 1) * dilation + 1
+        val nj = windowSize + (xj - 1) * stride - padding * 2
         val result = GPUJvmBuffer.create(b * xi * nj)
         JShape.foldD1(
             x = x.toGPUBuffer().ptr,
@@ -1743,6 +1748,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
             xk = xk,
             b = b,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.ptr,
             runtime = runtime,
@@ -1762,8 +1768,9 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
-        val nj = window + (xj - 1) * stride - padding * 2
-        val nk = window + (xk - 1) * stride - padding * 2
+        val windowSize = (window - 1) * dilation + 1
+        val nj = windowSize + (xj - 1) * stride - padding * 2
+        val nk = windowSize + (xk - 1) * stride - padding * 2
         val result = GPUJvmBuffer.create(b * xi * nj * nk)
         JShape.foldD2(
             x = x.toGPUBuffer().ptr,
@@ -1773,6 +1780,7 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
             xl = xl,
             b = b,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.ptr,
             runtime = runtime,
