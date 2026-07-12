@@ -600,7 +600,7 @@ val frozen2 = network.freeze { it.id == "encoder-ffn" }  // factory 関数の id
 
 ### 層の差し替え
 
-`replace<T>` で、型と条件にマッチする層を `NetworkBuilder` と同じ DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は次元によらず `replace`（`@JvmName` により JVM 上では `replaceD1` / `replaceD2` / `replaceD3` という名前になっているだけ）。新しい `Network` を返す。
+`replace<T>` で、型と条件にマッチする層を `NetworkBuilder` と同じ DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は `T` の種類によらず `replace`（`@JvmName` により JVM 上では `replaceComputeD1` / `replaceReshapeD1ToD2` のような名前になっているだけ）。新しい `Network` を返す。
 
 ```kotlin
 val newNetwork: Network<I, O> = network.replace<AffineD2>(
@@ -616,8 +616,20 @@ val newNetwork: Network<I, O> = network.replace<AffineD2>(
 
 - `condition` に一致した各層を、`block` が返す `NetworkBuilder` の `layers` で置き換える
 - 置き換え後の層列の入力形状・出力形状は、元の層の入力形状・出力形状（内部的には `Process` の `inputShape` / `outputShape`）と一致していなければならず、一致しない場合は例外になる
-- `block` が何も層を追加しない場合（元の `NetworkBuilder.Dx` をそのまま返す場合）、その層は削除されるだけになる
-- `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3` のいずれかのサブタイプである必要がある（`Reshape` 系は対象外）。`T` の次元によって D1 / D2 / D3 版のどのオーバーロードが選ばれるかが決まる
+- `block` が何も層を追加しない場合（元の `NetworkBuilder.Dx` をそのまま返す場合）、その層は削除されるだけになる。削除できるのは入力形状と出力形状が一致している層（活性化関数・`bias` 等）のみで、一致しない層（`affine` 等）を削除しようとすると例外になる
+- `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3`、または `Reshape.D1ToD2` / `D1ToD3` / `D2ToD1` / `D2ToD3` / `D3ToD1` / `D3ToD2` のいずれかのサブタイプである必要がある。`T` の次元遷移によってどのオーバーロードが選ばれるかが決まる
+
+Reshape 系の層（`tokenEmbedding` / `reshapeToDx` / `globalAverageToDx` 等）を対象にする場合、`block` は元の層と同じ次元遷移で終わる必要がある（例: `Reshape.D1ToD2` なら this は `NetworkBuilder.D1<I>`、戻り値は `NetworkBuilder.D2<I>`）。戻り値の型で強制されるため、Reshape 系では `block` を空にする（層を削除するだけにする）ことはできない。
+
+```kotlin
+// 学習済みモデルの tokenEmbedding を語彙サイズだけ変えて差し替える（語彙の転移）
+// vocabSize は出力形状 D2(i, tokenSize) に現れないため、tokenSize を保てば形状チェックを通る
+val newNetwork: Network<I, O> = network.replace<TokenEmbeddingD1ToD2>(
+    condition = { true },
+) { old ->
+    tokenEmbedding(vocabSize = 5000, tokenSize = old.outputJ)
+}
+```
 
 ### Converter の差し替え
 
