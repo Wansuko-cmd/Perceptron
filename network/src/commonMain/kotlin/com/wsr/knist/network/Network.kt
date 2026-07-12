@@ -13,6 +13,7 @@ import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Process
+import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -158,16 +159,16 @@ class Network<I, O> @PublishedApi internal constructor(
         copy.layers.forEach { layer -> layer.freeze(condition(layer)) }
     }
 
-    @JvmName("replaceD1")
+    @JvmName("replaceComputeD1")
     inline fun <reified T : Compute.D1> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D1<I>.(T) -> NetworkBuilder.D1<I>,
-    ): Network<I, O> = replace<T, NetworkBuilder.D1<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D1<I>, NetworkBuilder.D1<I>>(
         seed = { layer ->
             NetworkBuilder.D1(
-                inputI = layer.inputShape[0],
+                inputI = layer.inputI,
                 input = inputConverter,
                 layers = emptyList(),
                 optimizer = optimizer,
@@ -178,17 +179,17 @@ class Network<I, O> @PublishedApi internal constructor(
         block = block,
     )
 
-    @JvmName("replaceD2")
+    @JvmName("replaceComputeD2")
     inline fun <reified T : Compute.D2> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D2<I>.(T) -> NetworkBuilder.D2<I>,
-    ): Network<I, O> = replace<T, NetworkBuilder.D2<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D2<I>, NetworkBuilder.D2<I>>(
         seed = { layer ->
             NetworkBuilder.D2(
-                inputI = layer.inputShape[0],
-                inputJ = layer.inputShape[1],
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
                 input = inputConverter,
                 layers = emptyList(),
                 optimizer = optimizer,
@@ -199,18 +200,144 @@ class Network<I, O> @PublishedApi internal constructor(
         block = block,
     )
 
-    @JvmName("replaceD3")
+    @JvmName("replaceComputeD3")
     inline fun <reified T : Compute.D3> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: NetworkBuilder.D3<I>.(T) -> NetworkBuilder.D3<I>,
-    ): Network<I, O> = replace<T, NetworkBuilder.D3<I>>(
+    ): Network<I, O> = replace<T, NetworkBuilder.D3<I>, NetworkBuilder.D3<I>>(
         seed = { layer ->
             NetworkBuilder.D3(
-                inputI = layer.inputShape[0],
-                inputJ = layer.inputShape[1],
-                inputK = layer.inputShape[2],
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD2")
+    inline fun <reified T : Reshape.D1ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D1<I>.(T) -> NetworkBuilder.D2<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D1<I>, NetworkBuilder.D2<I>>(
+        seed = { layer ->
+            NetworkBuilder.D1(
+                inputI = layer.inputI,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD3")
+    inline fun <reified T : Reshape.D1ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D1<I>.(T) -> NetworkBuilder.D3<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D1<I>, NetworkBuilder.D3<I>>(
+        seed = { layer ->
+            NetworkBuilder.D1(
+                inputI = layer.inputI,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD1")
+    inline fun <reified T : Reshape.D2ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D2<I>.(T) -> NetworkBuilder.D1<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D2<I>, NetworkBuilder.D1<I>>(
+        seed = { layer ->
+            NetworkBuilder.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD3")
+    inline fun <reified T : Reshape.D2ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D2<I>.(T) -> NetworkBuilder.D3<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D2<I>, NetworkBuilder.D3<I>>(
+        seed = { layer ->
+            NetworkBuilder.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD1")
+    inline fun <reified T : Reshape.D3ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D3<I>.(T) -> NetworkBuilder.D1<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D3<I>, NetworkBuilder.D1<I>>(
+        seed = { layer ->
+            NetworkBuilder.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                input = inputConverter,
+                layers = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD2")
+    inline fun <reified T : Reshape.D3ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: NetworkBuilder.D3<I>.(T) -> NetworkBuilder.D2<I>,
+    ): Network<I, O> = replace<T, NetworkBuilder.D3<I>, NetworkBuilder.D2<I>>(
+        seed = { layer ->
+            NetworkBuilder.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
                 input = inputConverter,
                 layers = emptyList(),
                 optimizer = optimizer,
@@ -222,10 +349,10 @@ class Network<I, O> @PublishedApi internal constructor(
     )
 
     @PublishedApi
-    internal inline fun <reified T : Process, B : NetworkBuilder<*, *>> replace(
-        crossinline seed: (T) -> B,
+    internal inline fun <reified T : Process, B1 : NetworkBuilder<*, *>, B2 : NetworkBuilder<*, *>> replace(
+        crossinline seed: (T) -> B1,
         crossinline condition: (T) -> Boolean,
-        crossinline block: B.(T) -> B,
+        crossinline block: B1.(T) -> B2,
     ): Network<I, O> {
         val copy = clone()
         val layers = copy.layers
