@@ -65,9 +65,12 @@ class FoldTest {
     @Test
     fun `fold_dilation=2=タップの間隔を空けて復元`() = bufferTestRule {
         val x = DataBuffer.create(
-            1f, 3f,
-            2f, 4f,
-            3f, 5f,
+            1f,
+            3f,
+            2f,
+            4f,
+            3f,
+            5f,
         )
 
         val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 2, b = 1, stride = 1, dilation = 2, padding = 0)
@@ -81,9 +84,12 @@ class FoldTest {
     @Test
     fun `fold_dilation=2_padding=1=dilationとpaddingを併用`() = bufferTestRule {
         val x = DataBuffer.create(
-            1f, 2f,
-            3f, 4f,
-            5f, 6f,
+            1f,
+            2f,
+            3f,
+            4f,
+            5f,
+            6f,
         )
 
         val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 2, b = 1, stride = 1, dilation = 2, padding = 1)

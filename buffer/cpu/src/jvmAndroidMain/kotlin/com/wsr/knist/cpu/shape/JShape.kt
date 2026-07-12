@@ -119,7 +119,17 @@ object JShape {
         result: ByteBuffer,
     )
 
-    external fun foldD1(x: ByteBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, dilation: Int, padding: Int, result: ByteBuffer)
+    external fun foldD1(
+        x: ByteBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+        result: ByteBuffer,
+    )
 
     external fun foldD2(
         x: ByteBuffer,

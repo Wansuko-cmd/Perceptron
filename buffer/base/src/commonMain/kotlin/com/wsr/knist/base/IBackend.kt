@@ -476,16 +476,7 @@ interface IBackend {
         padding: Int,
     ): DataBuffer
 
-    fun fold(
-        x: DataBuffer,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        b: Int,
-        stride: Int,
-        dilation: Int,
-        padding: Int,
-    ): DataBuffer
+    fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, dilation: Int, padding: Int): DataBuffer
     fun fold(
         x: DataBuffer,
         xi: Int,
