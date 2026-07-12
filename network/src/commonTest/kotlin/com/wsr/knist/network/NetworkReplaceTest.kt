@@ -7,7 +7,6 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
-import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.converter.raw.RawD3
@@ -15,6 +14,7 @@ import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.freeze.Freeze
 import com.wsr.knist.network.optimizer.sgd.Sgd
+import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.output.mean.meanSquare
 import com.wsr.knist.network.process.compute.affine.AffineD1
 import com.wsr.knist.network.process.compute.affine.AffineD2
@@ -273,9 +273,7 @@ class NetworkReplaceTest {
     @Test
     fun `replace_OutputD1=出力層を組み直せる`() = networkTestRule {
         val original = createD1Network()
-        val block: NetworkBuilder.D1<Batch<IOType.D1>>.(Converter<Batch<IOType.D1>>) -> Network<Batch<IOType.D1>, Batch<IOType.D1>> =
-            { meanSquare() }
-        val replaced = original.replace(block = block)
+        val replaced = original.replace<Output.D1> { meanSquare() }
 
         runTest {
             assertSameOutput(expected = original.expect(inputD1), actual = replaced.expect(inputD1))
@@ -285,12 +283,17 @@ class NetworkReplaceTest {
     @Test
     fun `replace_OutputD2=出力層を組み直せる`() = networkTestRule {
         val original = createD2Network()
-        val block: NetworkBuilder.D2<Batch<IOType.D2>>.(Converter<Batch<IOType.D2>>) -> Network<Batch<IOType.D2>, Batch<IOType.D2>> =
-            { meanSquare() }
-        val replaced = original.replace(block = block)
+        val replaced = original.replace<Output.D2> { meanSquare() }
 
         runTest {
             assertSameOutput(expected = original.expect(inputD2), actual = replaced.expect(inputD2))
+        }
+    }
+
+    @Test
+    fun `replace_Output=最終層の形状と合わない型パラメータは例外`() = networkTestRule {
+        assertFailsWith<IllegalStateException> {
+            createD1Network().replace<Output.D2> { reshapeToD1().meanSquare() }
         }
     }
 

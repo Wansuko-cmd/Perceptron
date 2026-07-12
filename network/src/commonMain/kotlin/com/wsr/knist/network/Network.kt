@@ -409,28 +409,30 @@ class Network<I, O> @PublishedApi internal constructor(
     }
 
     @JvmName("replaceOutputD1")
-    fun <O2> replace(
+    fun <T : Output.D1> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
-        block: NetworkBuilder.D1<I>.(Converter<O>) -> Network<I, O2>,
-    ): Network<I, O2> {
+        block: NetworkBuilder.D1<I>.(Converter.D1<O>) -> Network<I, O>,
+    ): Network<I, O> {
         val copy = clone()
+        check(copy.layers.last().outputShape.size == 1)
         return NetworkBuilder.D1(
             inputI = copy.layers.last().outputShape[0],
             input = copy.inputConverter,
             layers = copy.layers,
             optimizer = optimizer,
             initializer = initializer,
-        ).block(copy.outputConverter)
+        ).block(copy.outputConverter as Converter.D1<O>)
     }
 
     @JvmName("replaceOutputD2")
-    fun <O2> replace(
+    fun <T : Output.D2> replace(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
-        block: NetworkBuilder.D2<I>.(Converter<O>) -> Network<I, O2>,
-    ): Network<I, O2> {
+        block: NetworkBuilder.D2<I>.(Converter.D2<O>) -> Network<I, O>,
+    ): Network<I, O> {
         val copy = clone()
+        check(copy.layers.last().outputShape.size == 2)
         return NetworkBuilder.D2(
             inputI = copy.layers.last().outputShape[0],
             inputJ = copy.layers.last().outputShape[1],
@@ -438,7 +440,7 @@ class Network<I, O> @PublishedApi internal constructor(
             layers = copy.layers,
             optimizer = optimizer,
             initializer = initializer,
-        ).block(copy.outputConverter)
+        ).block(copy.outputConverter as Converter.D2<O>)
     }
 
     fun toJson(): String = NetworkSerializer.encodeToString(this)
