@@ -44,12 +44,8 @@ class PaddingD2 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.padding(
-    axis: Int,
-    left: Int = 0,
-    right: Int = 0,
-    id: String = Uuid.random().toString(),
-) = addCompute(
+fun <T> NetworkBuilder.D2<T>.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
+    addCompute(
         compute = PaddingD2(
             axis = axis,
             left = left,
