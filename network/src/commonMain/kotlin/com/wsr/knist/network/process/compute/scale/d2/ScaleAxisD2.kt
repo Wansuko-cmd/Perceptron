@@ -42,10 +42,6 @@ class ScaleAxisD2 internal constructor(
         return dx
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         val inputT = if (axis == 0) inputI else inputJ
         this.optimizer = optimizer.d1(size = inputT)

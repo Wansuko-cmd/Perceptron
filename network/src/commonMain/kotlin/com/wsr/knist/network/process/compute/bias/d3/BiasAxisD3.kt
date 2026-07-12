@@ -45,10 +45,6 @@ class BiasAxisD3(
         return delta
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         val inputT = when (axis) {
             0 -> inputI

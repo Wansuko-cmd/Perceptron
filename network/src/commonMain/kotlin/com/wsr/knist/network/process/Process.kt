@@ -20,7 +20,5 @@ sealed interface Process {
         calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
     ): Batch<IOType>
 
-    fun freeze(isFrozen: Boolean) {}
-
     fun update(optimizer: Optimizer) {}
 }

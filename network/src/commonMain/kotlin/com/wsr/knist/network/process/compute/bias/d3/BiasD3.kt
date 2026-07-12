@@ -37,10 +37,6 @@ class BiasD3(
         return delta
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d3(i = inputI, j = inputJ, k = inputK)
     }

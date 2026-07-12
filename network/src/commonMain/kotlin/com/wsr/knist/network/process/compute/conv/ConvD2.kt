@@ -89,10 +89,6 @@ class ConvD2 internal constructor(
         return dx
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d4(i = filter, j = inputI, k = kernel, l = kernel)
     }

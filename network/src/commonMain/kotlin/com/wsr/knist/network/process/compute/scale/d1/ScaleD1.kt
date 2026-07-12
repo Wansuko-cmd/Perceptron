@@ -39,10 +39,6 @@ class ScaleD1 internal constructor(
         return dx
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d1(size = inputI)
     }

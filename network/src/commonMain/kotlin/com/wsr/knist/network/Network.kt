@@ -155,10 +155,6 @@ class Network<I, O> @PublishedApi internal constructor(
         }
     }
 
-    fun freeze(condition: (Process) -> Boolean): Network<I, O> = clone().also { copy ->
-        copy.layers.forEach { layer -> layer.freeze(condition(layer)) }
-    }
-
     @JvmName("replaceOptimizer")
     fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): Network<I, O> = clone().also { copy ->
         copy.layers.forEach { layer -> if (condition(layer)) layer.update(optimizer) }

@@ -51,10 +51,6 @@ class ScaleAxisD3 internal constructor(
         return dx
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         val inputT = when (axis) {
             0 -> inputI

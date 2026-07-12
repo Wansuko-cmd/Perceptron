@@ -69,10 +69,6 @@ class SkipD3 internal constructor(
         return mainDelta + skipDelta!!
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        layers.forEach { it.freeze(isFrozen) }
-    }
-
     override fun update(optimizer: Optimizer) {
         layers.forEach { it.update(optimizer) }
     }

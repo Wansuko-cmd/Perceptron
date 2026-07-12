@@ -140,13 +140,6 @@ class AttentionD2 internal constructor(
         return dxq + dxk + dxv
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizerQ.isFrozen = isFrozen
-        optimizerK.isFrozen = isFrozen
-        optimizerV.isFrozen = isFrozen
-        optimizerO.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         optimizerQ = optimizer.d2(i = inputJ, j = numOfHeads * dim)
         optimizerK = optimizer.d2(i = inputJ, j = numOfHeads * dim)

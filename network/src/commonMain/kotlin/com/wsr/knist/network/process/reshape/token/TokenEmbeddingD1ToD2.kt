@@ -41,10 +41,6 @@ class TokenEmbeddingD1ToD2 internal constructor(
         return Batch.d1(input.size, input.shape)
     }
 
-    override fun freeze(isFrozen: Boolean) {
-        optimizer.isFrozen = isFrozen
-    }
-
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d2(i = vocabSize, j = outputJ)
     }
