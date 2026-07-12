@@ -23,6 +23,7 @@ class ConvD1Test {
             channel = 3,
             kernel = 2,
             stride = 1,
+            dilation = 1,
             padding = 0,
             inputSize = 4,
             optimizer = Sgd(Scheduler.Fix(0.01f)).d3(i = 2, j = 3, k = 2),

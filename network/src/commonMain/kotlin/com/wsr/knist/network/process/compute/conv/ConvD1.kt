@@ -23,6 +23,7 @@ class ConvD1 internal constructor(
     private val channel: Int,
     private val kernel: Int,
     private val stride: Int,
+    private val dilation: Int,
     private val padding: Int,
     private val inputSize: Int,
     private var optimizer: Optimizer.D3,
@@ -33,24 +34,26 @@ class ConvD1 internal constructor(
     override val inputJ: Int = inputSize
 
     override val outputI: Int = filter
-    override val outputJ: Int = (inputSize - kernel + 2 * padding) / stride + 1
+    private val kernelSize = (kernel - 1) * dilation + 1
+    override val outputJ: Int = (inputSize - kernelSize + 2 * padding) / stride + 1
 
     init {
-        check((inputSize - kernel + 2 * padding) % stride == 0) {
-            val output = (inputSize - kernel + 2 * padding) / stride.toFloat() + 1.0
+        check((inputSize - kernelSize + 2 * padding) % stride == 0) {
+            val output = (inputSize - kernelSize + 2 * padding) / stride.toFloat() + 1.0
             """
             invalid parameter.
             inputSize: $inputSize
             kernel: $kernel
             padding: $padding
             stride: $stride
-            output: (inputSize - kernel + 2 * padding) % stride + 1 = $output
+            dilation: $dilation
+            output: $output
             """.trimIndent()
         }
     }
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
-        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold(window = kernel, stride = stride, dilation = dilation, padding = padding)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
             .reshapeToD2(i = kernel * channel, j = outputJ * input.size)
@@ -65,7 +68,7 @@ class ConvD1 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val col = input.unfold(windowSize = kernel, stride = stride, padding = padding)
+        val col = input.unfold(window = kernel, stride = stride, dilation = dilation, padding = padding)
             .toD4()
             .transpose(axisI = 1, axisJ = 3, axisK = 0, axisL = 2)
             .reshapeToD2(i = kernel * channel, j = outputJ * input.size)
@@ -87,7 +90,7 @@ class ConvD1 internal constructor(
             .reshapeToD4(i = channel, j = kernel, k = input.size, l = outputJ)
             .transpose(axisI = 2, axisJ = 0, axisK = 3, axisL = 1)
             .toBatch()
-            .fold(stride = stride, padding = padding)
+            .fold(stride = stride, dilation = dilation, padding = padding)
 
         val dw = deltaCol.matMul(col.transpose())
             .reshapeToD3(i = filter, j = channel, k = kernel)
@@ -105,6 +108,7 @@ fun <T> NetworkBuilder.D2<T>.convD1(
     filter: Int,
     kernel: Int,
     stride: Int = 1,
+    dilation: Int = 1,
     padding: Int = 0,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
@@ -116,6 +120,7 @@ fun <T> NetworkBuilder.D2<T>.convD1(
             channel = inputI,
             kernel = kernel,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             inputSize = inputJ,
             optimizer = optimizer.d3(filter, inputI, kernel),
