@@ -1191,14 +1191,24 @@ object KotlinBackend : IBackend {
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = (xj - window + padding * 2) / stride + 1
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj - windowSize + padding * 2) / stride + 1
         val result = DataBufferGenerator.create(b * xi * oj * window)
         for (xb in 0 until b) {
             for (i in 0 until xi) {
                 for (j in 0 until oj) {
                     for (w in 0 until window) {
-                        val index = j * stride + w - padding
+                        val index = j * stride + w * dilation - padding
                         if (index in 0 until xj) {
                             val resultIndex = ((xb * xi + i) * oj + j) * window + w
                             val xIndex = (xb * xi + i) * xj + index
@@ -1219,10 +1229,12 @@ object KotlinBackend : IBackend {
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val oj = (xj - window + padding * 2) / stride + 1
-        val ok = (xk - window + padding * 2) / stride + 1
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj - windowSize + padding * 2) / stride + 1
+        val ok = (xk - windowSize + padding * 2) / stride + 1
         val ww = window * window
         val result = DataBufferGenerator.create(b * xi * oj * ok * ww)
         for (xb in 0 until b) {
@@ -1231,8 +1243,8 @@ object KotlinBackend : IBackend {
                     for (oy in 0 until ok) {
                         for (wy in 0 until window) {
                             for (wx in 0 until window) {
-                                val inputI = ox * stride + wx - padding
-                                val inputJ = oy * stride + wy - padding
+                                val inputI = ox * stride + wx * dilation - padding
+                                val inputJ = oy * stride + wy * dilation - padding
                                 if (inputI in 0 until xj && inputJ in 0 until xk) {
                                     val resultIndex = (((xb * xi + i) * oj + ox) * ok + oy) * ww + wy * window + wx
                                     val xIndex = ((xb * xi + i) * xj + inputI) * xk + inputJ
@@ -1247,14 +1259,24 @@ object KotlinBackend : IBackend {
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = xk + (xj - 1) * stride - padding * 2
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (xk - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
         val result = DataBufferGenerator.create(b * xi * oj)
         for (xb in 0 until b) {
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     for (k in 0 until xk) {
-                        val index = j * stride + k - padding
+                        val index = j * stride + k * dilation - padding
                         if (index in 0 until oj) {
                             val xIndex = ((xb * xi + i) * xj + j) * xk + k
                             val resultIndex = (xb * xi + i) * oj + index
@@ -1275,11 +1297,13 @@ object KotlinBackend : IBackend {
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
-        val oj = window + (xj - 1) * stride - padding * 2
-        val ok = window + (xk - 1) * stride - padding * 2
+        val windowSize = (window - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
+        val ok = windowSize + (xk - 1) * stride - padding * 2
         val result = DataBufferGenerator.create(b * xi * oj * ok)
         for (xb in 0 until b) {
             for (i in 0 until xi) {
@@ -1287,8 +1311,8 @@ object KotlinBackend : IBackend {
                     for (oy in 0 until xk) {
                         for (wy in 0 until window) {
                             for (wx in 0 until window) {
-                                val inputI = ox * stride + wx - padding
-                                val inputJ = oy * stride + wy - padding
+                                val inputI = ox * stride + wx * dilation - padding
+                                val inputJ = oy * stride + wy * dilation - padding
                                 if (inputI in 0 until oj && inputJ in 0 until ok) {
                                     val xIndex = (((xb * xi + i) * xj + ox) * xk + oy) * xl + wy * window + wx
                                     val resultIndex = ((xb * xi + i) * oj + inputI) * ok + inputJ

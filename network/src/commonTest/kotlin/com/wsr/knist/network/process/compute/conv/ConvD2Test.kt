@@ -21,6 +21,7 @@ class ConvD2Test {
             channel = 2,
             kernel = 2,
             stride = 1,
+            dilation = 1,
             padding = 0,
             height = 3,
             width = 3,

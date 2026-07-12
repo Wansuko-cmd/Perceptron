@@ -1815,8 +1815,18 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         return result
     }
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = (xj + padding * 2 - window) / stride + 1
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj + padding * 2 - windowSize) / stride + 1
         val result = CPUNativeBuffer.create(b * xi * oj * window)
         com_wsr_cpu_unfold_d1(
             x = x.toCPUBuffer().buffer,
@@ -1825,6 +1835,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             b = b,
             window = window,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.buffer,
         )
@@ -1839,10 +1850,12 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val oj = (xj + padding * 2 - window) / stride + 1
-        val ok = (xk + padding * 2 - window) / stride + 1
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj + padding * 2 - windowSize) / stride + 1
+        val ok = (xk + padding * 2 - windowSize) / stride + 1
         val ww = window * window
         val result = CPUNativeBuffer.create(b * xi * oj * ok * ww)
         com_wsr_cpu_unfold_d2(
@@ -1853,14 +1866,25 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             b = b,
             window = window,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.buffer,
         )
         return result
     }
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = xk + (xj - 1) * stride - padding * 2
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (xk - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
         val result = CPUNativeBuffer.create(b * xi * oj)
         com_wsr_cpu_fold_d1(
             x = x.toCPUBuffer().buffer,
@@ -1869,6 +1893,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             xk = xk,
             b = b,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.buffer,
         )
@@ -1883,11 +1908,13 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
-        val oj = window + (xj - 1) * stride - padding * 2
-        val ok = window + (xk - 1) * stride - padding * 2
+        val windowSize = (window - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
+        val ok = windowSize + (xk - 1) * stride - padding * 2
         val result = CPUNativeBuffer.create(b * xi * oj * ok)
         com_wsr_cpu_fold_d2(
             x = x.toCPUBuffer().buffer,
@@ -1897,6 +1924,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             xl = xl,
             b = b,
             stride = stride,
+            dilation = dilation,
             padding = padding,
             result = result.buffer,
         )

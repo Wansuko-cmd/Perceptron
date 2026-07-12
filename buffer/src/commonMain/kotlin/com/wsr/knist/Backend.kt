@@ -536,8 +536,16 @@ object Backend : IBackend {
     override fun where(condition: DataBuffer, x: DataBuffer, y: DataBuffer): DataBuffer =
         instance.where(condition, x, y)
 
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer =
-        instance.unfold(x, xi, xj, b, window, stride, padding)
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer = instance.unfold(x, xi, xj, b, window, stride, dilation, padding)
 
     override fun unfold(
         x: DataBuffer,
@@ -547,11 +555,20 @@ object Backend : IBackend {
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.unfold(x, xi, xj, xk, b, window, stride, padding)
+    ): DataBuffer = instance.unfold(x, xi, xj, xk, b, window, stride, dilation, padding)
 
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer =
-        instance.fold(x, xi, xj, xk, b, stride, padding)
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer = instance.fold(x, xi, xj, xk, b, stride, dilation, padding)
 
     override fun fold(
         x: DataBuffer,
@@ -561,8 +578,9 @@ object Backend : IBackend {
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.fold(x, xi, xj, xk, xl, b, stride, padding)
+    ): DataBuffer = instance.fold(x, xi, xj, xk, xl, b, stride, dilation, padding)
 
     override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
         instance.flip(x, xi, xj, xk, axis)

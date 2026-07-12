@@ -6,7 +6,11 @@ struct Params {
     b: u32,
     window: u32,
     stride: u32,
+    dilation: u32,
     padding: u32,
+    _pad1: u32,
+    _pad2: u32,
+    _pad3: u32,
 }
 
 @group(0) @binding(0) var<storage, read> x: array<f32>;
@@ -29,13 +33,14 @@ fn fold_d2(@builtin(global_invocation_id) id: vec3<u32>, @builtin(num_workgroups
 
     let rb = params.b;
     let ri = params.xi;
-    let rj = params.window + (params.xj - 1) * params.stride - params.padding * 2;
-    let rk = params.window + (params.xk - 1) * params.stride - params.padding * 2;
+    let window_size = (params.window - 1) * params.dilation + 1;
+    let rj = window_size + (params.xj - 1) * params.stride - params.padding * 2;
+    let rk = window_size + (params.xk - 1) * params.stride - params.padding * 2;
 
     let nb = ob;
     let ni = oi;
-    let nj = oj * params.stride + (ol % params.window) - params.padding;
-    let nk = ok * params.stride + (ol / params.window) - params.padding;
+    let nj = oj * params.stride + (ol % params.window) * params.dilation - params.padding;
+    let nk = ok * params.stride + (ol / params.window) * params.dilation - params.padding;
     if (nj < rj && nk < rk) {
         let result_index = ((nb * ri + ni) * rj + nj) * rk + nk;
         atomicAdd(result_index, x[x_index]);

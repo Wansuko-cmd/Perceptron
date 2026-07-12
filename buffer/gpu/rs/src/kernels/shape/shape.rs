@@ -977,9 +977,9 @@ struct UnfoldD1Params {
     b: u32,
     window: u32,
     stride: u32,
+    dilation: u32,
     padding: u32,
-    _pad1: u32,
-    _pad2: u32,
+    _pad: u32,
 }
 
 impl Shape {
@@ -987,7 +987,7 @@ impl Shape {
         &'a self,
         x: &GPUBuffer,
         xi: usize, xj: usize, b: usize,
-        window: usize, stride: usize, padding: usize,
+        window: usize, stride: usize, dilation: usize, padding: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "unfold_d1";
@@ -997,10 +997,10 @@ impl Shape {
             xj: xj as u32,
             b: b as u32,
             window: window as u32,
-            padding: padding as u32,
             stride: stride as u32,
-            _pad1: 0u32,
-            _pad2: 0u32,
+            dilation: dilation as u32,
+            padding: padding as u32,
+            _pad: 0u32,
         };
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -1039,8 +1039,8 @@ struct UnfoldD2Params {
     b: u32,
     window: u32,
     stride: u32,
+    dilation: u32,
     padding: u32,
-    _pad: u32,
 }
 
 impl Shape {
@@ -1048,7 +1048,7 @@ impl Shape {
         &'a self,
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize, b: usize,
-        window: usize, stride: usize, padding: usize,
+        window: usize, stride: usize, dilation: usize, padding: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "unfold_d2";
@@ -1059,9 +1059,9 @@ impl Shape {
             xk: xk as u32,
             b: b as u32,
             window: window as u32,
-            padding: padding as u32,
             stride: stride as u32,
-            _pad: 0u32,
+            dilation: dilation as u32,
+            padding: padding as u32,
         };
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -1099,9 +1099,9 @@ struct FoldD1Params {
     xk: u32,
     b: u32,
     stride: u32,
+    dilation: u32,
     padding: u32,
-    _pad1: u32,
-    _pad2: u32,
+    _pad: u32,
 }
 
 impl Shape {
@@ -1109,7 +1109,7 @@ impl Shape {
         &'a self,
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize, b: usize,
-        stride: usize, padding: usize,
+        stride: usize, dilation: usize, padding: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "fold_d1";
@@ -1119,10 +1119,10 @@ impl Shape {
             xj: xj as u32,
             xk: xk as u32,
             b: b as u32,
-            padding: padding as u32,
             stride: stride as u32,
-            _pad1: 0u32,
-            _pad2: 0u32,
+            dilation: dilation as u32,
+            padding: padding as u32,
+            _pad: 0u32,
         };
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -1162,7 +1162,11 @@ struct FoldD2Params {
     b: u32,
     window: u32,
     stride: u32,
+    dilation: u32,
     padding: u32,
+    _pad1: u32,
+    _pad2: u32,
+    _pad3: u32,
 }
 
 impl Shape {
@@ -1170,7 +1174,7 @@ impl Shape {
         &'a self,
         x: &GPUBuffer,
         xi: usize, xj: usize, xk: usize, xl: usize, b: usize,
-        stride: usize, padding: usize,
+        stride: usize, dilation: usize, padding: usize,
         result: &GPUBuffer,
     ) -> ComputeTask<'a> {
         let label = "fold_d2";
@@ -1182,8 +1186,12 @@ impl Shape {
             xl: xl as u32,
             b: b as u32,
             window: xl.isqrt() as u32,
-            padding: padding as u32,
             stride: stride as u32,
+            dilation: dilation as u32,
+            padding: padding as u32,
+            _pad1: 0u32,
+            _pad2: 0u32,
+            _pad3: 0u32,
         };
 
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {

@@ -1481,17 +1481,53 @@ class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
         x: DataBuffer,
         xi: Int,
         xj: Int,
+        b: Int,
+        window: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj + padding * 2 - windowSize) / stride + 1
+        val result = CPUJvmBuffer.create(b * xi * oj * window)
+        JShape.unfoldD1(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, dilation, padding, result.byteBuffer)
+        return result
+    }
+
+    override fun unfold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
         xk: Int,
         b: Int,
         window: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
-        val oj = (xj + padding * 2 - window) / stride + 1
-        val ok = (xk + padding * 2 - window) / stride + 1
+        val windowSize = (window - 1) * dilation + 1
+        val oj = (xj + padding * 2 - windowSize) / stride + 1
+        val ok = (xk + padding * 2 - windowSize) / stride + 1
         val ww = window * window
         val result = CPUJvmBuffer.create(b * xi * oj * ok * ww)
-        JShape.unfoldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, window, stride, padding, result.byteBuffer)
+        JShape.unfoldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, window, stride, dilation, padding, result.byteBuffer)
+        return result
+    }
+
+    override fun fold(
+        x: DataBuffer,
+        xi: Int,
+        xj: Int,
+        xk: Int,
+        b: Int,
+        stride: Int,
+        dilation: Int,
+        padding: Int,
+    ): DataBuffer {
+        val windowSize = (xk - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
+        val result = CPUJvmBuffer.create(b * xi * oj)
+        JShape.foldD1(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, dilation, padding, result.byteBuffer)
         return result
     }
 
@@ -1503,27 +1539,15 @@ class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
         xl: Int,
         b: Int,
         stride: Int,
+        dilation: Int,
         padding: Int,
     ): DataBuffer {
         val window = kotlin.math.sqrt(xl.toDouble()).toInt()
-        val oj = window + (xj - 1) * stride - padding * 2
-        val ok = window + (xk - 1) * stride - padding * 2
+        val windowSize = (window - 1) * dilation + 1
+        val oj = windowSize + (xj - 1) * stride - padding * 2
+        val ok = windowSize + (xk - 1) * stride - padding * 2
         val result = CPUJvmBuffer.create(b * xi * oj * ok)
-        JShape.foldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, b, stride, padding, result.byteBuffer)
-        return result
-    }
-
-    override fun unfold(x: DataBuffer, xi: Int, xj: Int, b: Int, window: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = (xj + padding * 2 - window) / stride + 1
-        val result = CPUJvmBuffer.create(b * xi * oj * window)
-        JShape.unfoldD1(x.toCPUBuffer().byteBuffer, xi, xj, b, window, stride, padding, result.byteBuffer)
-        return result
-    }
-
-    override fun fold(x: DataBuffer, xi: Int, xj: Int, xk: Int, b: Int, stride: Int, padding: Int): DataBuffer {
-        val oj = xk + (xj - 1) * stride - padding * 2
-        val result = CPUJvmBuffer.create(b * xi * oj)
-        JShape.foldD1(x.toCPUBuffer().byteBuffer, xi, xj, xk, b, stride, padding, result.byteBuffer)
+        JShape.foldD2(x.toCPUBuffer().byteBuffer, xi, xj, xk, xl, b, stride, dilation, padding, result.byteBuffer)
         return result
     }
 

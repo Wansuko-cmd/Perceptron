@@ -18,7 +18,7 @@ class FoldTest {
             3f, 4f, 5f,
         )
 
-        val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 3, b = 1, stride = 1, padding = 0)
+        val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 3, b = 1, stride = 1, dilation = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(1f, 4f, 9f, 8f, 5f),
@@ -35,7 +35,7 @@ class FoldTest {
             3f, 4f, 0f,
         )
 
-        val actual = Backend.fold(x = x, xi = 1, xj = 4, xk = 3, b = 1, stride = 1, padding = 1)
+        val actual = Backend.fold(x = x, xi = 1, xj = 4, xk = 3, b = 1, stride = 1, dilation = 1, padding = 1)
 
         assertContentEquals(
             expected = DataBuffer.create(2f, 6f, 9f, 8f),
@@ -54,10 +54,48 @@ class FoldTest {
             5f,
         )
 
-        val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 3, b = 1, stride = 2, padding = 0)
+        val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 3, b = 1, stride = 2, dilation = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(1f, 2f, 6f, 4f, 5f),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `fold_dilation=2=タップの間隔を空けて復元`() = bufferTestRule {
+        val x = DataBuffer.create(
+            1f,
+            3f,
+            2f,
+            4f,
+            3f,
+            5f,
+        )
+
+        val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 2, b = 1, stride = 1, dilation = 2, padding = 0)
+
+        assertContentEquals(
+            expected = DataBuffer.create(1f, 2f, 6f, 4f, 5f),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun `fold_dilation=2_padding=1=dilationとpaddingを併用`() = bufferTestRule {
+        val x = DataBuffer.create(
+            1f,
+            2f,
+            3f,
+            4f,
+            5f,
+            6f,
+        )
+
+        val actual = Backend.fold(x = x, xi = 1, xj = 3, xk = 2, b = 1, stride = 1, dilation = 2, padding = 1)
+
+        assertContentEquals(
+            expected = DataBuffer.create(3f, 7f, 4f),
             actual = actual,
         )
     }
@@ -75,7 +113,7 @@ class FoldTest {
             6f,
         )
 
-        val actual = Backend.fold(x = x, xi = 2, xj = 2, xk = 2, b = 1, stride = 1, padding = 0)
+        val actual = Backend.fold(x = x, xi = 2, xj = 2, xk = 2, b = 1, stride = 1, dilation = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(
@@ -103,7 +141,7 @@ class FoldTest {
             6f,
         )
 
-        val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 2, b = 2, stride = 1, padding = 0)
+        val actual = Backend.fold(x = x, xi = 1, xj = 2, xk = 2, b = 2, stride = 1, dilation = 1, padding = 0)
 
         assertContentEquals(
             expected = DataBuffer.create(
@@ -152,7 +190,7 @@ class FoldTest {
             23f, 24f, 0f,
         )
 
-        val actual = Backend.fold(x = x, xi = 3, xj = 4, xk = 3, b = 2, stride = 1, padding = 1)
+        val actual = Backend.fold(x = x, xi = 3, xj = 4, xk = 3, b = 2, stride = 1, dilation = 1, padding = 1)
 
         assertContentEquals(
             expected = DataBuffer.create(

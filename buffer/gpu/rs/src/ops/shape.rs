@@ -131,26 +131,26 @@ pub fn flip_d3(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, resu
     runtime.dispatch(task);
 }
 
-pub fn unfold_d1(x: &GPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+pub fn unfold_d1(x: &GPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
     let _t = runtime.cpu_profiler.start();
-    let task = runtime.kernels.shape.unfold_d1(x, xi, xj, b, window, stride, padding, result);
+    let task = runtime.kernels.shape.unfold_d1(x, xi, xj, b, window, stride, dilation, padding, result);
     runtime.dispatch(task);
 }
 
-pub fn unfold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, window: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+pub fn unfold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
     let _t = runtime.cpu_profiler.start();
-    let task = runtime.kernels.shape.unfold_d2(x, xi, xj, xk, b, window, stride, padding, result);
+    let task = runtime.kernels.shape.unfold_d2(x, xi, xj, xk, b, window, stride, dilation, padding, result);
     runtime.dispatch(task);
 }
 
-pub fn fold_d1(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+pub fn fold_d1(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, dilation: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
     let _t = runtime.cpu_profiler.start();
-    let task = runtime.kernels.shape.fold_d1(x, xi, xj, xk, b, stride, padding, result);
+    let task = runtime.kernels.shape.fold_d1(x, xi, xj, xk, b, stride, dilation, padding, result);
     runtime.dispatch(task);
 }
 
-pub fn fold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize, b: usize, stride: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
+pub fn fold_d2(x: &GPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize, b: usize, stride: usize, dilation: usize, padding: usize, result: &GPUBuffer, runtime: &mut Runtime) {
     let _t = runtime.cpu_profiler.start();
-    let task = runtime.kernels.shape.fold_d2(x, xi, xj, xk, xl, b, stride, padding, result);
+    let task = runtime.kernels.shape.fold_d2(x, xi, xj, xk, xl, b, stride, dilation, padding, result);
     runtime.dispatch(task);
 }

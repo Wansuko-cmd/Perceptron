@@ -36,8 +36,9 @@ class MaxPoolD2 internal constructor(
     }
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
-        windowSize = poolSize,
+        window = poolSize,
         stride = poolSize,
+        dilation = 1,
         padding = padding,
     )
         .max(axis = 2)
@@ -47,14 +48,14 @@ class MaxPoolD2 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val unfold = input.unfold(windowSize = poolSize, stride = poolSize, padding = padding)
+        val unfold = input.unfold(window = poolSize, stride = poolSize, dilation = 1, padding = padding)
         val output = unfold.max(axis = 2)
         val delta = calcDelta(output)
         return where(
             condition = unfold eq output.broadcastToD3(axis = 2, size = poolSize),
             onTrue = delta.broadcastToD3(axis = 2, size = poolSize),
             onFalse = 0f,
-        ).fold(stride = poolSize, padding = padding)
+        ).fold(stride = poolSize, dilation = 1, padding = padding)
     }
 }
 

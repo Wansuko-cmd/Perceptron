@@ -13,7 +13,8 @@ import com.wsr.knist.scope.ScopeOp
 import kotlin.math.sqrt
 
 @ScopeOp
-fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<IOType.D4.Global> {
+fun Batch<IOType.D3>.unfold(window: Int, stride: Int, dilation: Int, padding: Int): Batch<IOType.D4.Global> {
+    val windowSize = (window - 1) * dilation + 1
     val oj = (j - windowSize + padding * 2) / stride + 1
     val ok = (k - windowSize + padding * 2) / stride + 1
     val result = Backend.unfold(
@@ -22,15 +23,16 @@ fun Batch<IOType.D3>.unfold(windowSize: Int, stride: Int, padding: Int): Batch<I
         xj = j,
         xk = k,
         b = size,
-        window = windowSize,
+        window = window,
         stride = stride,
+        dilation = dilation,
         padding = padding,
     )
-    return Batch.d4(size, i, oj, ok, windowSize * windowSize, result)
+    return Batch.d4(size = size, i = i, j = oj, k = ok, l = window * window, value = result)
 }
 
 @ScopeOp
-fun Batch<IOType.D4>.fold(stride: Int, padding: Int): Batch<IOType.D3.Global> {
+fun Batch<IOType.D4>.fold(stride: Int, dilation: Int, padding: Int): Batch<IOType.D3.Global> {
     val window = sqrt(l.toDouble()).toInt()
     val result = Backend.fold(
         x = value,
@@ -40,13 +42,15 @@ fun Batch<IOType.D4>.fold(stride: Int, padding: Int): Batch<IOType.D3.Global> {
         xl = l,
         b = size,
         stride = stride,
+        dilation = dilation,
         padding = padding,
     )
+    val windowSize = (window - 1) * dilation + 1
     return Batch.d3(
-        size,
-        i,
-        window + (j - 1) * stride - padding * 2,
-        window + (k - 1) * stride - padding * 2,
-        result,
+        size = size,
+        i = i,
+        j = windowSize + (j - 1) * stride - padding * 2,
+        k = windowSize + (k - 1) * stride - padding * 2,
+        value = result,
     )
 }

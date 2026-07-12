@@ -249,13 +249,14 @@ fn create_indices(start: usize, end: usize, step: isize) -> Vec<usize> {
     }
 }
 
-pub fn unfold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, b: usize, window: usize, stride: usize, padding: usize) {
-    let oj = (xj + padding * 2 - window) / stride + 1;
+pub fn unfold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize) {
+    let window_size = (window - 1) * dilation + 1;
+    let oj = (xj + padding * 2 - window_size) / stride + 1;
     for xb in 0..b {
         for i in 0..xi {
             for j in 0..oj {
                 for w in 0..window {
-                    let index = j * stride + w;
+                    let index = j * stride + w * dilation;
                     if padding <= index && index < xj + padding {
                         let index = index - padding;
                         let result_index = ((xb * xi + i) * oj + j) * window + w;
@@ -273,10 +274,11 @@ pub fn unfold_d2(
     result: &mut [f32],
     xi: usize, xj: usize, xk: usize,
     b: usize,
-    window: usize, stride: usize, padding: usize,
+    window: usize, stride: usize, dilation: usize, padding: usize,
 ) {
-    let oj = (xj + padding * 2 - window) / stride + 1;
-    let ok = (xk + padding * 2 - window) / stride + 1;
+    let window_size = (window - 1) * dilation + 1;
+    let oj = (xj + padding * 2 - window_size) / stride + 1;
+    let ok = (xk + padding * 2 - window_size) / stride + 1;
     let ww = window * window;
     for xb in 0..b {
         for i in 0..xi {
@@ -284,8 +286,8 @@ pub fn unfold_d2(
                 for oy in 0..ok {
                     for wy in 0..window {
                         for wx in 0..window {
-                            let input_x = (ox * stride + wx) as isize - padding as isize;
-                            let input_y = (oy * stride + wy) as isize - padding as isize;
+                            let input_x = (ox * stride + wx * dilation) as isize - padding as isize;
+                            let input_y = (oy * stride + wy * dilation) as isize - padding as isize;
                             if input_x >= 0 && input_x < xj as isize && input_y >= 0 && input_y < xk as isize {
                                 let input_x = input_x as usize;
                                 let input_y = input_y as usize;
@@ -301,13 +303,14 @@ pub fn unfold_d2(
     }
 }
 
-pub fn fold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, xk: usize, b: usize, stride: usize, padding: usize) {
-    let oj = xk + (xj - 1) * stride - padding * 2;
+pub fn fold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, xk: usize, b: usize, stride: usize, dilation: usize, padding: usize) {
+    let window_size = (xk - 1) * dilation + 1;
+    let oj = window_size + (xj - 1) * stride - padding * 2;
     for xb in 0..b {
         for i in 0..xi {
             for j in 0..xj {
                 for k in 0..xk {
-                    let index = j * stride + k;
+                    let index = j * stride + k * dilation;
                     if padding <= index && index < oj + padding {
                         let index = index - padding;
                         let x_index = ((xb * xi + i) * xj + j) * xk + k;
@@ -325,19 +328,20 @@ pub fn fold_d2(
     result: &mut [f32],
     xi: usize, xj: usize, xk: usize, xl: usize,
     b: usize,
-    stride: usize, padding: usize,
+    stride: usize, dilation: usize, padding: usize,
 ) {
     let window = (xl as f64).sqrt() as usize;
-    let oj = window + (xj - 1) * stride - padding * 2;
-    let ok = window + (xk - 1) * stride - padding * 2;
+    let window_size = (window - 1) * dilation + 1;
+    let oj = window_size + (xj - 1) * stride - padding * 2;
+    let ok = window_size + (xk - 1) * stride - padding * 2;
     for xb in 0..b {
         for i in 0..xi {
             for ox in 0..xj {
                 for oy in 0..xk {
                     for wy in 0..window {
                         for wx in 0..window {
-                            let input_x = (ox * stride + wx) as isize - padding as isize;
-                            let input_y = (oy * stride + wy) as isize - padding as isize;
+                            let input_x = (ox * stride + wx * dilation) as isize - padding as isize;
+                            let input_y = (oy * stride + wy * dilation) as isize - padding as isize;
                             if input_x >= 0 && input_x < oj as isize && input_y >= 0 && input_y < ok as isize {
                                 let input_x = input_x as usize;
                                 let input_y = input_y as usize;
