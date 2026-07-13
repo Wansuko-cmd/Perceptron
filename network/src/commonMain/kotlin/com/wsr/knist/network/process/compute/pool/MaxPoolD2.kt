@@ -15,29 +15,31 @@ class MaxPoolD2 internal constructor(
     val channel: Int,
     val inputSize: Int,
     val padding: Int,
+    val stride: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
     override val inputI: Int = channel
     override val inputJ: Int = inputSize
 
     override val outputI: Int = channel
-    override val outputJ: Int = (inputSize + 2 * padding - poolSize) / poolSize + 1
+    override val outputJ: Int = (inputSize + 2 * padding - poolSize) / stride + 1
 
     init {
-        check((inputSize + 2 * padding - poolSize) % poolSize == 0) {
+        check((inputSize + 2 * padding - poolSize) % stride == 0) {
             """
             invalid parameter.
             inputSize: $inputSize
             poolSize: $poolSize
+            stride: $stride
             padding: $padding
-            output: ${(inputSize + 2 * padding - poolSize) / poolSize.toFloat() + 1}
+            output: ${(inputSize + 2 * padding - poolSize) / stride.toFloat() + 1}
             """.trimIndent()
         }
     }
 
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input.unfold(
         window = poolSize,
-        stride = poolSize,
+        stride = stride,
         dilation = 1,
         padding = padding,
     )
@@ -48,23 +50,29 @@ class MaxPoolD2 internal constructor(
         context: Context,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
-        val unfold = input.unfold(window = poolSize, stride = poolSize, dilation = 1, padding = padding)
+        val unfold = input.unfold(window = poolSize, stride = stride, dilation = 1, padding = padding)
         val output = unfold.max(axis = 2)
         val delta = calcDelta(output)
         return where(
             condition = unfold eq output.broadcastToD3(axis = 2, size = poolSize),
             onTrue = delta.broadcastToD3(axis = 2, size = poolSize),
             onFalse = 0f,
-        ).fold(stride = poolSize, dilation = 1, padding = padding)
+        ).fold(stride = stride, dilation = 1, padding = padding)
     }
 }
 
-fun <T> NetworkBuilder.D2<T>.maxPool(size: Int, padding: Int = 0, id: String = Uuid.random().toString()) = addCompute(
+fun <T> NetworkBuilder.D2<T>.maxPool(
+    size: Int,
+    stride: Int = size,
+    padding: Int = 0,
+    id: String = Uuid.random().toString(),
+) = addCompute(
     compute = MaxPoolD2(
         poolSize = size,
         channel = inputI,
         inputSize = inputJ,
         padding = padding,
+        stride = stride,
         id = id,
     ),
 )
