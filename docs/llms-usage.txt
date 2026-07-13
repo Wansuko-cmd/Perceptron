@@ -202,12 +202,13 @@ val lossValue: Float = loss.unwrap()
 |------|--------|------|------|-------------|
 | `convD1(filter, kernel, stride?, dilation?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD1` | D2(i, j) | D2(filter, outJ) | stride=1, dilation=1, padding=0 |
 | `convD2(filter, kernel, stride?, dilation?, padding?)` | `com.wsr.knist.network.process.compute.conv.convD2` | D3(i, j, k) | D3(filter, outJ, outK) | stride=1, dilation=1, padding=0 |
-| `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(i, j) | D2(i, outJ) | padding=0 |
-| `maxPool(size, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(i, j, k) | D3(i, outJ, outK) | padding=0 |
+| `maxPool(size, stride?, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D2(i, j) | D2(i, outJ) | stride=size, padding=0 |
+| `maxPool(size, stride?, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(i, j, k) | D3(i, outJ, outK) | stride=size, padding=0 |
 
 conv の出力サイズ: `out = (size - kernelSize + 2 * padding) / stride + 1`（`kernelSize = (kernel - 1) * dilation + 1`。dilation=1 なら kernelSize=kernel）
 制約: `(size - kernelSize + 2 * padding) % stride == 0` であること。convD1 は違反すると実行時エラー、convD2 はエラーにならず出力サイズが黙って切り捨てられる
-制約: maxPool は `(j + 2*padding - size) % size == 0` でなければ実行時エラー（D3 は j・k 両方）
+maxPool の出力サイズ: `out = (j + 2*padding - size) / stride + 1`。`stride < size` とすると重複窓（overlapping pooling）になる
+制約: maxPool は `(j + 2*padding - size) % stride == 0` でなければ実行時エラー（D3 は j・k 両方）
 
 ### パディング
 
