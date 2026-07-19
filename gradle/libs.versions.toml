@@ -25,7 +25,7 @@ ktlint-lib = "1.8.0"
 # Android
 agp = "9.2.1"
 android-compile-sdk = "36"
-android-min-sdk = "28"
+android-min-sdk = "33"
 
 [libraries]
 # ksp
