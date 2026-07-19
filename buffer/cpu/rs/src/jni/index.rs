@@ -1,38 +1,37 @@
 use jni::JNIEnv;
-use jni::objects::{JByteBuffer, JClass};
-use jni::sys::jint;
+use jni::objects::JClass;
+use jni::sys::{jint, jlong};
 
 use crate::core::index;
-use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_index_JIndex_gather(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
-    y: JByteBuffer,
+    x: jlong,
+    y: jlong,
     i: jint, j: jint, k: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let y = unsafe { y.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let y = unsafe { crate::jni::buffer::as_slice(y) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
 
     index::gather(x, y, i as usize, j as usize, k as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_index_JIndex_scatterAdd(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
-    y: JByteBuffer,
+    x: jlong,
+    y: jlong,
     i: jint, j: jint, k: jint, b: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let y = unsafe { y.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let y = unsafe { crate::jni::buffer::as_slice(y) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
 
     index::scatter_add(x, y, i as usize, j as usize, k as usize, b as usize, result);
 }
