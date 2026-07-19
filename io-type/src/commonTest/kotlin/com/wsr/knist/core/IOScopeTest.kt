@@ -68,6 +68,27 @@ class IOScopeTest {
     }
 
     @Test
+    fun `launch(Unit版)内のバッファはscope終了後にreleaseされる`() = ioTypeTestRule {
+        val buffer = TrackingDataBuffer(4)
+        IOScope.launch {
+            bufferScope.register(buffer)
+        }
+        assertTrue(buffer.released)
+    }
+
+    @Test
+    fun `launch(Unit版)内で例外が発生してもバッファはreleaseされる`() = ioTypeTestRule {
+        val buffer = TrackingDataBuffer(4)
+        assertFails {
+            IOScope.launch {
+                bufferScope.register(buffer)
+                throw RuntimeException("test")
+            }
+        }
+        assertTrue(buffer.released)
+    }
+
+    @Test
     fun `matMulをtransB=trueのみ指定してもIOScope版が呼ばれる`() = ioTypeTestRule {
         val ioScope = IOScope(BufferScope())
         val a = IOType.d2(2, 3) { _, _ -> 1f }

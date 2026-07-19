@@ -69,14 +69,7 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
         sb.appendLine("    companion object {")
         sb.appendLine("        // 二重ラップ防止用(context parameterで優先順位を整える)")
         sb.appendLine("        context(scope: IOScope)")
-        sb.appendLine("        @kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine("        inline fun <T : IOType> launch(block: IOScope.() -> T): T = scope.block()")
-        sb.appendLine("        context(scope: IOScope)")
-        sb.appendLine("        @kotlin.jvm.JvmName(\"launchBatch\")")
-        sb.appendLine("        @kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine(
-            "        inline fun <T : com.wsr.knist.batch.Batch<out IOType>> launch(block: IOScope.() -> T): T = scope.block()",
-        )
+        sb.appendLine("        inline fun <T> launch(block: IOScope.() -> T): T = scope.block()")
         sb.appendLine("    }")
 
         indexed.forEach { (_, data) ->
@@ -85,23 +78,16 @@ class ScopeOpProcessor(private val codeGenerator: CodeGenerator, private val log
 
         sb.appendLine("}")
 
-        sb.appendLine("@kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine("inline fun <T : IOType> IOScope.Companion.launch(block: IOScope.() -> T): T {")
+        sb.appendLine("inline fun <T> IOScope.Companion.launch(block: IOScope.() -> T): T {")
         sb.appendLine("    val bufferScope = BufferScope()")
         sb.appendLine("    val ioScope = IOScope(bufferScope)")
         sb.appendLine("    return bufferScope.use {")
-        sb.appendLine("        ioScope.block().also { bufferScope.remove(it.value) }")
-        sb.appendLine("    }")
-        sb.appendLine("}")
-        sb.appendLine("@kotlin.jvm.JvmName(\"launchBatch\")")
-        sb.appendLine("@kotlin.OverloadResolutionByLambdaReturnType")
-        sb.appendLine(
-            "inline fun <T : com.wsr.knist.batch.Batch<out IOType>> IOScope.Companion.launch(block: IOScope.() -> T): T {",
-        )
-        sb.appendLine("    val bufferScope = BufferScope()")
-        sb.appendLine("    val ioScope = IOScope(bufferScope)")
-        sb.appendLine("    return bufferScope.use {")
-        sb.appendLine("        ioScope.block().also { bufferScope.remove(it.value) }")
+        sb.appendLine("        val result = ioScope.block()")
+        sb.appendLine("        when (result) {")
+        sb.appendLine("            is IOType -> bufferScope.remove(result.value)")
+        sb.appendLine("            is com.wsr.knist.batch.Batch<*> -> bufferScope.remove(result.value)")
+        sb.appendLine("        }")
+        sb.appendLine("        result")
         sb.appendLine("    }")
         sb.appendLine("}")
 
