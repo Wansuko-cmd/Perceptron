@@ -1,23 +1,21 @@
 package com.wsr.knist.cpu.linalg
 
-import java.nio.ByteBuffer
-
 object JMatMul {
-    external fun inner(x: ByteBuffer, y: ByteBuffer, b: Int, result: ByteBuffer)
+    external fun inner(x: Long, y: Long, b: Int, result: Long)
 
-    external fun matMulD1ToD2(x: ByteBuffer, y: ByteBuffer, transY: Boolean, n: Int, k: Int, result: ByteBuffer)
+    external fun matMulD1ToD2(x: Long, y: Long, transY: Boolean, n: Int, k: Int, result: Long)
 
-    external fun matMulD2ToD1(x: ByteBuffer, transX: Boolean, y: ByteBuffer, m: Int, k: Int, result: ByteBuffer)
+    external fun matMulD2ToD1(x: Long, transX: Boolean, y: Long, m: Int, k: Int, result: Long)
 
     external fun matMulD2ToD2(
-        x: ByteBuffer,
+        x: Long,
         transX: Boolean,
-        y: ByteBuffer,
+        y: Long,
         transY: Boolean,
         m: Int,
         n: Int,
         k: Int,
         b: Int,
-        result: ByteBuffer,
+        result: Long,
     )
 }

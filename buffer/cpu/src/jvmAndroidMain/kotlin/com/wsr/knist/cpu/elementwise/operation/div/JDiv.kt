@@ -1,48 +1,46 @@
 package com.wsr.knist.cpu.elementwise.operation.div
 
-import java.nio.ByteBuffer
-
 object JDiv {
-    external fun divD0ToD1(x: Float, y: ByteBuffer, result: ByteBuffer)
+    external fun divD0ToD1(x: Float, y: Long, result: Long)
 
-    external fun divD1ToD0(x: ByteBuffer, y: Float, result: ByteBuffer)
-    external fun divD1ToD1(x: ByteBuffer, y: ByteBuffer, result: ByteBuffer)
-    external fun divD1ToD2(x: ByteBuffer, y: ByteBuffer, yi: Int, yj: Int, axis: Int, result: ByteBuffer)
-    external fun divD1ToD3(x: ByteBuffer, y: ByteBuffer, yi: Int, yj: Int, yk: Int, axis: Int, result: ByteBuffer)
+    external fun divD1ToD0(x: Long, y: Float, result: Long)
+    external fun divD1ToD1(x: Long, y: Long, result: Long)
+    external fun divD1ToD2(x: Long, y: Long, yi: Int, yj: Int, axis: Int, result: Long)
+    external fun divD1ToD3(x: Long, y: Long, yi: Int, yj: Int, yk: Int, axis: Int, result: Long)
 
-    external fun divD2ToD1(x: ByteBuffer, xi: Int, xj: Int, y: ByteBuffer, axis: Int, result: ByteBuffer)
+    external fun divD2ToD1(x: Long, xi: Int, xj: Int, y: Long, axis: Int, result: Long)
     external fun divD2ToD3(
-        x: ByteBuffer,
+        x: Long,
         xi: Int,
         xj: Int,
-        y: ByteBuffer,
+        y: Long,
         yi: Int,
         yj: Int,
         yk: Int,
         axis1: Int,
         axis2: Int,
-        result: ByteBuffer,
+        result: Long,
     )
 
-    external fun divD3ToD1(x: ByteBuffer, xi: Int, xj: Int, xk: Int, y: ByteBuffer, axis: Int, result: ByteBuffer)
+    external fun divD3ToD1(x: Long, xi: Int, xj: Int, xk: Int, y: Long, axis: Int, result: Long)
     external fun divD3ToD2(
-        x: ByteBuffer,
+        x: Long,
         xi: Int,
         xj: Int,
         xk: Int,
-        y: ByteBuffer,
+        y: Long,
         yi: Int,
         yj: Int,
         axis1: Int,
         axis2: Int,
-        result: ByteBuffer,
+        result: Long,
     )
     external fun divD3ToD4(
-        x: ByteBuffer,
+        x: Long,
         xi: Int,
         xj: Int,
         xk: Int,
-        y: ByteBuffer,
+        y: Long,
         yi: Int,
         yj: Int,
         yk: Int,
@@ -50,45 +48,36 @@ object JDiv {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-        result: ByteBuffer,
+        result: Long,
     )
 
-    external fun divD4ToD1(
-        x: ByteBuffer,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        xl: Int,
-        y: ByteBuffer,
-        axis: Int,
-        result: ByteBuffer,
-    )
+    external fun divD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long)
     external fun divD4ToD2(
-        x: ByteBuffer,
+        x: Long,
         xi: Int,
         xj: Int,
         xk: Int,
         xl: Int,
-        y: ByteBuffer,
+        y: Long,
         yi: Int,
         yj: Int,
         axis1: Int,
         axis2: Int,
-        result: ByteBuffer,
+        result: Long,
     )
     external fun divD4ToD3(
-        x: ByteBuffer,
+        x: Long,
         xi: Int,
         xj: Int,
         xk: Int,
         xl: Int,
-        y: ByteBuffer,
+        y: Long,
         yi: Int,
         yj: Int,
         yk: Int,
         axis1: Int,
         axis2: Int,
         axis3: Int,
-        result: ByteBuffer,
+        result: Long,
     )
 }

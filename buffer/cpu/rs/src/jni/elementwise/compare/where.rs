@@ -1,66 +1,65 @@
 use jni::JNIEnv;
-use jni::objects::{JByteBuffer, JClass};
-use jni::sys::jfloat;
+use jni::objects::JClass;
+use jni::sys::{jfloat, jlong};
 
 use crate::core::elementwise::compare::r#where;
-use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD0ToD0(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    condition: JByteBuffer,
+    condition: jlong,
     x: jfloat,
     y: jfloat,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let condition = unsafe { condition.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let condition = unsafe { crate::jni::buffer::as_slice(condition) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     r#where::where_d0_to_d0(condition, x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD0ToD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    condition: JByteBuffer,
+    condition: jlong,
     x: jfloat,
-    y: JByteBuffer,
-    result: JByteBuffer,
+    y: jlong,
+    result: jlong,
 ) {
-    let condition = unsafe { condition.as_f32_slice(&env) };
-    let y = unsafe { y.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let condition = unsafe { crate::jni::buffer::as_slice(condition) };
+    let y = unsafe { crate::jni::buffer::as_slice(y) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     r#where::where_d0_to_d1(condition, x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD1ToD0(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    condition: JByteBuffer,
-    x: JByteBuffer,
+    condition: jlong,
+    x: jlong,
     y: jfloat,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let condition = unsafe { condition.as_f32_slice(&env) };
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let condition = unsafe { crate::jni::buffer::as_slice(condition) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     r#where::where_d1_to_d0(condition, x, y, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD1ToD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    condition: JByteBuffer,
-    x: JByteBuffer,
-    y: JByteBuffer,
-    result: JByteBuffer,
+    condition: jlong,
+    x: jlong,
+    y: jlong,
+    result: jlong,
 ) {
-    let condition = unsafe { condition.as_f32_slice(&env) };
-    let x = unsafe { x.as_f32_slice(&env) };
-    let y = unsafe { y.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let condition = unsafe { crate::jni::buffer::as_slice(condition) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let y = unsafe { crate::jni::buffer::as_slice(y) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     r#where::where_d1_to_d1(condition, x, y, result);
 }

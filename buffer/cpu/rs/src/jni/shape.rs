@@ -1,34 +1,33 @@
 use jni::JNIEnv;
-use jni::objects::{JByteBuffer, JClass};
-use jni::sys::jint;
+use jni::objects::JClass;
+use jni::sys::{jint, jlong};
 
 use crate::core::shape;
-use crate::jni::utils::ByteBufferExt;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD2(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::transpose_d2(x, xi as usize, xj as usize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD3(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint,
     axis_i: jint, axis_j: jint, axis_k: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::transpose_d3(
         x,
         xi as usize, xj as usize, xk as usize,
@@ -39,15 +38,15 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD3(
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD4(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint, xl: jint,
     axis_i: jint, axis_j: jint, axis_k: jint, axis_l: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::transpose_d4(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize,
@@ -58,15 +57,15 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD4(
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD5(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint, xl: jint, xm: jint,
     axis_i: jint, axis_j: jint, axis_k: jint, axis_l: jint, axis_m: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::transpose_d5(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize, xm as usize,
@@ -77,156 +76,156 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD5(
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     start: jint, end: jint, step: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::slice_d1(x, start as usize, end as usize, step as isize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD2(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, axis: jint,
     start: jint, end: jint, step: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::slice_d2(x, xi as usize, xj as usize, axis as usize, start as usize, end as usize, step as isize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD3(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint, axis: jint,
     start: jint, end: jint, step: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
-    result: JByteBuffer,
+    x: jlong,
+    result: jlong,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::copy_into_d1(x, result, start as usize, end as usize, step as isize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD2(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
-    result: JByteBuffer,
+    x: jlong,
+    result: jlong,
     ri: jint, rj: jint, axis: jint,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::copy_into_d2(x, result, ri as usize, rj as usize, axis as usize, start as usize, end as usize, step as isize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD3(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
-    result: JByteBuffer,
+    x: jlong,
+    result: jlong,
     ri: jint, rj: jint, rk: jint, axis: jint,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint,
     b: jint,
     window: jint, stride: jint, dilation: jint, padding: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::unfold_d1(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, dilation as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD2(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint,
     b: jint,
     window: jint, stride: jint, dilation: jint, padding: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::unfold_d2(x, result, xi as usize, xj as usize, xk as usize, b as usize, window as usize, stride as usize, dilation as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD1(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint,
     b: jint,
     stride: jint, dilation: jint, padding: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::fold_d1(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD2(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint, xl: jint,
     b: jint,
     stride: jint, dilation: jint, padding: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::fold_d2(x, result, xi as usize, xj as usize, xk as usize, xl as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD3(
-    env: JNIEnv,
+    _env: JNIEnv,
     _class: JClass,
-    x: JByteBuffer,
+    x: jlong,
     xi: jint, xj: jint, xk: jint,
     axis: jint,
-    result: JByteBuffer,
+    result: jlong,
 ) {
-    let x = unsafe { x.as_f32_slice(&env) };
-    let result = unsafe { result.as_f32_slice_mut(&env) };
+    let x = unsafe { crate::jni::buffer::as_slice(x) };
+    let result = unsafe { crate::jni::buffer::as_slice_mut(result) };
     shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
