@@ -68,7 +68,7 @@ class IOScopeTest {
     }
 
     @Test
-    fun `launch(Unit版)内のバッファはscope終了後にreleaseされる`() = ioTypeTestRule {
+    fun `launchでUnitを返す場合バッファはscope終了後にreleaseされる`() = ioTypeTestRule {
         val buffer = TrackingDataBuffer(4)
         IOScope.launch {
             bufferScope.register(buffer)
@@ -77,7 +77,7 @@ class IOScopeTest {
     }
 
     @Test
-    fun `launch(Unit版)内で例外が発生してもバッファはreleaseされる`() = ioTypeTestRule {
+    fun `launchでUnitを返す場合で例外が発生してもバッファはreleaseされる`() = ioTypeTestRule {
         val buffer = TrackingDataBuffer(4)
         assertFails {
             IOScope.launch {
