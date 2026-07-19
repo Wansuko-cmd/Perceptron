@@ -1,0 +1,12 @@
+package com.wsr.knist.cpu
+
+internal object JBuffer {
+    external fun alloc(size: Int): Long
+    external fun release(ptr: Long)
+
+    external fun get(ptr: Long, index: Int): Float
+    external fun set(ptr: Long, index: Int, value: Float)
+
+    external fun readAll(ptr: Long): FloatArray
+    external fun writeAll(ptr: Long, value: FloatArray)
+}

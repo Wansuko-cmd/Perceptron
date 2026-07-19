@@ -2,51 +2,66 @@ package com.wsr.knist.cpu
 
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.IDataBufferGenerator
-import com.wsr.knist.base.data.size
-import java.nio.Buffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import java.lang.ref.Cleaner
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
+
+private val allocatedBytes = AtomicLong(0)
+private const val MAX_ALLOCATED_BYTES = 1_500_000_000L
 
 internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
     is CPUJvmBuffer -> this
     else -> CPUJvmBuffer.create(this.toFloatArray())
 }
 
-class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
-    private val floatBuffer = byteBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
-    override val size = floatBuffer.capacity()
+class CPUJvmBuffer private constructor(
+    internal val address: Long,
+    override val size: Int,
+) : DataBuffer {
+    private val isReleased = AtomicBoolean(false)
 
-    override fun get(i: Int): Float = floatBuffer.get(i)
+    init {
+        val address = address
+        val byteSize = size * Float.SIZE_BYTES
+        val isReleased = isReleased
+        if (allocatedBytes.addAndGet(byteSize.toLong()) >= MAX_ALLOCATED_BYTES) System.gc()
+        cleaner.register(this) {
+            if (!isReleased.getAndSet(true)) {
+                JBuffer.release(address)
+                allocatedBytes.addAndGet(-byteSize.toLong())
+            }
+        }
+    }
+
+    override fun get(i: Int): Float = JBuffer.get(address, i)
 
     override fun set(i: Int, value: Float) {
-        floatBuffer.put(i, value)
+        JBuffer.set(address, i, value)
     }
 
-    override fun toFloatArray(): FloatArray {
-        val result = FloatArray(size)
-        floatBuffer.move(position = 0, limit = size) { get(result) }
-        return result
-    }
+    override fun toFloatArray(): FloatArray = JBuffer.readAll(address)
 
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
 
     override fun release() {
-        floatBuffer.clear()
+        if (!isReleased.getAndSet(true)) {
+            JBuffer.release(address)
+            allocatedBytes.addAndGet(-(size * Float.SIZE_BYTES).toLong())
+        }
     }
 
     companion object Companion {
+        private val cleaner = Cleaner.create()
+
         fun create(size: Int): CPUJvmBuffer {
-            val buffer = ByteBuffer.allocateDirect(size * Float.SIZE_BYTES)
-                .order(ByteOrder.nativeOrder())
-            return CPUJvmBuffer(buffer)
+            val address = JBuffer.alloc(size)
+            return CPUJvmBuffer(address, size)
         }
 
         fun create(value: FloatArray): CPUJvmBuffer {
-            val buffer = ByteBuffer
-                .allocateDirect(value.size * Float.SIZE_BYTES)
-                .order(ByteOrder.nativeOrder())
-                .apply { asFloatBuffer().put(value) }
-            return CPUJvmBuffer(buffer)
+            val address = JBuffer.alloc(value.size)
+            JBuffer.writeAll(address, value)
+            return CPUJvmBuffer(address, value.size)
         }
 
         val generator = object : IDataBufferGenerator {
@@ -54,18 +69,5 @@ class CPUJvmBuffer(internal val byteBuffer: ByteBuffer) : DataBuffer {
 
             override fun create(value: FloatArray): DataBuffer = CPUJvmBuffer.create(value)
         }
-    }
-}
-
-private inline fun <B : Buffer, T> B.move(position: Int, limit: Int = limit(), block: B.() -> T): T {
-    val currentPosition = position()
-    val currentLimit = this.limit()
-    position(position)
-    limit(limit)
-    try {
-        return block()
-    } finally {
-        position(currentPosition)
-        limit(currentLimit)
     }
 }
