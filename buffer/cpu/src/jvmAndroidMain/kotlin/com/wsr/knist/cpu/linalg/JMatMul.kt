@@ -1,6 +1,5 @@
 package com.wsr.knist.cpu.linalg
 
-
 object JMatMul {
     external fun inner(x: Long, y: Long, b: Int, result: Long)
 

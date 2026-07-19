@@ -1,6 +1,5 @@
 package com.wsr.knist.cpu.elementwise.operation.div
 
-
 object JDiv {
     external fun divD0ToD1(x: Float, y: Long, result: Long)
 
@@ -52,16 +51,7 @@ object JDiv {
         result: Long,
     )
 
-    external fun divD4ToD1(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        xl: Int,
-        y: Long,
-        axis: Int,
-        result: Long,
-    )
+    external fun divD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long)
     external fun divD4ToD2(
         x: Long,
         xi: Int,

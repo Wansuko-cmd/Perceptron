@@ -1,6 +1,5 @@
 package com.wsr.knist.cpu.reduction
 
-
 object JReduction {
     external fun averageD1(x: Long, result: Long)
     external fun averageD2(x: Long, xi: Int, xj: Int, axis: Int, result: Long)

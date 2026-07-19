@@ -1,19 +1,9 @@
 package com.wsr.knist.cpu.shape
 
-
 object JShape {
     external fun transposeD2(x: Long, xi: Int, xj: Int, result: Long)
 
-    external fun transposeD3(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        axisI: Int,
-        axisJ: Int,
-        axisK: Int,
-        result: Long,
-    )
+    external fun transposeD3(x: Long, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int, result: Long)
 
     external fun transposeD4(
         x: Long,
@@ -45,41 +35,13 @@ object JShape {
 
     external fun sliceD1(x: Long, start: Int, end: Int, step: Int, result: Long)
 
-    external fun sliceD2(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        axis: Int,
-        start: Int,
-        end: Int,
-        step: Int,
-        result: Long,
-    )
+    external fun sliceD2(x: Long, xi: Int, xj: Int, axis: Int, start: Int, end: Int, step: Int, result: Long)
 
-    external fun sliceD3(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        axis: Int,
-        start: Int,
-        end: Int,
-        step: Int,
-        result: Long,
-    )
+    external fun sliceD3(x: Long, xi: Int, xj: Int, xk: Int, axis: Int, start: Int, end: Int, step: Int, result: Long)
 
     external fun copyIntoD1(x: Long, result: Long, start: Int, end: Int, step: Int)
 
-    external fun copyIntoD2(
-        x: Long,
-        result: Long,
-        ri: Int,
-        rj: Int,
-        axis: Int,
-        start: Int,
-        end: Int,
-        step: Int,
-    )
+    external fun copyIntoD2(x: Long, result: Long, ri: Int, rj: Int, axis: Int, start: Int, end: Int, step: Int)
 
     external fun copyIntoD3(
         x: Long,

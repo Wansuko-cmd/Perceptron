@@ -1,6 +1,5 @@
 package com.wsr.knist.cpu.elementwise.operation.minus
 
-
 object JMinus {
     external fun minusD0ToD1(x: Float, y: Long, result: Long)
 
@@ -52,16 +51,7 @@ object JMinus {
         result: Long,
     )
 
-    external fun minusD4ToD1(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        xl: Int,
-        y: Long,
-        axis: Int,
-        result: Long,
-    )
+    external fun minusD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long)
     external fun minusD4ToD2(
         x: Long,
         xi: Int,

@@ -1,6 +1,5 @@
 package com.wsr.knist.cpu.elementwise.operation.times
 
-
 object JTimes {
     external fun timesD0ToD1(x: Float, y: Long, result: Long)
 
@@ -52,16 +51,7 @@ object JTimes {
         result: Long,
     )
 
-    external fun timesD4ToD1(
-        x: Long,
-        xi: Int,
-        xj: Int,
-        xk: Int,
-        xl: Int,
-        y: Long,
-        axis: Int,
-        result: Long,
-    )
+    external fun timesD4ToD1(x: Long, xi: Int, xj: Int, xk: Int, xl: Int, y: Long, axis: Int, result: Long)
     external fun timesD4ToD2(
         x: Long,
         xi: Int,

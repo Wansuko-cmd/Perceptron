@@ -14,10 +14,7 @@ internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
     else -> CPUJvmBuffer.create(this.toFloatArray())
 }
 
-class CPUJvmBuffer private constructor(
-    internal val address: Long,
-    override val size: Int,
-) : DataBuffer {
+class CPUJvmBuffer private constructor(internal val address: Long, override val size: Int) : DataBuffer {
     private val isReleased = AtomicBoolean(false)
 
     init {
