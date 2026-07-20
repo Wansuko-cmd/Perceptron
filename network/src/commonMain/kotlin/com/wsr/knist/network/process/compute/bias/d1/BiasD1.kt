@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.bias.d1
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -39,6 +41,23 @@ class BiasD1 internal constructor(
 }
 
 fun <T> NetworkBuilder.D1<T>.bias(
+    optimizer: Optimizer = this.optimizer,
+    initializer: WeightInitializer = Fixed(0f),
+    id: String = Uuid.random().toString(),
+) = addCompute(
+    BiasD1(
+        inputI = inputI,
+        optimizer = optimizer.d1(inputI),
+        weight = initializer.d1(
+            input = listOf(inputI),
+            output = listOf(inputI),
+            size = inputI,
+        ),
+        id = id,
+    ),
+)
+
+fun GraphBuilder.D1.bias(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(0f),
     id: String = Uuid.random().toString(),

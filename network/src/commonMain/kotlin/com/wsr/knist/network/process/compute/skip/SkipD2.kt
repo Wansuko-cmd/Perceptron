@@ -5,6 +5,9 @@ package com.wsr.knist.network.process.compute.skip
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.Graph
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
@@ -77,6 +80,38 @@ fun <T> NetworkBuilder.D2<T>.skip(
     builder: NetworkBuilder.D2<T>.() -> NetworkBuilder.D2<T>,
 ): NetworkBuilder.D2<T> {
     val layers = builder().layers.drop(layers.size)
+    val (outputI, outputJ) = when (val last = layers.lastOrNull()) {
+        is Compute.D2 -> last.outputI to last.outputJ
+        is Reshape.D1ToD2 -> last.outputI to last.outputJ
+        is Reshape.D3ToD2 -> last.outputI to last.outputJ
+        null -> return this
+        else -> throw IllegalArgumentException("invalid last layer. $last")
+    }
+
+    check(inputI == outputI && inputJ == outputJ) {
+        """
+            invalid parameter.
+            input: ($inputI, $inputJ)
+            output: ($outputI, $outputJ)
+        """.trimIndent()
+    }
+
+    return addCompute(
+        compute = SkipD2(
+            inputI = outputI,
+            inputJ = outputJ,
+            layers = layers,
+            id = id,
+        ),
+    )
+}
+
+fun GraphBuilder.D2.skip(
+    id: String = Uuid.random().toString(),
+    builder: GraphBuilder.D2.() -> GraphBuilder.D2,
+): GraphBuilder.D2 {
+    val before = nodes.size
+    val layers = builder().nodes.drop(before).map { (it as Graph.Node.Attach).process }
     val (outputI, outputJ) = when (val last = layers.lastOrNull()) {
         is Compute.D2 -> last.outputI to last.outputJ
         is Reshape.D1ToD2 -> last.outputI to last.outputJ

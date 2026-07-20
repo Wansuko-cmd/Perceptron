@@ -4,6 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -45,6 +47,16 @@ class PositionEncodeD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) =
+    addCompute(
+        compute = PositionEncodeD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            waveLength = waveLength,
+            id = id,
+        ),
+    )
+
+fun GraphBuilder.D2.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) =
     addCompute(
         compute = PositionEncodeD2(
             inputI = inputI,

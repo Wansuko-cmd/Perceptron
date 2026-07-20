@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.affine
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -47,6 +49,28 @@ class AffineD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.affine(
+    neuron: Int,
+    optimizer: Optimizer = this.optimizer,
+    initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
+) = addCompute(
+    compute =
+        AffineD2(
+            channel = inputI,
+            inputJ = inputJ,
+            outputJ = neuron,
+            optimizer = optimizer.d2(inputJ, neuron),
+            weight = initializer.d2(
+                input = listOf(inputJ),
+                output = listOf(neuron),
+                i = inputJ,
+                j = neuron,
+            ),
+            id = id,
+        ),
+)
+
+fun GraphBuilder.D2.affine(
     neuron: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,

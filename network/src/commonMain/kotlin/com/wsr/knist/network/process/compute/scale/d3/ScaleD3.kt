@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.scale.d3
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -54,6 +56,63 @@ fun <T> NetworkBuilder.D3<T>.scale(
     initializer: WeightInitializer = Fixed(1f),
     id: String = Uuid.random().toString(),
 ): NetworkBuilder.D3<T> {
+    val process = when (axis) {
+        null -> ScaleD3(
+            inputI = inputI,
+            inputJ = inputJ,
+            inputK = inputK,
+            optimizer = optimizer.d3(
+                inputI,
+                inputJ,
+                inputK,
+            ),
+            weight = initializer.d3(
+                input = listOf(inputI, inputJ, inputK),
+                output = listOf(inputI, inputJ, inputK),
+                i = inputI,
+                j = inputJ,
+                k = inputK,
+            ),
+            id = id,
+        )
+
+        0, 1, 2 -> {
+            val inputT = when (axis) {
+                0 -> inputI
+                1 -> inputJ
+                else -> inputK
+            }
+            ScaleAxisD3(
+                inputI = inputI,
+                inputJ = inputJ,
+                inputK = inputK,
+                axis = axis,
+                optimizer = optimizer.d1(inputT),
+                weight = initializer.d1(
+                    input = listOf(inputT),
+                    output = listOf(inputT),
+                    size = inputT,
+                ),
+                id = id,
+            )
+        }
+
+        else -> throw IllegalStateException(
+            """
+            invalid parameter.
+            axis: $axis
+            """.trimIndent(),
+        )
+    }
+    return addCompute(compute = process)
+}
+
+fun GraphBuilder.D3.scale(
+    axis: Int? = null,
+    optimizer: Optimizer = this.optimizer,
+    initializer: WeightInitializer = Fixed(1f),
+    id: String = Uuid.random().toString(),
+): GraphBuilder.D3 {
     val process = when (axis) {
         null -> ScaleD3(
             inputI = inputI,

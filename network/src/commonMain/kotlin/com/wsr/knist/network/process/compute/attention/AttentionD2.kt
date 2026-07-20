@@ -5,6 +5,8 @@ import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -156,6 +158,52 @@ fun <T> NetworkBuilder.D2<T>.attention(
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> = addCompute(
+    compute = AttentionD2(
+        inputI = inputI,
+        inputJ = inputJ,
+        numOfHeads = numOfHeads,
+        dim = dim,
+        biases = AttentionBiasD2Builder(inputI = inputI, inputJ = inputJ, numOfHeads = numOfHeads).biases().biases,
+        weightQ = initializer.d2(
+            input = listOf(inputJ),
+            output = listOf(numOfHeads * dim),
+            i = inputJ,
+            j = numOfHeads * dim,
+        ),
+        weightK = initializer.d2(
+            input = listOf(inputJ),
+            output = listOf(numOfHeads * dim),
+            i = inputJ,
+            j = numOfHeads * dim,
+        ),
+        weightV = initializer.d2(
+            input = listOf(inputJ),
+            output = listOf(numOfHeads * dim),
+            i = inputJ,
+            j = numOfHeads * dim,
+        ),
+        weightO = initializer.d2(
+            input = listOf(numOfHeads * dim),
+            output = listOf(inputJ),
+            i = numOfHeads * dim,
+            j = inputJ,
+        ),
+        optimizerQ = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerK = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerV = optimizer.d2(inputJ, numOfHeads * dim),
+        optimizerO = optimizer.d2(numOfHeads * dim, inputJ),
+        id = id,
+    ),
+)
+
+fun GraphBuilder.D2.attention(
+    numOfHeads: Int,
+    dim: Int = inputJ / numOfHeads,
+    biases: AttentionBiasD2Builder.() -> AttentionBiasD2Builder = { this },
+    optimizer: Optimizer = this.optimizer,
+    initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
+): GraphBuilder.D2 = addCompute(
     compute = AttentionD2(
         inputI = inputI,
         inputJ = inputJ,

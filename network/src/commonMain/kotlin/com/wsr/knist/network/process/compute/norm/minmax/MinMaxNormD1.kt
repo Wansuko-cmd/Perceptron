@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.norm.minmax
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -55,6 +57,13 @@ class MinMaxNormD1 internal constructor(override val inputI: Int, override val i
 }
 
 fun <T> NetworkBuilder.D1<T>.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
+    compute = MinMaxNormD1(
+        inputI = inputI,
+        id = id,
+    ),
+)
+
+fun GraphBuilder.D1.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
     compute = MinMaxNormD1(
         inputI = inputI,
         id = id,

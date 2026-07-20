@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.debug
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -44,6 +46,21 @@ class DebugD2 internal constructor(
  * ※Json化するとラムダ式はリセットされる
  */
 fun <T> NetworkBuilder.D2<T>.debug(
+    onInput: (Batch<IOType.D2>) -> Unit = {},
+    onDelta: (Batch<IOType.D2>) -> Unit = {},
+    id: String = Uuid.random().toString(),
+) = addCompute(
+    compute = DebugD2(
+        inputI = inputI,
+        inputJ = inputJ,
+        id = id,
+    ).apply {
+        this.onInput = onInput
+        this.onDelta = onDelta
+    },
+)
+
+fun GraphBuilder.D2.debug(
     onInput: (Batch<IOType.D2>) -> Unit = {},
     onDelta: (Batch<IOType.D2>) -> Unit = {},
     id: String = Uuid.random().toString(),
