@@ -5,6 +5,7 @@ import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Process
 import kotlin.jvm.JvmInline
 import kotlin.uuid.Uuid
+import kotlinx.serialization.Serializable
 
 object Graph {
     data class Source<T>(val id: GraphId = GraphId(), val converter: Converter<T>)
@@ -14,9 +15,11 @@ object Graph {
     sealed interface Node {
         val id: GraphId
 
+        @Serializable
         data class Attach(override val id: GraphId = GraphId(), val from: GraphId, val process: Process) : Node
     }
 }
 
 @JvmInline
+@Serializable
 value class GraphId(val value: String = Uuid.random().toString())

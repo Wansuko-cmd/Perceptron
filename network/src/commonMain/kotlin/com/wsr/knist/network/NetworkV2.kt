@@ -10,16 +10,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import okio.BufferedSink
+import okio.BufferedSource
 
 private typealias TrainLambdaV2 = IOScope.(Context) -> Unit
 
-class NetworkV2<I, O>(
-    private val source: Graph.Source<I>,
-    private val graph: List<Graph.Node>,
-    private val sink: Graph.Sink<O>,
+@Serializable(with = NetworkV2Serializer::class)
+class NetworkV2<I, O> @PublishedApi internal constructor(
+    @PublishedApi internal val source: Graph.Source<I>,
+    @PublishedApi internal val graph: List<Graph.Node>,
+    @PublishedApi internal val sink: Graph.Sink<O>,
 ) {
     @PublishedApi
     internal val mutex = Mutex()
+
     private val env = mutableMapOf<GraphId, Batch<IOType>>()
 
     suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
@@ -112,5 +117,28 @@ class NetworkV2<I, O>(
         }
     }
 
-    companion object
+    fun toJson(): String = NetworkV2Serializer.encodeToString(this)
+
+    fun toJson(sink: BufferedSink) {
+        NetworkV2Serializer.encodeToBufferedSink(
+            value = this,
+            sink = sink,
+        )
+    }
+
+    fun toCbor(): ByteArray = NetworkV2Serializer.encodeToCbor(this)
+
+    fun toCbor(sink: BufferedSink) = NetworkV2Serializer.encodeToCborSink(this, sink)
+
+    fun clone(): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCbor(NetworkV2Serializer.encodeToCbor(this))
+
+    companion object {
+        fun <I, O> fromJson(value: String) = NetworkV2Serializer.decodeFromString<I, O>(value)
+
+        fun <I, O> fromJson(source: BufferedSource) = NetworkV2Serializer.decodeFromBufferedSource<I, O>(source)
+
+        fun <I, O> fromCbor(bytes: ByteArray): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCbor(bytes)
+
+        fun <I, O> fromCbor(source: BufferedSource): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCborSource(source)
+    }
 }
