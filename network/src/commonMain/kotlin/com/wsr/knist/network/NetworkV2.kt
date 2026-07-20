@@ -43,6 +43,33 @@ class NetworkV2<I, O>(
         }
     }
 
+    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
+        withContext(dispatcher) {
+            mutex.withLock {
+                val input = source.converter._encode(input).also { env[source.id] = it }
+                val context = Context(input)
+                IOScope.launch {
+                    val scope = this
+                    graph.forEach { node ->
+                        when (node) {
+                            is Graph.Node.Attach -> {
+                                with(node.process) {
+                                    env[node.id] = scope._expect(env[node.from]!!, context)
+                                }
+                            }
+                        }
+                    }
+                    val result = with(sink.output) {
+                        scope._train(
+                            input = env[sink.from]!!,
+                            label = { sink.converter._encode(label) },
+                        )
+                    }
+                    result.loss.toGlobal()
+                }
+            }
+        }
+
     suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
         withContext(dispatcher) {
             mutex.withLock {
