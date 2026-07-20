@@ -19,7 +19,7 @@ class LeakyReLUD2 internal constructor(
     override val outputJ: Int get() = inputJ
     override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
         val mask = input gt 0f
-        return input.where(condition = mask, onFalse = 0.01f)
+        return input.where(condition = mask, onFalse = 0.01f * input)
     }
 
     override fun IOScope.train(
@@ -28,7 +28,7 @@ class LeakyReLUD2 internal constructor(
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val mask = input gt 0f
-        val output = input.where(condition = mask, onFalse = 0f)
+        val output = input.where(condition = mask, onFalse = 0.01f * input)
         val delta = calcDelta(output)
         return delta.where(condition = mask, onFalse = 0.01f * delta)
     }

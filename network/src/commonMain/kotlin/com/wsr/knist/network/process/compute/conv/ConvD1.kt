@@ -80,7 +80,6 @@ class ConvD1 internal constructor(
         val delta = calcDelta(output)
 
         val reversed = weight
-            .flip(axis = 2)
             .reshapeToD2(i = filter, j = channel * kernel)
             .transpose()
         val deltaCol = delta.toD3()

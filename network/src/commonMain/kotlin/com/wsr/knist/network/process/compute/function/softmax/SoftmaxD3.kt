@@ -28,7 +28,8 @@ class SoftmaxD3 internal constructor(
     ): Batch<IOType.D3> {
         val output = input.softmax()
         val delta = calcDelta(output)
-        return delta * output * (1f - output)
+        val sum = (delta * output).sum()
+        return output * (delta - sum)
     }
 }
 

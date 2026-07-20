@@ -26,7 +26,8 @@ class SoftmaxD2 internal constructor(
     ): Batch<IOType.D2> {
         val output = input.softmax()
         val delta = calcDelta(output)
-        return delta * output * (1f - output)
+        val sum = (delta * output).sum()
+        return output * (delta - sum)
     }
 }
 

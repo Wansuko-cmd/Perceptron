@@ -22,7 +22,8 @@ class SoftmaxD1 internal constructor(override val inputI: Int, override val id: 
     ): Batch<IOType.D1> {
         val output = input.softmax()
         val delta = calcDelta(output)
-        return delta * output * (1f - output)
+        val sum = (delta * output).sum()
+        return output * (delta - sum)
     }
 }
 
