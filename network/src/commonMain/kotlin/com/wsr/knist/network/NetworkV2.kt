@@ -11,7 +11,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
-private typealias TrainLambdaV2 = IOScope.() -> Unit
+private typealias TrainLambdaV2 = IOScope.(Context) -> Unit
 
 class NetworkV2<I, O>(
     private val source: Graph.Source<I>,
@@ -20,10 +20,10 @@ class NetworkV2<I, O>(
 ) {
     @PublishedApi
     internal val mutex = Mutex()
+    private val env = mutableMapOf<GraphId, Batch<IOType>>()
 
     suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
         mutex.withLock {
-            val env = mutableMapOf<GraphId, Batch<IOType>>()
             val input = source.converter._encode(input).also { env[source.id] = it }
             val context = Context(input)
             val output = IOScope.launch {
@@ -46,7 +46,6 @@ class NetworkV2<I, O>(
     suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
         withContext(dispatcher) {
             mutex.withLock {
-                val env = mutableMapOf<GraphId, Batch<IOType>>()
                 val input = source.converter._encode(input).also { env[source.id] = it }
                 val context = Context(input)
                 IOScope.launch {
@@ -58,27 +57,33 @@ class NetworkV2<I, O>(
                         loss = result.loss.toGlobal()
                         env[sink.from] = result.delta
                     }
-                    val chainStep = graph.foldRight(sinkStep) { node, next ->
-                        when (node) {
-                            is Graph.Node.Attach -> {
-                                {
-                                    val delta = with(node.process) {
-                                        _train(env[node.from]!!, context) { out ->
-                                            env[node.id] = out
-                                            next()
-                                            env[node.id]!!
-                                        }
-                                    }
-                                    env[node.from] = delta
-                                }
-                            }
-                        }
-                    }
-                    chainStep()
+                    trainLambda(sinkStep)(context)
                     loss!!
                 }
             }
         }
+
+    private val trainLambda: (TrainLambdaV2) -> TrainLambdaV2 = run {
+        val initial: (TrainLambdaV2) -> TrainLambdaV2 = { it }
+        graph.foldRight(initial) { node, next ->
+            { final ->
+                when (node) {
+                    is Graph.Node.Attach -> {
+                        { context ->
+                            val delta = with(node.process) {
+                                _train(env[node.from]!!, context) { out ->
+                                    env[node.id] = out
+                                    next(final)(context)
+                                    env[node.id]!!
+                                }
+                            }
+                            env[node.from] = delta
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     companion object
 }
