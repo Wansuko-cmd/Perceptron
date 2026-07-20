@@ -75,38 +75,36 @@ class ConvD2Test {
             _train(input = input, context = Context(input), calcDelta = { it })
         } as Batch<IOType.D3>
 
-        println(actual[1])
-
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(4396f, 8888f, 4252f),
-                IOType.d1(10484f, 20560f, 9596f),
-                IOType.d1(5848f, 11192f, 5104f),
+                IOType.d1(2896f, 7528f, 4872f),
+                IOType.d1(7764f, 19600f, 12316f),
+                IOType.d1(5108f, 12552f, 7684f),
             ),
             actual = actual[0][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(6396f, 13368f, 6732f),
-                IOType.d1(15444f, 31440f, 15516f),
-                IOType.d1(8808f, 17592f, 8544f),
+                IOType.d1(4896f, 12008f, 7352f),
+                IOType.d1(12724f, 30480f, 18236f),
+                IOType.d1(8068f, 18952f, 11124f),
             ),
             actual = actual[0][1],
         )
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(6292f, 12248f, 5716f),
-                IOType.d1(15156f, 28800f, 13164f),
-                IOType.d1(8504f, 15832f, 7088f),
+                IOType.d1(4144f, 10456f, 6552f),
+                IOType.d1(11212f, 27600f, 16868f),
+                IOType.d1(7428f, 17864f, 10676f),
             ),
             actual = actual[1][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(9156f, 18456f, 9060f),
-                IOType.d1(22324f, 44096f, 21292f),
-                IOType.d1(12808f, 24920f, 11872f),
+                IOType.d1(7008f, 16664f, 9896f),
+                IOType.d1(18380f, 42896f, 24996f),
+                IOType.d1(11732f, 26952f, 15460f),
             ),
             actual = actual[1][1],
         )

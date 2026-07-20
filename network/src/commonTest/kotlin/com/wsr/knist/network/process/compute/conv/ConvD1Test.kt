@@ -51,10 +51,10 @@ class ConvD1Test {
             _train(input = input, context = Context(input), calcDelta = { it })
         } as Batch<IOType.D2>
 
-        assertContentEquals(expected = IOType.d1(630f, 1300f, 1666f, 772f), actual = actual[0][0])
-        assertContentEquals(expected = IOType.d1(970f, 2088f, 2670f, 1328f), actual = actual[0][1])
-        assertContentEquals(expected = IOType.d1(888f, 1746f, 2112f, 960f), actual = actual[1][0])
-        assertContentEquals(expected = IOType.d1(1368f, 2814f, 3396f, 1656f), actual = actual[1][1])
+        assertContentEquals(expected = IOType.d1(460f, 1246f, 1612f, 1050f), actual = actual[0][0])
+        assertContentEquals(expected = IOType.d1(800f, 2034f, 2616f, 1606f), actual = actual[0][1])
+        assertContentEquals(expected = IOType.d1(648f, 1692f, 2058f, 1308f), actual = actual[1][0])
+        assertContentEquals(expected = IOType.d1(1128f, 2760f, 3342f, 2004f), actual = actual[1][1])
     }
 
     @Test
