@@ -5,6 +5,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
+import com.wsr.knist.network.Graph
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphId
 import com.wsr.knist.network.process.GraphEnv
@@ -63,10 +64,18 @@ data class AttentionBiasD2Builder(
     val inputI: Int,
     val inputJ: Int,
     val numOfHeads: Int,
+    val nodes: List<Graph.Node> = emptyList(),
     val biases: List<AttentionBiasD2> = emptyList(),
 ) {
     fun causal() = copy(biases = biases + AttentionBiasD2.Causal(inputI))
-    fun mask(node: GraphBuilder.Node.D1, value: Float) =
-        copy(biases = biases + AttentionBiasD2.Mask(nodeId = node.from, value = value))
+
+    fun mask(node: GraphBuilder.Node.D1, value: Float): AttentionBiasD2Builder {
+        val observer = Graph.Node.Observe(from = node.from)
+        return copy(
+            nodes = nodes + observer,
+            biases = biases + AttentionBiasD2.Mask(nodeId = observer.id, value = value),
+        )
+    }
+
     fun alibi() = copy(biases = biases + AttentionBiasD2.ALiBi(numOfHeads, inputI))
 }

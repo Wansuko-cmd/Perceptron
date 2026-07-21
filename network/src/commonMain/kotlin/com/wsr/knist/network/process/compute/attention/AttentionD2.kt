@@ -5,6 +5,7 @@ import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.Graph
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.initializer.WeightInitializer
@@ -156,13 +157,17 @@ fun GraphBuilder.Node.D2.attention(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-): GraphBuilder.Node.D2 = addCompute(
-    compute = AttentionD2(
+): GraphBuilder.Node.D2 {
+    val nodes = mutableListOf<Graph.Node>()
+    val compute = AttentionD2(
         inputI = inputI,
         inputJ = inputJ,
         numOfHeads = numOfHeads,
         dim = dim,
-        biases = AttentionBiasD2Builder(inputI = inputI, inputJ = inputJ, numOfHeads = numOfHeads).biases().biases,
+        biases = AttentionBiasD2Builder(inputI = inputI, inputJ = inputJ, numOfHeads = numOfHeads)
+            .biases()
+            .also { nodes.addAll(it.nodes) }
+            .biases,
         weightQ = initializer.d2(
             input = listOf(inputJ),
             output = listOf(numOfHeads * dim),
@@ -192,5 +197,16 @@ fun GraphBuilder.Node.D2.attention(
         optimizerV = optimizer.d2(inputJ, numOfHeads * dim),
         optimizerO = optimizer.d2(numOfHeads * dim, inputJ),
         id = id,
-    ),
-)
+    )
+    val node = Graph.Node.Attach(from = from, process = compute)
+    nodes.add(index = 0, element = node)
+
+    return GraphBuilder.Node.D2(
+        from = node.id,
+        nodes = nodes,
+        optimizer = optimizer,
+        initializer = initializer,
+        inputI = compute.outputI,
+        inputJ = compute.outputJ,
+    )
+}
