@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.function.softmax
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -34,5 +36,9 @@ class SoftmaxD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.softmax(id: String = Uuid.random().toString()) = addCompute(
+    compute = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+)
+
+fun GraphBuilder.D3.softmax(id: String = Uuid.random().toString()) = addCompute(
     compute = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

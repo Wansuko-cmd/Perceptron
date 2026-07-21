@@ -9,6 +9,8 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.shape.reshapeToD2
 import com.wsr.knist.core.shape.reshapeToD4
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -95,6 +97,39 @@ class ConvD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.convD2(
+    filter: Int,
+    kernel: Int,
+    stride: Int = 1,
+    dilation: Int = 1,
+    padding: Int = 0,
+    optimizer: Optimizer = this.optimizer,
+    initializer: WeightInitializer = this.initializer,
+    id: String = Uuid.random().toString(),
+) = addCompute(
+    compute =
+        ConvD2(
+            filter = filter,
+            channel = inputI,
+            kernel = kernel,
+            stride = stride,
+            dilation = dilation,
+            padding = padding,
+            height = inputJ,
+            width = inputK,
+            optimizer = optimizer.d4(filter, inputI, kernel, kernel),
+            weight = initializer.d4(
+                input = listOf(inputI, kernel, kernel),
+                output = listOf(filter, kernel, kernel),
+                i = filter,
+                j = inputI,
+                k = kernel,
+                l = kernel,
+            ),
+            id = id,
+        ),
+)
+
+fun GraphBuilder.D3.convD2(
     filter: Int,
     kernel: Int,
     stride: Int = 1,

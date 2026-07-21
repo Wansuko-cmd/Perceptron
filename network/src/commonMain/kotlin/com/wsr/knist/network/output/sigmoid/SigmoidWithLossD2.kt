@@ -3,6 +3,8 @@ package com.wsr.knist.network.output.sigmoid
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addOutput
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD2
@@ -45,4 +47,20 @@ fun <I, O> NetworkBuilder.D2<I>.sigmoidWithLoss(converter: NetworkBuilder.D2<I>.
         outputJ = inputJ,
     ),
     converter = converter,
+)
+
+fun GraphBuilder.D2.sigmoidWithLoss() = addOutput(
+    output = SigmoidWithLossD2(
+        outputI = inputI,
+        outputJ = inputJ,
+    ),
+    converter = RawD2(inputI, inputJ),
+)
+
+fun <O> GraphBuilder.D2.sigmoidWithLoss(converter: GraphBuilder.D2.() -> Converter.D2<O>) = addOutput(
+    output = SigmoidWithLossD2(
+        outputI = inputI,
+        outputJ = inputJ,
+    ),
+    converter = converter(),
 )

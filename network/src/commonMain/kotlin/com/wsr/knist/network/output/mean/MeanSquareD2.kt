@@ -3,6 +3,8 @@ package com.wsr.knist.network.output.mean
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addOutput
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD2
@@ -34,4 +36,14 @@ fun <I> NetworkBuilder.D2<I>.meanSquare() = addOutput(
 fun <I, O> NetworkBuilder.D2<I>.meanSquare(converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>) = addOutput(
     output = MeanSquareD2(),
     converter = converter,
+)
+
+fun GraphBuilder.D2.meanSquare() = addOutput(
+    output = MeanSquareD2(),
+    converter = RawD2(inputI, inputJ),
+)
+
+fun <O> GraphBuilder.D2.meanSquare(converter: GraphBuilder.D2.() -> Converter.D2<O>) = addOutput(
+    output = MeanSquareD2(),
+    converter = converter(),
 )

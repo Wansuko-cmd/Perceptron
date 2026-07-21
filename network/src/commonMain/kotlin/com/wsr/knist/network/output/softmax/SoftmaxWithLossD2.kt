@@ -5,6 +5,8 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addOutput
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD2
@@ -59,3 +61,20 @@ fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
     ),
     converter = converter,
 )
+
+fun GraphBuilder.D2.softmaxWithLoss(temperature: Float = 1f) = addOutput(
+    output = SoftmaxWithLossD2(
+        outputJ = inputJ,
+        temperature = temperature,
+    ),
+    converter = RawD2(inputI, inputJ),
+)
+
+fun <O> GraphBuilder.D2.softmaxWithLoss(temperature: Float = 1f, converter: GraphBuilder.D2.() -> Converter.D2<O>) =
+    addOutput(
+        output = SoftmaxWithLossD2(
+            outputJ = inputJ,
+            temperature = temperature,
+        ),
+        converter = converter(),
+    )

@@ -5,6 +5,8 @@ import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.batch.shape.reshapeToD3
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addReshape
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Reshape
@@ -35,6 +37,29 @@ internal class ReshapeD3ToD2(
 }
 
 fun <T> NetworkBuilder.D3<T>.reshapeToD2(i: Int, j: Int, id: String = Uuid.random().toString()): NetworkBuilder.D2<T> {
+    check(inputI * inputJ * inputK == i * j) {
+        """
+            invalid parameter.
+            inputI: $inputI
+            inputJ: $inputJ
+            inputK: $inputK
+            outputI: $i
+            outputJ: $j
+        """.trimIndent()
+    }
+    return addReshape(
+        reshape = ReshapeD3ToD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            inputK = inputK,
+            outputI = i,
+            outputJ = j,
+            id = id,
+        ),
+    )
+}
+
+fun GraphBuilder.D3.reshapeToD2(i: Int, j: Int, id: String = Uuid.random().toString()): GraphBuilder.D2 {
     check(inputI * inputJ * inputK == i * j) {
         """
             invalid parameter.

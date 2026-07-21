@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.padding
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -45,6 +47,18 @@ class PaddingD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
+    addCompute(
+        compute = PaddingD2(
+            axis = axis,
+            left = left,
+            right = right,
+            inputI = inputI,
+            inputJ = inputJ,
+            id = id,
+        ),
+    )
+
+fun GraphBuilder.D2.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
     addCompute(
         compute = PaddingD2(
             axis = axis,

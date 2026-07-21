@@ -4,6 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addReshape
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Reshape
@@ -39,5 +41,9 @@ internal class GlobalAverageD3ToD1(
 }
 
 fun <T> NetworkBuilder.D3<T>.globalAverageToD1(id: String = Uuid.random().toString()) = addReshape(
+    reshape = GlobalAverageD3ToD1(inputI, inputJ, inputK, id),
+)
+
+fun GraphBuilder.D3.globalAverageToD1(id: String = Uuid.random().toString()) = addReshape(
     reshape = GlobalAverageD3ToD1(inputI, inputJ, inputK, id),
 )

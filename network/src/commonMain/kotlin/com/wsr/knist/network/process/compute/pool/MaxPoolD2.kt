@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.pool
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -76,3 +78,15 @@ fun <T> NetworkBuilder.D2<T>.maxPool(
         id = id,
     ),
 )
+
+fun GraphBuilder.D2.maxPool(size: Int, stride: Int = size, padding: Int = 0, id: String = Uuid.random().toString()) =
+    addCompute(
+        compute = MaxPoolD2(
+            poolSize = size,
+            channel = inputI,
+            inputSize = inputJ,
+            padding = padding,
+            stride = stride,
+            id = id,
+        ),
+    )

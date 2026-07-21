@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.dropout
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -56,3 +58,14 @@ fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null, id: String
                 id = id,
             ),
     )
+
+fun GraphBuilder.D2.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) = addCompute(
+    compute =
+        DropoutD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            ratio = ratio,
+            seed = seed,
+            id = id,
+        ),
+)

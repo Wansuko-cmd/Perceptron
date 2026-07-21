@@ -5,6 +5,8 @@ import com.wsr.knist.batch.shape.flatten
 import com.wsr.knist.batch.shape.reshapeToD2
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addReshape
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Reshape
@@ -33,5 +35,9 @@ internal class ReshapeD2ToD1(
 }
 
 fun <T> NetworkBuilder.D2<T>.reshapeToD1(id: String = Uuid.random().toString()) = addReshape(
+    reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ, id = id),
+)
+
+fun GraphBuilder.D2.reshapeToD1(id: String = Uuid.random().toString()) = addReshape(
     reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ, id = id),
 )

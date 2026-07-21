@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.function.relu
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -35,5 +37,9 @@ class ReLUD2 internal constructor(
 }
 
 fun <T> NetworkBuilder.D2<T>.reLU(id: String = Uuid.random().toString()) = addCompute(
+    ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
+)
+
+fun GraphBuilder.D2.reLU(id: String = Uuid.random().toString()) = addCompute(
     ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

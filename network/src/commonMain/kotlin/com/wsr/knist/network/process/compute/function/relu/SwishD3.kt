@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.function.relu
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -34,5 +36,9 @@ class SwishD3 internal constructor(
 }
 
 fun <T> NetworkBuilder.D3<T>.swish(id: String = Uuid.random().toString()) = addCompute(
+    compute = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
+)
+
+fun GraphBuilder.D3.swish(id: String = Uuid.random().toString()) = addCompute(
     compute = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

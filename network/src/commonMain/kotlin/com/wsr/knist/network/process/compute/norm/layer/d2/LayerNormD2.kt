@@ -3,6 +3,8 @@ package com.wsr.knist.network.process.compute.norm.layer.d2
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -91,6 +93,37 @@ fun <T> NetworkBuilder.D2<T>.layerNorm(
     e: Float = 1e-6f,
     id: String = Uuid.random().toString(),
 ): NetworkBuilder.D2<T> {
+    val process = when (axis) {
+        null -> LayerNormD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            e = e,
+            id = id,
+        )
+
+        0, 1 -> LayerNormAxisD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            axis = axis,
+            e = e,
+            id = id,
+        )
+
+        else -> throw IllegalStateException(
+            """
+            invalid parameter.
+            axis: $axis
+            """.trimIndent(),
+        )
+    }
+    return addCompute(compute = process)
+}
+
+fun GraphBuilder.D2.layerNorm(
+    axis: Int? = null,
+    e: Float = 1e-6f,
+    id: String = Uuid.random().toString(),
+): GraphBuilder.D2 {
     val process = when (axis) {
         null -> LayerNormD2(
             inputI = inputI,
