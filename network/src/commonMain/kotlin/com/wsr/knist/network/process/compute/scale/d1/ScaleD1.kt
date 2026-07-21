@@ -63,7 +63,7 @@ fun <T> NetworkBuilder.D1<T>.scale(
     ),
 )
 
-fun GraphBuilder.D1.scale(
+fun GraphBuilder.Node.D1.scale(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
     id: String = Uuid.random().toString(),

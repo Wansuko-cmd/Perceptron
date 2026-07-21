@@ -37,6 +37,6 @@ fun <T> NetworkBuilder.D2<T>.softmax(id: String = Uuid.random().toString()) = ad
     compute = SoftmaxD2(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.softmax(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D2.softmax(id: String = Uuid.random().toString()) = addCompute(
     compute = SoftmaxD2(inputI = inputI, inputJ = inputJ, id = id),
 )

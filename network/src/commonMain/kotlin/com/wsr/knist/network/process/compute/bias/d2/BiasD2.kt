@@ -88,12 +88,12 @@ fun <T> NetworkBuilder.D2<T>.bias(
     return addCompute(compute = process)
 }
 
-fun GraphBuilder.D2.bias(
+fun GraphBuilder.Node.D2.bias(
     axis: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(0f),
     id: String = Uuid.random().toString(),
-): GraphBuilder.D2 {
+): GraphBuilder.Node.D2 {
     val process = when (axis) {
         null -> BiasD2(
             inputI = inputI,

@@ -70,13 +70,13 @@ fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
     ),
 )
 
-fun GraphBuilder.D1.tokenEmbedding(
+fun GraphBuilder.Node.D1.tokenEmbedding(
     vocabSize: Int,
     tokenSize: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-): GraphBuilder.D2 = addReshape(
+): GraphBuilder.Node.D2 = addReshape(
     reshape = TokenEmbeddingD1ToD2(
         inputI = inputI,
         outputJ = tokenSize,

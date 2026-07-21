@@ -107,12 +107,12 @@ fun <T> NetworkBuilder.D3<T>.scale(
     return addCompute(compute = process)
 }
 
-fun GraphBuilder.D3.scale(
+fun GraphBuilder.Node.D3.scale(
     axis: Int? = null,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(1f),
     id: String = Uuid.random().toString(),
-): GraphBuilder.D3 {
+): GraphBuilder.Node.D3 {
     val process = when (axis) {
         null -> ScaleD3(
             inputI = inputI,

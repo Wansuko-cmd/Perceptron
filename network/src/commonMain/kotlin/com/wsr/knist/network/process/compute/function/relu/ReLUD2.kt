@@ -40,6 +40,6 @@ fun <T> NetworkBuilder.D2<T>.reLU(id: String = Uuid.random().toString()) = addCo
     ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.reLU(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D2.reLU(id: String = Uuid.random().toString()) = addCompute(
     ReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

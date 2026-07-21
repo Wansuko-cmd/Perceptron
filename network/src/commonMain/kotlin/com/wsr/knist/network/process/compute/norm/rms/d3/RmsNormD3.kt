@@ -80,11 +80,11 @@ fun <T> NetworkBuilder.D3<T>.rmsNorm(
     return addCompute(compute = process)
 }
 
-fun GraphBuilder.D3.rmsNorm(
+fun GraphBuilder.Node.D3.rmsNorm(
     axis: Int? = null,
     e: Float = 1e-6f,
     id: String = Uuid.random().toString(),
-): GraphBuilder.D3 {
+): GraphBuilder.Node.D3 {
     val process = when (axis) {
         null -> RmsNormD3(
             inputI = inputI,

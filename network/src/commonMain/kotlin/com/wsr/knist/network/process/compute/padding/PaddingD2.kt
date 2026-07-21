@@ -58,7 +58,7 @@ fun <T> NetworkBuilder.D2<T>.padding(axis: Int, left: Int = 0, right: Int = 0, i
         ),
     )
 
-fun GraphBuilder.D2.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
+fun GraphBuilder.Node.D2.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
     addCompute(
         compute = PaddingD2(
             axis = axis,

@@ -136,7 +136,7 @@ fun <T> NetworkBuilder.D2<T>.convD1(
         ),
 )
 
-fun GraphBuilder.D2.convD1(
+fun GraphBuilder.Node.D2.convD1(
     filter: Int,
     kernel: Int,
     stride: Int = 1,

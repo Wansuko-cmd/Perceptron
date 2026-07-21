@@ -63,7 +63,7 @@ fun <T> NetworkBuilder.D3<T>.dropout(ratio: Float, seed: Int? = null, id: String
             ),
     )
 
-fun GraphBuilder.D3.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) = addCompute(
     compute =
         DropoutD3(
             inputI = inputI,

@@ -42,6 +42,6 @@ fun <T> NetworkBuilder.D3<T>.leakyReLU(id: String = Uuid.random().toString()) = 
     compute = LeakyReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
     compute = LeakyReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

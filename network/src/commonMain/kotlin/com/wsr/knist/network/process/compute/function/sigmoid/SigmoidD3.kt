@@ -38,6 +38,6 @@ fun <T> NetworkBuilder.D3<T>.sigmoid(id: String = Uuid.random().toString()) = ad
     compute = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.sigmoid(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.sigmoid(id: String = Uuid.random().toString()) = addCompute(
     compute = SigmoidD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

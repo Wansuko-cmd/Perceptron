@@ -42,6 +42,6 @@ fun <T> NetworkBuilder.D3<T>.reLU(id: String = Uuid.random().toString()) = addCo
     compute = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.reLU(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.reLU(id: String = Uuid.random().toString()) = addCompute(
     compute = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

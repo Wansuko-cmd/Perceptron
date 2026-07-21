@@ -44,6 +44,6 @@ fun <T> NetworkBuilder.D3<T>.globalAverageToD2(id: String = Uuid.random().toStri
     reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK, id),
 )
 
-fun GraphBuilder.D3.globalAverageToD2(id: String = Uuid.random().toString()) = addReshape(
+fun GraphBuilder.Node.D3.globalAverageToD2(id: String = Uuid.random().toString()) = addReshape(
     reshape = GlobalAverageD3ToD2(inputI, inputJ, inputK, id),
 )

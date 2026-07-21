@@ -8,38 +8,47 @@ import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Reshape
 
 object GraphBuilder {
-    data class D1(
-        val inputI: Int,
-        val from: GraphId,
-        val nodes: List<Graph.Node>,
-        val optimizer: Optimizer,
-        val initializer: WeightInitializer,
-    )
-    data class D2(
-        val inputI: Int,
-        val inputJ: Int,
-        val from: GraphId,
-        val nodes: List<Graph.Node>,
-        val optimizer: Optimizer,
-        val initializer: WeightInitializer,
-    )
-    data class D3(
-        val inputI: Int,
-        val inputJ: Int,
-        val inputK: Int,
-        val from: GraphId,
-        val nodes: List<Graph.Node>,
-        val optimizer: Optimizer,
-        val initializer: WeightInitializer,
-    )
+    sealed interface Node {
+        val from: GraphId
+        val nodes: List<Graph.Node>
+        val optimizer: Optimizer
+        val initializer: WeightInitializer
+
+        data class D1(
+            val inputI: Int,
+            override val from: GraphId,
+            override val nodes: List<Graph.Node>,
+            override val optimizer: Optimizer,
+            override val initializer: WeightInitializer,
+        ) : Node
+
+        data class D2(
+            val inputI: Int,
+            val inputJ: Int,
+            override val from: GraphId,
+            override val nodes: List<Graph.Node>,
+            override val optimizer: Optimizer,
+            override val initializer: WeightInitializer,
+        ) : Node
+
+        data class D3(
+            val inputI: Int,
+            val inputJ: Int,
+            val inputK: Int,
+            override val from: GraphId,
+            override val nodes: List<Graph.Node>,
+            override val optimizer: Optimizer,
+            override val initializer: WeightInitializer,
+        ) : Node
+    }
 
     data class Result<O>(val nodes: List<Graph.Node>, val sink: Graph.Sink<O>)
 }
 
 object GraphScope {
-    fun GraphBuilder.D1.addCompute(compute: Compute.D1): GraphBuilder.D1 {
+    fun GraphBuilder.Node.D1.addCompute(compute: Compute.D1): GraphBuilder.Node.D1 {
         val node = Graph.Node.Attach(from = from, process = compute)
-        return GraphBuilder.D1(
+        return GraphBuilder.Node.D1(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -48,9 +57,9 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D2.addCompute(compute: Compute.D2): GraphBuilder.D2 {
+    fun GraphBuilder.Node.D2.addCompute(compute: Compute.D2): GraphBuilder.Node.D2 {
         val node = Graph.Node.Attach(from = from, process = compute)
-        return GraphBuilder.D2(
+        return GraphBuilder.Node.D2(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -60,9 +69,9 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D3.addCompute(compute: Compute.D3): GraphBuilder.D3 {
+    fun GraphBuilder.Node.D3.addCompute(compute: Compute.D3): GraphBuilder.Node.D3 {
         val node = Graph.Node.Attach(from = from, process = compute)
-        return GraphBuilder.D3(
+        return GraphBuilder.Node.D3(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -73,9 +82,9 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D1.addReshape(reshape: Reshape.D1ToD2): GraphBuilder.D2 {
+    fun GraphBuilder.Node.D1.addReshape(reshape: Reshape.D1ToD2): GraphBuilder.Node.D2 {
         val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D2(
+        return GraphBuilder.Node.D2(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -85,33 +94,9 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D1.addReshape(reshape: Reshape.D1ToD3): GraphBuilder.D3 {
+    fun GraphBuilder.Node.D1.addReshape(reshape: Reshape.D1ToD3): GraphBuilder.Node.D3 {
         val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D3(
-            from = node.id,
-            nodes = nodes + node,
-            optimizer = optimizer,
-            initializer = initializer,
-            inputI = reshape.outputI,
-            inputJ = reshape.outputJ,
-            inputK = reshape.outputK,
-        )
-    }
-
-    fun GraphBuilder.D2.addReshape(reshape: Reshape.D2ToD1): GraphBuilder.D1 {
-        val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D1(
-            from = node.id,
-            nodes = nodes + node,
-            optimizer = optimizer,
-            initializer = initializer,
-            inputI = reshape.outputI,
-        )
-    }
-
-    fun GraphBuilder.D2.addReshape(reshape: Reshape.D2ToD3): GraphBuilder.D3 {
-        val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D3(
+        return GraphBuilder.Node.D3(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -122,9 +107,9 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D3.addReshape(reshape: Reshape.D3ToD1): GraphBuilder.D1 {
+    fun GraphBuilder.Node.D2.addReshape(reshape: Reshape.D2ToD1): GraphBuilder.Node.D1 {
         val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D1(
+        return GraphBuilder.Node.D1(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -133,9 +118,33 @@ object GraphScope {
         )
     }
 
-    fun GraphBuilder.D3.addReshape(reshape: Reshape.D3ToD2): GraphBuilder.D2 {
+    fun GraphBuilder.Node.D2.addReshape(reshape: Reshape.D2ToD3): GraphBuilder.Node.D3 {
         val node = Graph.Node.Attach(from = from, process = reshape)
-        return GraphBuilder.D2(
+        return GraphBuilder.Node.D3(
+            from = node.id,
+            nodes = nodes + node,
+            optimizer = optimizer,
+            initializer = initializer,
+            inputI = reshape.outputI,
+            inputJ = reshape.outputJ,
+            inputK = reshape.outputK,
+        )
+    }
+
+    fun GraphBuilder.Node.D3.addReshape(reshape: Reshape.D3ToD1): GraphBuilder.Node.D1 {
+        val node = Graph.Node.Attach(from = from, process = reshape)
+        return GraphBuilder.Node.D1(
+            from = node.id,
+            nodes = nodes + node,
+            optimizer = optimizer,
+            initializer = initializer,
+            inputI = reshape.outputI,
+        )
+    }
+
+    fun GraphBuilder.Node.D3.addReshape(reshape: Reshape.D3ToD2): GraphBuilder.Node.D2 {
+        val node = Graph.Node.Attach(from = from, process = reshape)
+        return GraphBuilder.Node.D2(
             from = node.id,
             nodes = nodes + node,
             optimizer = optimizer,
@@ -145,12 +154,12 @@ object GraphScope {
         )
     }
 
-    fun <O> GraphBuilder.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
         return GraphBuilder.Result(nodes = nodes, sink = sink)
     }
 
-    fun <O> GraphBuilder.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
         return GraphBuilder.Result(nodes = nodes, sink = sink)
     }
@@ -160,10 +169,10 @@ fun <I, O> NetworkV2.Companion.create(
     converter: Converter.D1<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.D1) -> GraphBuilder.Result<O>,
+    block: GraphScope.(GraphBuilder.Node.D1) -> GraphBuilder.Result<O>,
 ): NetworkV2<I, O> {
     val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.D1(
+    val builder = GraphBuilder.Node.D1(
         from = source.id,
         nodes = listOf(),
         optimizer = optimizer,
@@ -184,10 +193,10 @@ fun <I, O> NetworkV2.Companion.create(
     converter: Converter.D2<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.D2) -> GraphBuilder.Result<O>,
+    block: GraphScope.(GraphBuilder.Node.D2) -> GraphBuilder.Result<O>,
 ): NetworkV2<I, O> {
     val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.D2(
+    val builder = GraphBuilder.Node.D2(
         from = source.id,
         nodes = listOf(),
         optimizer = optimizer,
@@ -208,10 +217,10 @@ fun <I, O> NetworkV2.Companion.create(
     converter: Converter.D3<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.D3) -> GraphBuilder.Result<O>,
+    block: GraphScope.(GraphBuilder.Node.D3) -> GraphBuilder.Result<O>,
 ): NetworkV2<I, O> {
     val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.D3(
+    val builder = GraphBuilder.Node.D3(
         from = source.id,
         nodes = listOf(),
         optimizer = optimizer,

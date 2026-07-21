@@ -38,12 +38,12 @@ fun <I, O> NetworkBuilder.D1<I>.meanSquare(converter: NetworkBuilder.D1<I>.() ->
     converter = converter,
 )
 
-fun GraphBuilder.D1.meanSquare() = addOutput(
+fun GraphBuilder.Node.D1.meanSquare() = addOutput(
     output = MeanSquareD1(),
     converter = RawD1(inputI),
 )
 
-fun <O> GraphBuilder.D1.meanSquare(converter: GraphBuilder.D1.() -> Converter.D1<O>) = addOutput(
+fun <O> GraphBuilder.Node.D1.meanSquare(converter: GraphBuilder.Node.D1.() -> Converter.D1<O>) = addOutput(
     output = MeanSquareD1(),
     converter = converter(),
 )

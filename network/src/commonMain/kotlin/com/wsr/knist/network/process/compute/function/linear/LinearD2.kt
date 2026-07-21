@@ -32,6 +32,6 @@ fun <T> NetworkBuilder.D2<T>.linear(id: String = Uuid.random().toString()) = add
     compute = LinearD2(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.linear(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D2.linear(id: String = Uuid.random().toString()) = addCompute(
     compute = LinearD2(inputI = inputI, inputJ = inputJ, id = id),
 )

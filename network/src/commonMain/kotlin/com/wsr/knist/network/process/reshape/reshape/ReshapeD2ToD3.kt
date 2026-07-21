@@ -55,12 +55,12 @@ fun <T> NetworkBuilder.D2<T>.reshapeToD3(
     )
 }
 
-fun GraphBuilder.D2.reshapeToD3(
+fun GraphBuilder.Node.D2.reshapeToD3(
     i: Int = 1,
     j: Int = inputI,
     k: Int = inputJ,
     id: String = Uuid.random().toString(),
-): GraphBuilder.D3 {
+): GraphBuilder.Node.D3 {
     check(i * j * k == inputI * inputJ) {
         """
             invalid parameter.

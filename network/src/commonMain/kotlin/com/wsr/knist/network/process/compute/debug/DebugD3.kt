@@ -63,7 +63,7 @@ fun <T> NetworkBuilder.D3<T>.debug(
     },
 )
 
-fun GraphBuilder.D3.debug(
+fun GraphBuilder.Node.D3.debug(
     onInput: (Batch<IOType.D3>) -> Unit = {},
     onDelta: (Batch<IOType.D3>) -> Unit = {},
     id: String = Uuid.random().toString(),

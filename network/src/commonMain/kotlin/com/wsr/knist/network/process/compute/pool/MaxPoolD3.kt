@@ -89,15 +89,19 @@ fun <T> NetworkBuilder.D3<T>.maxPool(
     ),
 )
 
-fun GraphBuilder.D3.maxPool(size: Int, stride: Int = size, padding: Int = 0, id: String = Uuid.random().toString()) =
-    addCompute(
-        compute = MaxPoolD3(
-            poolSize = size,
-            channel = inputI,
-            height = inputJ,
-            width = inputK,
-            padding = padding,
-            stride = stride,
-            id = id,
-        ),
-    )
+fun GraphBuilder.Node.D3.maxPool(
+    size: Int,
+    stride: Int = size,
+    padding: Int = 0,
+    id: String = Uuid.random().toString(),
+) = addCompute(
+    compute = MaxPoolD3(
+        poolSize = size,
+        channel = inputI,
+        height = inputJ,
+        width = inputK,
+        padding = padding,
+        stride = stride,
+        id = id,
+    ),
+)

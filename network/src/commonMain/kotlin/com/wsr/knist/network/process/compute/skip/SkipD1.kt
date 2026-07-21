@@ -103,10 +103,10 @@ fun <T> NetworkBuilder.D1<T>.skip(
     )
 }
 
-fun GraphBuilder.D1.skip(
+fun GraphBuilder.Node.D1.skip(
     id: String = Uuid.random().toString(),
-    builder: GraphBuilder.D1.() -> GraphBuilder.D1,
-): GraphBuilder.D1 {
+    builder: GraphBuilder.Node.D1.() -> GraphBuilder.Node.D1,
+): GraphBuilder.Node.D1 {
     val before = nodes.size
     val layers = builder().nodes.drop(before).map { (it as Graph.Node.Attach).process }
     val outputI = when (val last = layers.lastOrNull()) {

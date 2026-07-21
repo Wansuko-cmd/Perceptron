@@ -49,7 +49,7 @@ fun <I, O> NetworkBuilder.D2<I>.sigmoidWithLoss(converter: NetworkBuilder.D2<I>.
     converter = converter,
 )
 
-fun GraphBuilder.D2.sigmoidWithLoss() = addOutput(
+fun GraphBuilder.Node.D2.sigmoidWithLoss() = addOutput(
     output = SigmoidWithLossD2(
         outputI = inputI,
         outputJ = inputJ,
@@ -57,7 +57,7 @@ fun GraphBuilder.D2.sigmoidWithLoss() = addOutput(
     converter = RawD2(inputI, inputJ),
 )
 
-fun <O> GraphBuilder.D2.sigmoidWithLoss(converter: GraphBuilder.D2.() -> Converter.D2<O>) = addOutput(
+fun <O> GraphBuilder.Node.D2.sigmoidWithLoss(converter: GraphBuilder.Node.D2.() -> Converter.D2<O>) = addOutput(
     output = SigmoidWithLossD2(
         outputI = inputI,
         outputJ = inputJ,

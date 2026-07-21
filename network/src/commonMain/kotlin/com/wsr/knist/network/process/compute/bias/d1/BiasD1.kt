@@ -57,7 +57,7 @@ fun <T> NetworkBuilder.D1<T>.bias(
     ),
 )
 
-fun GraphBuilder.D1.bias(
+fun GraphBuilder.Node.D1.bias(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = Fixed(0f),
     id: String = Uuid.random().toString(),

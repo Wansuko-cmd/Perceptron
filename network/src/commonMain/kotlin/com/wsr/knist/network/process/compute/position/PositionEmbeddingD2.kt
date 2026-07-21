@@ -60,7 +60,7 @@ fun <T> NetworkBuilder.D2<T>.positionEmbedding(
     ),
 )
 
-fun GraphBuilder.D2.positionEmbedding(
+fun GraphBuilder.Node.D2.positionEmbedding(
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),

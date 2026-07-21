@@ -32,6 +32,6 @@ fun <T> NetworkBuilder.D1<T>.sigmoid(id: String = Uuid.random().toString()) = ad
     SigmoidD1(inputI = inputI, id = id),
 )
 
-fun GraphBuilder.D1.sigmoid(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D1.sigmoid(id: String = Uuid.random().toString()) = addCompute(
     SigmoidD1(inputI = inputI, id = id),
 )

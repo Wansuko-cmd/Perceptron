@@ -38,6 +38,6 @@ fun <T> NetworkBuilder.D2<T>.reshapeToD1(id: String = Uuid.random().toString()) 
     reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.reshapeToD1(id: String = Uuid.random().toString()) = addReshape(
+fun GraphBuilder.Node.D2.reshapeToD1(id: String = Uuid.random().toString()) = addReshape(
     reshape = ReshapeD2ToD1(inputI = inputI, inputJ = inputJ, id = id),
 )
