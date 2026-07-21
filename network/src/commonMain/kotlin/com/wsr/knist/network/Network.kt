@@ -48,6 +48,10 @@ class Network<I, O> @PublishedApi internal constructor(
                                 env[node.id] = scope._expect(env[node.from], env)
                             }
                         }
+
+                        is Graph.Node.Observe -> {
+                            env[node.id] = env[node.from]
+                        }
                     }
                 }
                 with(sink.output) { scope._expect(env[sink.from]) }
@@ -68,6 +72,10 @@ class Network<I, O> @PublishedApi internal constructor(
                                 with(node.process) {
                                     env[node.id] = scope._expect(env[node.from], env)
                                 }
+                            }
+
+                            is Graph.Node.Observe -> {
+                                env[node.id] = env[node.from]
                             }
                         }
                     }
@@ -116,6 +124,13 @@ class Network<I, O> @PublishedApi internal constructor(
                                 }
                             }
                             env[node.from] = delta
+                        }
+                    }
+
+                    is Graph.Node.Observe -> {
+                        { env ->
+                            env[node.id] = env[node.from]
+                            next(final)(env)
                         }
                     }
                 }
@@ -417,7 +432,7 @@ class Network<I, O> @PublishedApi internal constructor(
                                 invalid replace.
                                 input: ${process.inputShape}
                                 output: ${process.outputShape}
-                                """.trimIndent()
+                            """.trimIndent()
                         }
                         redirect[node.id] = from
                         return@fold nodes
@@ -432,11 +447,16 @@ class Network<I, O> @PublishedApi internal constructor(
                             output: ${process.outputShape}
                             replaced input: ${first.inputShape}
                             replaced output: ${last.outputShape}
-                            """.trimIndent()
+                        """.trimIndent()
                     }
                     redirect[node.id] = result.from
                     nodes + result.nodes
                 }
+
+                is Graph.Node.Observe -> nodes + Graph.Node.Observe(
+                    id = node.id,
+                    from = redirect[node.from] ?: node.from,
+                )
             }
         }
         return Network(
