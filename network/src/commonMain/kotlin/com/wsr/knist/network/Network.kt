@@ -396,42 +396,46 @@ class Network<I, O> @PublishedApi internal constructor(
         crossinline block: B1.(T) -> B2,
     ): Network<I, O> {
         val copy = clone()
-        var currentFrom = copy.source.id
-        val newNodes = mutableListOf<Graph.Node>()
-        copy.graph.forEach { node ->
+        val redirect = mutableMapOf<GraphId, GraphId>()
+        val newNodes = copy.graph.fold(emptyList<Graph.Node>()) { nodes, node ->
             when (node) {
                 is Graph.Node.Attach -> {
                     val process = node.process
-                    if (process is T && condition(process)) {
-                        val result = seed(process, currentFrom).block(process)
-                        if (result.nodes.isEmpty()) {
-                            check(process.inputShape == process.outputShape) {
-                                """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                                """.trimIndent()
-                            }
-                        } else {
-                            val first = (result.nodes.first() as Graph.Node.Attach).process
-                            val last = (result.nodes.last() as Graph.Node.Attach).process
-                            check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
-                                """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                                replaced input: ${first.inputShape}
-                                replaced output: ${last.outputShape}
-                                """.trimIndent()
-                            }
-                            newNodes += result.nodes
-                            currentFrom = result.from
-                        }
-                    } else {
-                        val newNode = Graph.Node.Attach(id = node.id, from = currentFrom, process = process)
-                        newNodes += newNode
-                        currentFrom = newNode.id
+                    if (process !is T || !condition(process)) {
+                        return@fold nodes + Graph.Node.Attach(
+                            id = node.id,
+                            from = redirect[node.from] ?: node.from,
+                            process = process,
+                        )
                     }
+
+                    val from = redirect[node.from] ?: node.from
+                    val result = seed(process, from).block(process)
+                    if (result.nodes.isEmpty()) {
+                        check(process.inputShape == process.outputShape) {
+                            """
+                                invalid replace.
+                                input: ${process.inputShape}
+                                output: ${process.outputShape}
+                                """.trimIndent()
+                        }
+                        redirect[node.id] = from
+                        return@fold nodes
+                    }
+
+                    val first = (result.nodes.first() as Graph.Node.Attach).process
+                    val last = (result.nodes.last() as Graph.Node.Attach).process
+                    check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
+                        """
+                            invalid replace.
+                            input: ${process.inputShape}
+                            output: ${process.outputShape}
+                            replaced input: ${first.inputShape}
+                            replaced output: ${last.outputShape}
+                            """.trimIndent()
+                    }
+                    redirect[node.id] = result.from
+                    nodes + result.nodes
                 }
             }
         }
@@ -440,7 +444,7 @@ class Network<I, O> @PublishedApi internal constructor(
             graph = newNodes,
             sink = Graph.Sink(
                 id = copy.sink.id,
-                from = currentFrom,
+                from = redirect[copy.sink.from] ?: copy.sink.from,
                 output = copy.sink.output,
                 converter = copy.sink.converter,
             ),
