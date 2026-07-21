@@ -7,9 +7,9 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphId
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
@@ -74,8 +74,11 @@ class SkipD2Test {
         assertContentEquals(expected = IOType.d1(8f, 32f, 56f), actual = actual[1][1])
     }
 
-    private fun builder() = NetworkBuilder.inputD2(
-        converter = RawD2(2, 3),
+    private fun builder() = GraphBuilder.Node.D2(
+        inputI = 2,
+        inputJ = 3,
+        from = GraphId(),
+        nodes = emptyList(),
         optimizer = Sgd(Scheduler.Fix(rate = 0.01f)),
         initializer = Fixed(0.5f),
     )

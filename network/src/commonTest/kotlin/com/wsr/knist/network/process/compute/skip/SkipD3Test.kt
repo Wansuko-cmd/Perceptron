@@ -8,9 +8,9 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphId
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.converter.raw.RawD3
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
@@ -81,8 +81,12 @@ class SkipD3Test {
         assertContentEquals(expected = IOType.d1(24f, 24f), actual = actual[0][1][1])
     }
 
-    private fun builder() = NetworkBuilder.inputD3(
-        converter = RawD3(2, 3, 4),
+    private fun builder() = GraphBuilder.Node.D3(
+        inputI = 2,
+        inputJ = 3,
+        inputK = 4,
+        from = GraphId(),
+        nodes = emptyList(),
         optimizer = Sgd(Scheduler.Fix(rate = 0.01f)),
         initializer = Fixed(0.5f),
     )
