@@ -119,6 +119,8 @@ import com.wsr.knist.network.process.reshape.reshape.ReshapeD2ToD3
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD1
 import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD2
 import com.wsr.knist.network.process.reshape.token.TokenEmbeddingD1ToD2
+import kotlin.jvm.JvmName
+import kotlin.reflect.KClass
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.ListSerializer
@@ -270,7 +272,87 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
         fun <I, O> decodeFromCborSource(source: BufferedSource): Network<I, O> =
             cbor.decodeFromByteArray(NetworkSerializer(), source.readByteArray())
 
-        private val modules = mutableListOf(buildInSerializersModule)
+        val modules = mutableListOf(buildInSerializersModule)
+
+        @JvmName("registerProcess")
+        inline fun <reified T : Process> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Process::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerOptimizer")
+        inline fun <reified T : Optimizer> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Optimizer::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerWeightInitializer")
+        inline fun <reified T : WeightInitializer> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(WeightInitializer::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerOptimizerD1")
+        inline fun <reified T : Optimizer.D1> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Optimizer.D1::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerOptimizerD2")
+        inline fun <reified T : Optimizer.D2> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Optimizer.D2::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerOptimizerD3")
+        inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Optimizer.D3::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerAttentionBiasD2")
+        inline fun <reified T : AttentionBiasD2> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(AttentionBiasD2::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
+
+        @JvmName("registerConverter")
+        inline fun <reified T : Converter<*>> register(clazz: KClass<T>) {
+            val module = SerializersModule {
+                polymorphic(Converter::class) {
+                    subclass(clazz)
+                }
+            }
+            modules.add(module)
+        }
 
         private val json
             get() = Json {
