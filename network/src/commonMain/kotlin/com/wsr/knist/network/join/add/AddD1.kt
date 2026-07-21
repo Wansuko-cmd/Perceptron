@@ -3,8 +3,12 @@ package com.wsr.knist.network.join.add
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.Graph
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphScope
 import com.wsr.knist.network.join.Join
 import com.wsr.knist.network.process.GraphEnv
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,4 +27,12 @@ internal class AddD1(override val outputI: Int) : Join.D1() {
         val delta = calcDelta(output)
         return List(inputs.size) { delta }
     }
+}
+
+fun GraphScope.add(vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 {
+    check(nodes.distinctBy { it.inputI }.size == 1)
+    return addJoin(
+        join = AddD1(outputI = nodes[0].inputI),
+        nodes = nodes,
+    )
 }
