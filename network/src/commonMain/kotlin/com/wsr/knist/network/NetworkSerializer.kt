@@ -11,6 +11,10 @@ import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.initializer.Random
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.initializer.Xavier
+import com.wsr.knist.network.join.Join
+import com.wsr.knist.network.join.add.AddD1
+import com.wsr.knist.network.join.add.AddD2
+import com.wsr.knist.network.join.add.AddD3
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.Adam
@@ -368,9 +372,6 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
 
 private val buildInSerializersModule = SerializersModule {
     polymorphic(Process::class) {
-        /*
-         * Process
-         */
         // Affine
         subclass(AffineD1::class)
         subclass(AffineD2::class)
@@ -460,9 +461,6 @@ private val buildInSerializersModule = SerializersModule {
         subclass(SkipD2::class)
         subclass(SkipD3::class)
 
-        /*
-         * Reshape
-         */
         // Global Average
         subclass(GlobalAverageD2ToD1::class)
         subclass(GlobalAverageD3ToD1::class)
@@ -480,10 +478,13 @@ private val buildInSerializersModule = SerializersModule {
         subclass(TokenEmbeddingD1ToD2::class)
     }
 
+    polymorphic(Join::class) {
+        subclass(AddD1::class)
+        subclass(AddD2::class)
+        subclass(AddD3::class)
+    }
+
     polymorphic(Output::class) {
-        /*
-         * Output
-         */
         subclass(MeanSquareD1::class)
         subclass(MeanSquareD2::class)
 
@@ -494,9 +495,6 @@ private val buildInSerializersModule = SerializersModule {
         subclass(SoftmaxWithLossD2::class)
     }
 
-    /*
-     * Optimizer
-     */
     polymorphic(Optimizer::class) {
         subclass(Freeze::class)
         subclass(Sgd::class)
@@ -549,9 +547,6 @@ private val buildInSerializersModule = SerializersModule {
         subclass(Scheduler.CosineAnnealing::class)
     }
 
-    /*
-     * WeightInitializer
-     */
     polymorphic(WeightInitializer::class) {
         subclass(He::class)
         subclass(Xavier::class)
@@ -572,9 +567,6 @@ private val buildInSerializersModule = SerializersModule {
         subclass(AttentionBiasD2.ALiBi::class)
     }
 
-    /*
-     * Graph.Node
-     */
     polymorphic(Graph.Node::class) {
         subclass(Graph.Node.Attach::class)
         subclass(Graph.Node.Connect::class)
