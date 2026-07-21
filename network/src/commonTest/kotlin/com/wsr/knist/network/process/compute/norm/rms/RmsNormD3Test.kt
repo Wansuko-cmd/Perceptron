@@ -10,7 +10,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormD3
 import kotlin.test.Test
 

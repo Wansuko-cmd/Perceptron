@@ -7,7 +7,7 @@ import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable

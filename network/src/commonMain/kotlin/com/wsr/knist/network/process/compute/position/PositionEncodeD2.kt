@@ -7,7 +7,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin

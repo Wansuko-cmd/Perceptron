@@ -11,7 +11,7 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import kotlin.test.Test
 

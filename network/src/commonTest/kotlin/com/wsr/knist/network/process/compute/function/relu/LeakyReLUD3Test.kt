@@ -3,14 +3,12 @@
 package com.wsr.knist.network.process.compute.function.relu
 
 import com.wsr.knist.batch.Batch
-import com.wsr.knist.batch.get
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
 import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import kotlin.test.Test
 
 class LeakyReLUD3Test {

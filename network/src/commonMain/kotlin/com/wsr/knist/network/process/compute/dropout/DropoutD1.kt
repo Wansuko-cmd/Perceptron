@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import kotlin.random.Random
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable

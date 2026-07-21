@@ -3,6 +3,7 @@ package com.wsr.knist.network.process
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
+import com.wsr.knist.network.GraphEnv
 import kotlinx.serialization.Serializable
 
 @Suppress("UNCHECKED_CAST")

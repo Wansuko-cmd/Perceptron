@@ -8,7 +8,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.network.Graph
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphId
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlinx.serialization.Serializable

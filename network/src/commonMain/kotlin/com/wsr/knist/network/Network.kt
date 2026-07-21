@@ -1,6 +1,5 @@
 package com.wsr.knist.network
 
-import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
@@ -9,7 +8,6 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName

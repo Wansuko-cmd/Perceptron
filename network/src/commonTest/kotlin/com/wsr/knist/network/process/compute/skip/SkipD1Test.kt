@@ -12,7 +12,7 @@ import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.GraphEnv
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.bias.d1.BiasD1
 import kotlin.test.Test

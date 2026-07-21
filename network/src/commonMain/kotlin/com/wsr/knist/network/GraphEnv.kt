@@ -1,8 +1,7 @@
-package com.wsr.knist.network.process
+package com.wsr.knist.network
 
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
-import com.wsr.knist.network.GraphId
 import kotlin.jvm.JvmInline
 
 @JvmInline
