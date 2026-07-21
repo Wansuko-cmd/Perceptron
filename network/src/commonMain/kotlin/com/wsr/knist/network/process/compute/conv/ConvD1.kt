@@ -10,11 +10,11 @@ import com.wsr.knist.core.shape.reshapeToD2
 import com.wsr.knist.core.shape.reshapeToD3
 import com.wsr.knist.core.shape.reshapeToD4
 import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 

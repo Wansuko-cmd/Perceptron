@@ -4,9 +4,9 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.GraphScope
 import com.wsr.knist.network.join.Join
-import com.wsr.knist.network.GraphEnv
 import kotlinx.serialization.Serializable
 
 @Serializable

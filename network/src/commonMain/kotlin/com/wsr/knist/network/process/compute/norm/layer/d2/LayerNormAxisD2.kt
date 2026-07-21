@@ -3,8 +3,8 @@ package com.wsr.knist.network.process.compute.norm.layer.d2
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.GraphEnv
+import com.wsr.knist.network.process.Compute
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 

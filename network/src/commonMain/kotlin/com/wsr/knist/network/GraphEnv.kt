@@ -17,8 +17,8 @@ value class GraphEnv internal constructor(private val values: MutableMap<GraphId
         values[id] = value as Batch<IOType>
     }
 
-    context(scope: IOScope)
     @Suppress("UNCHECKED_CAST")
+    context(scope: IOScope)
     fun <T : IOType> plus(id: GraphId, value: Batch<T>) {
         val current = values[id]
         values[id] = if (current == null) {
@@ -33,8 +33,8 @@ value class GraphEnv internal constructor(private val values: MutableMap<GraphId
     }
 }
 
-context(scope: IOScope)
 @Suppress("UNCHECKED_CAST")
+context(scope: IOScope)
 private fun accumulate(a: Batch<IOType>, b: Batch<IOType>): Batch<IOType> {
     check(a.shape == b.shape) { "GraphEnv: shape mismatch on accumulate. a=$a.shape, b=$b.shape" }
     return when (a.shape.size) {
