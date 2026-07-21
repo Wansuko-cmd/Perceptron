@@ -3,8 +3,9 @@
 package stories
 
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.Network
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphScope.repeat
+import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -116,11 +117,13 @@ class TinyStoriesTest {
         println(story)
     }
 
-    private fun createModel(words: List<String>) = NetworkBuilder.wordsD1(
-        maxLength = MAX_LENGTH,
-        words = words,
-        unknownIndex = UNK_INDEX,
-        paddingIndex = PAD_INDEX,
+    private fun createModel(words: List<String>) = NetworkV2.create(
+        converter = wordsD1(
+            maxLength = MAX_LENGTH,
+            words = words,
+            unknownIndex = UNK_INDEX,
+            paddingIndex = PAD_INDEX,
+        ),
         optimizer = AdamW(
             scheduler = Scheduler.CosineAnnealing(
                 minRate = 0.0005f,
@@ -131,41 +134,43 @@ class TinyStoriesTest {
             ),
         ),
         initializer = Xavier(seed = 0),
-    )
-        .tokenEmbedding(
-            vocabSize = words.size,
-            tokenSize = EMBEDDING_DIM,
-        )
-        .positionEmbedding()
-        .repeat(NUM_LAYERS) {
-            this
-                .skip {
-                    this
-                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
-                        .dropout(0.9f)
-                }
-                .skip {
-                    this
-                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .affine(FFN_DIM).bias(axis = 1).swish()
-                        .affine(EMBEDDING_DIM).bias(axis = 1)
-                        .dropout(0.9f)
-                }
-        }
-        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-        .affine(words.size)
-        .softmaxWithLoss(
-            converter = {
-                WordD2(
-                    words = words,
-                    length = MAX_LENGTH,
-                    unknownIndex = UNK_INDEX,
-                )
-            },
-        )
+    ) { input ->
+        input
+            .tokenEmbedding(
+                vocabSize = words.size,
+                tokenSize = EMBEDDING_DIM,
+            )
+            .positionEmbedding()
+            .repeat(NUM_LAYERS) {
+                this
+                    .skip {
+                        this
+                            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                            .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
+                            .dropout(0.9f)
+                    }
+                    .skip {
+                        this
+                            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                            .affine(FFN_DIM).bias(axis = 1).swish()
+                            .affine(EMBEDDING_DIM).bias(axis = 1)
+                            .dropout(0.9f)
+                    }
+            }
+            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+            .affine(words.size)
+            .softmaxWithLoss(
+                converter = {
+                    WordD2(
+                        words = words,
+                        length = MAX_LENGTH,
+                        unknownIndex = UNK_INDEX,
+                    )
+                },
+            )
+    }
 
-    private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
+    private suspend fun NetworkV2<List<List<String>>, List<List<String>>>.createStories(
         beginning: String,
         maxLength: Int,
     ): String {

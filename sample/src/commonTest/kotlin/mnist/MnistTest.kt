@@ -2,9 +2,10 @@
 
 package mnist
 
-import com.wsr.knist.network.Network
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphScope.repeat
 import com.wsr.knist.network.NetworkSerializer
+import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -28,7 +29,6 @@ import com.wsr.knist.network.process.reshape.reshape.reshapeToD3
 import dataset.mnist.LabelConverter
 import dataset.mnist.MnistDataset
 import dataset.mnist.PixelConverter
-import dataset.mnist.inputPx
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.time.measureTime
@@ -55,7 +55,7 @@ class MnistTest {
         println("Json変換")
         network.toJson()
             .also { println(it.take(100) + "...") }
-            .also { println(Network.fromJson<List<List<Float>>, List<Int>>(it)) }
+            .also { println(NetworkV2.fromJson<List<List<Float>>, List<Int>>(it)) }
 
         println("訓練開始")
         val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)
@@ -89,29 +89,29 @@ class MnistTest {
         assertTrue(actual = accuracy > 0.95f, message = "精度が95%を割っています")
     }
 
-    private fun createNetwork(): Network<List<List<Float>>, List<Int>> = NetworkBuilder
-        .inputPx(
-            x = 28,
-            y = 28,
-            optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
-            initializer = He(seed = 0),
-        )
-        .reshapeToD3(i = 1)
-        .convD2(filter = 16, kernel = 5, padding = 2).biasD3().reLU()
-        .maxPool(size = 2)
-        .convD2(filter = 32, kernel = 3, padding = 1).biasD3().reLU()
-        .maxPool(size = 2)
-        .reshapeToD2(i = 49, j = 32)
-        .repeat(2) {
-            skip {
-                this.rmsNorm().attention(numOfHeads = 4).dropout(ratio = 0.9f, seed = 0)
-            }
-                .skip {
-                    this.rmsNorm().affine(neuron = 64).biasD2().swish().affine(neuron = 32).biasD2()
+    private fun createNetwork(): NetworkV2<List<List<Float>>, List<Int>> = NetworkV2.create(
+        converter = PixelConverter(outputI = 28, outputJ = 28),
+        optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
+        initializer = He(seed = 0),
+    ) { input ->
+        input
+            .reshapeToD3(i = 1)
+            .convD2(filter = 16, kernel = 5, padding = 2).biasD3().reLU()
+            .maxPool(size = 2)
+            .convD2(filter = 32, kernel = 3, padding = 1).biasD3().reLU()
+            .maxPool(size = 2)
+            .reshapeToD2(i = 49, j = 32)
+            .repeat(2) {
+                skip {
+                    this.rmsNorm().attention(numOfHeads = 4).dropout(ratio = 0.9f, seed = 0)
                 }
-        }
-        .reshapeToD1()
-        .layerNorm().affine(neuron = 128).bias().swish()
-        .affine(neuron = 10)
-        .softmaxWithLoss(converter = { LabelConverter(inputI) })
+                    .skip {
+                        this.rmsNorm().affine(neuron = 64).biasD2().swish().affine(neuron = 32).biasD2()
+                    }
+            }
+            .reshapeToD1()
+            .layerNorm().affine(neuron = 128).bias().swish()
+            .affine(neuron = 10)
+            .softmaxWithLoss(converter = { LabelConverter(inputI) })
+    }
 }

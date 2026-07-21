@@ -4,10 +4,7 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.batch.reduction.maxIndex
 import com.wsr.knist.core.IOType
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.initializer.WeightInitializer
-import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,12 +22,6 @@ data class PixelConverter(override val outputI: Int, override val outputJ: Int) 
         .toList()
         .chunked(input.size)
 }
-
-fun NetworkBuilder.Companion.inputPx(x: Int, y: Int, optimizer: Optimizer, initializer: WeightInitializer) = inputD2(
-    converter = PixelConverter(x, y),
-    optimizer = optimizer,
-    initializer = initializer,
-)
 
 @Serializable
 data class LabelConverter(override val outputI: Int) : Converter.D1<List<Int>>() {

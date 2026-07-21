@@ -1,9 +1,10 @@
 package dataset.stories
 
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.Network
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphScope.repeat
 import com.wsr.knist.network.NetworkSerializer
+import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -42,7 +43,7 @@ private const val NUM_OF_STORIES = 1000
 private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
 
-fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> = runBlocking {
+fun createTinyStoriesModel(seed: Int? = null): NetworkV2<List<List<String>>, List<List<String>>> = runBlocking {
     NetworkSerializer.apply {
         register(WordsD1::class)
         register(WordD2::class)
@@ -52,11 +53,13 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
     val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 
     // ニューラルネットワークを構築
-    val network = NetworkBuilder.wordsD1(
-        maxLength = MAX_LENGTH,
-        words = words,
-        unknownIndex = UNK_INDEX,
-        paddingIndex = PAD_INDEX,
+    val network = NetworkV2.create(
+        converter = wordsD1(
+            maxLength = MAX_LENGTH,
+            words = words,
+            unknownIndex = UNK_INDEX,
+            paddingIndex = PAD_INDEX,
+        ),
         optimizer = AdamW(
             scheduler = Scheduler.CosineAnnealing(
                 minRate = 0.0005f,
@@ -67,39 +70,41 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
             ),
         ),
         initializer = Xavier(seed = seed),
-    )
-        .tokenEmbedding(
-            vocabSize = words.size,
-            tokenSize = EMBEDDING_DIM,
-        )
-        .positionEmbedding()
-        .repeat(NUM_LAYERS) {
-            this
-                .skip {
-                    this
-                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
-                        .dropout(ratio = 0.9f)
-                }
-                .skip {
-                    this
-                        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-                        .affine(neuron = FFN_DIM).bias(axis = 1).swish()
-                        .affine(neuron = EMBEDDING_DIM).bias(axis = 1)
-                        .dropout(ratio = 0.9f)
-                }
-        }
-        .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
-        .affine(neuron = words.size)
-        .softmaxWithLoss(
-            converter = {
-                WordD2(
-                    words = words,
-                    length = MAX_LENGTH,
-                    unknownIndex = UNK_INDEX,
-                )
-            },
-        )
+    ) { input ->
+        input
+            .tokenEmbedding(
+                vocabSize = words.size,
+                tokenSize = EMBEDDING_DIM,
+            )
+            .positionEmbedding()
+            .repeat(NUM_LAYERS) {
+                this
+                    .skip {
+                        this
+                            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                            .attention(numOfHeads = NUM_HEADS, biases = { causal().mask(PAD_INDEX.toFloat()) })
+                            .dropout(ratio = 0.9f)
+                    }
+                    .skip {
+                        this
+                            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+                            .affine(neuron = FFN_DIM).bias(axis = 1).swish()
+                            .affine(neuron = EMBEDDING_DIM).bias(axis = 1)
+                            .dropout(ratio = 0.9f)
+                    }
+            }
+            .layerNorm(axis = 1).scale(axis = 1).bias(axis = 1)
+            .affine(neuron = words.size)
+            .softmaxWithLoss(
+                converter = {
+                    WordD2(
+                        words = words,
+                        length = MAX_LENGTH,
+                        unknownIndex = UNK_INDEX,
+                    )
+                },
+            )
+    }
 
     println("学習開始")
     FileSystem.SYSTEM.resource(TRAIN_PATH).buffer().use { buffer ->
@@ -140,7 +145,7 @@ fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<
     network
 }
 
-private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
+private suspend fun NetworkV2<List<List<String>>, List<List<String>>>.createStories(
     beginning: String,
     maxLength: Int,
 ): String {

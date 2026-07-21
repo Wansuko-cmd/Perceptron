@@ -5,10 +5,7 @@ import com.wsr.knist.batch.shape.toBatch
 import com.wsr.knist.batch.shape.toList
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
-import com.wsr.knist.network.initializer.WeightInitializer
-import com.wsr.knist.network.optimizer.Optimizer
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -41,25 +38,14 @@ class WordsD1(
     }
 }
 
-fun NetworkBuilder.Companion.wordsD1(
-    maxLength: Int,
-    words: List<String>,
-    unknownIndex: Int,
-    paddingIndex: Int,
-    optimizer: Optimizer,
-    initializer: WeightInitializer,
-): NetworkBuilder.D1<List<List<String>>> {
+fun wordsD1(maxLength: Int, words: List<String>, unknownIndex: Int, paddingIndex: Int): WordsD1 {
     check(unknownIndex in words.indices) { "unknownIndex must be within words range." }
     check(paddingIndex in words.indices) { "paddingIndex must be within words range." }
 
-    return inputD1(
-        converter = WordsD1(
-            outputI = maxLength,
-            words = words,
-            unknownIndex = unknownIndex,
-            paddingIndex = paddingIndex,
-        ),
-        optimizer = optimizer,
-        initializer = initializer,
+    return WordsD1(
+        outputI = maxLength,
+        words = words,
+        unknownIndex = unknownIndex,
+        paddingIndex = paddingIndex,
     )
 }

@@ -46,6 +46,21 @@ object GraphBuilder {
 }
 
 object GraphScope {
+    fun GraphBuilder.Node.D1.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D1.(index: Int) -> GraphBuilder.Node.D1,
+    ): GraphBuilder.Node.D1 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
+    fun GraphBuilder.Node.D2.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D2.(index: Int) -> GraphBuilder.Node.D2,
+    ): GraphBuilder.Node.D2 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
+    fun GraphBuilder.Node.D3.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D3.(index: Int) -> GraphBuilder.Node.D3,
+    ): GraphBuilder.Node.D3 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
     fun GraphBuilder.Node.D1.addCompute(compute: Compute.D1): GraphBuilder.Node.D1 {
         val node = Graph.Node.Attach(from = from, process = compute)
         return GraphBuilder.Node.D1(
