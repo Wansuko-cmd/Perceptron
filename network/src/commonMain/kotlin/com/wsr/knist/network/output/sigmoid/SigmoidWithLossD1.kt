@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addOutput
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.output.Output
@@ -32,16 +31,6 @@ internal class SigmoidWithLossD1 internal constructor(val outputI: Int) : Output
         return TResult(loss = loss, delta = delta)
     }
 }
-
-fun <I> NetworkBuilder.D1<I>.sigmoidWithLoss() = addOutput(
-    output = SigmoidWithLossD1(inputI),
-    converter = { RawD1(inputI) },
-)
-
-fun <I, O> NetworkBuilder.D1<I>.sigmoidWithLoss(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) = addOutput(
-    output = SigmoidWithLossD1(inputI),
-    converter = converter,
-)
 
 fun GraphBuilder.Node.D1.sigmoidWithLoss() = addOutput(
     output = SigmoidWithLossD1(inputI),

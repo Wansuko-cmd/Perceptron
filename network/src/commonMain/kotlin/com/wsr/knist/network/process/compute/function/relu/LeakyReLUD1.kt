@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -31,10 +30,6 @@ class LeakyReLUD1 internal constructor(override val inputI: Int, override val id
         return delta.where(condition = mask, onFalse = 0.01f * delta)
     }
 }
-
-fun <T> NetworkBuilder.D1<T>.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
-    LeakyReLUD1(inputI = inputI, id = id),
-)
 
 fun GraphBuilder.Node.D1.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
     LeakyReLUD1(inputI = inputI, id = id),

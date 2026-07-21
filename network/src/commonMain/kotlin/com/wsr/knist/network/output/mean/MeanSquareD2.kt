@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addOutput
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.output.Output
@@ -27,16 +26,6 @@ internal class MeanSquareD2 internal constructor() : Output.D2() {
         return TResult(loss = loss, delta = delta)
     }
 }
-
-fun <I> NetworkBuilder.D2<I>.meanSquare() = addOutput(
-    output = MeanSquareD2(),
-    converter = { RawD2(inputI, inputJ) },
-)
-
-fun <I, O> NetworkBuilder.D2<I>.meanSquare(converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>) = addOutput(
-    output = MeanSquareD2(),
-    converter = converter,
-)
 
 fun GraphBuilder.Node.D2.meanSquare() = addOutput(
     output = MeanSquareD2(),

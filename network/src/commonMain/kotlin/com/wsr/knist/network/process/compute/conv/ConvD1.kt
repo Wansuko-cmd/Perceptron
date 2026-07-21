@@ -11,7 +11,6 @@ import com.wsr.knist.core.shape.reshapeToD3
 import com.wsr.knist.core.shape.reshapeToD4
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
@@ -104,37 +103,6 @@ class ConvD1 internal constructor(
         this.optimizer = optimizer.d3(i = filter, j = inputI, k = kernel)
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.convD1(
-    filter: Int,
-    kernel: Int,
-    stride: Int = 1,
-    dilation: Int = 1,
-    padding: Int = 0,
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = this.initializer,
-    id: String = Uuid.random().toString(),
-) = addCompute(
-    compute =
-        ConvD1(
-            filter = filter,
-            channel = inputI,
-            kernel = kernel,
-            stride = stride,
-            dilation = dilation,
-            padding = padding,
-            inputSize = inputJ,
-            optimizer = optimizer.d3(filter, inputI, kernel),
-            weight = initializer.d3(
-                input = listOf(inputI, kernel),
-                output = listOf(filter, kernel),
-                i = filter,
-                j = inputI,
-                k = kernel,
-            ),
-            id = id,
-        ),
-)
 
 fun GraphBuilder.Node.D2.convD1(
     filter: Int,

@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -45,18 +44,6 @@ class PaddingD2 internal constructor(
         return delta.slice(indices = left until left + if (axis == 0) inputI else inputJ, axis = axis)
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
-    addCompute(
-        compute = PaddingD2(
-            axis = axis,
-            left = left,
-            right = right,
-            inputI = inputI,
-            inputJ = inputJ,
-            id = id,
-        ),
-    )
 
 fun GraphBuilder.Node.D2.padding(axis: Int, left: Int = 0, right: Int = 0, id: String = Uuid.random().toString()) =
     addCompute(

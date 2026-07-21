@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -46,55 +45,6 @@ class ScaleD2 internal constructor(
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d2(i = inputI, j = inputJ)
     }
-}
-
-fun <T> NetworkBuilder.D2<T>.scale(
-    axis: Int? = null,
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = Fixed(1f),
-    id: String = Uuid.random().toString(),
-): NetworkBuilder.D2<T> {
-    val process = when (axis) {
-        null -> ScaleD2(
-            inputI = inputI,
-            inputJ = inputJ,
-            optimizer = optimizer.d2(
-                inputI,
-                inputJ,
-            ),
-            weight = initializer.d2(
-                input = listOf(inputI, inputJ),
-                output = listOf(inputI, inputJ),
-                i = inputI,
-                j = inputJ,
-            ),
-            id = id,
-        )
-
-        0, 1 -> {
-            val inputT = if (axis == 0) inputI else inputJ
-            ScaleAxisD2(
-                inputI = inputI,
-                inputJ = inputJ,
-                axis = axis,
-                optimizer = optimizer.d1(inputT),
-                weight = initializer.d1(
-                    input = listOf(inputT),
-                    output = listOf(inputT),
-                    size = inputT,
-                ),
-                id = id,
-            )
-        }
-
-        else -> throw IllegalStateException(
-            """
-            invalid parameter.
-            axis: $axis
-            """.trimIndent(),
-        )
-    }
-    return addCompute(compute = process)
 }
 
 fun GraphBuilder.Node.D2.scale(

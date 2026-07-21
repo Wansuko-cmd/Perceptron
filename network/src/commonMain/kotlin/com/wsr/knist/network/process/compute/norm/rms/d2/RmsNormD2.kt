@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -43,37 +42,6 @@ class RmsNormD2 internal constructor(
         }
         return dx1 - dx2
     }
-}
-
-fun <T> NetworkBuilder.D2<T>.rmsNorm(
-    axis: Int? = null,
-    e: Float = 1e-6f,
-    id: String = Uuid.random().toString(),
-): NetworkBuilder.D2<T> {
-    val process = when (axis) {
-        null -> RmsNormD2(
-            inputI = inputI,
-            inputJ = inputJ,
-            e = e,
-            id = id,
-        )
-
-        0, 1 -> RmsNormAxisD2(
-            inputI = inputI,
-            inputJ = inputJ,
-            axis = axis,
-            e = e,
-            id = id,
-        )
-
-        else -> throw IllegalStateException(
-            """
-            invalid parameter.
-            axis: $axis
-            """.trimIndent(),
-        )
-    }
-    return addCompute(compute = process)
 }
 
 fun GraphBuilder.Node.D2.rmsNorm(

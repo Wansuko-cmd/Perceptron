@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.random.Random
@@ -46,18 +45,6 @@ class DropoutD2 internal constructor(
         return delta * mask
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) =
-    addCompute(
-        compute =
-            DropoutD2(
-                inputI = inputI,
-                inputJ = inputJ,
-                ratio = ratio,
-                seed = seed,
-                id = id,
-            ),
-    )
 
 fun GraphBuilder.Node.D2.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) = addCompute(
     compute =
