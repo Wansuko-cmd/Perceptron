@@ -4,6 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
+import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +23,8 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val source: Graph.Source<I>,
     @PublishedApi internal val graph: List<Graph.Node>,
     @PublishedApi internal val sink: Graph.Sink<O>,
+    @PublishedApi internal val optimizer: Optimizer,
+    @PublishedApi internal val initializer: WeightInitializer,
 ) {
     @PublishedApi
     internal val mutex = Mutex()

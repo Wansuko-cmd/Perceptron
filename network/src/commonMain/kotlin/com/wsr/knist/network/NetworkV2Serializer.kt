@@ -3,6 +3,8 @@
 package com.wsr.knist.network
 
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
@@ -31,6 +33,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
     private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
     private val nodeSerializer = ListSerializer(PolymorphicSerializer(Graph.Node::class))
     private val outputSerializer = PolymorphicSerializer(Output::class)
+    private val optimizerSerializer = PolymorphicSerializer(Optimizer::class)
+    private val initializerSerializer = PolymorphicSerializer(WeightInitializer::class)
 
     override val descriptor: SerialDescriptor =
         buildClassSerialDescriptor("com.wsr.knist.network.NetworkV2") {
@@ -41,6 +45,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
             element("sinkFrom", idSerializer.descriptor)
             element("sinkOutput", outputSerializer.descriptor)
             element("sinkConverter", converterSerializer.descriptor)
+            element("optimizer", optimizerSerializer.descriptor)
+            element("initializer", initializerSerializer.descriptor)
         }
 
     override fun serialize(encoder: Encoder, value: NetworkV2<I, O>) {
@@ -52,6 +58,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
             encodeSerializableElement(descriptor, 4, idSerializer, value.sink.from)
             encodeSerializableElement(descriptor, 5, outputSerializer, value.sink.output)
             encodeSerializableElement(descriptor, 6, converterSerializer, value.sink.converter as Converter<Any?>)
+            encodeSerializableElement(descriptor, 7, optimizerSerializer, value.optimizer)
+            encodeSerializableElement(descriptor, 8, initializerSerializer, value.initializer)
         }
     }
 
@@ -69,6 +77,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
                     output = decodeSerializableElement(descriptor, 5, outputSerializer),
                     converter = decodeSerializableElement(descriptor, 6, converterSerializer) as Converter<O>,
                 ),
+                optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer),
+                initializer = decodeSerializableElement(descriptor, 8, initializerSerializer),
             )
         } else {
             var sourceId: GraphId? = null
@@ -78,6 +88,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
             var sinkFrom: GraphId? = null
             var sinkOutput: Output? = null
             var sinkConverter: Converter<Any?>? = null
+            var optimizer: Optimizer? = null
+            var initializer: WeightInitializer? = null
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> sourceId = decodeSerializableElement(descriptor, 0, idSerializer)
@@ -87,6 +99,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
                     4 -> sinkFrom = decodeSerializableElement(descriptor, 4, idSerializer)
                     5 -> sinkOutput = decodeSerializableElement(descriptor, 5, outputSerializer)
                     6 -> sinkConverter = decodeSerializableElement(descriptor, 6, converterSerializer)
+                    7 -> optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer)
+                    8 -> initializer = decodeSerializableElement(descriptor, 8, initializerSerializer)
                     CompositeDecoder.DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
@@ -103,6 +117,8 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
                     output = checkNotNull(sinkOutput),
                     converter = checkNotNull(sinkConverter) as Converter<O>,
                 ),
+                optimizer = checkNotNull(optimizer),
+                initializer = checkNotNull(initializer),
             )
         }
     }

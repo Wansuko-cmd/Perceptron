@@ -171,7 +171,13 @@ fun <I, O> NetworkV2.Companion.create(
         inputI = converter.outputI,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(source = source, graph = result.nodes, sink = result.sink)
+    return NetworkV2(
+        source = source,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
 }
 
 fun <I, O> NetworkV2.Companion.create(
@@ -190,7 +196,13 @@ fun <I, O> NetworkV2.Companion.create(
         inputJ = converter.outputJ,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(source = source, graph = result.nodes, sink = result.sink)
+    return NetworkV2(
+        source = source,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
 }
 fun <I, O> NetworkV2.Companion.create(
     converter: Converter.D3<I>,
@@ -209,5 +221,11 @@ fun <I, O> NetworkV2.Companion.create(
         inputK = converter.outputK,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(source = source, graph = result.nodes, sink = result.sink)
+    return NetworkV2(
+        source = source,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
 }
