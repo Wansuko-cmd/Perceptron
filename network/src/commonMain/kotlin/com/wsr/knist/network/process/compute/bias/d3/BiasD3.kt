@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
@@ -42,59 +41,6 @@ class BiasD3(
     override fun update(optimizer: Optimizer) {
         this.optimizer = optimizer.d3(i = inputI, j = inputJ, k = inputK)
     }
-}
-
-fun <T> NetworkBuilder.D3<T>.bias(
-    axis: Int? = null,
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = Fixed(0f),
-    id: String = Uuid.random().toString(),
-): NetworkBuilder.D3<T> {
-    val process = when (axis) {
-        null -> BiasD3(
-            inputI = inputI,
-            inputJ = inputJ,
-            inputK = inputK,
-            optimizer = optimizer.d3(inputI, inputJ, inputK),
-            weight = initializer.d3(
-                input = listOf(inputI, inputJ, inputK),
-                output = listOf(inputI, inputJ, inputK),
-                i = inputI,
-                j = inputJ,
-                k = inputK,
-            ),
-            id = id,
-        )
-
-        0, 1, 2 -> {
-            val inputT = when (axis) {
-                0 -> inputI
-                1 -> inputJ
-                else -> inputK
-            }
-            BiasAxisD3(
-                inputI = inputI,
-                inputJ = inputJ,
-                inputK = inputK,
-                axis = axis,
-                optimizer = optimizer.d1(inputT),
-                weight = initializer.d1(
-                    input = listOf(inputT),
-                    output = listOf(inputT),
-                    size = inputT,
-                ),
-                id = id,
-            )
-        }
-
-        else -> throw IllegalStateException(
-            """
-            invalid parameter.
-            axis: $axis
-            """.trimIndent(),
-        )
-    }
-    return addCompute(compute = process)
 }
 
 fun GraphBuilder.Node.D3.bias(

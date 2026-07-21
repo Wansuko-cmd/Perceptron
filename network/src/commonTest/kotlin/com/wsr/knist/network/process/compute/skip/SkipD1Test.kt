@@ -5,9 +5,9 @@ package com.wsr.knist.network.process.compute.skip
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
-import com.wsr.knist.network.NetworkBuilder
+import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphId
 import com.wsr.knist.network.assertContentEquals
-import com.wsr.knist.network.converter.raw.RawD1
 import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
@@ -59,8 +59,10 @@ class SkipD1Test {
         assertContentEquals(expected = IOType.d1(0f, 16f, 32f), actual = actual[1])
     }
 
-    private fun builder() = NetworkBuilder.inputD1(
-        converter = RawD1(3),
+    private fun builder() = GraphBuilder.Node.D1(
+        inputI = 3,
+        from = GraphId(),
+        nodes = emptyList(),
         optimizer = Sgd(Scheduler.Fix(rate = 0.01f)),
         initializer = Fixed(0.5f),
     )

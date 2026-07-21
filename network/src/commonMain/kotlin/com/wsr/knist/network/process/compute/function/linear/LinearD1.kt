@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -23,8 +22,5 @@ class LinearD1 internal constructor(override val inputI: Int, override val id: S
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> = calcDelta(input)
 }
-
-fun <T> NetworkBuilder.D1<T>.linear(id: String = Uuid.random().toString()) =
-    addCompute(LinearD1(inputI = inputI, id = id))
 
 fun GraphBuilder.Node.D1.linear(id: String = Uuid.random().toString()) = addCompute(LinearD1(inputI = inputI, id = id))

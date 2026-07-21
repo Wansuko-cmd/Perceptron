@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -37,10 +36,6 @@ class ReLUD3 internal constructor(
         return delta.where(condition = mask, onFalse = 0f)
     }
 }
-
-fun <T> NetworkBuilder.D3<T>.reLU(id: String = Uuid.random().toString()) = addCompute(
-    compute = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
-)
 
 fun GraphBuilder.Node.D3.reLU(id: String = Uuid.random().toString()) = addCompute(
     compute = ReLUD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),

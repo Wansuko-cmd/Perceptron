@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
@@ -31,10 +30,6 @@ internal class GlobalAverageD2ToD1(
         return (delta / inputJ.toFloat()).broadcastToD2(1, inputJ)
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.globalAverageToD1(id: String = Uuid.random().toString()) = addReshape(
-    reshape = GlobalAverageD2ToD1(inputI, inputJ, id),
-)
 
 fun GraphBuilder.Node.D2.globalAverageToD1(id: String = Uuid.random().toString()) = addReshape(
     reshape = GlobalAverageD2ToD1(inputI, inputJ, id),

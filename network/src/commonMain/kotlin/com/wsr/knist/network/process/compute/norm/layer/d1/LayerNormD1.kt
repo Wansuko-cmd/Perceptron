@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -83,10 +82,6 @@ class LayerNormD1 internal constructor(
         return dx1 + dx2 + dx3
     }
 }
-
-fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
-    compute = LayerNormD1(inputI = inputI, e = e, id = id),
-)
 
 fun GraphBuilder.Node.D1.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
     compute = LayerNormD1(inputI = inputI, e = e, id = id),

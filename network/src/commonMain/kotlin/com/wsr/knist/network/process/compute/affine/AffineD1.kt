@@ -6,7 +6,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
@@ -42,27 +41,6 @@ class AffineD1 internal constructor(
         this.optimizer = optimizer.d2(i = inputI, j = outputI)
     }
 }
-
-fun <T> NetworkBuilder.D1<T>.affine(
-    neuron: Int,
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = this.initializer,
-    id: String = Uuid.random().toString(),
-) = addCompute(
-    compute =
-        AffineD1(
-            inputI = inputI,
-            outputI = neuron,
-            optimizer = optimizer.d2(inputI, neuron),
-            weight = initializer.d2(
-                input = listOf(inputI),
-                output = listOf(neuron),
-                i = inputI,
-                j = neuron,
-            ),
-            id = id,
-        ),
-)
 
 fun GraphBuilder.Node.D1.affine(
     neuron: Int,

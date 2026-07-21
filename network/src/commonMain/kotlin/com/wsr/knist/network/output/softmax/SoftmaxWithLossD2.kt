@@ -3,11 +3,8 @@ package com.wsr.knist.network.output.softmax
 import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.d1
-import com.wsr.knist.core.d2
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addOutput
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.converter.raw.RawD2
 import com.wsr.knist.network.output.Output
@@ -42,25 +39,6 @@ internal class SoftmaxWithLossD2 internal constructor(val outputJ: Int, val temp
         return TResult(loss = loss, delta = delta)
     }
 }
-
-fun <I> NetworkBuilder.D2<I>.softmaxWithLoss(temperature: Float = 1f) = addOutput(
-    output = SoftmaxWithLossD2(
-        outputJ = inputJ,
-        temperature = temperature,
-    ),
-    converter = { RawD2(inputI, inputJ) },
-)
-
-fun <I, O> NetworkBuilder.D2<I>.softmaxWithLoss(
-    temperature: Float = 1f,
-    converter: NetworkBuilder.D2<I>.() -> Converter.D2<O>,
-) = addOutput(
-    output = SoftmaxWithLossD2(
-        outputJ = inputJ,
-        temperature = temperature,
-    ),
-    converter = converter,
-)
 
 fun GraphBuilder.Node.D2.softmaxWithLoss(temperature: Float = 1f) = addOutput(
     output = SoftmaxWithLossD2(

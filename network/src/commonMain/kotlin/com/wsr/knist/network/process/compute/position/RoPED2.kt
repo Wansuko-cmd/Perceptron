@@ -6,7 +6,6 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.math.cos
@@ -58,16 +57,6 @@ class RoPED2 internal constructor(
         return resEven.interleave(resOdd, axis = 1)
     }
 }
-
-@Deprecated("実装ミス。Attentionの中に組み込む必要がある")
-fun <T> NetworkBuilder.D2<T>.roPE(waveLength: Float = 10000f, id: String = Uuid.random().toString()) = addCompute(
-    compute = RoPED2(
-        inputI = inputI,
-        inputJ = inputJ,
-        waveLength = waveLength,
-        id = id,
-    ),
-)
 
 @Deprecated("実装ミス。Attentionの中に組み込む必要がある")
 fun GraphBuilder.Node.D2.roPE(waveLength: Float = 10000f, id: String = Uuid.random().toString()) = addCompute(

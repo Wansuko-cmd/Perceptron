@@ -1,8 +1,8 @@
 package dataset.mnist
 
 import com.wsr.knist.network.Network
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.NetworkSerializer
+import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
@@ -28,19 +28,18 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<List<Float>>, 
     }
 
     // ニューラルネットワークを構築
-    val network = NetworkBuilder
-        .inputPx(
-            x = 28,
-            y = 28,
-            optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
-            initializer = He(seed = seed),
-        )
-        .reshapeToD1()
-        .layerNorm()
-        .affine(neuron = 256).bias().reLU()
-        .affine(neuron = 128).bias().reLU()
-        .affine(neuron = 10)
-        .softmaxWithLoss(converter = { LabelConverter(inputI) })
+    val network = Network.create(
+        converter = PixelConverter(outputI = 28, outputJ = 28),
+        optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
+        initializer = He(seed = seed),
+    ) { input ->
+        input.reshapeToD1()
+            .layerNorm()
+            .affine(neuron = 256).bias().reLU()
+            .affine(neuron = 128).bias().reLU()
+            .affine(neuron = 10)
+            .softmaxWithLoss(converter = { LabelConverter(inputI) })
+    }
 
     println("データ読み込み")
     val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)

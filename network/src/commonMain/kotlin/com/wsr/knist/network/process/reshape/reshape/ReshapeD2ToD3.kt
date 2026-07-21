@@ -7,7 +7,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Context
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
@@ -34,25 +33,6 @@ internal class ReshapeD2ToD3(
         val delta = calcDelta(output)
         return delta.reshapeToD2(input.shape)
     }
-}
-
-fun <T> NetworkBuilder.D2<T>.reshapeToD3(
-    i: Int = 1,
-    j: Int = inputI,
-    k: Int = inputJ,
-    id: String = Uuid.random().toString(),
-): NetworkBuilder.D3<T> {
-    check(i * j * k == inputI * inputJ) {
-        """
-            invalid parameter.
-            i: $i
-            j: $j
-            k: $k
-        """.trimIndent()
-    }
-    return addReshape(
-        reshape = ReshapeD2ToD3(inputI = inputI, inputJ = inputJ, outputI = i, outputJ = j, outputK = k, id = id),
-    )
 }
 
 fun GraphBuilder.Node.D2.reshapeToD3(

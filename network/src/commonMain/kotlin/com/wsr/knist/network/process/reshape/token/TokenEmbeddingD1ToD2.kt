@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Context
@@ -47,28 +46,6 @@ class TokenEmbeddingD1ToD2 internal constructor(
         this.optimizer = optimizer.d2(i = vocabSize, j = outputJ)
     }
 }
-
-fun <T> NetworkBuilder.D1<T>.tokenEmbedding(
-    vocabSize: Int,
-    tokenSize: Int,
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = this.initializer,
-    id: String = Uuid.random().toString(),
-): NetworkBuilder.D2<T> = addReshape(
-    reshape = TokenEmbeddingD1ToD2(
-        inputI = inputI,
-        outputJ = tokenSize,
-        vocabSize = vocabSize,
-        optimizer = optimizer.d2(vocabSize, tokenSize),
-        weight = initializer.d2(
-            input = listOf(vocabSize),
-            output = listOf(tokenSize),
-            i = vocabSize,
-            j = tokenSize,
-        ),
-        id = id,
-    ),
-)
 
 fun GraphBuilder.Node.D1.tokenEmbedding(
     vocabSize: Int,

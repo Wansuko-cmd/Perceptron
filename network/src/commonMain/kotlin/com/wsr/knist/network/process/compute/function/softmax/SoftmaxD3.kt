@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -34,10 +33,6 @@ class SoftmaxD3 internal constructor(
         return output * (delta - sum)
     }
 }
-
-fun <T> NetworkBuilder.D3<T>.softmax(id: String = Uuid.random().toString()) = addCompute(
-    compute = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
-)
 
 fun GraphBuilder.Node.D3.softmax(id: String = Uuid.random().toString()) = addCompute(
     compute = SoftmaxD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),

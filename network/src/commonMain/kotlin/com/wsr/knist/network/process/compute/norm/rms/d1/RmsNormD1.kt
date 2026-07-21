@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -42,10 +41,6 @@ class RmsNormD1 internal constructor(
         return dx1 - dx2
     }
 }
-
-fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
-    compute = RmsNormD1(inputI = inputI, e = e, id = id),
-)
 
 fun GraphBuilder.Node.D1.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
     compute = RmsNormD1(inputI = inputI, e = e, id = id),

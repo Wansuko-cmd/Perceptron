@@ -46,6 +46,21 @@ object GraphBuilder {
 }
 
 object GraphScope {
+    fun GraphBuilder.Node.D1.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D1.(index: Int) -> GraphBuilder.Node.D1,
+    ): GraphBuilder.Node.D1 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
+    fun GraphBuilder.Node.D2.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D2.(index: Int) -> GraphBuilder.Node.D2,
+    ): GraphBuilder.Node.D2 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
+    fun GraphBuilder.Node.D3.repeat(
+        times: Int,
+        builder: GraphBuilder.Node.D3.(index: Int) -> GraphBuilder.Node.D3,
+    ): GraphBuilder.Node.D3 = (0 until times).fold(this) { acc, i -> acc.builder(i) }
+
     fun GraphBuilder.Node.D1.addCompute(compute: Compute.D1): GraphBuilder.Node.D1 {
         val node = Graph.Node.Attach(from = from, process = compute)
         return GraphBuilder.Node.D1(
@@ -165,12 +180,12 @@ object GraphScope {
     }
 }
 
-fun <I, O> NetworkV2.Companion.create(
+fun <I, O> Network.Companion.create(
     converter: Converter.D1<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D1) -> GraphBuilder.Result<O>,
-): NetworkV2<I, O> {
+): Network<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D1(
         from = source.id,
@@ -180,7 +195,7 @@ fun <I, O> NetworkV2.Companion.create(
         inputI = converter.outputI,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(
+    return Network(
         source = source,
         graph = result.nodes,
         sink = result.sink,
@@ -189,12 +204,12 @@ fun <I, O> NetworkV2.Companion.create(
     )
 }
 
-fun <I, O> NetworkV2.Companion.create(
+fun <I, O> Network.Companion.create(
     converter: Converter.D2<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D2) -> GraphBuilder.Result<O>,
-): NetworkV2<I, O> {
+): Network<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D2(
         from = source.id,
@@ -205,7 +220,7 @@ fun <I, O> NetworkV2.Companion.create(
         inputJ = converter.outputJ,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(
+    return Network(
         source = source,
         graph = result.nodes,
         sink = result.sink,
@@ -213,12 +228,12 @@ fun <I, O> NetworkV2.Companion.create(
         initializer = initializer,
     )
 }
-fun <I, O> NetworkV2.Companion.create(
+fun <I, O> Network.Companion.create(
     converter: Converter.D3<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D3) -> GraphBuilder.Result<O>,
-): NetworkV2<I, O> {
+): Network<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D3(
         from = source.id,
@@ -230,7 +245,7 @@ fun <I, O> NetworkV2.Companion.create(
         inputK = converter.outputK,
     )
     val result = GraphScope.block(builder)
-    return NetworkV2(
+    return Network(
         source = source,
         graph = result.nodes,
         sink = result.sink,

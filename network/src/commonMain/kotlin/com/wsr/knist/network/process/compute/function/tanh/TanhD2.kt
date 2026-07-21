@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -31,10 +30,6 @@ class TanhD2 internal constructor(
         return delta * (1f - output.pow(2))
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.tanh(id: String = Uuid.random().toString()) = addCompute(
-    TanhD2(inputI = inputI, inputJ = inputJ, id = id),
-)
 
 fun GraphBuilder.Node.D2.tanh(id: String = Uuid.random().toString()) = addCompute(
     TanhD2(inputI = inputI, inputJ = inputJ, id = id),

@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -31,10 +30,6 @@ class SigmoidD2 internal constructor(
         return delta * output * (1f - output)
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.sigmoid(id: String = Uuid.random().toString()) = addCompute(
-    SigmoidD2(inputI = inputI, inputJ = inputJ, id = id),
-)
 
 fun GraphBuilder.Node.D2.sigmoid(id: String = Uuid.random().toString()) = addCompute(
     SigmoidD2(inputI = inputI, inputJ = inputJ, id = id),

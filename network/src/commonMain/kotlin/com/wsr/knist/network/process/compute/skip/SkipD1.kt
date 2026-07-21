@@ -8,7 +8,6 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.Graph
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
@@ -71,36 +70,6 @@ class SkipD1 internal constructor(
     override fun update(optimizer: Optimizer) {
         layers.forEach { it.update(optimizer) }
     }
-}
-
-fun <T> NetworkBuilder.D1<T>.skip(
-    id: String = Uuid.random().toString(),
-    builder: NetworkBuilder.D1<T>.() -> NetworkBuilder.D1<T>,
-): NetworkBuilder.D1<T> {
-    val layers = builder().layers.drop(layers.size)
-    val outputI = when (val last = layers.lastOrNull()) {
-        is Compute.D1 -> last.outputI
-        is Reshape.D2ToD1 -> last.outputI
-        is Reshape.D3ToD1 -> last.outputI
-        null -> return this
-        else -> throw IllegalArgumentException("invalid last layer. $last")
-    }
-
-    check(inputI == outputI) {
-        """
-            invalid parameter.
-            input: ($inputI)
-            output: ($outputI)
-        """.trimIndent()
-    }
-
-    return addCompute(
-        compute = SkipD1(
-            inputI = outputI,
-            layers = layers,
-            id = id,
-        ),
-    )
 }
 
 fun GraphBuilder.Node.D1.skip(

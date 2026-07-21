@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
@@ -40,25 +39,6 @@ class PositionEmbeddingD2 internal constructor(
         this.optimizer = optimizer.d2(i = inputI, j = inputJ)
     }
 }
-
-fun <T> NetworkBuilder.D2<T>.positionEmbedding(
-    optimizer: Optimizer = this.optimizer,
-    initializer: WeightInitializer = this.initializer,
-    id: String = Uuid.random().toString(),
-) = addCompute(
-    compute = PositionEmbeddingD2(
-        inputI = inputI,
-        inputJ = inputJ,
-        optimizer = optimizer.d2(inputI, inputJ),
-        weight = initializer.d2(
-            input = listOf(inputI, inputJ),
-            output = listOf(inputI, inputJ),
-            i = inputI,
-            j = inputJ,
-        ),
-        id = id,
-    ),
-)
 
 fun GraphBuilder.Node.D2.positionEmbedding(
     optimizer: Optimizer = this.optimizer,

@@ -5,7 +5,6 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.NetworkBuilder
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
 import kotlin.uuid.Uuid
@@ -61,16 +60,6 @@ class MinMaxNormD3 internal constructor(
         )
     }
 }
-
-fun <T> NetworkBuilder.D3<T>.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
-    compute =
-        MinMaxNormD3(
-            inputI = inputI,
-            inputJ = inputJ,
-            inputK = inputK,
-            id = id,
-        ),
-)
 
 fun GraphBuilder.Node.D3.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
     compute =
