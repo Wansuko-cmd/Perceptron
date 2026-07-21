@@ -577,6 +577,7 @@ private val buildInSerializersModule = SerializersModule {
      */
     polymorphic(Graph.Node::class) {
         subclass(Graph.Node.Attach::class)
+        subclass(Graph.Node.Connect::class)
         subclass(Graph.Node.Observe::class)
     }
 }

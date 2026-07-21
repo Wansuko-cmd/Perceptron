@@ -1,5 +1,6 @@
 package com.wsr.knist.network
 
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
@@ -49,6 +50,12 @@ class Network<I, O> @PublishedApi internal constructor(
                             }
                         }
 
+                        is Graph.Node.Connect -> {
+                            with(node.join) {
+                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
+                            }
+                        }
+
                         is Graph.Node.Observe -> {
                             env[node.id] = env[node.from]
                         }
@@ -71,6 +78,12 @@ class Network<I, O> @PublishedApi internal constructor(
                             is Graph.Node.Attach -> {
                                 with(node.process) {
                                     env[node.id] = scope._expect(env[node.from], env)
+                                }
+                            }
+
+                            is Graph.Node.Connect -> {
+                                with(node.join) {
+                                    env[node.id] = scope._expect(node.from.map { env[it] }, env)
                                 }
                             }
 
@@ -124,6 +137,19 @@ class Network<I, O> @PublishedApi internal constructor(
                                 }
                             }
                             env[node.from] = delta
+                        }
+                    }
+
+                    is Graph.Node.Connect -> {
+                        { env ->
+                            val delta = with(node.join) {
+                                _train(node.from.map { env[it] }, env) { out ->
+                                    env[node.id] = out
+                                    next(final)(env)
+                                    env[node.id]
+                                }
+                            }
+                            node.from.forEachIndexed { index, id -> env[id] = delta[index] }
                         }
                     }
 
@@ -452,6 +478,12 @@ class Network<I, O> @PublishedApi internal constructor(
                     redirect[node.id] = result.from
                     nodes + result.nodes
                 }
+
+                is Graph.Node.Connect -> nodes + Graph.Node.Connect(
+                    id = node.id,
+                    from = node.from.map { redirect[it] ?: it },
+                    join = node.join,
+                )
 
                 is Graph.Node.Observe -> nodes + Graph.Node.Observe(
                     id = node.id,
