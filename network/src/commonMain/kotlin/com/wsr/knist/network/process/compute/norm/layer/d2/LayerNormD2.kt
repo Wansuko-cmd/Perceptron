@@ -119,11 +119,11 @@ fun <T> NetworkBuilder.D2<T>.layerNorm(
     return addCompute(compute = process)
 }
 
-fun GraphBuilder.D2.layerNorm(
+fun GraphBuilder.Node.D2.layerNorm(
     axis: Int? = null,
     e: Float = 1e-6f,
     id: String = Uuid.random().toString(),
-): GraphBuilder.D2 {
+): GraphBuilder.Node.D2 {
     val process = when (axis) {
         null -> LayerNormD2(
             inputI = inputI,

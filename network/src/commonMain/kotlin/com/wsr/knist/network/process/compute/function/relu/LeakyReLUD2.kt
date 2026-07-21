@@ -40,6 +40,6 @@ fun <T> NetworkBuilder.D2<T>.leakyReLU(id: String = Uuid.random().toString()) = 
     LeakyReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D2.leakyReLU(id: String = Uuid.random().toString()) = addCompute(
     LeakyReLUD2(inputI = inputI, inputJ = inputJ, id = id),
 )

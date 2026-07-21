@@ -53,7 +53,7 @@ fun <T> NetworkBuilder.D1<T>.debug(
         },
 )
 
-fun GraphBuilder.D1.debug(
+fun GraphBuilder.Node.D1.debug(
     onInput: (Batch<IOType.D1>) -> Unit = {},
     onDelta: (Batch<IOType.D1>) -> Unit = {},
     id: String = Uuid.random().toString(),

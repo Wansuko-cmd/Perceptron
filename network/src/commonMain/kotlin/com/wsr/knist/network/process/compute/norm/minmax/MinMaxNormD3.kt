@@ -72,7 +72,7 @@ fun <T> NetworkBuilder.D3<T>.minMaxNorm(id: String = Uuid.random().toString()) =
         ),
 )
 
-fun GraphBuilder.D3.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.minMaxNorm(id: String = Uuid.random().toString()) = addCompute(
     compute =
         MinMaxNormD3(
             inputI = inputI,

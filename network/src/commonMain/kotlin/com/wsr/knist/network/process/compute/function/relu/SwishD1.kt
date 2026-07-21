@@ -32,4 +32,4 @@ class SwishD1 internal constructor(override val inputI: Int, override val id: St
 fun <T> NetworkBuilder.D1<T>.swish(id: String = Uuid.random().toString()) =
     addCompute(SwishD1(inputI = inputI, id = id))
 
-fun GraphBuilder.D1.swish(id: String = Uuid.random().toString()) = addCompute(SwishD1(inputI = inputI, id = id))
+fun GraphBuilder.Node.D1.swish(id: String = Uuid.random().toString()) = addCompute(SwishD1(inputI = inputI, id = id))

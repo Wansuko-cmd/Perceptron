@@ -88,6 +88,6 @@ fun <T> NetworkBuilder.D1<T>.layerNorm(e: Float = 1e-6f, id: String = Uuid.rando
     compute = LayerNormD1(inputI = inputI, e = e, id = id),
 )
 
-fun GraphBuilder.D1.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D1.layerNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
     compute = LayerNormD1(inputI = inputI, e = e, id = id),
 )

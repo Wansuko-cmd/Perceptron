@@ -196,14 +196,14 @@ fun <T> NetworkBuilder.D2<T>.attention(
     ),
 )
 
-fun GraphBuilder.D2.attention(
+fun GraphBuilder.Node.D2.attention(
     numOfHeads: Int,
     dim: Int = inputJ / numOfHeads,
     biases: AttentionBiasD2Builder.() -> AttentionBiasD2Builder = { this },
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,
     id: String = Uuid.random().toString(),
-): GraphBuilder.D2 = addCompute(
+): GraphBuilder.Node.D2 = addCompute(
     compute = AttentionD2(
         inputI = inputI,
         inputJ = inputJ,

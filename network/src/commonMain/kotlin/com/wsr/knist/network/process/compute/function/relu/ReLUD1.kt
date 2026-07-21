@@ -34,4 +34,4 @@ class ReLUD1 internal constructor(override val inputI: Int, override val id: Str
 
 fun <T> NetworkBuilder.D1<T>.reLU(id: String = Uuid.random().toString()) = addCompute(ReLUD1(inputI = inputI, id = id))
 
-fun GraphBuilder.D1.reLU(id: String = Uuid.random().toString()) = addCompute(ReLUD1(inputI = inputI, id = id))
+fun GraphBuilder.Node.D1.reLU(id: String = Uuid.random().toString()) = addCompute(ReLUD1(inputI = inputI, id = id))

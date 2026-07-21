@@ -34,6 +34,6 @@ fun <T> NetworkBuilder.D3<T>.linear(id: String = Uuid.random().toString()) = add
     compute = LinearD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.linear(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.linear(id: String = Uuid.random().toString()) = addCompute(
     compute = LinearD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

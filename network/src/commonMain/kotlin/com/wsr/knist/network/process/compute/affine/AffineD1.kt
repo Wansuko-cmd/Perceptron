@@ -64,7 +64,7 @@ fun <T> NetworkBuilder.D1<T>.affine(
         ),
 )
 
-fun GraphBuilder.D1.affine(
+fun GraphBuilder.Node.D1.affine(
     neuron: Int,
     optimizer: Optimizer = this.optimizer,
     initializer: WeightInitializer = this.initializer,

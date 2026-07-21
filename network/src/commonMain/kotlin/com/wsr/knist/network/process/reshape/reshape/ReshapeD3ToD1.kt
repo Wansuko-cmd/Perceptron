@@ -39,6 +39,6 @@ fun <T> NetworkBuilder.D3<T>.reshapeToD1(id: String = Uuid.random().toString()):
     reshape = ReshapeD3ToD1(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.reshapeToD1(id: String = Uuid.random().toString()): GraphBuilder.D1 = addReshape(
+fun GraphBuilder.Node.D3.reshapeToD1(id: String = Uuid.random().toString()): GraphBuilder.Node.D1 = addReshape(
     reshape = ReshapeD3ToD1(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

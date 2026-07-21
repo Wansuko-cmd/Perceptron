@@ -43,12 +43,12 @@ fun <I, O> NetworkBuilder.D1<I>.sigmoidWithLoss(converter: NetworkBuilder.D1<I>.
     converter = converter,
 )
 
-fun GraphBuilder.D1.sigmoidWithLoss() = addOutput(
+fun GraphBuilder.Node.D1.sigmoidWithLoss() = addOutput(
     output = SigmoidWithLossD1(inputI),
     converter = RawD1(inputI),
 )
 
-fun <O> GraphBuilder.D1.sigmoidWithLoss(converter: GraphBuilder.D1.() -> Converter.D1<O>) = addOutput(
+fun <O> GraphBuilder.Node.D1.sigmoidWithLoss(converter: GraphBuilder.Node.D1.() -> Converter.D1<O>) = addOutput(
     output = SigmoidWithLossD1(inputI),
     converter = converter(),
 )

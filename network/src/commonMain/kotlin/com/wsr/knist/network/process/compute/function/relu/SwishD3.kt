@@ -39,6 +39,6 @@ fun <T> NetworkBuilder.D3<T>.swish(id: String = Uuid.random().toString()) = addC
     compute = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )
 
-fun GraphBuilder.D3.swish(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D3.swish(id: String = Uuid.random().toString()) = addCompute(
     compute = SwishD3(inputI = inputI, inputJ = inputJ, inputK = inputK, id = id),
 )

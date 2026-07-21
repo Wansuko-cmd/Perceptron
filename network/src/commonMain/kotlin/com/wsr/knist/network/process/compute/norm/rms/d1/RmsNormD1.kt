@@ -47,6 +47,6 @@ fun <T> NetworkBuilder.D1<T>.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random(
     compute = RmsNormD1(inputI = inputI, e = e, id = id),
 )
 
-fun GraphBuilder.D1.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D1.rmsNorm(e: Float = 1e-6f, id: String = Uuid.random().toString()) = addCompute(
     compute = RmsNormD1(inputI = inputI, e = e, id = id),
 )

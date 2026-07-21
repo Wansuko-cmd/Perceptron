@@ -129,7 +129,7 @@ fun <T> NetworkBuilder.D3<T>.convD2(
         ),
 )
 
-fun GraphBuilder.D3.convD2(
+fun GraphBuilder.Node.D3.convD2(
     filter: Int,
     kernel: Int,
     stride: Int = 1,

@@ -36,6 +36,6 @@ fun <T> NetworkBuilder.D2<T>.tanh(id: String = Uuid.random().toString()) = addCo
     TanhD2(inputI = inputI, inputJ = inputJ, id = id),
 )
 
-fun GraphBuilder.D2.tanh(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D2.tanh(id: String = Uuid.random().toString()) = addCompute(
     TanhD2(inputI = inputI, inputJ = inputJ, id = id),
 )
