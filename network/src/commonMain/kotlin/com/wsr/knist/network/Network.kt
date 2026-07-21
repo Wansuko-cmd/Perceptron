@@ -109,10 +109,13 @@ class Network<I, O> @PublishedApi internal constructor(
                     var loss: IOType.D0.Global? = null
                     val sinkStep: TrainLambdaV2 = {
                         val result = with(sink.output) {
-                            _train(env[sink.from]) { sink.converter._encode(label) }
+                            _train(env[sink.from]) {
+                                env.reset()
+                                sink.converter._encode(label)
+                            }
                         }
                         loss = result.loss.toGlobal()
-                        env[sink.from] = result.delta
+                        env.plus(sink.from, result.delta)
                     }
                     trainLambda(sinkStep)(env)
                     loss!!
@@ -134,7 +137,7 @@ class Network<I, O> @PublishedApi internal constructor(
                                     env[node.id]
                                 }
                             }
-                            env[node.from] = delta
+                            env.plus(node.from, delta)
                         }
                     }
 
@@ -147,7 +150,7 @@ class Network<I, O> @PublishedApi internal constructor(
                                     env[node.id]
                                 }
                             }
-                            node.from.forEachIndexed { index, id -> env[id] = delta[index] }
+                            node.from.forEachIndexed { index, id -> env.plus(id, delta[index]) }
                         }
                     }
 
