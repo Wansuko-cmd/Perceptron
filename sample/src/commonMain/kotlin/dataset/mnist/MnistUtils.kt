@@ -1,7 +1,7 @@
 package dataset.mnist
 
-import com.wsr.knist.network.NetworkSerializer
 import com.wsr.knist.network.Network
+import com.wsr.knist.network.NetworkSerializer
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler

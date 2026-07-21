@@ -258,8 +258,7 @@ class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
             source = source,
         )
 
-        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray =
-            cbor.encodeToByteArray(NetworkSerializer(), value)
+        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray = cbor.encodeToByteArray(NetworkSerializer(), value)
 
         fun <I, O> encodeToCborSink(value: Network<I, O>, sink: BufferedSink) {
             sink.write(cbor.encodeToByteArray(NetworkSerializer<I, O>(), value))
