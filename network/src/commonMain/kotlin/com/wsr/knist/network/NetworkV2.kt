@@ -4,9 +4,15 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
+import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
+import com.wsr.knist.network.output.Output
+import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.Process
+import com.wsr.knist.network.process.Reshape
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -119,6 +125,332 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
                 }
             }
         }
+    }
+
+    @JvmName("replaceOptimizer")
+    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): NetworkV2<I, O> = clone().also { copy ->
+        copy.graph.forEach { node ->
+            if (node is Graph.Node.Attach && condition(node.process)) {
+                node.process.update(optimizer)
+            }
+        }
+    }
+
+    fun <I2> replaceSource(converter: Converter<I2>): NetworkV2<I2, O> {
+        val copy = clone()
+        return NetworkV2(
+            source = Graph.Source(id = copy.source.id, converter = converter),
+            graph = copy.graph,
+            sink = copy.sink,
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
+    }
+
+    @JvmName("replaceSinkD1")
+    fun <T : Output.D1, O2> replaceSink(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<O2>,
+    ): NetworkV2<I, O2> {
+        val copy = clone()
+        val last = copy.graph.last() as Graph.Node.Attach
+        check(last.process.outputShape.size == 1) {
+            "invalid replaceSink. outputShape=${last.process.outputShape}"
+        }
+        val builder = GraphBuilder.Node.D1(
+            inputI = last.process.outputShape[0],
+            from = copy.sink.from,
+            nodes = copy.graph,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+        val result = builder.block()
+        return NetworkV2(
+            source = copy.source,
+            graph = result.nodes,
+            sink = result.sink,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+    }
+
+    @JvmName("replaceSinkD2")
+    fun <T : Output.D2, O2> replaceSink(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<O2>,
+    ): NetworkV2<I, O2> {
+        val copy = clone()
+        val last = copy.graph.last() as Graph.Node.Attach
+        check(last.process.outputShape.size == 2) {
+            "invalid replaceSink. outputShape=${last.process.outputShape}"
+        }
+        val builder = GraphBuilder.Node.D2(
+            inputI = last.process.outputShape[0],
+            inputJ = last.process.outputShape[1],
+            from = copy.sink.from,
+            nodes = copy.graph,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+        val result = builder.block()
+        return NetworkV2(
+            source = copy.source,
+            graph = result.nodes,
+            sink = result.sink,
+            optimizer = optimizer,
+            initializer = initializer,
+        )
+    }
+
+    @JvmName("replaceComputeD1")
+    inline fun <reified T : Compute.D1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D1,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceComputeD2")
+    inline fun <reified T : Compute.D2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D2,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceComputeD3")
+    inline fun <reified T : Compute.D3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D3,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD2")
+    inline fun <reified T : Reshape.D1ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D2,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD3")
+    inline fun <reified T : Reshape.D1ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D3,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD1")
+    inline fun <reified T : Reshape.D2ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D1,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD3")
+    inline fun <reified T : Reshape.D2ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D3,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD1")
+    inline fun <reified T : Reshape.D3ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D1,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD2")
+    inline fun <reified T : Reshape.D3ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D2,
+    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @PublishedApi
+    internal inline fun <reified T : Process, B1 : GraphBuilder.Node, B2 : GraphBuilder.Node> replace(
+        crossinline seed: (layer: T, from: GraphId) -> B1,
+        crossinline condition: (T) -> Boolean,
+        crossinline block: B1.(T) -> B2,
+    ): NetworkV2<I, O> {
+        val copy = clone()
+        var currentFrom = copy.source.id
+        val newNodes = mutableListOf<Graph.Node>()
+        copy.graph.forEach { node ->
+            when (node) {
+                is Graph.Node.Attach -> {
+                    val process = node.process
+                    if (process is T && condition(process)) {
+                        val result = seed(process, currentFrom).block(process)
+                        if (result.nodes.isEmpty()) {
+                            check(process.inputShape == process.outputShape) {
+                                """
+                                invalid replace.
+                                input: ${process.inputShape}
+                                output: ${process.outputShape}
+                                """.trimIndent()
+                            }
+                        } else {
+                            val first = (result.nodes.first() as Graph.Node.Attach).process
+                            val last = (result.nodes.last() as Graph.Node.Attach).process
+                            check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
+                                """
+                                invalid replace.
+                                input: ${process.inputShape}
+                                output: ${process.outputShape}
+                                replaced input: ${first.inputShape}
+                                replaced output: ${last.outputShape}
+                                """.trimIndent()
+                            }
+                            newNodes += result.nodes
+                            currentFrom = result.from
+                        }
+                    } else {
+                        val newNode = Graph.Node.Attach(id = node.id, from = currentFrom, process = process)
+                        newNodes += newNode
+                        currentFrom = newNode.id
+                    }
+                }
+            }
+        }
+        return NetworkV2(
+            source = copy.source,
+            graph = newNodes,
+            sink = Graph.Sink(
+                id = copy.sink.id,
+                from = currentFrom,
+                output = copy.sink.output,
+                converter = copy.sink.converter,
+            ),
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
     }
 
     fun toJson(): String = NetworkV2Serializer.encodeToString(this)
