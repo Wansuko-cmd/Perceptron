@@ -141,7 +141,7 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 @Suppress("UNCHECKED_CAST")
-class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
+class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
     private val idSerializer = GraphId.serializer()
     private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
     private val nodeSerializer = ListSerializer(PolymorphicSerializer(Graph.Node::class))
@@ -162,7 +162,7 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
             element("initializer", initializerSerializer.descriptor)
         }
 
-    override fun serialize(encoder: Encoder, value: NetworkV2<I, O>) {
+    override fun serialize(encoder: Encoder, value: Network<I, O>) {
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, idSerializer, value.source.id)
             encodeSerializableElement(descriptor, 1, converterSerializer, value.source.converter as Converter<Any?>)
@@ -176,9 +176,9 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
         }
     }
 
-    override fun deserialize(decoder: Decoder): NetworkV2<I, O> = decoder.decodeStructure(descriptor) {
+    override fun deserialize(decoder: Decoder): Network<I, O> = decoder.decodeStructure(descriptor) {
         if (decodeSequentially()) {
-            NetworkV2(
+            Network(
                 source = Graph.Source(
                     id = decodeSerializableElement(descriptor, 0, idSerializer),
                     converter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<I>,
@@ -218,7 +218,7 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
                     else -> error("Unexpected index: $index")
                 }
             }
-            NetworkV2(
+            Network(
                 source = Graph.Source(
                     id = checkNotNull(sourceId),
                     converter = checkNotNull(sourceConverter) as Converter<I>,
@@ -237,39 +237,39 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
     }
 
     companion object {
-        fun <I, O> encodeToString(value: NetworkV2<I, O>) = json.encodeToString(
-            serializer = NetworkV2Serializer(),
+        fun <I, O> encodeToString(value: Network<I, O>) = json.encodeToString(
+            serializer = NetworkSerializer(),
             value = value,
         )
 
-        fun <I, O> encodeToBufferedSink(value: NetworkV2<I, O>, sink: BufferedSink) = json.encodeToBufferedSink(
-            serializer = NetworkV2Serializer(),
+        fun <I, O> encodeToBufferedSink(value: Network<I, O>, sink: BufferedSink) = json.encodeToBufferedSink(
+            serializer = NetworkSerializer(),
             value = value,
             sink = sink,
         )
 
-        fun <I, O> decodeFromString(value: String) = json.decodeFromString<NetworkV2<I, O>>(
-            deserializer = NetworkV2Serializer(),
+        fun <I, O> decodeFromString(value: String) = json.decodeFromString<Network<I, O>>(
+            deserializer = NetworkSerializer(),
             string = value,
         )
 
-        fun <I, O> decodeFromBufferedSource(source: BufferedSource) = json.decodeFromBufferedSource<NetworkV2<I, O>>(
-            deserializer = NetworkV2Serializer(),
+        fun <I, O> decodeFromBufferedSource(source: BufferedSource) = json.decodeFromBufferedSource<Network<I, O>>(
+            deserializer = NetworkSerializer(),
             source = source,
         )
 
-        fun <I, O> encodeToCbor(value: NetworkV2<I, O>): ByteArray =
-            cbor.encodeToByteArray(NetworkV2Serializer(), value)
+        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray =
+            cbor.encodeToByteArray(NetworkSerializer(), value)
 
-        fun <I, O> encodeToCborSink(value: NetworkV2<I, O>, sink: BufferedSink) {
-            sink.write(cbor.encodeToByteArray(NetworkV2Serializer<I, O>(), value))
+        fun <I, O> encodeToCborSink(value: Network<I, O>, sink: BufferedSink) {
+            sink.write(cbor.encodeToByteArray(NetworkSerializer<I, O>(), value))
         }
 
-        fun <I, O> decodeFromCbor(bytes: ByteArray): NetworkV2<I, O> =
-            cbor.decodeFromByteArray(NetworkV2Serializer(), bytes)
+        fun <I, O> decodeFromCbor(bytes: ByteArray): Network<I, O> =
+            cbor.decodeFromByteArray(NetworkSerializer(), bytes)
 
-        fun <I, O> decodeFromCborSource(source: BufferedSource): NetworkV2<I, O> =
-            cbor.decodeFromByteArray(NetworkV2Serializer(), source.readByteArray())
+        fun <I, O> decodeFromCborSource(source: BufferedSource): Network<I, O> =
+            cbor.decodeFromByteArray(NetworkSerializer(), source.readByteArray())
 
         private val modules = mutableListOf(buildInSerializersModule)
 

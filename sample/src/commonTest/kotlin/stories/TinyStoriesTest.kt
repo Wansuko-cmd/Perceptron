@@ -3,8 +3,7 @@
 package stories
 
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.GraphScope.repeat
-import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.Network
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
@@ -117,7 +116,7 @@ class TinyStoriesTest {
         println(story)
     }
 
-    private fun createModel(words: List<String>) = NetworkV2.create(
+    private fun createModel(words: List<String>) = Network.create(
         converter = wordsD1(
             maxLength = MAX_LENGTH,
             words = words,
@@ -170,7 +169,7 @@ class TinyStoriesTest {
             )
     }
 
-    private suspend fun NetworkV2<List<List<String>>, List<List<String>>>.createStories(
+    private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
         beginning: String,
         maxLength: Int,
     ): String {

@@ -2,9 +2,8 @@
 
 package mnist
 
-import com.wsr.knist.network.GraphScope.repeat
 import com.wsr.knist.network.NetworkSerializer
-import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.Network
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler
@@ -55,7 +54,7 @@ class MnistTest {
         println("Json変換")
         network.toJson()
             .also { println(it.take(100) + "...") }
-            .also { println(NetworkV2.fromJson<List<List<Float>>, List<Int>>(it)) }
+            .also { println(Network.fromJson<List<List<Float>>, List<Int>>(it)) }
 
         println("訓練開始")
         val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)
@@ -89,7 +88,7 @@ class MnistTest {
         assertTrue(actual = accuracy > 0.95f, message = "精度が95%を割っています")
     }
 
-    private fun createNetwork(): NetworkV2<List<List<Float>>, List<Int>> = NetworkV2.create(
+    private fun createNetwork(): Network<List<List<Float>>, List<Int>> = Network.create(
         converter = PixelConverter(outputI = 28, outputJ = 28),
         optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
         initializer = He(seed = 0),

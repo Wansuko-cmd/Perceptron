@@ -1,9 +1,8 @@
 package dataset.stories
 
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.network.GraphScope.repeat
 import com.wsr.knist.network.NetworkSerializer
-import com.wsr.knist.network.NetworkV2
+import com.wsr.knist.network.Network
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
@@ -43,7 +42,7 @@ private const val NUM_OF_STORIES = 1000
 private const val PAD_INDEX = 0
 private const val UNK_INDEX = 1
 
-fun createTinyStoriesModel(seed: Int? = null): NetworkV2<List<List<String>>, List<List<String>>> = runBlocking {
+fun createTinyStoriesModel(seed: Int? = null): Network<List<List<String>>, List<List<String>>> = runBlocking {
     NetworkSerializer.apply {
         register(WordsD1::class)
         register(WordD2::class)
@@ -53,7 +52,7 @@ fun createTinyStoriesModel(seed: Int? = null): NetworkV2<List<List<String>>, Lis
     val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 
     // ニューラルネットワークを構築
-    val network = NetworkV2.create(
+    val network = Network.create(
         converter = wordsD1(
             maxLength = MAX_LENGTH,
             words = words,
@@ -145,7 +144,7 @@ fun createTinyStoriesModel(seed: Int? = null): NetworkV2<List<List<String>>, Lis
     network
 }
 
-private suspend fun NetworkV2<List<List<String>>, List<List<String>>>.createStories(
+private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
     beginning: String,
     maxLength: Int,
 ): String {

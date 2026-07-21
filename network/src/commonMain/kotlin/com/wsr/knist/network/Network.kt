@@ -24,8 +24,8 @@ import okio.BufferedSource
 
 private typealias TrainLambdaV2 = IOScope.(Context) -> Unit
 
-@Serializable(with = NetworkV2Serializer::class)
-class NetworkV2<I, O> @PublishedApi internal constructor(
+@Serializable(with = NetworkSerializer::class)
+class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val source: Graph.Source<I>,
     @PublishedApi internal val graph: List<Graph.Node>,
     @PublishedApi internal val sink: Graph.Sink<O>,
@@ -128,7 +128,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
     }
 
     @JvmName("replaceOptimizer")
-    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): NetworkV2<I, O> = clone().also { copy ->
+    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): Network<I, O> = clone().also { copy ->
         copy.graph.forEach { node ->
             if (node is Graph.Node.Attach && condition(node.process)) {
                 node.process.update(optimizer)
@@ -136,9 +136,9 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         }
     }
 
-    fun <I2> replaceSource(converter: Converter<I2>): NetworkV2<I2, O> {
+    fun <I2> replaceSource(converter: Converter<I2>): Network<I2, O> {
         val copy = clone()
-        return NetworkV2(
+        return Network(
             source = Graph.Source(id = copy.source.id, converter = converter),
             graph = copy.graph,
             sink = copy.sink,
@@ -152,7 +152,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<O2>,
-    ): NetworkV2<I, O2> {
+    ): Network<I, O2> {
         val copy = clone()
         val last = copy.graph.last() as Graph.Node.Attach
         check(last.process.outputShape.size == 1) {
@@ -166,7 +166,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
             initializer = initializer,
         )
         val result = builder.block()
-        return NetworkV2(
+        return Network(
             source = copy.source,
             graph = result.nodes,
             sink = result.sink,
@@ -180,7 +180,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         optimizer: Optimizer = this.optimizer,
         initializer: WeightInitializer = this.initializer,
         block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<O2>,
-    ): NetworkV2<I, O2> {
+    ): Network<I, O2> {
         val copy = clone()
         val last = copy.graph.last() as Graph.Node.Attach
         check(last.process.outputShape.size == 2) {
@@ -195,7 +195,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
             initializer = initializer,
         )
         val result = builder.block()
-        return NetworkV2(
+        return Network(
             source = copy.source,
             graph = result.nodes,
             sink = result.sink,
@@ -210,7 +210,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D1,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
         seed = { layer, from ->
             GraphBuilder.Node.D1(
                 inputI = layer.inputI,
@@ -230,7 +230,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D2,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
         seed = { layer, from ->
             GraphBuilder.Node.D2(
                 inputI = layer.inputI,
@@ -251,7 +251,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D3,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
         seed = { layer, from ->
             GraphBuilder.Node.D3(
                 inputI = layer.inputI,
@@ -273,7 +273,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D2,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
         seed = { layer, from ->
             GraphBuilder.Node.D1(
                 inputI = layer.inputI,
@@ -293,7 +293,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D3,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
         seed = { layer, from ->
             GraphBuilder.Node.D1(
                 inputI = layer.inputI,
@@ -313,7 +313,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D1,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
         seed = { layer, from ->
             GraphBuilder.Node.D2(
                 inputI = layer.inputI,
@@ -334,7 +334,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D3,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
         seed = { layer, from ->
             GraphBuilder.Node.D2(
                 inputI = layer.inputI,
@@ -355,7 +355,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D1,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
         seed = { layer, from ->
             GraphBuilder.Node.D3(
                 inputI = layer.inputI,
@@ -377,7 +377,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         initializer: WeightInitializer = this.initializer,
         crossinline condition: (T) -> Boolean,
         crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D2,
-    ): NetworkV2<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
+    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
         seed = { layer, from ->
             GraphBuilder.Node.D3(
                 inputI = layer.inputI,
@@ -398,7 +398,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         crossinline seed: (layer: T, from: GraphId) -> B1,
         crossinline condition: (T) -> Boolean,
         crossinline block: B1.(T) -> B2,
-    ): NetworkV2<I, O> {
+    ): Network<I, O> {
         val copy = clone()
         var currentFrom = copy.source.id
         val newNodes = mutableListOf<Graph.Node>()
@@ -439,7 +439,7 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
                 }
             }
         }
-        return NetworkV2(
+        return Network(
             source = copy.source,
             graph = newNodes,
             sink = Graph.Sink(
@@ -453,28 +453,28 @@ class NetworkV2<I, O> @PublishedApi internal constructor(
         )
     }
 
-    fun toJson(): String = NetworkV2Serializer.encodeToString(this)
+    fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
-        NetworkV2Serializer.encodeToBufferedSink(
+        NetworkSerializer.encodeToBufferedSink(
             value = this,
             sink = sink,
         )
     }
 
-    fun toCbor(): ByteArray = NetworkV2Serializer.encodeToCbor(this)
+    fun toCbor(): ByteArray = NetworkSerializer.encodeToCbor(this)
 
-    fun toCbor(sink: BufferedSink) = NetworkV2Serializer.encodeToCborSink(this, sink)
+    fun toCbor(sink: BufferedSink) = NetworkSerializer.encodeToCborSink(this, sink)
 
-    fun clone(): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCbor(NetworkV2Serializer.encodeToCbor(this))
+    fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
 
     companion object {
-        fun <I, O> fromJson(value: String) = NetworkV2Serializer.decodeFromString<I, O>(value)
+        fun <I, O> fromJson(value: String) = NetworkSerializer.decodeFromString<I, O>(value)
 
-        fun <I, O> fromJson(source: BufferedSource) = NetworkV2Serializer.decodeFromBufferedSource<I, O>(source)
+        fun <I, O> fromJson(source: BufferedSource) = NetworkSerializer.decodeFromBufferedSource<I, O>(source)
 
-        fun <I, O> fromCbor(bytes: ByteArray): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCbor(bytes)
+        fun <I, O> fromCbor(bytes: ByteArray): Network<I, O> = NetworkSerializer.decodeFromCbor(bytes)
 
-        fun <I, O> fromCbor(source: BufferedSource): NetworkV2<I, O> = NetworkV2Serializer.decodeFromCborSource(source)
+        fun <I, O> fromCbor(source: BufferedSource): Network<I, O> = NetworkSerializer.decodeFromCborSource(source)
     }
 }

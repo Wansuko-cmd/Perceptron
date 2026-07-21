@@ -13,14 +13,13 @@ import com.wsr.knist.network.output.mean.meanSquare
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.function.relu.reLU
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import okio.Buffer
 
 class NetworkV2SerializerTest {
 
-    private fun createNetwork(): NetworkV2<Batch<IOType.D1>, Batch<IOType.D1>> = NetworkV2.create(
+    private fun createNetwork(): Network<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
         converter = RawD1(3),
         optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)),
         initializer = Fixed(0.5f),
@@ -33,7 +32,7 @@ class NetworkV2SerializerTest {
     @Test
     fun `JSON=文字列にシリアライズして復元できる`() = networkTestRule {
         val original = createNetwork()
-        val restored = NetworkV2.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(original.toJson())
+        val restored = Network.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(original.toJson())
 
         runTest {
             assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
@@ -45,7 +44,7 @@ class NetworkV2SerializerTest {
         val original = createNetwork()
         val buffer = Buffer()
         original.toJson(buffer)
-        val restored = NetworkV2.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
+        val restored = Network.fromJson<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
 
         runTest {
             assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
@@ -55,7 +54,7 @@ class NetworkV2SerializerTest {
     @Test
     fun `CBOR=ByteArrayにシリアライズして復元できる`() = networkTestRule {
         val original = createNetwork()
-        val restored = NetworkV2.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(original.toCbor())
+        val restored = Network.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(original.toCbor())
 
         runTest {
             assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
@@ -67,7 +66,7 @@ class NetworkV2SerializerTest {
         val original = createNetwork()
         val buffer = Buffer()
         original.toCbor(buffer)
-        val restored = NetworkV2.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
+        val restored = Network.fromCbor<Batch<IOType.D1>, Batch<IOType.D1>>(buffer)
 
         runTest {
             assertContentEquals(expected = original.expect(input), actual = restored.expect(input))
