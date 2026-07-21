@@ -59,14 +59,13 @@ fun <T> NetworkBuilder.D2<T>.dropout(ratio: Float, seed: Int? = null, id: String
             ),
     )
 
-fun GraphBuilder.D2.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) =
-    addCompute(
-        compute =
-            DropoutD2(
-                inputI = inputI,
-                inputJ = inputJ,
-                ratio = ratio,
-                seed = seed,
-                id = id,
-            ),
-    )
+fun GraphBuilder.D2.dropout(ratio: Float, seed: Int? = null, id: String = Uuid.random().toString()) = addCompute(
+    compute =
+        DropoutD2(
+            inputI = inputI,
+            inputJ = inputJ,
+            ratio = ratio,
+            seed = seed,
+            id = id,
+        ),
+)

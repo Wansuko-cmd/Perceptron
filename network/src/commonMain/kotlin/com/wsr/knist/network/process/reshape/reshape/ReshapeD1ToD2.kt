@@ -49,11 +49,7 @@ fun <T> NetworkBuilder.D1<T>.reshapeToD2(
     return addReshape(reshape = ReshapeD1ToD2(inputI = inputI, outputI = i, outputJ = j, id = id))
 }
 
-fun GraphBuilder.D1.reshapeToD2(
-    i: Int = 1,
-    j: Int = inputI,
-    id: String = Uuid.random().toString(),
-): GraphBuilder.D2 {
+fun GraphBuilder.D1.reshapeToD2(i: Int = 1, j: Int = inputI, id: String = Uuid.random().toString()): GraphBuilder.D2 {
     check(i * j == inputI) {
         """
             invalid parameter.

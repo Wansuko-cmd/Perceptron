@@ -70,13 +70,11 @@ fun GraphBuilder.D2.softmaxWithLoss(temperature: Float = 1f) = addOutput(
     converter = RawD2(inputI, inputJ),
 )
 
-fun <O> GraphBuilder.D2.softmaxWithLoss(
-    temperature: Float = 1f,
-    converter: GraphBuilder.D2.() -> Converter.D2<O>,
-) = addOutput(
-    output = SoftmaxWithLossD2(
-        outputJ = inputJ,
-        temperature = temperature,
-    ),
-    converter = converter(),
-)
+fun <O> GraphBuilder.D2.softmaxWithLoss(temperature: Float = 1f, converter: GraphBuilder.D2.() -> Converter.D2<O>) =
+    addOutput(
+        output = SoftmaxWithLossD2(
+            outputJ = inputJ,
+            temperature = temperature,
+        ),
+        converter = converter(),
+    )

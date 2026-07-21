@@ -79,18 +79,14 @@ fun <T> NetworkBuilder.D2<T>.maxPool(
     ),
 )
 
-fun GraphBuilder.D2.maxPool(
-    size: Int,
-    stride: Int = size,
-    padding: Int = 0,
-    id: String = Uuid.random().toString(),
-) = addCompute(
-    compute = MaxPoolD2(
-        poolSize = size,
-        channel = inputI,
-        inputSize = inputJ,
-        padding = padding,
-        stride = stride,
-        id = id,
-    ),
-)
+fun GraphBuilder.D2.maxPool(size: Int, stride: Int = size, padding: Int = 0, id: String = Uuid.random().toString()) =
+    addCompute(
+        compute = MaxPoolD2(
+            poolSize = size,
+            channel = inputI,
+            inputSize = inputJ,
+            padding = padding,
+            stride = stride,
+            id = id,
+        ),
+    )

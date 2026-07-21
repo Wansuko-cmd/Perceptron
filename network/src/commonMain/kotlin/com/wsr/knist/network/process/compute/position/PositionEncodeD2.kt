@@ -56,12 +56,11 @@ fun <T> NetworkBuilder.D2<T>.positionEncode(waveLength: Float = 10000f, id: Stri
         ),
     )
 
-fun GraphBuilder.D2.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) =
-    addCompute(
-        compute = PositionEncodeD2(
-            inputI = inputI,
-            inputJ = inputJ,
-            waveLength = waveLength,
-            id = id,
-        ),
-    )
+fun GraphBuilder.D2.positionEncode(waveLength: Float = 10000f, id: String = Uuid.random().toString()) = addCompute(
+    compute = PositionEncodeD2(
+        inputI = inputI,
+        inputJ = inputJ,
+        waveLength = waveLength,
+        id = id,
+    ),
+)

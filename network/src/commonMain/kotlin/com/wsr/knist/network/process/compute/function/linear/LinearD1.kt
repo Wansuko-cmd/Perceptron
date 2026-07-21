@@ -27,5 +27,4 @@ class LinearD1 internal constructor(override val inputI: Int, override val id: S
 fun <T> NetworkBuilder.D1<T>.linear(id: String = Uuid.random().toString()) =
     addCompute(LinearD1(inputI = inputI, id = id))
 
-fun GraphBuilder.D1.linear(id: String = Uuid.random().toString()) =
-    addCompute(LinearD1(inputI = inputI, id = id))
+fun GraphBuilder.D1.linear(id: String = Uuid.random().toString()) = addCompute(LinearD1(inputI = inputI, id = id))
