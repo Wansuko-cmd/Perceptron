@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -28,13 +28,13 @@ class DebugD3 internal constructor(
     @Transient
     var onDelta: (Batch<IOType.D3>) -> Unit = {}
 
-    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> = input.also {
+    override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> = input.also {
         onInput(it)
     }
 
     override fun IOScope.train(
         input: Batch<IOType.D3>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val input = input.also { onInput(it) }

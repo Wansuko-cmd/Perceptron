@@ -10,7 +10,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.math.exp
 import kotlin.test.Test
 
@@ -39,7 +39,7 @@ class SoftmaxD3Test {
 
     @Test
     fun `expect=i_j_kすべてを含む全要素に対するsoftmaxを計算する`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         val e0 = softmax(floatArrayOf(1f, 2f, -1f, 0.5f))
         val e1 = softmax(floatArrayOf(0f, -0.5f, 1.5f, 2f))
@@ -53,7 +53,7 @@ class SoftmaxD3Test {
     @Test
     fun `train=softmaxのヤコビアンによるvjpを返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         val e0 = vjp(floatArrayOf(1f, 2f, -1f, 0.5f))

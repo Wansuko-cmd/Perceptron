@@ -9,7 +9,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormD2
 import kotlin.test.Test
 
@@ -29,7 +29,7 @@ class RmsNormD2Test {
 
     @Test
     fun `expect=層正規化`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.4898f, 0.9797f),
@@ -59,7 +59,7 @@ class RmsNormD2Test {
         val actual = with(target) {
             _train(
                 input = input,
-                context = Context(input),
+                env = GraphEnv(),
                 calcDelta = { 1e6f * it as Batch<IOType.D2> },
             )
         } as Batch<IOType.D2>

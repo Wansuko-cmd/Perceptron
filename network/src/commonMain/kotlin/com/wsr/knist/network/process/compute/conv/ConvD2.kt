@@ -14,7 +14,7 @@ import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -41,7 +41,7 @@ class ConvD2 internal constructor(
     override val outputJ: Int = (height - kernelSize + 2 * padding) / stride + 1
     override val outputK: Int = (width - kernelSize + 2 * padding) / stride + 1
 
-    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> {
         val col = input.unfold(window = kernel, stride = stride, dilation = dilation, padding = padding)
             .reshapeToD3(i = channel, j = outputJ * outputK, k = kernel * kernel)
             .toD4()
@@ -55,7 +55,7 @@ class ConvD2 internal constructor(
 
     override fun IOScope.train(
         input: Batch<IOType.D3>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val col = input.unfold(window = kernel, stride = stride, dilation = dilation, padding = padding)

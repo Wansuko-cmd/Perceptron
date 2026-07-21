@@ -12,7 +12,7 @@ import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.bias.d1.BiasD1
 import kotlin.test.Test
@@ -43,7 +43,7 @@ class SkipD1Test {
 
     @Test
     fun `expect=スキップ接続を行う`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 6f, 12f), actual = actual[0])
         assertContentEquals(expected = IOType.d1(0f, 8f, 16f), actual = actual[1])
@@ -52,7 +52,7 @@ class SkipD1Test {
     @Test
     fun `train=勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 12f, 24f), actual = actual[0])

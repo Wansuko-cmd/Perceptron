@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class DropoutD1Test {
@@ -20,7 +20,7 @@ class DropoutD1Test {
 
     @Test
     fun `expect=入力をそのまま返す`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = input[0], actual = actual[0])
         assertContentEquals(expected = input[1], actual = actual[1])
@@ -29,7 +29,7 @@ class DropoutD1Test {
     @Test
     fun `train=dropoutを行いratioを掛け勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 6.25f), actual = actual[0])

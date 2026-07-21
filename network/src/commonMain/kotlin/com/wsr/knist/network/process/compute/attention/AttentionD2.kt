@@ -10,7 +10,7 @@ import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2Builder
 import com.wsr.knist.network.process.compute.attention.bias.backward
@@ -39,7 +39,7 @@ class AttentionD2 internal constructor(
 ) : Compute.D2() {
     override val outputI: Int get() = inputI
     override val outputJ: Int get() = inputJ
-    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
             .reshapeToD3(i = outputI, j = numOfHeads, k = dim)
             .transpose(axisI = 1, axisJ = 0, axisK = 2)
@@ -54,7 +54,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = biases.forward(scaled, context)
+        val masked = biases.forward(scaled, env)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = heads
@@ -65,7 +65,7 @@ class AttentionD2 internal constructor(
 
     override fun IOScope.train(
         input: Batch<IOType.D2>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val query = input.matMul(weightQ)
@@ -82,7 +82,7 @@ class AttentionD2 internal constructor(
 
         val mul = query.matMul(key)
         val scaled = mul / sqrt(dim.toFloat())
-        val masked = biases.forward(scaled, context)
+        val masked = biases.forward(scaled, env)
         val softmax = masked.softmax(axis = 2)
         val heads = softmax.matMul(value)
         val concat = heads
@@ -109,7 +109,7 @@ class AttentionD2 internal constructor(
         val sum = (dSoftmax * softmax).sum(axis = 2)
         val dMasked = softmax * dSoftmax.minus(other = sum, axis1 = 0, axis2 = 1)
 
-        val dScaled = biases.backward(dMasked, context)
+        val dScaled = biases.backward(dMasked, env)
         val dMul = dScaled / sqrt(dim.toFloat())
 
         val dQuery = dMul.matMul(key, transB = true)

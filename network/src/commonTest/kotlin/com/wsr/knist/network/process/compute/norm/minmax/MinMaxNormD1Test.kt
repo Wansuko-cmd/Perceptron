@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class MinMaxNormD1Test {
@@ -20,7 +20,7 @@ class MinMaxNormD1Test {
 
     @Test
     fun `expect=最小値0最大値1へ正規化`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.5000f, 1.0000f),
@@ -37,7 +37,7 @@ class MinMaxNormD1Test {
     @Test
     fun `train=正規化および勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         assertContentEquals(

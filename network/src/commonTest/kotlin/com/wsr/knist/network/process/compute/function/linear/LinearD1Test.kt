@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class LinearD1Test {
@@ -18,7 +18,7 @@ class LinearD1Test {
 
     @Test
     fun `expect=入力をそのまま返す`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = input, actual = actual)
     }
@@ -28,7 +28,7 @@ class LinearD1Test {
         val label = Batch.of(IOType.d1(10f, 20f, 30f))
 
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { label })
+            _train(input = input, env = GraphEnv(), calcDelta = { label })
         } as Batch<IOType.D1>
 
         assertContentEquals(expected = label, actual = actual)

@@ -12,7 +12,7 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class BiasAxisD3Test {
@@ -62,7 +62,7 @@ class BiasAxisD3Test {
 
     @Test
     fun `Axis0_expect=axis0で共通のバイアス項`() = networkScopeTestRule {
-        val actual = with(target0) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target0) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][1])
@@ -73,7 +73,7 @@ class BiasAxisD3Test {
     @Test
     fun `Axis0_train=Axis0で共通の勾配を伝播`() = networkScopeTestRule {
         val actual = with(target0) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
@@ -86,8 +86,8 @@ class BiasAxisD3Test {
     fun `Axis0_train=重みを更新する`() = networkScopeTestRule {
         val target = target0
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(-0.0499f, 1.95f),
@@ -109,7 +109,7 @@ class BiasAxisD3Test {
 
     @Test
     fun `Axis1_expect=axis1で共通のバイアス項`() = networkScopeTestRule {
-        val actual = with(target1) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target1) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(1f, 4f), actual = actual[0][0][1])
@@ -120,7 +120,7 @@ class BiasAxisD3Test {
     @Test
     fun `Axis1_train=Axis1で共通の勾配を伝播`() = networkScopeTestRule {
         val actual = with(target1) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
@@ -133,8 +133,8 @@ class BiasAxisD3Test {
     fun `Axis1_train=重みを更新する`() = networkScopeTestRule {
         val target = target1
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0.94f, 3.94f), actual = actual[0][0][1])
@@ -148,7 +148,7 @@ class BiasAxisD3Test {
 
     @Test
     fun `Axis2_expect=axis2で共通のバイアス項`() = networkScopeTestRule {
-        val actual = with(target2) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target2) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0f, 4f), actual = actual[0][0][1])
@@ -159,7 +159,7 @@ class BiasAxisD3Test {
     @Test
     fun `Axis2_train=Axis2で共通の勾配を伝播`() = networkScopeTestRule {
         val actual = with(target2) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 3f), actual = actual[0][0][0])
@@ -172,8 +172,8 @@ class BiasAxisD3Test {
     fun `Axis2_train=重みを更新する`() = networkScopeTestRule {
         val target = target2
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 2.94f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0f, 3.94f), actual = actual[0][0][1])

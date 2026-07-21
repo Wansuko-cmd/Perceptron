@@ -9,7 +9,7 @@ import com.wsr.knist.network.initializer.Fixed
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -23,11 +23,11 @@ class ScaleD2 internal constructor(
 ) : Compute.D2() {
     override val outputI: Int get() = inputI
     override val outputJ: Int get() = inputJ
-    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> = input * weight
+    override fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D2> = input * weight
 
     override fun IOScope.train(
         input: Batch<IOType.D2>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val output = input * weight

@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -23,7 +23,7 @@ class DebugD3Test {
         var captured: Batch<IOType.D3>? = null
         target.onInput = { captured = it }
 
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = input, actual = actual)
         assertContentEquals(expected = input, actual = assertNotNull(captured))
@@ -39,7 +39,7 @@ class DebugD3Test {
 
         val delta = Batch.of(IOType.d3(1, 2, 2) { _, j, k -> j * 10f + k })
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { delta })
+            _train(input = input, env = GraphEnv(), calcDelta = { delta })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = input, actual = assertNotNull(capturedInput))

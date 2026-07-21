@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 class MinMaxNormD1 internal constructor(override val inputI: Int, override val id: String = Uuid.random().toString()) :
     Compute.D1() {
     override val outputI: Int get() = inputI
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> {
         val min = input.min()
         val max = input.max()
         val denominator = max - min
@@ -23,7 +23,7 @@ class MinMaxNormD1 internal constructor(override val inputI: Int, override val i
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val min = input.min()

@@ -10,7 +10,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.math.exp
 import kotlin.test.Test
 
@@ -28,7 +28,7 @@ class SwishD1Test {
 
     @Test
     fun `expect=x_times_sigmoid_xを適用する`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d0(swish(0f)), actual = actual[0][0])
         assertContentEquals(expected = IOType.d0(swish(1f)), actual = actual[0][1])
@@ -39,7 +39,7 @@ class SwishD1Test {
     @Test
     fun `train=output_plus_sigmoid_times_1_minus_outputを勾配に掛けて返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         fun grad(x: Float): Float {

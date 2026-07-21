@@ -9,7 +9,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class RoPED2Test {
@@ -28,7 +28,7 @@ class RoPED2Test {
 
     @Test
     fun `expect=RoPEアルゴリズムを元に位置情報埋め込み`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1f, 2f, 3f), actual = actual[0][0])
         assertContentEquals(
@@ -48,7 +48,7 @@ class RoPED2Test {
     @Test
     fun `train=勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1f, 2f, 3f), actual = actual[0][0])

@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
@@ -21,11 +21,11 @@ internal class GlobalAverageD3ToD2(
     override val outputI: Int = inputJ
     override val outputJ: Int = inputK
 
-    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2> = forward(input)
+    override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D2> = forward(input)
 
     override fun IOScope.train(
         input: Batch<IOType.D3>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D3> {
         val output = forward(input)
