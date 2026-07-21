@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d3
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class LinearD3Test {
@@ -18,7 +18,7 @@ class LinearD3Test {
 
     @Test
     fun `expect=入力をそのまま返す`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = input, actual = actual)
     }
@@ -28,7 +28,7 @@ class LinearD3Test {
         val label = Batch.of(IOType.d3(1, 2, 2) { _, j, k -> j * 10f + k })
 
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { label })
+            _train(input = input, env = GraphEnv(), calcDelta = { label })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = label, actual = actual)

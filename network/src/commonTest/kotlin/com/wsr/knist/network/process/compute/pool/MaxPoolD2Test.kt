@@ -10,7 +10,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class MaxPoolD2Test {
@@ -29,7 +29,7 @@ class MaxPoolD2Test {
 
     @Test
     fun `expect=指定区間内での最大値を取得`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(1f, 3f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(2f, 6f), actual = actual[0][1])
@@ -41,7 +41,7 @@ class MaxPoolD2Test {
     @Test
     fun `train=勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1f, 0f, 3f), actual = actual[0][0])
@@ -67,7 +67,7 @@ class MaxPoolD2Test {
     @Test
     fun `expect=strideが窓幅未満の時は重複した窓で最大値を取得`() = networkScopeTestRule {
         val actual = with(strideTarget) {
-            _expect(input = strideInput, context = Context(strideInput))
+            _expect(input = strideInput, env = GraphEnv())
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(3f, 3f, 2f), actual = actual[0][0])
@@ -80,7 +80,7 @@ class MaxPoolD2Test {
     @Test
     fun `train=strideが窓幅未満の時は重複した窓の勾配を加算して伝播`() = networkScopeTestRule {
         val actual = with(strideTarget) {
-            _train(input = strideInput, context = Context(strideInput), calcDelta = { it })
+            _train(input = strideInput, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 6f, 2f, 0f), actual = actual[0][0])

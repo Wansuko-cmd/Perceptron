@@ -7,7 +7,7 @@ import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
@@ -23,12 +23,11 @@ class TokenEmbeddingD1ToD2 internal constructor(
 ) : Reshape.D1ToD2() {
     override val outputI: Int get() = inputI
 
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
-        input.gather(other = weight)
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D2> = input.gather(other = weight)
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D1> {
         val output = input.gather(other = weight)

@@ -6,7 +6,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -23,7 +23,7 @@ class LayerNormD3 internal constructor(
     override val outputK: Int get() = inputK
     private val outputSize = outputI * outputJ * outputK
 
-    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> {
         val average = input.average()
         val numerator = input - average
 
@@ -35,7 +35,7 @@ class LayerNormD3 internal constructor(
 
     override fun IOScope.train(
         input: Batch<IOType.D3>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> {
         val average = input.average()

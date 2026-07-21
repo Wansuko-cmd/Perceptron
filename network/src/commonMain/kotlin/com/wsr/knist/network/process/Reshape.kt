@@ -16,26 +16,26 @@ sealed interface Reshape : Process {
         abstract val outputI: Int
         abstract val outputJ: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D2>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D1>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         ): Batch<IOType.D1>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> = expect(
             input = input as Batch<IOType.D1>,
-            context = context,
+            env = env,
         )
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D1>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         )
     }
@@ -50,24 +50,24 @@ sealed interface Reshape : Process {
         abstract val outputJ: Int
         abstract val outputK: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D3>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D3>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D1>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         ): Batch<IOType.D1>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> =
-            expect(input = input as Batch<IOType.D1>, context = context)
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> =
+            expect(input = input as Batch<IOType.D1>, env = env)
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D1>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         )
     }
@@ -81,26 +81,26 @@ sealed interface Reshape : Process {
         override val outputShape: List<Int> get() = listOf(outputI)
         abstract val outputI: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D1>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D1>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D2>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         ): Batch<IOType.D2>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> = expect(
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> = expect(
             input = input as Batch<IOType.D2>,
-            context = context,
+            env = env,
         )
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D2>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         )
     }
@@ -116,24 +116,24 @@ sealed interface Reshape : Process {
         abstract val outputJ: Int
         abstract val outputK: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D3>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D3>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D2>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         ): Batch<IOType.D2>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> =
-            expect(input = input as Batch<IOType.D2>, context = context)
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> =
+            expect(input = input as Batch<IOType.D2>, env = env)
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D2>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
         )
     }
@@ -148,24 +148,24 @@ sealed interface Reshape : Process {
         override val outputShape: List<Int> get() = listOf(outputI)
         abstract val outputI: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D1>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D1>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D3>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         ): Batch<IOType.D3>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> =
-            expect(input = input as Batch<IOType.D3>, context = context)
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> =
+            expect(input = input as Batch<IOType.D3>, env = env)
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D3>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
         )
     }
@@ -181,24 +181,24 @@ sealed interface Reshape : Process {
         abstract val outputI: Int
         abstract val outputJ: Int
 
-        protected abstract fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D2>
+        protected abstract fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D2>
 
         protected abstract fun IOScope.train(
             input: Batch<IOType.D3>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         ): Batch<IOType.D3>
 
-        final override fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType> =
-            expect(input = input as Batch<IOType.D3>, context = context)
+        final override fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType> =
+            expect(input = input as Batch<IOType.D3>, env = env)
 
         final override fun IOScope._train(
             input: Batch<IOType>,
-            context: Context,
+            env: GraphEnv,
             calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
         ): Batch<IOType> = train(
             input = input as Batch<IOType.D3>,
-            context = context,
+            env = env,
             calcDelta = calcDelta as IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
         )
     }

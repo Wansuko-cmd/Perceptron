@@ -10,7 +10,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class MaxPoolD3Test {
@@ -41,7 +41,7 @@ class MaxPoolD3Test {
 
     @Test
     fun `expect=指定区間内での最大値を取得`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(2f, 6f), actual = actual[0][0][0])
         assertContentEquals(expected = IOType.d1(0.3f, 2f), actual = actual[0][1][0])
@@ -53,7 +53,7 @@ class MaxPoolD3Test {
     @Test
     fun `train=勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 0f), actual = actual[0][0][0])
@@ -95,7 +95,7 @@ class MaxPoolD3Test {
     @Test
     fun `expect=strideが窓幅未満の時は重複した窓で最大値を取得`() = networkScopeTestRule {
         val actual = with(strideTarget) {
-            _expect(input = strideInput, context = Context(strideInput))
+            _expect(input = strideInput, env = GraphEnv())
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(5f, 5f), actual = actual[0][0][0])
@@ -112,7 +112,7 @@ class MaxPoolD3Test {
     @Test
     fun `train=strideが窓幅未満の時は重複した窓の勾配を加算して伝播`() = networkScopeTestRule {
         val actual = with(strideTarget) {
-            _train(input = strideInput, context = Context(strideInput), calcDelta = { it })
+            _train(input = strideInput, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 0f), actual = actual[0][0][0])

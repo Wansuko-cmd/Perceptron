@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d1
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.math.exp
 import kotlin.test.Test
 
@@ -35,7 +35,7 @@ class SoftmaxD1Test {
 
     @Test
     fun `expect=全要素に対するsoftmaxを計算する`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         val e0 = softmax(floatArrayOf(1f, 2f, -1f, 0.5f))
         val e1 = softmax(floatArrayOf(0f, -0.5f, 1.5f, 2f))
@@ -55,7 +55,7 @@ class SoftmaxD1Test {
     @Test
     fun `train=softmaxのヤコビアンによるvjpを返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         val e0 = vjp(floatArrayOf(1f, 2f, -1f, 0.5f))

@@ -17,6 +17,9 @@ object Graph {
 
         @Serializable
         data class Attach(override val id: GraphId = GraphId(), val from: GraphId, val process: Process) : Node
+
+        @Serializable
+        data class Observe(override val id: GraphId = GraphId(), val from: GraphId) : Node
     }
 }
 

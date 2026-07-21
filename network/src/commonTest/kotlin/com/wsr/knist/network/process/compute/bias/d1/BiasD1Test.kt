@@ -9,7 +9,7 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class BiasD1Test {
@@ -27,7 +27,7 @@ class BiasD1Test {
 
     @Test
     fun `expect=バイアス項`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 3f, 6f), actual = actual[0])
         assertContentEquals(expected = IOType.d1(0f, 4f, 8f), actual = actual[1])
@@ -36,7 +36,7 @@ class BiasD1Test {
     @Test
     fun `train=逆伝播を行い勾配を返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 3f, 6f), actual = actual[0])
@@ -47,8 +47,8 @@ class BiasD1Test {
     fun `train=重みを更新する`() = networkScopeTestRule {
         val target = target
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d1(0f, 2.965f, 5.93f), actual = actual[0])
         assertContentEquals(expected = IOType.d1(0f, 3.965f, 7.93f), actual = actual[1])

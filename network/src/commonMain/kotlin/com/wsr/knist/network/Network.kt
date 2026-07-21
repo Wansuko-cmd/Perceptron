@@ -1,6 +1,5 @@
 package com.wsr.knist.network
 
-import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
@@ -9,7 +8,7 @@ import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName
@@ -22,7 +21,7 @@ import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.BufferedSource
 
-private typealias TrainLambdaV2 = IOScope.(Context) -> Unit
+private typealias TrainLambdaV2 = IOScope.(GraphEnv) -> Unit
 
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> @PublishedApi internal constructor(
@@ -35,24 +34,27 @@ class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi
     internal val mutex = Mutex()
 
-    private val env = mutableMapOf<GraphId, Batch<IOType>>()
+    private val env = GraphEnv()
 
     suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
         mutex.withLock {
-            val input = source.converter._encode(input).also { env[source.id] = it }
-            val context = Context(input)
+            env[source.id] = source.converter._encode(input)
             val output = IOScope.launch {
                 val scope = this
                 graph.forEach { node ->
                     when (node) {
                         is Graph.Node.Attach -> {
                             with(node.process) {
-                                env[node.id] = scope._expect(env[node.from]!!, context)
+                                env[node.id] = scope._expect(env[node.from], env)
                             }
+                        }
+
+                        is Graph.Node.Observe -> {
+                            env[node.id] = env[node.from]
                         }
                     }
                 }
-                with(sink.output) { scope._expect(env[sink.from]!!) }
+                with(sink.output) { scope._expect(env[sink.from]) }
             }
             sink.converter._decode(output)
         }
@@ -61,22 +63,25 @@ class Network<I, O> @PublishedApi internal constructor(
     suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
         withContext(dispatcher) {
             mutex.withLock {
-                val input = source.converter._encode(input).also { env[source.id] = it }
-                val context = Context(input)
+                env[source.id] = source.converter._encode(input)
                 IOScope.launch {
                     val scope = this
                     graph.forEach { node ->
                         when (node) {
                             is Graph.Node.Attach -> {
                                 with(node.process) {
-                                    env[node.id] = scope._expect(env[node.from]!!, context)
+                                    env[node.id] = scope._expect(env[node.from], env)
                                 }
+                            }
+
+                            is Graph.Node.Observe -> {
+                                env[node.id] = env[node.from]
                             }
                         }
                     }
                     val result = with(sink.output) {
                         scope._train(
-                            input = env[sink.from]!!,
+                            input = env[sink.from],
                             label = { sink.converter._encode(label) },
                         )
                     }
@@ -88,18 +93,17 @@ class Network<I, O> @PublishedApi internal constructor(
     suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
         withContext(dispatcher) {
             mutex.withLock {
-                val input = source.converter._encode(input).also { env[source.id] = it }
-                val context = Context(input)
+                env[source.id] = source.converter._encode(input)
                 IOScope.launch {
                     var loss: IOType.D0.Global? = null
                     val sinkStep: TrainLambdaV2 = {
                         val result = with(sink.output) {
-                            _train(env[sink.from]!!) { sink.converter._encode(label) }
+                            _train(env[sink.from]) { sink.converter._encode(label) }
                         }
                         loss = result.loss.toGlobal()
                         env[sink.from] = result.delta
                     }
-                    trainLambda(sinkStep)(context)
+                    trainLambda(sinkStep)(env)
                     loss!!
                 }
             }
@@ -111,15 +115,22 @@ class Network<I, O> @PublishedApi internal constructor(
             { final ->
                 when (node) {
                     is Graph.Node.Attach -> {
-                        { context ->
+                        { env ->
                             val delta = with(node.process) {
-                                _train(env[node.from]!!, context) { out ->
+                                _train(env[node.from], env) { out ->
                                     env[node.id] = out
-                                    next(final)(context)
-                                    env[node.id]!!
+                                    next(final)(env)
+                                    env[node.id]
                                 }
                             }
                             env[node.from] = delta
+                        }
+                    }
+
+                    is Graph.Node.Observe -> {
+                        { env ->
+                            env[node.id] = env[node.from]
+                            next(final)(env)
                         }
                     }
                 }
@@ -400,43 +411,52 @@ class Network<I, O> @PublishedApi internal constructor(
         crossinline block: B1.(T) -> B2,
     ): Network<I, O> {
         val copy = clone()
-        var currentFrom = copy.source.id
-        val newNodes = mutableListOf<Graph.Node>()
-        copy.graph.forEach { node ->
+        val redirect = mutableMapOf<GraphId, GraphId>()
+        val newNodes = copy.graph.fold(emptyList<Graph.Node>()) { nodes, node ->
             when (node) {
                 is Graph.Node.Attach -> {
                     val process = node.process
-                    if (process is T && condition(process)) {
-                        val result = seed(process, currentFrom).block(process)
-                        if (result.nodes.isEmpty()) {
-                            check(process.inputShape == process.outputShape) {
-                                """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                                """.trimIndent()
-                            }
-                        } else {
-                            val first = (result.nodes.first() as Graph.Node.Attach).process
-                            val last = (result.nodes.last() as Graph.Node.Attach).process
-                            check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
-                                """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                                replaced input: ${first.inputShape}
-                                replaced output: ${last.outputShape}
-                                """.trimIndent()
-                            }
-                            newNodes += result.nodes
-                            currentFrom = result.from
-                        }
-                    } else {
-                        val newNode = Graph.Node.Attach(id = node.id, from = currentFrom, process = process)
-                        newNodes += newNode
-                        currentFrom = newNode.id
+                    if (process !is T || !condition(process)) {
+                        return@fold nodes + Graph.Node.Attach(
+                            id = node.id,
+                            from = redirect[node.from] ?: node.from,
+                            process = process,
+                        )
                     }
+
+                    val from = redirect[node.from] ?: node.from
+                    val result = seed(process, from).block(process)
+                    if (result.nodes.isEmpty()) {
+                        check(process.inputShape == process.outputShape) {
+                            """
+                                invalid replace.
+                                input: ${process.inputShape}
+                                output: ${process.outputShape}
+                            """.trimIndent()
+                        }
+                        redirect[node.id] = from
+                        return@fold nodes
+                    }
+
+                    val first = (result.nodes.first() as Graph.Node.Attach).process
+                    val last = (result.nodes.last() as Graph.Node.Attach).process
+                    check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
+                        """
+                            invalid replace.
+                            input: ${process.inputShape}
+                            output: ${process.outputShape}
+                            replaced input: ${first.inputShape}
+                            replaced output: ${last.outputShape}
+                        """.trimIndent()
+                    }
+                    redirect[node.id] = result.from
+                    nodes + result.nodes
                 }
+
+                is Graph.Node.Observe -> nodes + Graph.Node.Observe(
+                    id = node.id,
+                    from = redirect[node.from] ?: node.from,
+                )
             }
         }
         return Network(
@@ -444,7 +464,7 @@ class Network<I, O> @PublishedApi internal constructor(
             graph = newNodes,
             sink = Graph.Sink(
                 id = copy.sink.id,
-                from = currentFrom,
+                from = redirect[copy.sink.from] ?: copy.sink.from,
                 output = copy.sink.output,
                 converter = copy.sink.converter,
             ),

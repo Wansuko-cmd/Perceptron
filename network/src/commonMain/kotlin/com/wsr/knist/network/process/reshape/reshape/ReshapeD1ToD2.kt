@@ -7,7 +7,7 @@ import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
@@ -19,12 +19,12 @@ internal class ReshapeD1ToD2(
     override val outputJ: Int,
     override val id: String = Uuid.random().toString(),
 ) : Reshape.D1ToD2() {
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D2> =
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D2> =
         input.reshapeToD2(i = outputI, j = outputJ)
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D1> {
         val output = input.reshapeToD2(i = outputI, j = outputJ)

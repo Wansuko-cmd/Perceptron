@@ -10,7 +10,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.math.exp
 import kotlin.test.Test
 
@@ -27,7 +27,7 @@ class SigmoidD3Test {
 
     @Test
     fun `expect=シグモイド関数を適用する`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(sigmoid(0f), sigmoid(1f)),
@@ -54,7 +54,7 @@ class SigmoidD3Test {
     @Test
     fun `train=output_times_1_minus_outputを勾配に掛けて返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         fun grad(x: Float): Float {

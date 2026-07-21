@@ -11,7 +11,7 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class ConvD2Test {
@@ -36,7 +36,7 @@ class ConvD2Test {
 
     @Test
     fun `expect=2次元畳み込み`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d2(
@@ -72,7 +72,7 @@ class ConvD2Test {
     @Test
     fun `train=逆伝播を行い勾配を返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D3>
 
         assertContentEquals(
@@ -114,8 +114,8 @@ class ConvD2Test {
     fun `train=重みを更新する`() = networkScopeTestRule {
         val target = target
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d2(

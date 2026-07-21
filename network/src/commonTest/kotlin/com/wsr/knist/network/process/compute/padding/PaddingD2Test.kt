@@ -8,7 +8,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class PaddingD2Test {
@@ -22,7 +22,7 @@ class PaddingD2Test {
     fun `expect=axis=1_leftとrightにゼロが挿入される`() = networkScopeTestRule {
         val target = PaddingD2(axis = 1, left = 2, right = 1, inputI = 2, inputJ = 3)
 
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 0f, 1f, 2f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 0f, 3f, 4f, 5f, 0f), actual = actual[0][1])
@@ -34,7 +34,7 @@ class PaddingD2Test {
     fun `expect=axis=0_channel方向にゼロが挿入される`() = networkScopeTestRule {
         val target = PaddingD2(axis = 0, left = 1, right = 0, inputI = 2, inputJ = 3)
 
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 0f, 0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(0f, 1f, 2f), actual = actual[0][1])
@@ -50,7 +50,7 @@ class PaddingD2Test {
         val target = PaddingD2(axis = 1, left = 2, right = 1, inputI = 2, inputJ = 3)
 
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1f, 2f), actual = actual[0][0])
@@ -64,7 +64,7 @@ class PaddingD2Test {
         val target = PaddingD2(axis = 1, left = 2, right = 0, inputI = 2, inputJ = 3)
 
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 1f, 2f), actual = actual[0][0])

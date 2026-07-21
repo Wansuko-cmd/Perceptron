@@ -10,7 +10,7 @@ import com.wsr.knist.core.d1
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class ReLUD1Test {
@@ -24,7 +24,7 @@ class ReLUD1Test {
 
     @Test
     fun `expect=正の値のみ通し0以下は0にする`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D1>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D1>
 
         assertContentEquals(expected = IOType.d0(0f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d0(1f), actual = actual[0][1])
@@ -35,7 +35,7 @@ class ReLUD1Test {
     @Test
     fun `train=正の位置のみ勾配を通す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D1>
 
         fun grad(x: Float): Float = maxOf(x, 0f)

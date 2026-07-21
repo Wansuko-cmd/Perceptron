@@ -10,7 +10,7 @@ import com.wsr.knist.core.d3
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormAxisD3
 import kotlin.test.Test
 
@@ -44,7 +44,7 @@ class RmsNormAxisD3Test {
 
     @Test
     fun `Axis0_expect=axis0で層正規化`() = networkScopeTestRule {
-        val actual = with(target0) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target0) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 1.4142f, 1.2649f),
@@ -94,7 +94,7 @@ class RmsNormAxisD3Test {
         val actual = with(target0) {
             _train(
                 input = input,
-                context = Context(input),
+                env = GraphEnv(),
                 calcDelta = { 1e6f * it as Batch<IOType.D2> },
             )
         } as Batch<IOType.D3>
@@ -144,7 +144,7 @@ class RmsNormAxisD3Test {
 
     @Test
     fun `Axis1_expect=axis1で層正規化`() = networkScopeTestRule {
-        val actual = with(target1) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target1) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.6324f, 0.6324f),
@@ -194,7 +194,7 @@ class RmsNormAxisD3Test {
         val actual = with(target1) {
             _train(
                 input = input,
-                context = Context(input),
+                env = GraphEnv(),
                 calcDelta = { it },
             )
         } as Batch<IOType.D3>
@@ -244,7 +244,7 @@ class RmsNormAxisD3Test {
 
     @Test
     fun `Axis2_expect=axis2で層正規化`() = networkScopeTestRule {
-        val actual = with(target2) { _expect(input = input, context = Context(input)) } as Batch<IOType.D3>
+        val actual = with(target2) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D3>
 
         assertContentEquals(
             expected = IOType.d1(0.0000f, 0.7745f, 1.5491f),
@@ -294,7 +294,7 @@ class RmsNormAxisD3Test {
         val actual = with(target2) {
             _train(
                 input = input,
-                context = Context(input),
+                env = GraphEnv(),
                 calcDelta = { 1e6f * it as Batch<IOType.D2> },
             )
         } as Batch<IOType.D3>

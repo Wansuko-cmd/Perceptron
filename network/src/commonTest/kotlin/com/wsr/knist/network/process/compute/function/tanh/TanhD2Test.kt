@@ -10,7 +10,7 @@ import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.math.tanh
 import kotlin.test.Test
 
@@ -25,7 +25,7 @@ class TanhD2Test {
 
     @Test
     fun `expect=双曲線正接を適用する`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(tanh(0f), tanh(1f)), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(tanh(-1f), tanh(-2f)), actual = actual[0][1])
@@ -36,7 +36,7 @@ class TanhD2Test {
     @Test
     fun `train=1-tanh^2を勾配に掛けて返す`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         fun grad(x: Float): Float {

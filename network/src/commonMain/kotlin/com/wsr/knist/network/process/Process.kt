@@ -11,12 +11,12 @@ sealed interface Process {
     val outputShape: List<Int>
 
     @Suppress("FunctionName")
-    fun IOScope._expect(input: Batch<IOType>, context: Context): Batch<IOType>
+    fun IOScope._expect(input: Batch<IOType>, env: GraphEnv): Batch<IOType>
 
     @Suppress("FunctionName")
     fun IOScope._train(
         input: Batch<IOType>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType>) -> Batch<IOType>,
     ): Batch<IOType>
 

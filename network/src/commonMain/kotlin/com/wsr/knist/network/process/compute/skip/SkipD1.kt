@@ -10,13 +10,13 @@ import com.wsr.knist.network.GraphBuilder
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
-private typealias CALC_DELTA_D1 = IOScope.(input: Batch<IOType.D1>, context: Context) -> Batch<IOType.D1>
+private typealias CALC_DELTA_D1 = IOScope.(input: Batch<IOType.D1>, env: GraphEnv) -> Batch<IOType.D1>
 
 @Serializable
 class SkipD1 internal constructor(
@@ -26,10 +26,10 @@ class SkipD1 internal constructor(
     override val id: String = Uuid.random().toString(),
 ) : Compute.D1() {
     override val outputI: Int get() = inputI
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> {
         val scope = this
         val main = layers.fold(input) { acc, layer ->
-            with(layer) { scope._expect(acc, context) } as Batch<IOType.D1>
+            with(layer) { scope._expect(acc, env) } as Batch<IOType.D1>
         }
         return main + input
     }
@@ -39,11 +39,11 @@ class SkipD1 internal constructor(
             initial = { final: CALC_DELTA_D1 -> final },
         ) { layer, acc ->
             { final ->
-                { input, context ->
+                { input, env ->
                     val scope = this
                     with(layer) {
-                        scope._train(input, context) {
-                            acc(final)(it as Batch<IOType.D1>, context)
+                        scope._train(input, env) {
+                            acc(final)(it as Batch<IOType.D1>, env)
                         }
                     } as Batch<IOType.D1>
                 }
@@ -53,7 +53,7 @@ class SkipD1 internal constructor(
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         var skipDelta: Batch<IOType.D1>? = null
@@ -62,7 +62,7 @@ class SkipD1 internal constructor(
             val output = input + acc
             calcDelta(output).also { skipDelta = it }
         }
-        val mainDelta = trainChain(final)(input, context)
+        val mainDelta = trainChain(final)(input, env)
 
         return mainDelta + skipDelta!!
     }

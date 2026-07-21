@@ -4,7 +4,7 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
@@ -22,14 +22,14 @@ class RmsNormAxisD2 internal constructor(
     // 四則演算用
     private val basicOpAxis = if (axis == 0) 1 else 0
 
-    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> {
+    override fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D2> {
         val deviation = input.pow(n = 2).average(axis = axis).sqrt(e = e)
         return input.div(other = deviation, axis = basicOpAxis)
     }
 
     override fun IOScope.train(
         input: Batch<IOType.D2>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> {
         val variance = input.pow(2).average(axis = axis)

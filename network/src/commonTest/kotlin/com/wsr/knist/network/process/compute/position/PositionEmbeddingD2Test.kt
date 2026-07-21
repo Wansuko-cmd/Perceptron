@@ -11,7 +11,7 @@ import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class PositionEmbeddingD2Test {
@@ -36,7 +36,7 @@ class PositionEmbeddingD2Test {
 
     @Test
     fun `expect=学習型位置情報埋め込み`() = networkScopeTestRule {
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
         assertContentEquals(expected = IOType.d1(2f, 5f, 8f), actual = actual[0][1])
@@ -48,7 +48,7 @@ class PositionEmbeddingD2Test {
     @Test
     fun `train=勾配を伝播`() = networkScopeTestRule {
         val actual = with(target) {
-            _train(input = input, context = Context(input), calcDelta = { it })
+            _train(input = input, env = GraphEnv(), calcDelta = { it })
         } as Batch<IOType.D2>
 
         assertContentEquals(expected = IOType.d1(0f, 2f, 4f), actual = actual[0][0])
@@ -62,8 +62,8 @@ class PositionEmbeddingD2Test {
     fun `train=重みを更新`() = networkScopeTestRule {
         val target = target
 
-        with(target) { _train(input = input, context = Context(input), calcDelta = { it }) }
-        val actual = with(target) { _expect(input = input, context = Context(input)) } as Batch<IOType.D2>
+        with(target) { _train(input = input, env = GraphEnv(), calcDelta = { it }) }
+        val actual = with(target) { _expect(input = input, env = GraphEnv()) } as Batch<IOType.D2>
 
         assertContentEquals(
             expected = IOType.d1(0f, 1.985f, 3.9650f),
