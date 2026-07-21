@@ -2,6 +2,7 @@ package com.wsr.knist.network
 
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
+import com.wsr.knist.network.join.Join
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
@@ -166,6 +167,42 @@ object GraphScope {
             initializer = initializer,
             inputI = reshape.outputI,
             inputJ = reshape.outputJ,
+        )
+    }
+
+    fun addJoin(join: Join.D1, vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 {
+        val node = Graph.Node.Connect(from = nodes.map { it.from }, join = join)
+        return GraphBuilder.Node.D1(
+            from = node.id,
+            nodes = (nodes.flatMap { it.nodes } + node).distinctBy { it.id },
+            optimizer = nodes.first().optimizer,
+            initializer = nodes.first().initializer,
+            inputI = join.outputI,
+        )
+    }
+
+    fun addJoin(join: Join.D2, vararg nodes: GraphBuilder.Node.D2): GraphBuilder.Node.D2 {
+        val node = Graph.Node.Connect(from = nodes.map { it.from }, join = join)
+        return GraphBuilder.Node.D2(
+            from = node.id,
+            nodes = (nodes.flatMap { it.nodes } + node).distinctBy { it.id },
+            optimizer = nodes.first().optimizer,
+            initializer = nodes.first().initializer,
+            inputI = join.outputI,
+            inputJ = join.outputJ,
+        )
+    }
+
+    fun addJoin(join: Join.D3, vararg nodes: GraphBuilder.Node.D3): GraphBuilder.Node.D3 {
+        val node = Graph.Node.Connect(from = nodes.map { it.from }, join = join)
+        return GraphBuilder.Node.D3(
+            from = node.id,
+            nodes = (nodes.flatMap { it.nodes } + node).distinctBy { it.id },
+            optimizer = nodes.first().optimizer,
+            initializer = nodes.first().initializer,
+            inputI = join.outputI,
+            inputJ = join.outputJ,
+            inputK = join.outputK,
         )
     }
 

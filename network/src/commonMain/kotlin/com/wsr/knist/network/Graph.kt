@@ -1,6 +1,7 @@
 package com.wsr.knist.network
 
 import com.wsr.knist.network.converter.Converter
+import com.wsr.knist.network.join.Join
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Process
 import kotlin.jvm.JvmInline
@@ -17,6 +18,9 @@ object Graph {
 
         @Serializable
         data class Attach(override val id: GraphId = GraphId(), val from: GraphId, val process: Process) : Node
+
+        @Serializable
+        data class Connect(override val id: GraphId = GraphId(), val from: List<GraphId>, val join: Join) : Node
 
         @Serializable
         data class Observe(override val id: GraphId = GraphId(), val from: GraphId) : Node
