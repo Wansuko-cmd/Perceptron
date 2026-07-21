@@ -124,11 +124,10 @@ class NetworkV2Serializer<I, O> : KSerializer<NetworkV2<I, O>> {
             string = value,
         )
 
-        fun <I, O> decodeFromBufferedSource(source: BufferedSource) =
-            json.decodeFromBufferedSource<NetworkV2<I, O>>(
-                deserializer = NetworkV2Serializer(),
-                source = source,
-            )
+        fun <I, O> decodeFromBufferedSource(source: BufferedSource) = json.decodeFromBufferedSource<NetworkV2<I, O>>(
+            deserializer = NetworkV2Serializer(),
+            source = source,
+        )
 
         fun <I, O> encodeToCbor(value: NetworkV2<I, O>): ByteArray =
             cbor.encodeToByteArray(NetworkV2Serializer(), value)
