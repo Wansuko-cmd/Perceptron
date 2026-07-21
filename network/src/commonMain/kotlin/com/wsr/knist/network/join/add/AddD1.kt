@@ -13,10 +13,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal class AddD1(override val outputI: Int) : Join.D1() {
-    override fun IOScope.expect(
-        inputs: List<Batch<IOType.D1>>,
-        env: GraphEnv,
-    ): Batch<IOType.D1> = inputs.reduce { acc, batch -> acc + batch }
+    override fun IOScope.expect(inputs: List<Batch<IOType.D1>>, env: GraphEnv): Batch<IOType.D1> =
+        inputs.reduce { acc, batch -> acc + batch }
 
     override fun IOScope.train(
         inputs: List<Batch<IOType.D1>>,
