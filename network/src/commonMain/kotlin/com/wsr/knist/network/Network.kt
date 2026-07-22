@@ -170,15 +170,6 @@ class Network<I, O> @PublishedApi internal constructor(
         }
     }
 
-    @JvmName("replaceOptimizer")
-    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): Network<I, O> = clone().also { copy ->
-        copy.graph.forEach { node ->
-            if (node is Graph.Node.Attach && condition(node.process)) {
-                node.process.update(optimizer)
-            }
-        }
-    }
-
     fun <I2> replaceSource(converter: Converter<I2>): Network<I2, O> {
         val copy = clone()
         return Network(
@@ -559,6 +550,16 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
 
     abstract val optimizer: Optimizer
     abstract val initializer: WeightInitializer
+
+
+    @JvmName("replaceOptimizer")
+    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): T = clone().also { copy ->
+        copy.graph.forEach { node ->
+            if (node is Graph.Node.Attach && condition(node.process)) {
+                node.process.update(optimizer)
+            }
+        }
+    }
 
     abstract fun create(
         sources: List<Graph.Source<*>>,
