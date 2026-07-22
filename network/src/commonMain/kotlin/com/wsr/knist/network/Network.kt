@@ -237,195 +237,6 @@ class Network<I, O> @PublishedApi internal constructor(
         )
     }
 
-    @JvmName("replaceComputeD1")
-    inline fun <reified T : Compute.D1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceComputeD2")
-    inline fun <reified T : Compute.D2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceComputeD3")
-    inline fun <reified T : Compute.D3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD1ToD2")
-    inline fun <reified T : Reshape.D1ToD2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD1ToD3")
-    inline fun <reified T : Reshape.D1ToD3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD2ToD1")
-    inline fun <reified T : Reshape.D2ToD1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD2ToD3")
-    inline fun <reified T : Reshape.D2ToD3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD3ToD1")
-    inline fun <reified T : Reshape.D3ToD1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD3ToD2")
-    inline fun <reified T : Reshape.D3ToD2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
@@ -484,6 +295,195 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
             }
         }
     }
+
+    @JvmName("replaceComputeD1")
+    inline fun <reified C : Compute.D1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (C) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(C) -> GraphBuilder.Node.D1,
+    ): T = replace<C, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceComputeD2")
+    inline fun <reified C : Compute.D2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (C) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(C) -> GraphBuilder.Node.D2,
+    ): T = replace<C, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceComputeD3")
+    inline fun <reified C : Compute.D3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (C) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(C) -> GraphBuilder.Node.D3,
+    ): T = replace<C, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD2")
+    inline fun <reified R : Reshape.D1ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(R) -> GraphBuilder.Node.D2,
+    ): T = replace<R, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD1ToD3")
+    inline fun <reified R : Reshape.D1ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D1.(R) -> GraphBuilder.Node.D3,
+    ): T = replace<R, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D1(
+                inputI = layer.inputI,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD1")
+    inline fun <reified R : Reshape.D2ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(R) -> GraphBuilder.Node.D1,
+    ): T = replace<R, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD2ToD3")
+    inline fun <reified R : Reshape.D2ToD3> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D2.(R) -> GraphBuilder.Node.D3,
+    ): T = replace<R, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D2(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD1")
+    inline fun <reified R : Reshape.D3ToD1> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(R) -> GraphBuilder.Node.D1,
+    ): T = replace<R, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
+
+    @JvmName("replaceReshapeD3ToD2")
+    inline fun <reified R : Reshape.D3ToD2> replace(
+        optimizer: Optimizer = this.optimizer,
+        initializer: WeightInitializer = this.initializer,
+        crossinline condition: (R) -> Boolean,
+        crossinline block: GraphBuilder.Node.D3.(R) -> GraphBuilder.Node.D2,
+    ): T = replace<R, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
+        seed = { layer, from ->
+            GraphBuilder.Node.D3(
+                inputI = layer.inputI,
+                inputJ = layer.inputJ,
+                inputK = layer.inputK,
+                from = from,
+                nodes = emptyList(),
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+        condition = condition,
+        block = block,
+    )
 
     @PublishedApi
     internal inline fun <reified P : Process, B1 : GraphBuilder.Node, B2 : GraphBuilder.Node> replace(
