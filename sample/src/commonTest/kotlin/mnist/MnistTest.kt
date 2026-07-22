@@ -54,7 +54,7 @@ class MnistTest {
         println("Json変換")
         network.toJson()
             .also { println(it.take(100) + "...") }
-            .also { println(Network.fromJson<List<List<Float>>, List<Int>>(it)) }
+            .also { println(Network.Src1.Sink1.fromJson<List<List<Float>>, List<Int>>(it)) }
 
         println("訓練開始")
         val train = MnistDataset.read(imagePath = TRAIN_IMAGE_PATH, labelPath = TRAIN_LABEL_PATH)
@@ -88,7 +88,7 @@ class MnistTest {
         assertTrue(actual = accuracy > 0.95f, message = "精度が95%を割っています")
     }
 
-    private fun createNetwork(): Network<List<List<Float>>, List<Int>> = Network.create(
+    private fun createNetwork(): Network.Src1.Sink1<List<List<Float>>, List<Int>> = Network.Src1.Sink1.create(
         converter = PixelConverter(outputI = 28, outputJ = 28),
         optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
         initializer = He(seed = 0),

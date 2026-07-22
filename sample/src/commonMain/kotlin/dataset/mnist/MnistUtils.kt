@@ -20,7 +20,7 @@ private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"
 private const val TEST_IMAGE_PATH = "mnist/t10k-images-idx3-ubyte.gz"
 private const val TEST_LABEL_PATH = "mnist/t10k-labels-idx1-ubyte.gz"
 
-fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<List<Float>>, List<Int>> = runBlocking {
+fun createMnistModel(epoch: Int, seed: Int? = null): Network.Src1.Sink1<List<List<Float>>, List<Int>> = runBlocking {
     // カスタムした層をSerializerに登録
     NetworkSerializer.apply {
         register(PixelConverter::class)
@@ -28,7 +28,7 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network<List<List<Float>>, 
     }
 
     // ニューラルネットワークを構築
-    val network = Network.create(
+    val network = Network.Src1.Sink1.create(
         converter = PixelConverter(outputI = 28, outputJ = 28),
         optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
         initializer = He(seed = seed),

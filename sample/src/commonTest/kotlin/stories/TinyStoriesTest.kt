@@ -116,7 +116,7 @@ class TinyStoriesTest {
         println(story)
     }
 
-    private fun createModel(words: List<String>) = Network.create(
+    private fun createModel(words: List<String>) = Network.Src1.Sink1.create(
         converter = wordsD1(
             maxLength = MAX_LENGTH,
             words = words,
@@ -169,7 +169,7 @@ class TinyStoriesTest {
             )
     }
 
-    private suspend fun Network<List<List<String>>, List<List<String>>>.createStories(
+    private suspend fun Network.Src1.Sink1<List<List<String>>, List<List<String>>>.createStories(
         beginning: String,
         maxLength: Int,
     ): String {
