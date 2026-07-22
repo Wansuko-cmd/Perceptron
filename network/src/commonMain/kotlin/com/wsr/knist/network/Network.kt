@@ -47,68 +47,10 @@ class Network<I, O> @PublishedApi internal constructor(
         return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
     }
 
-    suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
-        withContext(dispatcher) {
-            mutex.withLock {
-                env[source.id] = source.converter._encode(input)
-                IOScope.launch {
-                    var loss: IOType.D0.Global? = null
-                    val sinkStep: TrainLambdaV2 = {
-                        val result = with(sink.output) {
-                            _train(env[sink.from]) {
-                                env.reset()
-                                sink.converter._encode(label)
-                            }
-                        }
-                        loss = result.loss.toGlobal()
-                        env.plus(sink.from, result.delta)
-                    }
-                    trainLambda(sinkStep)(env)
-                    loss!!
-                }
-            }
-        }
-
-    private val trainLambda: (TrainLambdaV2) -> TrainLambdaV2 = run {
-        val initial: (TrainLambdaV2) -> TrainLambdaV2 = { it }
-        graph.foldRight(initial) { node, next ->
-            { final ->
-                when (node) {
-                    is Graph.Node.Attach -> {
-                        { env ->
-                            val delta = with(node.process) {
-                                _train(env[node.from], env) { out ->
-                                    env[node.id] = out
-                                    next(final)(env)
-                                    env[node.id]
-                                }
-                            }
-                            env.plus(node.from, delta)
-                        }
-                    }
-
-                    is Graph.Node.Connect -> {
-                        { env ->
-                            val delta = with(node.join) {
-                                _train(node.from.map { env[it] }, env) { out ->
-                                    env[node.id] = out
-                                    next(final)(env)
-                                    env[node.id]
-                                }
-                            }
-                            node.from.forEachIndexed { index, id -> env.plus(id, delta[index]) }
-                        }
-                    }
-
-                    is Graph.Node.Observe -> {
-                        { env ->
-                            env[node.id] = env[node.from]
-                            next(final)(env)
-                        }
-                    }
-                }
-            }
-        }
+    suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global {
+        val inputs = listOf(source.converter._encode(input))
+        val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+        return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
     }
 
     fun <I2> replaceSource(converter: Converter<I2>): Network<I2, O> {
@@ -198,7 +140,7 @@ class Network<I, O> @PublishedApi internal constructor(
         graph: List<Graph.Node>,
         sinks: List<Graph.Sink<*>>,
         optimizer: Optimizer,
-        initializer: WeightInitializer
+        initializer: WeightInitializer,
     ): Network<I, O> = Network(
         source = sources[0] as Graph.Source<I>,
         graph = graph,
@@ -220,7 +162,7 @@ class Network<I, O> @PublishedApi internal constructor(
     }
 }
 
-abstract class GraphNetwork<T: GraphNetwork<T>> {
+abstract class GraphNetwork<T : GraphNetwork<T>> {
     abstract val sources: List<Graph.Source<*>>
     abstract val graph: List<Graph.Node>
     abstract val sinks: List<Graph.Sink<*>>
@@ -233,7 +175,7 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
 
     protected val env = GraphEnv()
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "FunctionName")
     protected suspend fun _expect(
         inputs: List<Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -266,7 +208,7 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "FunctionName")
     protected suspend fun _loss(
         inputs: List<Batch<IOType>>,
         labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
@@ -301,6 +243,73 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
                     }
                     result.loss.toGlobal()
                 }
+            }
+        }
+    }
+
+    private val trainLambda: (TrainLambdaV2) -> TrainLambdaV2 by lazy {
+        val initial: (TrainLambdaV2) -> TrainLambdaV2 = { it }
+        graph.foldRight(initial) { node, next ->
+            { final ->
+                when (node) {
+                    is Graph.Node.Attach -> {
+                        { env ->
+                            val delta = with(node.process) {
+                                _train(env[node.from], env) { out ->
+                                    env[node.id] = out
+                                    next(final)(env)
+                                    env[node.id]
+                                }
+                            }
+                            env.plus(node.from, delta)
+                        }
+                    }
+
+                    is Graph.Node.Connect -> {
+                        { env ->
+                            val delta = with(node.join) {
+                                _train(node.from.map { env[it] }, env) { out ->
+                                    env[node.id] = out
+                                    next(final)(env)
+                                    env[node.id]
+                                }
+                            }
+                            node.from.forEachIndexed { index, id -> env.plus(id, delta[index]) }
+                        }
+                    }
+
+                    is Graph.Node.Observe -> {
+                        { env ->
+                            env[node.id] = env[node.from]
+                            next(final)(env)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST", "FunctionName")
+    protected suspend fun _train(
+        inputs: List<Batch<IOType>>,
+        labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ): List<IOType.D0.Global> = withContext(dispatcher) {
+        mutex.withLock {
+            sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
+            IOScope.launch {
+                var losses: List<IOType.D0.Global>? = null
+                val sinkStep: TrainLambdaV2 = {
+                    val outputs = sinks.map { sink -> env.get<IOType>(sink.from) }
+                    env.reset()
+                    losses = sinks.mapIndexed { i, sink ->
+                        val result = with(sink.output) { _train(outputs[i], labels[i]) }
+                        env.plus(sink.from, result.delta)
+                        result.loss.toGlobal()
+                    }
+                }
+                trainLambda(sinkStep)(env)
+                losses!!
             }
         }
     }
