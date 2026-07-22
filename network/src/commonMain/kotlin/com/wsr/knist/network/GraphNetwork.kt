@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.wsr.knist.network
 
 import com.wsr.knist.batch.Batch
@@ -15,6 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.okio.encodeToBufferedSink
+import okio.BufferedSink
 
 private typealias TrainLambda = IOScope.(GraphEnv) -> Unit
 
@@ -456,5 +461,27 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
         initializer: WeightInitializer,
     ): T
 
-    abstract fun clone(): T
+    internal abstract fun serializer(): GraphNetworkSerializer<T>
+
+    @Suppress("UNCHECKED_CAST")
+    fun toJson(): String = networkSerializerJson.encodeToString(serializer(), this as T)
+
+    @Suppress("UNCHECKED_CAST")
+    fun toJson(sink: BufferedSink) {
+        networkSerializerJson.encodeToBufferedSink(serializer(), this as T, sink)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun toCbor(): ByteArray = networkSerializerCbor.encodeToByteArray(serializer(), this as T)
+
+    @Suppress("UNCHECKED_CAST")
+    fun toCbor(sink: BufferedSink) {
+        sink.write(networkSerializerCbor.encodeToByteArray(serializer(), this as T))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun clone(): T = networkSerializerCbor.decodeFromByteArray(
+        serializer(),
+        networkSerializerCbor.encodeToByteArray(serializer(), this as T),
+    )
 }

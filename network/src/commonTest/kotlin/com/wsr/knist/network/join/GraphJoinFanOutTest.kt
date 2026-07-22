@@ -33,17 +33,18 @@ class GraphJoinFanOutTest {
 
     private var capturedDelta: Batch<IOType.D1>? = null
 
-    private fun createNetwork(rate: Float = 0.1f): Network<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
-        converter = RawD1(1),
-        optimizer = Sgd(scheduler = Scheduler.Fix(rate = rate)),
-        initializer = Fixed(0f),
-    ) { input ->
-        val h = input
-            .affine(neuron = 1, id = "shared", initializer = Fixed(w0))
-            .debug(onDelta = { capturedDelta = it })
-        val f = h.affine(neuron = 1, id = "branch", initializer = Fixed(w1))
-        add(h, f).meanSquare()
-    }
+    private fun createNetwork(rate: Float = 0.1f): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
+        Network.Src1.Sink1.create(
+            converter = RawD1(1),
+            optimizer = Sgd(scheduler = Scheduler.Fix(rate = rate)),
+            initializer = Fixed(0f),
+        ) { input ->
+            val h = input
+                .affine(neuron = 1, id = "shared", initializer = Fixed(w0))
+                .debug(onDelta = { capturedDelta = it })
+            val f = h.affine(neuron = 1, id = "branch", initializer = Fixed(w1))
+            add(h, f).meanSquare()
+        }
 
     private val input = Batch(1) { IOType.d1(x) }
     private val labelBatch = Batch(1) { IOType.d1(label) }

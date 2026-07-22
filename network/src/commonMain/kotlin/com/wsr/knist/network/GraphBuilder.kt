@@ -217,12 +217,12 @@ object GraphScope {
     }
 }
 
-fun <I, O> Network.Companion.create(
+fun <I, O> Network.Src1.Sink1.Companion.create(
     converter: Converter.D1<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D1) -> GraphBuilder.Result<O>,
-): Network<I, O> {
+): Network.Src1.Sink1<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D1(
         from = source.id,
@@ -232,7 +232,7 @@ fun <I, O> Network.Companion.create(
         inputI = converter.outputI,
     )
     val result = GraphScope.block(builder)
-    return Network(
+    return Network.Src1.Sink1(
         source = source,
         graph = result.nodes,
         sink = result.sink,
@@ -241,12 +241,12 @@ fun <I, O> Network.Companion.create(
     )
 }
 
-fun <I, O> Network.Companion.create(
+fun <I, O> Network.Src1.Sink1.Companion.create(
     converter: Converter.D2<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D2) -> GraphBuilder.Result<O>,
-): Network<I, O> {
+): Network.Src1.Sink1<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D2(
         from = source.id,
@@ -257,7 +257,7 @@ fun <I, O> Network.Companion.create(
         inputJ = converter.outputJ,
     )
     val result = GraphScope.block(builder)
-    return Network(
+    return Network.Src1.Sink1(
         source = source,
         graph = result.nodes,
         sink = result.sink,
@@ -265,12 +265,12 @@ fun <I, O> Network.Companion.create(
         initializer = initializer,
     )
 }
-fun <I, O> Network.Companion.create(
+fun <I, O> Network.Src1.Sink1.Companion.create(
     converter: Converter.D3<I>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
     block: GraphScope.(GraphBuilder.Node.D3) -> GraphBuilder.Result<O>,
-): Network<I, O> {
+): Network.Src1.Sink1<I, O> {
     val source = Graph.Source(converter = converter)
     val builder = GraphBuilder.Node.D3(
         from = source.id,
@@ -282,7 +282,7 @@ fun <I, O> Network.Companion.create(
         inputK = converter.outputK,
     )
     val result = GraphScope.block(builder)
-    return Network(
+    return Network.Src1.Sink1(
         source = source,
         graph = result.nodes,
         sink = result.sink,
