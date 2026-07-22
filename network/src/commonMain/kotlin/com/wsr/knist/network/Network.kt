@@ -25,11 +25,10 @@ class Network<I, O> @PublishedApi internal constructor(
     override val sinks: List<Graph.Sink<*>> = listOf(sink)
     override val sources: List<Graph.Source<*>> = listOf(source)
 
-    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O {
-        val inputs = listOf(source.converter._encode(input))
-        val outputs = _expect(inputs = inputs, dispatcher = dispatcher)
-        return sink.converter._decode(outputs[0])
-    }
+    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = _expect(
+        inputs = listOf(source.converter._encode(input)),
+        dispatcher = dispatcher,
+    ) { outputs -> sink.converter._decode(outputs[0]) }
 
     suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global {
         val inputs = listOf(source.converter._encode(input))

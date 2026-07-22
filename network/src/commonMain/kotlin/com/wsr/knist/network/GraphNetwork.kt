@@ -31,11 +31,12 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
 
     protected val env = GraphEnv()
 
-    @Suppress("UNCHECKED_CAST", "FunctionName")
-    protected suspend fun _expect(
+    @Suppress("FunctionName")
+    protected suspend inline fun <O> _expect(
         inputs: List<Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ): List<Batch<IOType>> = withContext(dispatcher) {
+        crossinline decode: (outputs: List<Batch<IOType>>) -> O,
+    ): O = withContext(dispatcher) {
         mutex.withLock {
             sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
             IOScope.launch {
@@ -59,7 +60,8 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
                         }
                     }
                 }
-                sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
+                val outputs = sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
+                decode(outputs)
             }
         }
     }
