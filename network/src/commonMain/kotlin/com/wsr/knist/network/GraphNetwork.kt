@@ -447,7 +447,8 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
         )
     }
 
-    abstract fun create(
+    @PublishedApi
+    internal abstract fun create(
         sources: List<Graph.Source<*>>,
         graph: List<Graph.Node>,
         sinks: List<Graph.Sink<*>>,

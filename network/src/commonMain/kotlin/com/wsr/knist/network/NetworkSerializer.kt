@@ -1,5 +1,3 @@
-@file:OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
-
 package com.wsr.knist.network
 
 import com.wsr.knist.network.converter.Converter
@@ -125,248 +123,93 @@ import com.wsr.knist.network.process.reshape.reshape.ReshapeD3ToD2
 import com.wsr.knist.network.process.reshape.token.TokenEmbeddingD1ToD2
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.okio.decodeFromBufferedSource
-import kotlinx.serialization.json.okio.encodeToBufferedSink
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import okio.BufferedSink
-import okio.BufferedSource
 
-@Suppress("UNCHECKED_CAST")
-class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
-    private val idSerializer = GraphId.serializer()
-    private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
-    private val nodeSerializer = ListSerializer(PolymorphicSerializer(Graph.Node::class))
-    private val outputSerializer = PolymorphicSerializer(Output::class)
-    private val optimizerSerializer = PolymorphicSerializer(Optimizer::class)
-    private val initializerSerializer = PolymorphicSerializer(WeightInitializer::class)
-
-    override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("com.wsr.knist.network.NetworkV2") {
-            element("sourceId", idSerializer.descriptor)
-            element("sourceConverter", converterSerializer.descriptor)
-            element("graph", nodeSerializer.descriptor)
-            element("sinkId", idSerializer.descriptor)
-            element("sinkFrom", idSerializer.descriptor)
-            element("sinkOutput", outputSerializer.descriptor)
-            element("sinkConverter", converterSerializer.descriptor)
-            element("optimizer", optimizerSerializer.descriptor)
-            element("initializer", initializerSerializer.descriptor)
+object NetworkSerializer {
+    @JvmName("registerProcess")
+    inline fun <reified T : Process> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Process::class) {
+                subclass(clazz)
+            }
         }
-
-    override fun serialize(encoder: Encoder, value: Network<I, O>) {
-        encoder.encodeStructure(descriptor) {
-            encodeSerializableElement(descriptor, 0, idSerializer, value.source.id)
-            encodeSerializableElement(descriptor, 1, converterSerializer, value.source.converter as Converter<Any?>)
-            encodeSerializableElement(descriptor, 2, nodeSerializer, value.graph)
-            encodeSerializableElement(descriptor, 3, idSerializer, value.sink.id)
-            encodeSerializableElement(descriptor, 4, idSerializer, value.sink.from)
-            encodeSerializableElement(descriptor, 5, outputSerializer, value.sink.output)
-            encodeSerializableElement(descriptor, 6, converterSerializer, value.sink.converter as Converter<Any?>)
-            encodeSerializableElement(descriptor, 7, optimizerSerializer, value.optimizer)
-            encodeSerializableElement(descriptor, 8, initializerSerializer, value.initializer)
-        }
+        networkSerializerModules.add(module)
     }
 
-    override fun deserialize(decoder: Decoder): Network<I, O> = decoder.decodeStructure(descriptor) {
-        if (decodeSequentially()) {
-            Network(
-                source = Graph.Source(
-                    id = decodeSerializableElement(descriptor, 0, idSerializer),
-                    converter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<I>,
-                ),
-                graph = decodeSerializableElement(descriptor, 2, nodeSerializer),
-                sink = Graph.Sink(
-                    id = decodeSerializableElement(descriptor, 3, idSerializer),
-                    from = decodeSerializableElement(descriptor, 4, idSerializer),
-                    output = decodeSerializableElement(descriptor, 5, outputSerializer),
-                    converter = decodeSerializableElement(descriptor, 6, converterSerializer) as Converter<O>,
-                ),
-                optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer),
-                initializer = decodeSerializableElement(descriptor, 8, initializerSerializer),
-            )
-        } else {
-            var sourceId: GraphId? = null
-            var sourceConverter: Converter<Any?>? = null
-            var graph: List<Graph.Node>? = null
-            var sinkId: GraphId? = null
-            var sinkFrom: GraphId? = null
-            var sinkOutput: Output? = null
-            var sinkConverter: Converter<Any?>? = null
-            var optimizer: Optimizer? = null
-            var initializer: WeightInitializer? = null
-            while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
-                    0 -> sourceId = decodeSerializableElement(descriptor, 0, idSerializer)
-                    1 -> sourceConverter = decodeSerializableElement(descriptor, 1, converterSerializer)
-                    2 -> graph = decodeSerializableElement(descriptor, 2, nodeSerializer)
-                    3 -> sinkId = decodeSerializableElement(descriptor, 3, idSerializer)
-                    4 -> sinkFrom = decodeSerializableElement(descriptor, 4, idSerializer)
-                    5 -> sinkOutput = decodeSerializableElement(descriptor, 5, outputSerializer)
-                    6 -> sinkConverter = decodeSerializableElement(descriptor, 6, converterSerializer)
-                    7 -> optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer)
-                    8 -> initializer = decodeSerializableElement(descriptor, 8, initializerSerializer)
-                    CompositeDecoder.DECODE_DONE -> break
-                    else -> error("Unexpected index: $index")
-                }
+    @JvmName("registerOptimizer")
+    inline fun <reified T : Optimizer> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer::class) {
+                subclass(clazz)
             }
-            Network(
-                source = Graph.Source(
-                    id = checkNotNull(sourceId),
-                    converter = checkNotNull(sourceConverter) as Converter<I>,
-                ),
-                graph = checkNotNull(graph),
-                sink = Graph.Sink(
-                    id = checkNotNull(sinkId),
-                    from = checkNotNull(sinkFrom),
-                    output = checkNotNull(sinkOutput),
-                    converter = checkNotNull(sinkConverter) as Converter<O>,
-                ),
-                optimizer = checkNotNull(optimizer),
-                initializer = checkNotNull(initializer),
-            )
         }
+        networkSerializerModules.add(module)
     }
 
-    companion object {
-        fun <I, O> encodeToString(value: Network<I, O>) = json.encodeToString(
-            serializer = NetworkSerializer(),
-            value = value,
-        )
-
-        fun <I, O> encodeToBufferedSink(value: Network<I, O>, sink: BufferedSink) = json.encodeToBufferedSink(
-            serializer = NetworkSerializer(),
-            value = value,
-            sink = sink,
-        )
-
-        fun <I, O> decodeFromString(value: String) = json.decodeFromString<Network<I, O>>(
-            deserializer = NetworkSerializer(),
-            string = value,
-        )
-
-        fun <I, O> decodeFromBufferedSource(source: BufferedSource) = json.decodeFromBufferedSource<Network<I, O>>(
-            deserializer = NetworkSerializer(),
-            source = source,
-        )
-
-        fun <I, O> encodeToCbor(value: Network<I, O>): ByteArray = cbor.encodeToByteArray(NetworkSerializer(), value)
-
-        fun <I, O> encodeToCborSink(value: Network<I, O>, sink: BufferedSink) {
-            sink.write(cbor.encodeToByteArray(NetworkSerializer<I, O>(), value))
+    @JvmName("registerWeightInitializer")
+    inline fun <reified T : WeightInitializer> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(WeightInitializer::class) {
+                subclass(clazz)
+            }
         }
+        networkSerializerModules.add(module)
+    }
 
-        fun <I, O> decodeFromCbor(bytes: ByteArray): Network<I, O> =
-            cbor.decodeFromByteArray(NetworkSerializer(), bytes)
-
-        fun <I, O> decodeFromCborSource(source: BufferedSource): Network<I, O> =
-            cbor.decodeFromByteArray(NetworkSerializer(), source.readByteArray())
-
-        val modules = mutableListOf(buildInSerializersModule)
-
-        @JvmName("registerProcess")
-        inline fun <reified T : Process> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Process::class) {
-                    subclass(clazz)
-                }
+    @JvmName("registerOptimizerD1")
+    inline fun <reified T : Optimizer.D1> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer.D1::class) {
+                subclass(clazz)
             }
-            modules.add(module)
         }
+        networkSerializerModules.add(module)
+    }
 
-        @JvmName("registerOptimizer")
-        inline fun <reified T : Optimizer> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Optimizer::class) {
-                    subclass(clazz)
-                }
+    @JvmName("registerOptimizerD2")
+    inline fun <reified T : Optimizer.D2> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer.D2::class) {
+                subclass(clazz)
             }
-            modules.add(module)
         }
+        networkSerializerModules.add(module)
+    }
 
-        @JvmName("registerWeightInitializer")
-        inline fun <reified T : WeightInitializer> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(WeightInitializer::class) {
-                    subclass(clazz)
-                }
+    @JvmName("registerOptimizerD3")
+    inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer.D3::class) {
+                subclass(clazz)
             }
-            modules.add(module)
         }
+        networkSerializerModules.add(module)
+    }
 
-        @JvmName("registerOptimizerD1")
-        inline fun <reified T : Optimizer.D1> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Optimizer.D1::class) {
-                    subclass(clazz)
-                }
+    @JvmName("registerAttentionBiasD2")
+    inline fun <reified T : AttentionBiasD2> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(AttentionBiasD2::class) {
+                subclass(clazz)
             }
-            modules.add(module)
         }
+        networkSerializerModules.add(module)
+    }
 
-        @JvmName("registerOptimizerD2")
-        inline fun <reified T : Optimizer.D2> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Optimizer.D2::class) {
-                    subclass(clazz)
-                }
+    @JvmName("registerConverter")
+    inline fun <reified T : Converter<*>> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Converter::class) {
+                subclass(clazz)
             }
-            modules.add(module)
         }
-
-        @JvmName("registerOptimizerD3")
-        inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Optimizer.D3::class) {
-                    subclass(clazz)
-                }
-            }
-            modules.add(module)
-        }
-
-        @JvmName("registerAttentionBiasD2")
-        inline fun <reified T : AttentionBiasD2> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(AttentionBiasD2::class) {
-                    subclass(clazz)
-                }
-            }
-            modules.add(module)
-        }
-
-        @JvmName("registerConverter")
-        inline fun <reified T : Converter<*>> register(clazz: KClass<T>) {
-            val module = SerializersModule {
-                polymorphic(Converter::class) {
-                    subclass(clazz)
-                }
-            }
-            modules.add(module)
-        }
-
-        private val json
-            get() = Json {
-                serializersModule = modules.reduce { acc, module -> acc + module }
-            }
-
-        private val cbor
-            get() = Cbor {
-                serializersModule = modules.reduce { acc, module -> acc + module }
-            }
+        networkSerializerModules.add(module)
     }
 }
 
@@ -573,3 +416,17 @@ private val buildInSerializersModule = SerializersModule {
         subclass(Graph.Node.Observe::class)
     }
 }
+
+@PublishedApi
+internal val networkSerializerModules = mutableListOf(buildInSerializersModule)
+
+internal val networkSerializerJson
+    get() = Json {
+        serializersModule = networkSerializerModules.reduce { acc, module -> acc + module }
+    }
+
+@OptIn(ExperimentalSerializationApi::class)
+internal val networkSerializerCbor
+    get() = Cbor {
+        serializersModule = networkSerializerModules.reduce { acc, module -> acc + module }
+    }

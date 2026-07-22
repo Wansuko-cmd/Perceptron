@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.wsr.knist.network
 
 import com.wsr.knist.batch.Batch
@@ -9,11 +11,12 @@ import com.wsr.knist.network.output.Output
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.okio.decodeFromBufferedSource
+import kotlinx.serialization.json.okio.encodeToBufferedSink
 import okio.BufferedSink
 import okio.BufferedSource
 
-@Serializable(with = NetworkSerializer::class)
 class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val source: Graph.Source<I>,
     override val graph: List<Graph.Node>,
@@ -110,43 +113,60 @@ class Network<I, O> @PublishedApi internal constructor(
         )
     }
 
-    fun toJson(): String = NetworkSerializer.encodeToString(this)
+    fun toJson(): String = networkSerializerJson.encodeToString(serializer(), this)
 
     fun toJson(sink: BufferedSink) {
-        NetworkSerializer.encodeToBufferedSink(
-            value = this,
-            sink = sink,
-        )
+        networkSerializerJson.encodeToBufferedSink(serializer(), this, sink)
     }
 
-    fun toCbor(): ByteArray = NetworkSerializer.encodeToCbor(this)
+    fun toCbor(): ByteArray = networkSerializerCbor.encodeToByteArray(serializer(), this)
 
-    fun toCbor(sink: BufferedSink) = NetworkSerializer.encodeToCborSink(this, sink)
+    fun toCbor(sink: BufferedSink) = sink.write(networkSerializerCbor.encodeToByteArray(serializer(), this))
 
-    @Suppress("UNCHECKED_CAST")
+    override fun clone(): Network<I, O> = networkSerializerCbor.decodeFromByteArray(
+        serializer(),
+        networkSerializerCbor.encodeToByteArray(serializer(), this),
+    )
+
     override fun create(
         sources: List<Graph.Source<*>>,
         graph: List<Graph.Node>,
         sinks: List<Graph.Sink<*>>,
         optimizer: Optimizer,
         initializer: WeightInitializer,
-    ): Network<I, O> = Network(
-        source = sources[0] as Graph.Source<I>,
-        graph = graph,
-        sink = sinks[0] as Graph.Sink<O>,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
-
-    override fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
+    ): Network<I, O> = build(sources, graph, sinks, optimizer, initializer)
 
     companion object {
-        fun <I, O> fromJson(value: String) = NetworkSerializer.decodeFromString<I, O>(value)
+        @Suppress("UNCHECKED_CAST")
+        private fun <I, O> build(
+            sources: List<Graph.Source<*>>,
+            graph: List<Graph.Node>,
+            sinks: List<Graph.Sink<*>>,
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Network<I, O> {
+            check(sources.size == 1) { "invalid Network format. sources.size=${sources.size}." }
+            check(sinks.size == 1) { "invalid Network format. sinks.size=${sinks.size}." }
+            return Network(
+                source = sources[0] as Graph.Source<I>,
+                graph = graph,
+                sink = sinks[0] as Graph.Sink<O>,
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        }
 
-        fun <I, O> fromJson(source: BufferedSource) = NetworkSerializer.decodeFromBufferedSource<I, O>(source)
+        private fun <I, O> serializer(): GraphNetworkSerializer<Network<I, O>> = GraphNetworkSerializer(::build)
 
-        fun <I, O> fromCbor(bytes: ByteArray): Network<I, O> = NetworkSerializer.decodeFromCbor(bytes)
+        fun <I, O> fromJson(value: String): Network<I, O> = networkSerializerJson.decodeFromString(serializer(), value)
 
-        fun <I, O> fromCbor(source: BufferedSource): Network<I, O> = NetworkSerializer.decodeFromCborSource(source)
+        fun <I, O> fromJson(source: BufferedSource): Network<I, O> =
+            networkSerializerJson.decodeFromBufferedSource(serializer(), source)
+
+        fun <I, O> fromCbor(bytes: ByteArray): Network<I, O> =
+            networkSerializerCbor.decodeFromByteArray(serializer(), bytes)
+
+        fun <I, O> fromCbor(source: BufferedSource): Network<I, O> =
+            networkSerializerCbor.decodeFromByteArray(serializer(), source.readByteArray())
     }
 }
