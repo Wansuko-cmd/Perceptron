@@ -4,8 +4,8 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.GraphScope.addReshape
-import com.wsr.knist.network.process.GraphEnv
 import com.wsr.knist.network.process.Reshape
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable

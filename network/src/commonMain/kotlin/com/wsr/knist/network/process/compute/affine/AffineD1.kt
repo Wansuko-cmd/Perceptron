@@ -5,11 +5,11 @@ import com.wsr.knist.batch.shape.toD2
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.network.GraphBuilder
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.GraphScope.addCompute
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.GraphEnv
 import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 

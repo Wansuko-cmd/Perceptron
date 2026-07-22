@@ -6,9 +6,9 @@ import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.d2
 import com.wsr.knist.core.get
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.assertContentEquals
 import com.wsr.knist.network.networkScopeTestRule
-import com.wsr.knist.network.process.GraphEnv
 import kotlin.test.Test
 
 class DropoutD2Test {
