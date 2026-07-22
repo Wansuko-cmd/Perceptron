@@ -147,101 +147,187 @@ import okio.BufferedSink
 import okio.BufferedSource
 
 @Suppress("UNCHECKED_CAST")
-class NetworkSerializer<I, O> : KSerializer<Network<I, O>> {
+private object GraphSourceSerializer : KSerializer<Graph.Source<*>> {
     private val idSerializer = GraphId.serializer()
     private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
-    private val nodeSerializer = ListSerializer(PolymorphicSerializer(Graph.Node::class))
-    private val outputSerializer = PolymorphicSerializer(Output::class)
-    private val optimizerSerializer = PolymorphicSerializer(Optimizer::class)
-    private val initializerSerializer = PolymorphicSerializer(WeightInitializer::class)
 
     override val descriptor: SerialDescriptor =
-        buildClassSerialDescriptor("com.wsr.knist.network.NetworkV2") {
-            element("sourceId", idSerializer.descriptor)
-            element("sourceConverter", converterSerializer.descriptor)
-            element("graph", nodeSerializer.descriptor)
-            element("sinkId", idSerializer.descriptor)
-            element("sinkFrom", idSerializer.descriptor)
-            element("sinkOutput", outputSerializer.descriptor)
-            element("sinkConverter", converterSerializer.descriptor)
-            element("optimizer", optimizerSerializer.descriptor)
-            element("initializer", initializerSerializer.descriptor)
+        buildClassSerialDescriptor("com.wsr.knist.network.Graph.Source") {
+            element("id", idSerializer.descriptor)
+            element("converter", converterSerializer.descriptor)
         }
 
-    override fun serialize(encoder: Encoder, value: Network<I, O>) {
+    override fun serialize(encoder: Encoder, value: Graph.Source<*>) {
         encoder.encodeStructure(descriptor) {
-            encodeSerializableElement(descriptor, 0, idSerializer, value.source.id)
-            encodeSerializableElement(descriptor, 1, converterSerializer, value.source.converter as Converter<Any?>)
-            encodeSerializableElement(descriptor, 2, nodeSerializer, value.graph)
-            encodeSerializableElement(descriptor, 3, idSerializer, value.sink.id)
-            encodeSerializableElement(descriptor, 4, idSerializer, value.sink.from)
-            encodeSerializableElement(descriptor, 5, outputSerializer, value.sink.output)
-            encodeSerializableElement(descriptor, 6, converterSerializer, value.sink.converter as Converter<Any?>)
-            encodeSerializableElement(descriptor, 7, optimizerSerializer, value.optimizer)
-            encodeSerializableElement(descriptor, 8, initializerSerializer, value.initializer)
+            encodeSerializableElement(descriptor, 0, idSerializer, value.id)
+            encodeSerializableElement(descriptor, 1, converterSerializer, value.converter as Converter<Any?>)
         }
     }
 
-    override fun deserialize(decoder: Decoder): Network<I, O> = decoder.decodeStructure(descriptor) {
+    override fun deserialize(decoder: Decoder): Graph.Source<*> = decoder.decodeStructure(descriptor) {
         if (decodeSequentially()) {
-            Network(
-                source = Graph.Source(
-                    id = decodeSerializableElement(descriptor, 0, idSerializer),
-                    converter = decodeSerializableElement(descriptor, 1, converterSerializer) as Converter<I>,
-                ),
-                graph = decodeSerializableElement(descriptor, 2, nodeSerializer),
-                sink = Graph.Sink(
-                    id = decodeSerializableElement(descriptor, 3, idSerializer),
-                    from = decodeSerializableElement(descriptor, 4, idSerializer),
-                    output = decodeSerializableElement(descriptor, 5, outputSerializer),
-                    converter = decodeSerializableElement(descriptor, 6, converterSerializer) as Converter<O>,
-                ),
-                optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer),
-                initializer = decodeSerializableElement(descriptor, 8, initializerSerializer),
+            Graph.Source(
+                id = decodeSerializableElement(descriptor, 0, idSerializer),
+                converter = decodeSerializableElement(descriptor, 1, converterSerializer),
             )
         } else {
-            var sourceId: GraphId? = null
-            var sourceConverter: Converter<Any?>? = null
-            var graph: List<Graph.Node>? = null
-            var sinkId: GraphId? = null
-            var sinkFrom: GraphId? = null
-            var sinkOutput: Output? = null
-            var sinkConverter: Converter<Any?>? = null
-            var optimizer: Optimizer? = null
-            var initializer: WeightInitializer? = null
+            var id: GraphId? = null
+            var converter: Converter<Any?>? = null
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
-                    0 -> sourceId = decodeSerializableElement(descriptor, 0, idSerializer)
-                    1 -> sourceConverter = decodeSerializableElement(descriptor, 1, converterSerializer)
-                    2 -> graph = decodeSerializableElement(descriptor, 2, nodeSerializer)
-                    3 -> sinkId = decodeSerializableElement(descriptor, 3, idSerializer)
-                    4 -> sinkFrom = decodeSerializableElement(descriptor, 4, idSerializer)
-                    5 -> sinkOutput = decodeSerializableElement(descriptor, 5, outputSerializer)
-                    6 -> sinkConverter = decodeSerializableElement(descriptor, 6, converterSerializer)
-                    7 -> optimizer = decodeSerializableElement(descriptor, 7, optimizerSerializer)
-                    8 -> initializer = decodeSerializableElement(descriptor, 8, initializerSerializer)
+                    0 -> id = decodeSerializableElement(descriptor, 0, idSerializer)
+                    1 -> converter = decodeSerializableElement(descriptor, 1, converterSerializer)
                     CompositeDecoder.DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
             }
-            Network(
-                source = Graph.Source(
-                    id = checkNotNull(sourceId),
-                    converter = checkNotNull(sourceConverter) as Converter<I>,
-                ),
-                graph = checkNotNull(graph),
-                sink = Graph.Sink(
-                    id = checkNotNull(sinkId),
-                    from = checkNotNull(sinkFrom),
-                    output = checkNotNull(sinkOutput),
-                    converter = checkNotNull(sinkConverter) as Converter<O>,
-                ),
-                optimizer = checkNotNull(optimizer),
-                initializer = checkNotNull(initializer),
-            )
+            Graph.Source(id = checkNotNull(id), converter = checkNotNull(converter))
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+private object GraphSinkSerializer : KSerializer<Graph.Sink<*>> {
+    private val idSerializer = GraphId.serializer()
+    private val converterSerializer = PolymorphicSerializer(Converter::class) as KSerializer<Converter<Any?>>
+    private val outputSerializer = PolymorphicSerializer(Output::class)
+
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("com.wsr.knist.network.Graph.Sink") {
+            element("id", idSerializer.descriptor)
+            element("from", idSerializer.descriptor)
+            element("output", outputSerializer.descriptor)
+            element("converter", converterSerializer.descriptor)
+        }
+
+    override fun serialize(encoder: Encoder, value: Graph.Sink<*>) {
+        encoder.encodeStructure(descriptor) {
+            encodeSerializableElement(descriptor, 0, idSerializer, value.id)
+            encodeSerializableElement(descriptor, 1, idSerializer, value.from)
+            encodeSerializableElement(descriptor, 2, outputSerializer, value.output)
+            encodeSerializableElement(descriptor, 3, converterSerializer, value.converter as Converter<Any?>)
         }
     }
 
+    override fun deserialize(decoder: Decoder): Graph.Sink<*> = decoder.decodeStructure(descriptor) {
+        if (decodeSequentially()) {
+            Graph.Sink(
+                id = decodeSerializableElement(descriptor, 0, idSerializer),
+                from = decodeSerializableElement(descriptor, 1, idSerializer),
+                output = decodeSerializableElement(descriptor, 2, outputSerializer),
+                converter = decodeSerializableElement(descriptor, 3, converterSerializer),
+            )
+        } else {
+            var id: GraphId? = null
+            var from: GraphId? = null
+            var output: Output? = null
+            var converter: Converter<Any?>? = null
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> id = decodeSerializableElement(descriptor, 0, idSerializer)
+                    1 -> from = decodeSerializableElement(descriptor, 1, idSerializer)
+                    2 -> output = decodeSerializableElement(descriptor, 2, outputSerializer)
+                    3 -> converter = decodeSerializableElement(descriptor, 3, converterSerializer)
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+            Graph.Sink(
+                id = checkNotNull(id),
+                from = checkNotNull(from),
+                output = checkNotNull(output),
+                converter = checkNotNull(converter),
+            )
+        }
+    }
+}
+
+class GraphNetworkSerializer<T : GraphNetwork<T>>(
+    private val factory: (
+        sources: List<Graph.Source<*>>,
+        graph: List<Graph.Node>,
+        sinks: List<Graph.Sink<*>>,
+        optimizer: Optimizer,
+        initializer: WeightInitializer,
+    ) -> T,
+) : KSerializer<T> {
+    private val sourceListSerializer = ListSerializer(GraphSourceSerializer)
+    private val nodeSerializer = ListSerializer(PolymorphicSerializer(Graph.Node::class))
+    private val sinkListSerializer = ListSerializer(GraphSinkSerializer)
+    private val optimizerSerializer = PolymorphicSerializer(Optimizer::class)
+    private val initializerSerializer = PolymorphicSerializer(WeightInitializer::class)
+
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("com.wsr.knist.network.GraphNetwork") {
+            element("sources", sourceListSerializer.descriptor)
+            element("graph", nodeSerializer.descriptor)
+            element("sinks", sinkListSerializer.descriptor)
+            element("optimizer", optimizerSerializer.descriptor)
+            element("initializer", initializerSerializer.descriptor)
+        }
+
+    override fun serialize(encoder: Encoder, value: T) {
+        encoder.encodeStructure(descriptor) {
+            encodeSerializableElement(descriptor, 0, sourceListSerializer, value.sources)
+            encodeSerializableElement(descriptor, 1, nodeSerializer, value.graph)
+            encodeSerializableElement(descriptor, 2, sinkListSerializer, value.sinks)
+            encodeSerializableElement(descriptor, 3, optimizerSerializer, value.optimizer)
+            encodeSerializableElement(descriptor, 4, initializerSerializer, value.initializer)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): T = decoder.decodeStructure(descriptor) {
+        if (decodeSequentially()) {
+            factory(
+                decodeSerializableElement(descriptor, 0, sourceListSerializer),
+                decodeSerializableElement(descriptor, 1, nodeSerializer),
+                decodeSerializableElement(descriptor, 2, sinkListSerializer),
+                decodeSerializableElement(descriptor, 3, optimizerSerializer),
+                decodeSerializableElement(descriptor, 4, initializerSerializer),
+            )
+        } else {
+            var sources: List<Graph.Source<*>>? = null
+            var graph: List<Graph.Node>? = null
+            var sinks: List<Graph.Sink<*>>? = null
+            var optimizer: Optimizer? = null
+            var initializer: WeightInitializer? = null
+            while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    0 -> sources = decodeSerializableElement(descriptor, 0, sourceListSerializer)
+                    1 -> graph = decodeSerializableElement(descriptor, 1, nodeSerializer)
+                    2 -> sinks = decodeSerializableElement(descriptor, 2, sinkListSerializer)
+                    3 -> optimizer = decodeSerializableElement(descriptor, 3, optimizerSerializer)
+                    4 -> initializer = decodeSerializableElement(descriptor, 4, initializerSerializer)
+                    CompositeDecoder.DECODE_DONE -> break
+                    else -> error("Unexpected index: $index")
+                }
+            }
+            factory(
+                checkNotNull(sources),
+                checkNotNull(graph),
+                checkNotNull(sinks),
+                checkNotNull(optimizer),
+                checkNotNull(initializer),
+            )
+        }
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class NetworkSerializer<I, O> :
+    KSerializer<Network<I, O>> by GraphNetworkSerializer(
+        factory = { sources, graph, sinks, optimizer, initializer ->
+            check(sources.size == 1) { "invalid Network format. sources.size=${sources.size}, expected 1" }
+            check(sinks.size == 1) { "invalid Network format. sinks.size=${sinks.size}, expected 1" }
+            Network(
+                source = sources[0] as Graph.Source<I>,
+                graph = graph,
+                sink = sinks[0] as Graph.Sink<O>,
+                optimizer = optimizer,
+                initializer = initializer,
+            )
+        },
+    ) {
     companion object {
         fun <I, O> encodeToString(value: Network<I, O>) = json.encodeToString(
             serializer = NetworkSerializer(),
