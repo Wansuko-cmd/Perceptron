@@ -531,3 +531,22 @@ class Network<I, O> @PublishedApi internal constructor(
         fun <I, O> fromCbor(source: BufferedSource): Network<I, O> = NetworkSerializer.decodeFromCborSource(source)
     }
 }
+
+abstract class GraphNetwork<T: GraphNetwork<T>> {
+    abstract val sources: List<Graph.Source<*>>
+    abstract val graph: List<Graph.Node>
+    abstract val sinks: List<Graph.Sink<*>>
+
+    abstract val optimizer: Optimizer
+    abstract val initializer: WeightInitializer
+
+    abstract fun create(
+        sources: List<Graph.Source<*>>,
+        graph: List<Graph.Node>,
+        sinks: List<Graph.Sink<*>>,
+        optimizer: Optimizer,
+        initializer: WeightInitializer,
+    ): T
+
+    abstract fun clone(): T
+}
