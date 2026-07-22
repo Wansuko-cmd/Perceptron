@@ -1,177 +1,45 @@
 package com.wsr.knist.network
 
-import com.wsr.knist.core.IOScope
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOType
-import com.wsr.knist.core.launch
 import com.wsr.knist.network.converter.Converter
 import com.wsr.knist.network.initializer.WeightInitializer
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
-import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import okio.BufferedSink
 import okio.BufferedSource
 
-private typealias TrainLambdaV2 = IOScope.(GraphEnv) -> Unit
-
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val source: Graph.Source<I>,
-    @PublishedApi internal val graph: List<Graph.Node>,
+    override val graph: List<Graph.Node>,
     @PublishedApi internal val sink: Graph.Sink<O>,
-    @PublishedApi internal val optimizer: Optimizer,
-    @PublishedApi internal val initializer: WeightInitializer,
-) {
-    @PublishedApi
-    internal val mutex = Mutex()
+    override val optimizer: Optimizer,
+    override val initializer: WeightInitializer,
+) : GraphNetwork<Network<I, O>>() {
 
-    private val env = GraphEnv()
+    override val sinks: List<Graph.Sink<*>> = listOf(sink)
+    override val sources: List<Graph.Source<*>> = listOf(source)
 
-    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
-        mutex.withLock {
-            env[source.id] = source.converter._encode(input)
-            val output = IOScope.launch {
-                val scope = this
-                graph.forEach { node ->
-                    when (node) {
-                        is Graph.Node.Attach -> {
-                            with(node.process) {
-                                env[node.id] = scope._expect(env[node.from], env)
-                            }
-                        }
+    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = _expect(
+        inputs = listOf(source.converter._encode(input)),
+        dispatcher = dispatcher,
+    ) { outputs -> sink.converter._decode(outputs[0]) }
 
-                        is Graph.Node.Connect -> {
-                            with(node.join) {
-                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                            }
-                        }
-
-                        is Graph.Node.Observe -> {
-                            env[node.id] = env[node.from]
-                        }
-                    }
-                }
-                with(sink.output) { scope._expect(env[sink.from]) }
-            }
-            sink.converter._decode(output)
-        }
+    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global {
+        val inputs = listOf(source.converter._encode(input))
+        val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+        return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
     }
 
-    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
-        withContext(dispatcher) {
-            mutex.withLock {
-                env[source.id] = source.converter._encode(input)
-                IOScope.launch {
-                    val scope = this
-                    graph.forEach { node ->
-                        when (node) {
-                            is Graph.Node.Attach -> {
-                                with(node.process) {
-                                    env[node.id] = scope._expect(env[node.from], env)
-                                }
-                            }
-
-                            is Graph.Node.Connect -> {
-                                with(node.join) {
-                                    env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                                }
-                            }
-
-                            is Graph.Node.Observe -> {
-                                env[node.id] = env[node.from]
-                            }
-                        }
-                    }
-                    val result = with(sink.output) {
-                        scope._train(
-                            input = env[sink.from],
-                            label = { sink.converter._encode(label) },
-                        )
-                    }
-                    result.loss.toGlobal()
-                }
-            }
-        }
-
-    suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
-        withContext(dispatcher) {
-            mutex.withLock {
-                env[source.id] = source.converter._encode(input)
-                IOScope.launch {
-                    var loss: IOType.D0.Global? = null
-                    val sinkStep: TrainLambdaV2 = {
-                        val result = with(sink.output) {
-                            _train(env[sink.from]) {
-                                env.reset()
-                                sink.converter._encode(label)
-                            }
-                        }
-                        loss = result.loss.toGlobal()
-                        env.plus(sink.from, result.delta)
-                    }
-                    trainLambda(sinkStep)(env)
-                    loss!!
-                }
-            }
-        }
-
-    private val trainLambda: (TrainLambdaV2) -> TrainLambdaV2 = run {
-        val initial: (TrainLambdaV2) -> TrainLambdaV2 = { it }
-        graph.foldRight(initial) { node, next ->
-            { final ->
-                when (node) {
-                    is Graph.Node.Attach -> {
-                        { env ->
-                            val delta = with(node.process) {
-                                _train(env[node.from], env) { out ->
-                                    env[node.id] = out
-                                    next(final)(env)
-                                    env[node.id]
-                                }
-                            }
-                            env.plus(node.from, delta)
-                        }
-                    }
-
-                    is Graph.Node.Connect -> {
-                        { env ->
-                            val delta = with(node.join) {
-                                _train(node.from.map { env[it] }, env) { out ->
-                                    env[node.id] = out
-                                    next(final)(env)
-                                    env[node.id]
-                                }
-                            }
-                            node.from.forEachIndexed { index, id -> env.plus(id, delta[index]) }
-                        }
-                    }
-
-                    is Graph.Node.Observe -> {
-                        { env ->
-                            env[node.id] = env[node.from]
-                            next(final)(env)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @JvmName("replaceOptimizer")
-    fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): Network<I, O> = clone().also { copy ->
-        copy.graph.forEach { node ->
-            if (node is Graph.Node.Attach && condition(node.process)) {
-                node.process.update(optimizer)
-            }
-        }
+    suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global {
+        val inputs = listOf(source.converter._encode(input))
+        val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+        return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
     }
 
     fun <I2> replaceSource(converter: Converter<I2>): Network<I2, O> {
@@ -242,270 +110,6 @@ class Network<I, O> @PublishedApi internal constructor(
         )
     }
 
-    @JvmName("replaceComputeD1")
-    inline fun <reified T : Compute.D1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceComputeD2")
-    inline fun <reified T : Compute.D2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceComputeD3")
-    inline fun <reified T : Compute.D3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD1ToD2")
-    inline fun <reified T : Reshape.D1ToD2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD1ToD3")
-    inline fun <reified T : Reshape.D1ToD3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D1.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D1, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D1(
-                inputI = layer.inputI,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD2ToD1")
-    inline fun <reified T : Reshape.D2ToD1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD2ToD3")
-    inline fun <reified T : Reshape.D2ToD3> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D2.(T) -> GraphBuilder.Node.D3,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D2, GraphBuilder.Node.D3>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D2(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD3ToD1")
-    inline fun <reified T : Reshape.D3ToD1> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D1,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D1>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @JvmName("replaceReshapeD3ToD2")
-    inline fun <reified T : Reshape.D3ToD2> replace(
-        optimizer: Optimizer = this.optimizer,
-        initializer: WeightInitializer = this.initializer,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: GraphBuilder.Node.D3.(T) -> GraphBuilder.Node.D2,
-    ): Network<I, O> = replace<T, GraphBuilder.Node.D3, GraphBuilder.Node.D2>(
-        seed = { layer, from ->
-            GraphBuilder.Node.D3(
-                inputI = layer.inputI,
-                inputJ = layer.inputJ,
-                inputK = layer.inputK,
-                from = from,
-                nodes = emptyList(),
-                optimizer = optimizer,
-                initializer = initializer,
-            )
-        },
-        condition = condition,
-        block = block,
-    )
-
-    @PublishedApi
-    internal inline fun <reified T : Process, B1 : GraphBuilder.Node, B2 : GraphBuilder.Node> replace(
-        crossinline seed: (layer: T, from: GraphId) -> B1,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: B1.(T) -> B2,
-    ): Network<I, O> {
-        val copy = clone()
-        val redirect = mutableMapOf<GraphId, GraphId>()
-        val newNodes = copy.graph.fold(emptyList<Graph.Node>()) { nodes, node ->
-            when (node) {
-                is Graph.Node.Attach -> {
-                    val process = node.process
-                    if (process !is T || !condition(process)) {
-                        return@fold nodes + Graph.Node.Attach(
-                            id = node.id,
-                            from = redirect[node.from] ?: node.from,
-                            process = process,
-                        )
-                    }
-
-                    val from = redirect[node.from] ?: node.from
-                    val result = seed(process, from).block(process)
-                    if (result.nodes.isEmpty()) {
-                        check(process.inputShape == process.outputShape) {
-                            """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                            """.trimIndent()
-                        }
-                        redirect[node.id] = from
-                        return@fold nodes
-                    }
-
-                    val first = (result.nodes.first() as Graph.Node.Attach).process
-                    val last = (result.nodes.last() as Graph.Node.Attach).process
-                    check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
-                        """
-                            invalid replace.
-                            input: ${process.inputShape}
-                            output: ${process.outputShape}
-                            replaced input: ${first.inputShape}
-                            replaced output: ${last.outputShape}
-                        """.trimIndent()
-                    }
-                    redirect[node.id] = result.from
-                    nodes + result.nodes
-                }
-
-                is Graph.Node.Connect -> nodes + Graph.Node.Connect(
-                    id = node.id,
-                    from = node.from.map { redirect[it] ?: it },
-                    join = node.join,
-                )
-
-                is Graph.Node.Observe -> nodes + Graph.Node.Observe(
-                    id = node.id,
-                    from = redirect[node.from] ?: node.from,
-                )
-            }
-        }
-        return Network(
-            source = copy.source,
-            graph = newNodes,
-            sink = Graph.Sink(
-                id = copy.sink.id,
-                from = redirect[copy.sink.from] ?: copy.sink.from,
-                output = copy.sink.output,
-                converter = copy.sink.converter,
-            ),
-            optimizer = copy.optimizer,
-            initializer = copy.initializer,
-        )
-    }
-
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
@@ -519,7 +123,22 @@ class Network<I, O> @PublishedApi internal constructor(
 
     fun toCbor(sink: BufferedSink) = NetworkSerializer.encodeToCborSink(this, sink)
 
-    fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
+    @Suppress("UNCHECKED_CAST")
+    override fun create(
+        sources: List<Graph.Source<*>>,
+        graph: List<Graph.Node>,
+        sinks: List<Graph.Sink<*>>,
+        optimizer: Optimizer,
+        initializer: WeightInitializer,
+    ): Network<I, O> = Network(
+        source = sources[0] as Graph.Source<I>,
+        graph = graph,
+        sink = sinks[0] as Graph.Sink<O>,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+
+    override fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
 
     companion object {
         fun <I, O> fromJson(value: String) = NetworkSerializer.decodeFromString<I, O>(value)
