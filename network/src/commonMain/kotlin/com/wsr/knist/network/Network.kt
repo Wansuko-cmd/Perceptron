@@ -1,5 +1,6 @@
 package com.wsr.knist.network
 
+import com.wsr.knist.batch.Batch
 import com.wsr.knist.core.IOScope
 import com.wsr.knist.core.IOType
 import com.wsr.knist.core.launch
@@ -34,39 +35,10 @@ class Network<I, O> @PublishedApi internal constructor(
     override val sinks: List<Graph.Sink<*>> = listOf(sink)
     override val sources: List<Graph.Source<*>> = listOf(source)
 
-    @PublishedApi
-    internal val mutex = Mutex()
-
-    private val env = GraphEnv()
-
-    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = withContext(dispatcher) {
-        mutex.withLock {
-            env[source.id] = source.converter._encode(input)
-            val output = IOScope.launch {
-                val scope = this
-                graph.forEach { node ->
-                    when (node) {
-                        is Graph.Node.Attach -> {
-                            with(node.process) {
-                                env[node.id] = scope._expect(env[node.from], env)
-                            }
-                        }
-
-                        is Graph.Node.Connect -> {
-                            with(node.join) {
-                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                            }
-                        }
-
-                        is Graph.Node.Observe -> {
-                            env[node.id] = env[node.from]
-                        }
-                    }
-                }
-                with(sink.output) { scope._expect(env[sink.from]) }
-            }
-            sink.converter._decode(output)
-        }
+    suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O {
+        val inputs = listOf(source.converter._encode(input))
+        val outputs = _expect(inputs = inputs, dispatcher = dispatcher)
+        return sink.converter._decode(outputs[0])
     }
 
     suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
@@ -286,6 +258,43 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
     abstract val optimizer: Optimizer
     abstract val initializer: WeightInitializer
 
+    @PublishedApi
+    internal val mutex = Mutex()
+
+    protected val env = GraphEnv()
+
+    @Suppress("UNCHECKED_CAST")
+    protected suspend fun _expect(
+        inputs: List<Batch<IOType>>,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ): List<Batch<IOType>> = withContext(dispatcher) {
+        mutex.withLock {
+            sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
+            IOScope.launch {
+                val scope = this
+                graph.forEach { node ->
+                    when (node) {
+                        is Graph.Node.Attach -> {
+                            with(node.process) {
+                                env[node.id] = scope._expect(env[node.from], env)
+                            }
+                        }
+
+                        is Graph.Node.Connect -> {
+                            with(node.join) {
+                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
+                            }
+                        }
+
+                        is Graph.Node.Observe -> {
+                            env[node.id] = env[node.from]
+                        }
+                    }
+                }
+                sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
+            }
+        }
+    }
 
     @JvmName("replaceOptimizer")
     fun replace(condition: (Process) -> Boolean, optimizer: Optimizer): T = clone().also { copy ->
