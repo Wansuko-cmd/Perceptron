@@ -11,6 +11,7 @@ import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName
+import kotlin.math.sin
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -25,11 +26,15 @@ private typealias TrainLambdaV2 = IOScope.(GraphEnv) -> Unit
 @Serializable(with = NetworkSerializer::class)
 class Network<I, O> @PublishedApi internal constructor(
     @PublishedApi internal val source: Graph.Source<I>,
-    @PublishedApi internal val graph: List<Graph.Node>,
+    override val graph: List<Graph.Node>,
     @PublishedApi internal val sink: Graph.Sink<O>,
-    @PublishedApi internal val optimizer: Optimizer,
-    @PublishedApi internal val initializer: WeightInitializer,
-) {
+    override val optimizer: Optimizer,
+    override val initializer: WeightInitializer,
+) : GraphNetwork<Network<I, O>>() {
+
+    override val sinks: List<Graph.Sink<*>> = listOf(sink)
+    override val sources: List<Graph.Source<*>> = listOf(source)
+
     @PublishedApi
     internal val mutex = Mutex()
 
@@ -519,7 +524,22 @@ class Network<I, O> @PublishedApi internal constructor(
 
     fun toCbor(sink: BufferedSink) = NetworkSerializer.encodeToCborSink(this, sink)
 
-    fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
+    @Suppress("UNCHECKED_CAST")
+    override fun create(
+        sources: List<Graph.Source<*>>,
+        graph: List<Graph.Node>,
+        sinks: List<Graph.Sink<*>>,
+        optimizer: Optimizer,
+        initializer: WeightInitializer
+    ): Network<I, O> = Network(
+        source = sources[0] as Graph.Source<I>,
+        graph = graph,
+        sink = sinks[0] as Graph.Sink<O>,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+
+    override fun clone(): Network<I, O> = NetworkSerializer.decodeFromCbor(NetworkSerializer.encodeToCbor(this))
 
     companion object {
         fun <I, O> fromJson(value: String) = NetworkSerializer.decodeFromString<I, O>(value)
