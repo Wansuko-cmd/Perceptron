@@ -24,8 +24,8 @@ interface Network {
             override val optimizer: Optimizer,
             override val initializer: WeightInitializer,
         ) : GraphNetwork<Sink1<I, O>>() {
-            override val sinks: List<Graph.Sink<*>> = listOf(sink)
             override val sources: List<Graph.Source<*>> = listOf(source)
+            override val sinks: List<Graph.Sink<*>> = listOf(sink)
 
             suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): O = _expect(
                 inputs = listOf(source.converter._encode(input)),
@@ -162,6 +162,230 @@ interface Network {
                     networkSerializerCbor.decodeFromByteArray(serializer(), bytes)
 
                 fun <I, O> fromCbor(source: BufferedSource): Sink1<I, O> =
+                    networkSerializerCbor.decodeFromByteArray(serializer(), source.readByteArray())
+            }
+        }
+
+        class Sink2<I, O1, O2>(
+            val source: Graph.Source<I>,
+            override val graph: List<Graph.Node>,
+            val sink1: Graph.Sink<O1>,
+            val sink2: Graph.Sink<O2>,
+            override val optimizer: Optimizer,
+            override val initializer: WeightInitializer,
+        ) : GraphNetwork<Sink2<I, O1, O2>>() {
+            override val sources: List<Graph.Source<*>> = listOf(source)
+            override val sinks: List<Graph.Sink<*>> = listOf(sink1, sink2)
+
+            suspend fun expect(input: I, dispatcher: CoroutineDispatcher = Dispatchers.Default): Pair<O1, O2> = _expect(
+                inputs = listOf(source.converter._encode(input)),
+                dispatcher = dispatcher,
+            ) { outputs ->
+                sink1.converter._decode(outputs[0]) to sink2.converter._decode(outputs[1])
+            }
+
+            suspend fun loss(
+                input: I,
+                label1: O1,
+                label2: O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    { sink1.converter._encode(label1) },
+                    { sink2.converter._encode(label2) },
+                )
+                return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            suspend fun train(
+                input: I,
+                label1: O1,
+                label2: O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    { sink1.converter._encode(label1) },
+                    { sink2.converter._encode(label2) },
+                )
+                return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            fun <I2> replaceSource(converter: Converter<I2>): Sink2<I2, O1, O2> {
+                val copy = clone()
+                return Sink2(
+                    source = Graph.Source(id = copy.source.id, converter = converter),
+                    graph = copy.graph,
+                    sink1 = copy.sink1,
+                    sink2 = copy.sink2,
+                    optimizer = copy.optimizer,
+                    initializer = copy.initializer,
+                )
+            }
+
+            @JvmName("replaceSink1D1")
+            fun <T : Output.D1, ON> replaceSink1(
+                optimizer: Optimizer = this.optimizer,
+                initializer: WeightInitializer = this.initializer,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+            ): Sink2<I, ON, O2> {
+                val copy = clone()
+                val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
+                check(last.process.outputShape.size == 1) {
+                    "invalid replaceSink1. outputShape=${last.process.outputShape}"
+                }
+                val builder = GraphBuilder.Node.D1(
+                    inputI = last.process.outputShape[0],
+                    from = copy.sink1.from,
+                    nodes = copy.graph,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+                val result = builder.block()
+                return Sink2(
+                    source = copy.source,
+                    graph = result.nodes,
+                    sink1 = result.sink,
+                    sink2 = copy.sink2,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+            }
+
+            @JvmName("replaceSink2D1")
+            fun <T : Output.D1, ON> replaceSink2(
+                optimizer: Optimizer = this.optimizer,
+                initializer: WeightInitializer = this.initializer,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+            ): Sink2<I, O1, ON> {
+                val copy = clone()
+                val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
+                check(last.process.outputShape.size == 1) {
+                    "invalid replaceSink2. outputShape=${last.process.outputShape}"
+                }
+                val builder = GraphBuilder.Node.D1(
+                    inputI = last.process.outputShape[0],
+                    from = copy.sink2.from,
+                    nodes = copy.graph,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+                val result = builder.block()
+                return Sink2(
+                    source = copy.source,
+                    graph = result.nodes,
+                    sink1 = copy.sink1,
+                    sink2 = result.sink,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+            }
+
+            @JvmName("replaceSink1D2")
+            fun <T : Output.D2, ON> replaceSink1(
+                optimizer: Optimizer = this.optimizer,
+                initializer: WeightInitializer = this.initializer,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+            ): Sink2<I, ON, O2> {
+                val copy = clone()
+                val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
+                check(last.process.outputShape.size == 2) {
+                    "invalid replaceSink1. outputShape=${last.process.outputShape}"
+                }
+                val builder = GraphBuilder.Node.D2(
+                    inputI = last.process.outputShape[0],
+                    inputJ = last.process.outputShape[1],
+                    from = copy.sink1.from,
+                    nodes = copy.graph,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+                val result = builder.block()
+                return Sink2(
+                    source = copy.source,
+                    graph = result.nodes,
+                    sink1 = result.sink,
+                    sink2 = copy.sink2,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+            }
+
+            @JvmName("replaceSink2D2")
+            fun <T : Output.D2, ON> replaceSink2(
+                optimizer: Optimizer = this.optimizer,
+                initializer: WeightInitializer = this.initializer,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+            ): Sink2<I, O1, ON> {
+                val copy = clone()
+                val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
+                check(last.process.outputShape.size == 2) {
+                    "invalid replaceSink2. outputShape=${last.process.outputShape}"
+                }
+                val builder = GraphBuilder.Node.D2(
+                    inputI = last.process.outputShape[0],
+                    inputJ = last.process.outputShape[1],
+                    from = copy.sink2.from,
+                    nodes = copy.graph,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+                val result = builder.block()
+                return Sink2(
+                    source = copy.source,
+                    graph = result.nodes,
+                    sink1 = copy.sink1,
+                    sink2 = result.sink,
+                    optimizer = optimizer,
+                    initializer = initializer,
+                )
+            }
+
+            override fun create(
+                sources: List<Graph.Source<*>>,
+                graph: List<Graph.Node>,
+                sinks: List<Graph.Sink<*>>,
+                optimizer: Optimizer,
+                initializer: WeightInitializer,
+            ): Sink2<I, O1, O2> = build(sources, graph, sinks, optimizer, initializer)
+
+            override fun serializer(): GraphNetworkSerializer<Sink2<I, O1, O2>> = serializer<I, O1, O2>()
+
+            companion object {
+                @Suppress("UNCHECKED_CAST")
+                private fun <I, O1, O2> build(
+                    sources: List<Graph.Source<*>>,
+                    graph: List<Graph.Node>,
+                    sinks: List<Graph.Sink<*>>,
+                    optimizer: Optimizer,
+                    initializer: WeightInitializer,
+                ): Sink2<I, O1, O2> {
+                    check(sources.size == 1) { "invalid Network format. sources.size=${sources.size}." }
+                    check(sinks.size == 2) { "invalid Network format. sinks.size=${sinks.size}." }
+                    return Sink2(
+                        source = sources[0] as Graph.Source<I>,
+                        graph = graph,
+                        sink1 = sinks[0] as Graph.Sink<O1>,
+                        sink2 = sinks[1] as Graph.Sink<O2>,
+                        optimizer = optimizer,
+                        initializer = initializer,
+                    )
+                }
+
+                private fun <I, O1, O2> serializer(): GraphNetworkSerializer<Sink2<I, O1, O2>> =
+                    GraphNetworkSerializer(::build)
+
+                fun <I, O1, O2> fromJson(value: String): Sink2<I, O1, O2> =
+                    networkSerializerJson.decodeFromString(serializer(), value)
+
+                fun <I, O1, O2> fromJson(source: BufferedSource): Sink2<I, O1, O2> =
+                    networkSerializerJson.decodeFromBufferedSource(serializer(), source)
+
+                fun <I, O1, O2> fromCbor(bytes: ByteArray): Sink2<I, O1, O2> =
+                    networkSerializerCbor.decodeFromByteArray(serializer(), bytes)
+
+                fun <I, O1, O2> fromCbor(source: BufferedSource): Sink2<I, O1, O2> =
                     networkSerializerCbor.decodeFromByteArray(serializer(), source.readByteArray())
             }
         }
