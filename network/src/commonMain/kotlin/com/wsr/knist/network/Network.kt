@@ -11,7 +11,6 @@ import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Process
 import com.wsr.knist.network.process.Reshape
 import kotlin.jvm.JvmName
-import kotlin.math.sin
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -427,81 +426,6 @@ class Network<I, O> @PublishedApi internal constructor(
         block = block,
     )
 
-    @PublishedApi
-    internal inline fun <reified T : Process, B1 : GraphBuilder.Node, B2 : GraphBuilder.Node> replace(
-        crossinline seed: (layer: T, from: GraphId) -> B1,
-        crossinline condition: (T) -> Boolean,
-        crossinline block: B1.(T) -> B2,
-    ): Network<I, O> {
-        val copy = clone()
-        val redirect = mutableMapOf<GraphId, GraphId>()
-        val newNodes = copy.graph.fold(emptyList<Graph.Node>()) { nodes, node ->
-            when (node) {
-                is Graph.Node.Attach -> {
-                    val process = node.process
-                    if (process !is T || !condition(process)) {
-                        return@fold nodes + Graph.Node.Attach(
-                            id = node.id,
-                            from = redirect[node.from] ?: node.from,
-                            process = process,
-                        )
-                    }
-
-                    val from = redirect[node.from] ?: node.from
-                    val result = seed(process, from).block(process)
-                    if (result.nodes.isEmpty()) {
-                        check(process.inputShape == process.outputShape) {
-                            """
-                                invalid replace.
-                                input: ${process.inputShape}
-                                output: ${process.outputShape}
-                            """.trimIndent()
-                        }
-                        redirect[node.id] = from
-                        return@fold nodes
-                    }
-
-                    val first = (result.nodes.first() as Graph.Node.Attach).process
-                    val last = (result.nodes.last() as Graph.Node.Attach).process
-                    check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
-                        """
-                            invalid replace.
-                            input: ${process.inputShape}
-                            output: ${process.outputShape}
-                            replaced input: ${first.inputShape}
-                            replaced output: ${last.outputShape}
-                        """.trimIndent()
-                    }
-                    redirect[node.id] = result.from
-                    nodes + result.nodes
-                }
-
-                is Graph.Node.Connect -> nodes + Graph.Node.Connect(
-                    id = node.id,
-                    from = node.from.map { redirect[it] ?: it },
-                    join = node.join,
-                )
-
-                is Graph.Node.Observe -> nodes + Graph.Node.Observe(
-                    id = node.id,
-                    from = redirect[node.from] ?: node.from,
-                )
-            }
-        }
-        return Network(
-            source = copy.source,
-            graph = newNodes,
-            sink = Graph.Sink(
-                id = copy.sink.id,
-                from = redirect[copy.sink.from] ?: copy.sink.from,
-                output = copy.sink.output,
-                converter = copy.sink.converter,
-            ),
-            optimizer = copy.optimizer,
-            initializer = copy.initializer,
-        )
-    }
-
     fun toJson(): String = NetworkSerializer.encodeToString(this)
 
     fun toJson(sink: BufferedSink) {
@@ -559,6 +483,83 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
                 node.process.update(optimizer)
             }
         }
+    }
+
+    @PublishedApi
+    internal inline fun <reified P : Process, B1 : GraphBuilder.Node, B2 : GraphBuilder.Node> replace(
+        crossinline seed: (layer: P, from: GraphId) -> B1,
+        crossinline condition: (P) -> Boolean,
+        crossinline block: B1.(P) -> B2,
+    ): T {
+        val copy = clone()
+        val redirect = mutableMapOf<GraphId, GraphId>()
+        val newNodes = copy.graph.fold(emptyList<Graph.Node>()) { nodes, node ->
+            when (node) {
+                is Graph.Node.Attach -> {
+                    val process = node.process
+                    if (process !is P || !condition(process)) {
+                        return@fold nodes + Graph.Node.Attach(
+                            id = node.id,
+                            from = redirect[node.from] ?: node.from,
+                            process = process,
+                        )
+                    }
+
+                    val from = redirect[node.from] ?: node.from
+                    val result = seed(process, from).block(process)
+                    if (result.nodes.isEmpty()) {
+                        check(process.inputShape == process.outputShape) {
+                            """
+                                invalid replace.
+                                input: ${process.inputShape}
+                                output: ${process.outputShape}
+                            """.trimIndent()
+                        }
+                        redirect[node.id] = from
+                        return@fold nodes
+                    }
+
+                    val first = (result.nodes.first() as Graph.Node.Attach).process
+                    val last = (result.nodes.last() as Graph.Node.Attach).process
+                    check(first.inputShape == process.inputShape && last.outputShape == process.outputShape) {
+                        """
+                            invalid replace.
+                            input: ${process.inputShape}
+                            output: ${process.outputShape}
+                            replaced input: ${first.inputShape}
+                            replaced output: ${last.outputShape}
+                        """.trimIndent()
+                    }
+                    redirect[node.id] = result.from
+                    nodes + result.nodes
+                }
+
+                is Graph.Node.Connect -> nodes + Graph.Node.Connect(
+                    id = node.id,
+                    from = node.from.map { redirect[it] ?: it },
+                    join = node.join,
+                )
+
+                is Graph.Node.Observe -> nodes + Graph.Node.Observe(
+                    id = node.id,
+                    from = redirect[node.from] ?: node.from,
+                )
+            }
+        }
+        return create(
+            sources = copy.sources,
+            graph = newNodes,
+            sinks = copy.sinks.map { sink ->
+                Graph.Sink(
+                    id = sink.id,
+                    from = redirect[sink.from] ?: sink.from,
+                    output = sink.output,
+                    converter = sink.converter,
+                )
+            },
+            optimizer = copy.optimizer,
+            initializer = copy.initializer,
+        )
     }
 
     abstract fun create(
