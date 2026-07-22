@@ -41,41 +41,11 @@ class Network<I, O> @PublishedApi internal constructor(
         return sink.converter._decode(outputs[0])
     }
 
-    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
-        withContext(dispatcher) {
-            mutex.withLock {
-                env[source.id] = source.converter._encode(input)
-                IOScope.launch {
-                    val scope = this
-                    graph.forEach { node ->
-                        when (node) {
-                            is Graph.Node.Attach -> {
-                                with(node.process) {
-                                    env[node.id] = scope._expect(env[node.from], env)
-                                }
-                            }
-
-                            is Graph.Node.Connect -> {
-                                with(node.join) {
-                                    env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                                }
-                            }
-
-                            is Graph.Node.Observe -> {
-                                env[node.id] = env[node.from]
-                            }
-                        }
-                    }
-                    val result = with(sink.output) {
-                        scope._train(
-                            input = env[sink.from],
-                            label = { sink.converter._encode(label) },
-                        )
-                    }
-                    result.loss.toGlobal()
-                }
-            }
-        }
+    suspend fun loss(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global {
+        val inputs = listOf(source.converter._encode(input))
+        val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+        return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+    }
 
     suspend fun train(input: I, label: O, dispatcher: CoroutineDispatcher = Dispatchers.Default): IOType.D0.Global =
         withContext(dispatcher) {
@@ -292,6 +262,45 @@ abstract class GraphNetwork<T: GraphNetwork<T>> {
                     }
                 }
                 sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected suspend fun _loss(
+        inputs: List<Batch<IOType>>,
+        labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ): List<IOType.D0.Global> = withContext(dispatcher) {
+        mutex.withLock {
+            sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
+            IOScope.launch {
+                val scope = this
+                graph.forEach { node ->
+                    when (node) {
+                        is Graph.Node.Attach -> {
+                            with(node.process) {
+                                env[node.id] = scope._expect(env[node.from], env)
+                            }
+                        }
+
+                        is Graph.Node.Connect -> {
+                            with(node.join) {
+                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
+                            }
+                        }
+
+                        is Graph.Node.Observe -> {
+                            env[node.id] = env[node.from]
+                        }
+                    }
+                }
+                sinks.mapIndexed { i, sink ->
+                    val result = with(sink.output) {
+                        scope._train(input = env[sink.from], label = labels[i])
+                    }
+                    result.loss.toGlobal()
+                }
             }
         }
     }
