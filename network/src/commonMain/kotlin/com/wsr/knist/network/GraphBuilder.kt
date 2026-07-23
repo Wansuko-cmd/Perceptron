@@ -234,6 +234,26 @@ fun <I, D : GraphBuilder.Node, O> Network.Companion.create(
     )
 }
 
+fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O> Network.Companion.create(
+    port1: Port<I1, D1>,
+    port2: Port<I2, D2>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D1, D2) -> GraphBuilder.Result<O>,
+): Network.Src2.Sink1<I1, I2, O> {
+    val (source1, seed1) = port1.toNode(optimizer, initializer)
+    val (source2, seed2) = port2.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed1, seed2)
+    return Network.Src2.Sink1(
+        source1 = source1,
+        source2 = source2,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
 sealed interface Port<T, D : GraphBuilder.Node> {
     fun toNode(optimizer: Optimizer, initializer: WeightInitializer): Pair<Graph.Source<T>, D>
 
