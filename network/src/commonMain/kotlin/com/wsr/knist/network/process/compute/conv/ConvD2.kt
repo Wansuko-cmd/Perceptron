@@ -41,6 +41,24 @@ class ConvD2 internal constructor(
     override val outputJ: Int = (height - kernelSize + 2 * padding) / stride + 1
     override val outputK: Int = (width - kernelSize + 2 * padding) / stride + 1
 
+    init {
+        val numH = height - kernelSize + 2 * padding
+        val numW = width - kernelSize + 2 * padding
+        check(numH % stride == 0 && numW % stride == 0) {
+            """
+            invalid parameter.
+            height: $height
+            width: $width
+            kernel: $kernel
+            padding: $padding
+            stride: $stride
+            dilation: $dilation
+            outputJ: ${(height - kernelSize + 2 * padding) / stride.toFloat() + 1}
+            outputK: ${(width - kernelSize + 2 * padding) / stride.toFloat() + 1}
+            """.trimIndent()
+        }
+    }
+
     override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> {
         val col = input.unfold(window = kernel, stride = stride, dilation = dilation, padding = padding)
             .reshapeToD3(i = channel, j = outputJ * outputK, k = kernel * kernel)
