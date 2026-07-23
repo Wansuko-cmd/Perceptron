@@ -7,6 +7,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Reshape
+import kotlin.experimental.ExperimentalTypeInference
 
 object GraphBuilder {
     sealed interface Node {
@@ -219,15 +220,18 @@ object GraphScope {
         return GraphBuilder.Result.Sink1(nodes = nodes, sink = sink)
     }
 
-    fun <O1, O2> outputs(o1: GraphBuilder.Result.Sink1<O1>, o2: GraphBuilder.Result.Sink1<O2>): GraphBuilder.Result.Sink2<O1, O2> {
-        return GraphBuilder.Result.Sink2(
-            nodes = (o1.nodes + o2.nodes).distinctBy { it.id },
-            sink1 = o1.sink,
-            sink2 = o2.sink,
-        )
-    }
+    fun <O1, O2> outputs(
+        o1: GraphBuilder.Result.Sink1<O1>,
+        o2: GraphBuilder.Result.Sink1<O2>,
+    ): GraphBuilder.Result.Sink2<O1, O2> = GraphBuilder.Result.Sink2(
+        nodes = (o1.nodes + o2.nodes).distinctBy { it.id },
+        sink1 = o1.sink,
+        sink2 = o2.sink,
+    )
 }
 
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 fun <I, D : GraphBuilder.Node, O> Network.Companion.create(
     port: Port<I, D>,
     optimizer: Optimizer,
@@ -245,6 +249,8 @@ fun <I, D : GraphBuilder.Node, O> Network.Companion.create(
     )
 }
 
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 fun <I, D : GraphBuilder.Node, O1, O2> Network.Companion.create(
     port: Port<I, D>,
     optimizer: Optimizer,
@@ -263,6 +269,8 @@ fun <I, D : GraphBuilder.Node, O1, O2> Network.Companion.create(
     )
 }
 
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O> Network.Companion.create(
     port1: Port<I1, D1>,
     port2: Port<I2, D2>,
@@ -283,6 +291,8 @@ fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O> Network.Companio
     )
 }
 
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
 fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O1, O2> Network.Companion.create(
     port1: Port<I1, D1>,
     port2: Port<I2, D2>,

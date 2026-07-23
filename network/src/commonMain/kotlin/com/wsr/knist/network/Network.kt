@@ -67,7 +67,7 @@ interface Network {
             fun <T : Output.D1, O2> replaceSink(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<O2>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<O2>,
             ): Sink1<I, O2> {
                 val copy = clone()
                 val last = copy.graph.last() as Graph.Node.Attach
@@ -95,7 +95,7 @@ interface Network {
             fun <T : Output.D2, O2> replaceSink(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<O2>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<O2>,
             ): Sink1<I, O2> {
                 val copy = clone()
                 val last = copy.graph.last() as Graph.Node.Attach
@@ -228,7 +228,7 @@ interface Network {
             fun <T : Output.D1, ON> replaceSink1(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I, ON, O2> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
@@ -257,7 +257,7 @@ interface Network {
             fun <T : Output.D1, ON> replaceSink2(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I, O1, ON> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
@@ -286,7 +286,7 @@ interface Network {
             fun <T : Output.D2, ON> replaceSink1(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I, ON, O2> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
@@ -316,7 +316,7 @@ interface Network {
             fun <T : Output.D2, ON> replaceSink2(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I, O1, ON> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
@@ -459,7 +459,7 @@ interface Network {
             fun <T : Output.D1, O2> replaceSink(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<O2>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<O2>,
             ): Sink1<I1, I2, O2> {
                 val copy = clone()
                 val last = copy.graph.last() as Graph.Node.Attach
@@ -488,7 +488,7 @@ interface Network {
             fun <T : Output.D2, O2> replaceSink(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<O2>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<O2>,
             ): Sink1<I1, I2, O2> {
                 val copy = clone()
                 val last = copy.graph.last() as Graph.Node.Attach
@@ -645,7 +645,7 @@ interface Network {
             fun <T : Output.D1, ON> replaceSink1(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I1, I2, ON, O2> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
@@ -675,7 +675,7 @@ interface Network {
             fun <T : Output.D1, ON> replaceSink2(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D1.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I1, I2, O1, ON> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
@@ -705,7 +705,7 @@ interface Network {
             fun <T : Output.D2, ON> replaceSink1(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I1, I2, ON, O2> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink1.from } as Graph.Node.Attach
@@ -736,7 +736,7 @@ interface Network {
             fun <T : Output.D2, ON> replaceSink2(
                 optimizer: Optimizer = this.optimizer,
                 initializer: WeightInitializer = this.initializer,
-                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result<ON>,
+                block: GraphBuilder.Node.D2.() -> GraphBuilder.Result.Sink1<ON>,
             ): Sink2<I1, I2, O1, ON> {
                 val copy = clone()
                 val last = copy.graph.first { it.id == copy.sink2.from } as Graph.Node.Attach
