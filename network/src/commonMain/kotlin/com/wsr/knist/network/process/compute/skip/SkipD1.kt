@@ -2,103 +2,11 @@
 
 package com.wsr.knist.network.process.compute.skip
 
-import com.wsr.knist.batch.Batch
-import com.wsr.knist.core.IOScope
-import com.wsr.knist.core.IOType
-import com.wsr.knist.network.Graph
 import com.wsr.knist.network.GraphBuilder
-import com.wsr.knist.network.GraphEnv
-import com.wsr.knist.network.GraphScope.addCompute
-import com.wsr.knist.network.optimizer.Optimizer
-import com.wsr.knist.network.process.Compute
-import com.wsr.knist.network.process.Process
-import com.wsr.knist.network.process.Reshape
-import kotlin.uuid.Uuid
-import kotlinx.serialization.Serializable
+import com.wsr.knist.network.GraphScope
+import com.wsr.knist.network.join.add.add
 
-private typealias CALC_DELTA_D1 = IOScope.(input: Batch<IOType.D1>, env: GraphEnv) -> Batch<IOType.D1>
-
-@Serializable
-class SkipD1 internal constructor(
-    // List<Process.D1>だがSerializer対策
-    private val layers: List<Process> = emptyList(),
-    override val inputI: Int,
-    override val id: String = Uuid.random().toString(),
-) : Compute.D1() {
-    override val outputI: Int get() = inputI
-    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> {
-        val scope = this
-        val main = layers.fold(input) { acc, layer ->
-            with(layer) { scope._expect(acc, env) } as Batch<IOType.D1>
-        }
-        return main + input
-    }
-
-    private val trainChain: (CALC_DELTA_D1) -> CALC_DELTA_D1 by lazy {
-        layers.foldRight(
-            initial = { final: CALC_DELTA_D1 -> final },
-        ) { layer, acc ->
-            { final ->
-                { input, env ->
-                    val scope = this
-                    with(layer) {
-                        scope._train(input, env) {
-                            acc(final)(it as Batch<IOType.D1>, env)
-                        }
-                    } as Batch<IOType.D1>
-                }
-            }
-        }
-    }
-
-    override fun IOScope.train(
-        input: Batch<IOType.D1>,
-        env: GraphEnv,
-        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
-    ): Batch<IOType.D1> {
-        var skipDelta: Batch<IOType.D1>? = null
-
-        val final: CALC_DELTA_D1 = { acc, _ ->
-            val output = input + acc
-            calcDelta(output).also { skipDelta = it }
-        }
-        val mainDelta = trainChain(final)(input, env)
-
-        return mainDelta + skipDelta!!
-    }
-
-    override fun update(optimizer: Optimizer) {
-        layers.forEach { it.update(optimizer) }
-    }
-}
-
-fun GraphBuilder.Node.D1.skip(
-    id: String = Uuid.random().toString(),
-    builder: GraphBuilder.Node.D1.() -> GraphBuilder.Node.D1,
-): GraphBuilder.Node.D1 {
-    val before = nodes.size
-    val layers = builder().nodes.drop(before).map { (it as Graph.Node.Attach).process }
-    val outputI = when (val last = layers.lastOrNull()) {
-        is Compute.D1 -> last.outputI
-        is Reshape.D2ToD1 -> last.outputI
-        is Reshape.D3ToD1 -> last.outputI
-        null -> return this
-        else -> throw IllegalArgumentException("invalid last layer. $last")
-    }
-
-    check(inputI == outputI) {
-        """
-            invalid parameter.
-            input: ($inputI)
-            output: ($outputI)
-        """.trimIndent()
-    }
-
-    return addCompute(
-        compute = SkipD1(
-            inputI = outputI,
-            layers = layers,
-            id = id,
-        ),
-    )
+fun GraphBuilder.Node.D1.skip(builder: GraphBuilder.Node.D1.() -> GraphBuilder.Node.D1): GraphBuilder.Node.D1 {
+    val branch = builder()
+    return if (this == branch) this else GraphScope.add(this, branch)
 }

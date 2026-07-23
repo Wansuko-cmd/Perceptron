@@ -1,14 +1,15 @@
 package com.wsr.knist
 
 import com.wsr.knist.base.IBackend
+import com.wsr.knist.base.KotlinBackend
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.DataBufferGenerator
 import com.wsr.knist.base.data.IDataBufferGenerator
-import com.wsr.knist.cpu.cpu
+import com.wsr.knist.cpu.loadCPUBackend
 import kotlin.random.Random
 
 object Backend : IBackend {
-    private var instance: IBackend = cpu
+    private var instance: IBackend = loadCPUBackend(KotlinBackend)
 
     init {
         DataBufferGenerator.set(instance.generator)

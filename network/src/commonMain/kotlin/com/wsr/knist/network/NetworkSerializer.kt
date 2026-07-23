@@ -108,9 +108,6 @@ import com.wsr.knist.network.process.compute.scale.d2.ScaleAxisD2
 import com.wsr.knist.network.process.compute.scale.d2.ScaleD2
 import com.wsr.knist.network.process.compute.scale.d3.ScaleAxisD3
 import com.wsr.knist.network.process.compute.scale.d3.ScaleD3
-import com.wsr.knist.network.process.compute.skip.SkipD1
-import com.wsr.knist.network.process.compute.skip.SkipD2
-import com.wsr.knist.network.process.compute.skip.SkipD3
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD2ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD2
@@ -298,11 +295,6 @@ private val buildInSerializersModule = SerializersModule {
         subclass(ScaleAxisD2::class)
         subclass(ScaleD3::class)
         subclass(ScaleAxisD3::class)
-
-        // Skip
-        subclass(SkipD1::class)
-        subclass(SkipD2::class)
-        subclass(SkipD3::class)
 
         // Global Average
         subclass(GlobalAverageD2ToD1::class)

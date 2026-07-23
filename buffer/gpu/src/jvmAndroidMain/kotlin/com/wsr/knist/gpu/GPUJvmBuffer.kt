@@ -6,12 +6,12 @@ import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.IDataBufferGenerator
 import java.lang.ref.Cleaner
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.minusAssign
 
-private val allocateSize = AtomicInt(0)
-private const val MAX_ALLOCATE_SIZE = 1_500_000_000
+private val reservedBytes = AtomicLong(0)
+internal var gpuMaxReservedBytes: Long = 4_000_000_000L
 
 internal fun DataBuffer.toGPUBuffer(runtime: Long): GPUJvmBuffer = when (this) {
     is GPUJvmBuffer -> this
@@ -26,11 +26,12 @@ class GPUJvmBuffer(override val size: Int, internal val ptr: Long, private val r
         val ptr = ptr
         val runtime = runtime
         val isReleased = isReleased
-        if (allocateSize.addAndFetch(size) >= MAX_ALLOCATE_SIZE) System.gc()
+        val byteSize = size.toLong() * Float.SIZE_BYTES
+        if (reservedBytes.addAndFetch(byteSize) >= gpuMaxReservedBytes) System.gc()
         cleaner.register(this) {
             if (!isReleased.getAndSet(true)) {
                 JBuffer.release(ptr, runtime)
-                allocateSize.minusAssign(size)
+                reservedBytes.minusAssign(byteSize)
             }
         }
     }
@@ -48,7 +49,7 @@ class GPUJvmBuffer(override val size: Int, internal val ptr: Long, private val r
     override fun release() {
         if (!isReleased.getAndSet(true)) {
             JBuffer.release(ptr, runtime)
-            allocateSize.minusAssign(size)
+            reservedBytes.minusAssign(size.toLong() * Float.SIZE_BYTES)
         }
     }
 
