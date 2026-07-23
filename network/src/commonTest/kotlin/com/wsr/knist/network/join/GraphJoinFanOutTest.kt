@@ -15,6 +15,7 @@ import com.wsr.knist.network.networkTestRule
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.sgd.Sgd
 import com.wsr.knist.network.output.mean.meanSquare
+import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.debug.debug
 import kotlin.test.Test
@@ -34,8 +35,8 @@ class GraphJoinFanOutTest {
     private var capturedDelta: Batch<IOType.D1>? = null
 
     private fun createNetwork(rate: Float = 0.1f): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.Src1.Sink1.create(
-            converter = RawD1(1),
+        Network.create(
+            port = port(RawD1(1)),
             optimizer = Sgd(scheduler = Scheduler.Fix(rate = rate)),
             initializer = Fixed(0f),
         ) { input ->

@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
 import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.attention.attention
 import com.wsr.knist.network.process.compute.bias.d2.bias
@@ -116,12 +117,14 @@ class TinyStoriesTest {
         println(story)
     }
 
-    private fun createModel(words: List<String>) = Network.Src1.Sink1.create(
-        converter = wordsD1(
-            maxLength = MAX_LENGTH,
-            words = words,
-            unknownIndex = UNK_INDEX,
-            paddingIndex = PAD_INDEX,
+    private fun createModel(words: List<String>) = Network.create(
+        port = port(
+            wordsD1(
+                maxLength = MAX_LENGTH,
+                words = words,
+                unknownIndex = UNK_INDEX,
+                paddingIndex = PAD_INDEX,
+            ),
         ),
         optimizer = AdamW(
             scheduler = Scheduler.CosineAnnealing(

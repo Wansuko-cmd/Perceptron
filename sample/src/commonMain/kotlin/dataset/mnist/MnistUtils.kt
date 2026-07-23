@@ -7,6 +7,7 @@ import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
 import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.bias.d1.bias
 import com.wsr.knist.network.process.compute.function.relu.reLU
@@ -28,8 +29,8 @@ fun createMnistModel(epoch: Int, seed: Int? = null): Network.Src1.Sink1<List<Lis
     }
 
     // ニューラルネットワークを構築
-    val network = Network.Src1.Sink1.create(
-        converter = PixelConverter(outputI = 28, outputJ = 28),
+    val network = Network.create(
+        port = port(PixelConverter(outputI = 28, outputJ = 28)),
         optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
         initializer = He(seed = seed),
     ) { input ->

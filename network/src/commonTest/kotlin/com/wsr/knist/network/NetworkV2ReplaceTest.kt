@@ -42,24 +42,24 @@ class NetworkV2ReplaceTest {
 
     private val optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f))
 
-    private fun createD1Network(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.Src1.Sink1.create(
-        converter = RawD1(3),
+    private fun createD1Network(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(3)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
         builder.affine(neuron = 4, id = "mid").affine(neuron = 2, id = "last").meanSquare()
     }
 
-    private fun createD2Network(): Network.Src1.Sink1<Batch<IOType.D2>, Batch<IOType.D2>> = Network.Src1.Sink1.create(
-        converter = RawD2(2, 3),
+    private fun createD2Network(): Network.Src1.Sink1<Batch<IOType.D2>, Batch<IOType.D2>> = Network.create(
+        port = port(RawD2(2, 3)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
         builder.affine(neuron = 4, id = "mid").meanSquare()
     }
 
-    private fun createD3Network(): Network.Src1.Sink1<Batch<IOType.D3>, Batch<IOType.D1>> = Network.Src1.Sink1.create(
-        converter = RawD3(2, 2, 2),
+    private fun createD3Network(): Network.Src1.Sink1<Batch<IOType.D3>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD3(2, 2, 2)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
@@ -110,8 +110,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { affine(neuron = 4) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val expected = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -131,8 +131,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { affine(neuron = 4) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD2(2, 3),
+        val expected = Network.create(
+            port = port(RawD2(2, 3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -151,8 +151,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { scale(initializer = Fixed(2f)) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD3(2, 2, 2),
+        val expected = Network.create(
+            port = port(RawD3(2, 2, 2)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -170,8 +170,8 @@ class NetworkV2ReplaceTest {
      * 値を変えないネットワークを使い、同じ形状変換で置き換えても出力が保たれることを確認する
      */
     private fun createReshapeNetworkA(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.Src1.Sink1.create(
-            converter = RawD1(6),
+        Network.create(
+            port = port(RawD1(6)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -183,8 +183,8 @@ class NetworkV2ReplaceTest {
         }
 
     private fun createReshapeNetworkB(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.Src1.Sink1.create(
-            converter = RawD1(8),
+        Network.create(
+            port = port(RawD1(8)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -318,8 +318,8 @@ class NetworkV2ReplaceTest {
      */
     @Test
     fun `replace=空ブロックで入出力形状が同じ層は削除できる`() = networkTestRule {
-        val original = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val original = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -327,8 +327,8 @@ class NetworkV2ReplaceTest {
         }
         val replaced = original.replace<BiasD1>(condition = { it.id == "del" }) { this }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val expected = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->

@@ -9,6 +9,7 @@ import com.wsr.knist.network.initializer.He
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
 import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.attention.attention
 import com.wsr.knist.network.process.compute.bias.d1.bias
@@ -88,8 +89,8 @@ class MnistTest {
         assertTrue(actual = accuracy > 0.95f, message = "精度が95%を割っています")
     }
 
-    private fun createNetwork(): Network.Src1.Sink1<List<List<Float>>, List<Int>> = Network.Src1.Sink1.create(
-        converter = PixelConverter(outputI = 28, outputJ = 28),
+    private fun createNetwork(): Network.Src1.Sink1<List<List<Float>>, List<Int>> = Network.create(
+        port = port(PixelConverter(outputI = 28, outputJ = 28)),
         optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
         initializer = He(seed = 0),
     ) { input ->
