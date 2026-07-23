@@ -110,9 +110,6 @@ import com.wsr.knist.network.process.compute.scale.d2.ScaleAxisD2
 import com.wsr.knist.network.process.compute.scale.d2.ScaleD2
 import com.wsr.knist.network.process.compute.scale.d3.ScaleAxisD3
 import com.wsr.knist.network.process.compute.scale.d3.ScaleD3
-import com.wsr.knist.network.process.compute.skip.SkipD1
-import com.wsr.knist.network.process.compute.skip.SkipD2
-import com.wsr.knist.network.process.compute.skip.SkipD3
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD2ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD1
 import com.wsr.knist.network.process.reshape.gad.GlobalAverageD3ToD2
