@@ -43,7 +43,10 @@ object GraphBuilder {
         ) : Node
     }
 
-    data class Result<O>(val nodes: List<Graph.Node>, val sink: Graph.Sink<O>)
+    sealed interface Result {
+        data class Sink1<O>(val nodes: List<Graph.Node>, val sink: Graph.Sink<O>)
+        data class Sink2<O1, O2>(val nodes: List<Graph.Node>, val sink1: Graph.Sink<O1>, val sink2: Graph.Sink<O2>)
+    }
 }
 
 object GraphScope {
@@ -206,14 +209,14 @@ object GraphScope {
         )
     }
 
-    fun <O> GraphBuilder.Node.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result.Sink1<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
-        return GraphBuilder.Result(nodes = nodes, sink = sink)
+        return GraphBuilder.Result.Sink1(nodes = nodes, sink = sink)
     }
 
-    fun <O> GraphBuilder.Node.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result.Sink1<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
-        return GraphBuilder.Result(nodes = nodes, sink = sink)
+        return GraphBuilder.Result.Sink1(nodes = nodes, sink = sink)
     }
 }
 
@@ -221,7 +224,7 @@ fun <I, D : GraphBuilder.Node, O> Network.Companion.create(
     port: Port<I, D>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-    block: GraphScope.(D) -> GraphBuilder.Result<O>,
+    block: GraphScope.(D) -> GraphBuilder.Result.Sink1<O>,
 ): Network.Src1.Sink1<I, O> {
     val (source, seed) = port.toNode(optimizer, initializer)
     val result = GraphScope.block(seed)
@@ -239,7 +242,7 @@ fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O> Network.Companio
     port2: Port<I2, D2>,
     optimizer: Optimizer,
     initializer: WeightInitializer,
-    block: GraphScope.(D1, D2) -> GraphBuilder.Result<O>,
+    block: GraphScope.(D1, D2) -> GraphBuilder.Result.Sink1<O>,
 ): Network.Src2.Sink1<I1, I2, O> {
     val (source1, seed1) = port1.toNode(optimizer, initializer)
     val (source2, seed2) = port2.toNode(optimizer, initializer)
