@@ -119,7 +119,9 @@ import kotlin.math.min
 import kotlin.random.Random
 import kotlinx.cinterop.ExperimentalForeignApi
 
-actual fun loadCPUBackend(fallback: IBackend): IBackend = CPUNativeBackend(fallback)
+internal actual fun defaultMaxReservedBytes(): Long = 1_500_000_000L
+
+actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long): IBackend = CPUNativeBackend(fallback)
 
 class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     override val generator = CPUNativeBuffer.generator

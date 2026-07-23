@@ -1,8 +1,7 @@
 package com.wsr.knist.cpu
 
 import com.wsr.knist.base.IBackend
-import com.wsr.knist.base.KotlinBackend
 
-val cpu: IBackend = loadCPUBackend(KotlinBackend)
+internal expect fun defaultMaxReservedBytes(): Long
 
-expect fun loadCPUBackend(fallback: IBackend): IBackend
+expect fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long = defaultMaxReservedBytes()): IBackend

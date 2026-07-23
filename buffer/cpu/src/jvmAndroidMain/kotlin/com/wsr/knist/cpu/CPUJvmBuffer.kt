@@ -6,8 +6,10 @@ import java.lang.ref.Cleaner
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
-private val allocatedBytes = AtomicLong(0)
-private const val MAX_ALLOCATED_BYTES = 1_500_000_000L
+private val reservedBytes = AtomicLong(0)
+internal var cpuMaxReservedBytes: Long = 1_500_000_000L
+
+internal actual fun defaultMaxReservedBytes(): Long = Runtime.getRuntime().maxMemory()
 
 internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
     is CPUJvmBuffer -> this
@@ -21,11 +23,11 @@ class CPUJvmBuffer private constructor(internal val address: Long, override val 
         val address = address
         val byteSize = size * Float.SIZE_BYTES
         val isReleased = isReleased
-        if (allocatedBytes.addAndGet(byteSize.toLong()) >= MAX_ALLOCATED_BYTES) System.gc()
+        if (reservedBytes.addAndGet(byteSize.toLong()) >= cpuMaxReservedBytes) System.gc()
         cleaner.register(this) {
             if (!isReleased.getAndSet(true)) {
                 JBuffer.release(address)
-                allocatedBytes.addAndGet(-byteSize.toLong())
+                reservedBytes.addAndGet(-byteSize.toLong())
             }
         }
     }
@@ -43,7 +45,7 @@ class CPUJvmBuffer private constructor(internal val address: Long, override val 
     override fun release() {
         if (!isReleased.getAndSet(true)) {
             JBuffer.release(address)
-            allocatedBytes.addAndGet(-(size * Float.SIZE_BYTES).toLong())
+            reservedBytes.addAndGet(-(size * Float.SIZE_BYTES).toLong())
         }
     }
 
