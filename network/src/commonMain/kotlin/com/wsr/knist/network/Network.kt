@@ -812,4 +812,6 @@ interface Network {
             }
         }
     }
+
+    companion object
 }

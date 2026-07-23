@@ -290,3 +290,82 @@ fun <I, O> Network.Src1.Sink1.Companion.create(
         initializer = initializer,
     )
 }
+
+fun <I, D: GraphBuilder.Node, O> Network.Companion.create(
+    port: Port<I, D>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D) -> GraphBuilder.Result<O>,
+): Network.Src1.Sink1<I, O> {
+    val (source, seed) = port.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed)
+    return Network.Src1.Sink1(
+        source = source,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
+sealed interface Port<T, D: GraphBuilder.Node> {
+    fun toNode(optimizer: Optimizer, initializer: WeightInitializer): Pair<Graph.Source<T>, D>
+
+    data class D1<T>(val converter: Converter.D1<T>): Port<T, GraphBuilder.Node.D1> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D1> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D1(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+            )
+            return source to node
+        }
+    }
+
+    data class D2<T>(val converter: Converter.D2<T>): Port<T, GraphBuilder.Node.D2> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D2> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D2(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+                inputJ = converter.outputJ,
+            )
+            return source to node
+        }
+    }
+
+    data class D3<T>(val converter: Converter.D3<T>): Port<T, GraphBuilder.Node.D3> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D3> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D3(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+                inputJ = converter.outputJ,
+                inputK = converter.outputK,
+            )
+            return source to node
+        }
+    }
+}
+
+fun <T> port(converter: Converter.D1<T>): Port<T, GraphBuilder.Node.D1> = Port.D1(converter)
+fun <T> port(converter: Converter.D2<T>): Port<T, GraphBuilder.Node.D2> = Port.D2(converter)
+fun <T> port(converter: Converter.D3<T>): Port<T, GraphBuilder.Node.D3> = Port.D3(converter)
