@@ -169,31 +169,29 @@ class NetworkV2ReplaceTest {
      * Reshape の差し替え
      * 値を変えないネットワークを使い、同じ形状変換で置き換えても出力が保たれることを確認する
      */
-    private fun createReshapeNetworkA(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.create(
-            port = port(RawD1(6)),
-            optimizer = optimizer,
-            initializer = Fixed(0.5f),
-        ) { builder ->
-            builder
-                .reshapeToD2(i = 2, j = 3, id = "d1tod2")
-                .reshapeToD3(i = 1, j = 2, k = 3, id = "d2tod3")
-                .reshapeToD1(id = "d3tod1")
-                .meanSquare()
-        }
+    private fun createReshapeNetworkA(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(6)),
+        optimizer = optimizer,
+        initializer = Fixed(0.5f),
+    ) { builder ->
+        builder
+            .reshapeToD2(i = 2, j = 3, id = "d1tod2")
+            .reshapeToD3(i = 1, j = 2, k = 3, id = "d2tod3")
+            .reshapeToD1(id = "d3tod1")
+            .meanSquare()
+    }
 
-    private fun createReshapeNetworkB(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.create(
-            port = port(RawD1(8)),
-            optimizer = optimizer,
-            initializer = Fixed(0.5f),
-        ) { builder ->
-            builder
-                .reshapeToD3(i = 2, j = 2, k = 2, id = "d1tod3")
-                .reshapeToD2(i = 2, j = 4, id = "d3tod2")
-                .reshapeToD1(id = "d2tod1")
-                .meanSquare()
-        }
+    private fun createReshapeNetworkB(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(8)),
+        optimizer = optimizer,
+        initializer = Fixed(0.5f),
+    ) { builder ->
+        builder
+            .reshapeToD3(i = 2, j = 2, k = 2, id = "d1tod3")
+            .reshapeToD2(i = 2, j = 4, id = "d3tod2")
+            .reshapeToD1(id = "d2tod1")
+            .meanSquare()
+    }
 
     private val inputD1x6 = Batch(1) { IOType.d1(6) { it + 1f } }
     private val inputD1x8 = Batch(1) { IOType.d1(8) { it + 1f } }
