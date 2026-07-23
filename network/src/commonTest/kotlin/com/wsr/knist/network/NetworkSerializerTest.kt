@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import okio.Buffer
 
-class NetworkV2SerializerTest {
+class NetworkSerializerTest {
 
     private fun createNetwork(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
         port = port(RawD1(3)),

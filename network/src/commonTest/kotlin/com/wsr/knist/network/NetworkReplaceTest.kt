@@ -38,7 +38,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
-class NetworkV2ReplaceTest {
+class NetworkReplaceTest {
 
     private val optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f))
 
