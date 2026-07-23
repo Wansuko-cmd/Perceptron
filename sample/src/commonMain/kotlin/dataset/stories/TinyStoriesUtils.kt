@@ -8,6 +8,7 @@ import com.wsr.knist.network.initializer.Xavier
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.AdamW
 import com.wsr.knist.network.output.softmax.softmaxWithLoss
+import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.attention.attention
 import com.wsr.knist.network.process.compute.bias.d2.bias
@@ -53,12 +54,14 @@ fun createTinyStoriesModel(seed: Int? = null): Network.Src1.Sink1<List<List<Stri
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
 
         // ニューラルネットワークを構築
-        val network = Network.Src1.Sink1.create(
-            converter = wordsD1(
-                maxLength = MAX_LENGTH,
-                words = words,
-                unknownIndex = UNK_INDEX,
-                paddingIndex = PAD_INDEX,
+        val network = Network.create(
+            port = port(
+                wordsD1(
+                    maxLength = MAX_LENGTH,
+                    words = words,
+                    unknownIndex = UNK_INDEX,
+                    paddingIndex = PAD_INDEX,
+                ),
             ),
             optimizer = AdamW(
                 scheduler = Scheduler.CosineAnnealing(

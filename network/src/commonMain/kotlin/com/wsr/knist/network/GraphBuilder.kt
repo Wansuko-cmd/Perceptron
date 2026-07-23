@@ -7,6 +7,7 @@ import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.output.Output
 import com.wsr.knist.network.process.Compute
 import com.wsr.knist.network.process.Reshape
+import kotlin.experimental.ExperimentalTypeInference
 
 object GraphBuilder {
     sealed interface Node {
@@ -43,7 +44,10 @@ object GraphBuilder {
         ) : Node
     }
 
-    data class Result<O>(val nodes: List<Graph.Node>, val sink: Graph.Sink<O>)
+    sealed interface Result {
+        data class Sink1<O>(val nodes: List<Graph.Node>, val sink: Graph.Sink<O>)
+        data class Sink2<O1, O2>(val nodes: List<Graph.Node>, val sink1: Graph.Sink<O1>, val sink2: Graph.Sink<O2>)
+    }
 }
 
 object GraphScope {
@@ -206,87 +210,168 @@ object GraphScope {
         )
     }
 
-    fun <O> GraphBuilder.Node.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D1.addOutput(output: Output.D1, converter: Converter<O>): GraphBuilder.Result.Sink1<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
-        return GraphBuilder.Result(nodes = nodes, sink = sink)
+        return GraphBuilder.Result.Sink1(nodes = nodes, sink = sink)
     }
 
-    fun <O> GraphBuilder.Node.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result<O> {
+    fun <O> GraphBuilder.Node.D2.addOutput(output: Output.D2, converter: Converter<O>): GraphBuilder.Result.Sink1<O> {
         val sink = Graph.Sink(from = from, output = output, converter = converter)
-        return GraphBuilder.Result(nodes = nodes, sink = sink)
+        return GraphBuilder.Result.Sink1(nodes = nodes, sink = sink)
+    }
+
+    fun <O1, O2> outputs(
+        o1: GraphBuilder.Result.Sink1<O1>,
+        o2: GraphBuilder.Result.Sink1<O2>,
+    ): GraphBuilder.Result.Sink2<O1, O2> = GraphBuilder.Result.Sink2(
+        nodes = (o1.nodes + o2.nodes).distinctBy { it.id },
+        sink1 = o1.sink,
+        sink2 = o2.sink,
+    )
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun <I, D : GraphBuilder.Node, O> Network.Companion.create(
+    port: Port<I, D>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D) -> GraphBuilder.Result.Sink1<O>,
+): Network.Src1.Sink1<I, O> {
+    val (source, seed) = port.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed)
+    return Network.Src1.Sink1(
+        source = source,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun <I, D : GraphBuilder.Node, O1, O2> Network.Companion.create(
+    port: Port<I, D>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D) -> GraphBuilder.Result.Sink2<O1, O2>,
+): Network.Src1.Sink2<I, O1, O2> {
+    val (source, seed) = port.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed)
+    return Network.Src1.Sink2(
+        source = source,
+        graph = result.nodes,
+        sink1 = result.sink1,
+        sink2 = result.sink2,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O> Network.Companion.create(
+    port1: Port<I1, D1>,
+    port2: Port<I2, D2>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D1, D2) -> GraphBuilder.Result.Sink1<O>,
+): Network.Src2.Sink1<I1, I2, O> {
+    val (source1, seed1) = port1.toNode(optimizer, initializer)
+    val (source2, seed2) = port2.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed1, seed2)
+    return Network.Src2.Sink1(
+        source1 = source1,
+        source2 = source2,
+        graph = result.nodes,
+        sink = result.sink,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+fun <I1, I2, D1 : GraphBuilder.Node, D2 : GraphBuilder.Node, O1, O2> Network.Companion.create(
+    port1: Port<I1, D1>,
+    port2: Port<I2, D2>,
+    optimizer: Optimizer,
+    initializer: WeightInitializer,
+    block: GraphScope.(D1, D2) -> GraphBuilder.Result.Sink2<O1, O2>,
+): Network.Src2.Sink2<I1, I2, O1, O2> {
+    val (source1, seed1) = port1.toNode(optimizer, initializer)
+    val (source2, seed2) = port2.toNode(optimizer, initializer)
+    val result = GraphScope.block(seed1, seed2)
+    return Network.Src2.Sink2(
+        source1 = source1,
+        source2 = source2,
+        graph = result.nodes,
+        sink1 = result.sink1,
+        sink2 = result.sink2,
+        optimizer = optimizer,
+        initializer = initializer,
+    )
+}
+
+sealed interface Port<T, D : GraphBuilder.Node> {
+    fun toNode(optimizer: Optimizer, initializer: WeightInitializer): Pair<Graph.Source<T>, D>
+
+    data class D1<T>(val converter: Converter.D1<T>) : Port<T, GraphBuilder.Node.D1> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D1> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D1(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+            )
+            return source to node
+        }
+    }
+
+    data class D2<T>(val converter: Converter.D2<T>) : Port<T, GraphBuilder.Node.D2> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D2> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D2(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+                inputJ = converter.outputJ,
+            )
+            return source to node
+        }
+    }
+
+    data class D3<T>(val converter: Converter.D3<T>) : Port<T, GraphBuilder.Node.D3> {
+        override fun toNode(
+            optimizer: Optimizer,
+            initializer: WeightInitializer,
+        ): Pair<Graph.Source<T>, GraphBuilder.Node.D3> {
+            val source = Graph.Source(converter = converter)
+            val node = GraphBuilder.Node.D3(
+                from = source.id,
+                nodes = listOf(),
+                optimizer = optimizer,
+                initializer = initializer,
+                inputI = converter.outputI,
+                inputJ = converter.outputJ,
+                inputK = converter.outputK,
+            )
+            return source to node
+        }
     }
 }
 
-fun <I, O> Network.Src1.Sink1.Companion.create(
-    converter: Converter.D1<I>,
-    optimizer: Optimizer,
-    initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.Node.D1) -> GraphBuilder.Result<O>,
-): Network.Src1.Sink1<I, O> {
-    val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.Node.D1(
-        from = source.id,
-        nodes = listOf(),
-        optimizer = optimizer,
-        initializer = initializer,
-        inputI = converter.outputI,
-    )
-    val result = GraphScope.block(builder)
-    return Network.Src1.Sink1(
-        source = source,
-        graph = result.nodes,
-        sink = result.sink,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
-}
-
-fun <I, O> Network.Src1.Sink1.Companion.create(
-    converter: Converter.D2<I>,
-    optimizer: Optimizer,
-    initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.Node.D2) -> GraphBuilder.Result<O>,
-): Network.Src1.Sink1<I, O> {
-    val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.Node.D2(
-        from = source.id,
-        nodes = listOf(),
-        optimizer = optimizer,
-        initializer = initializer,
-        inputI = converter.outputI,
-        inputJ = converter.outputJ,
-    )
-    val result = GraphScope.block(builder)
-    return Network.Src1.Sink1(
-        source = source,
-        graph = result.nodes,
-        sink = result.sink,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
-}
-fun <I, O> Network.Src1.Sink1.Companion.create(
-    converter: Converter.D3<I>,
-    optimizer: Optimizer,
-    initializer: WeightInitializer,
-    block: GraphScope.(GraphBuilder.Node.D3) -> GraphBuilder.Result<O>,
-): Network.Src1.Sink1<I, O> {
-    val source = Graph.Source(converter = converter)
-    val builder = GraphBuilder.Node.D3(
-        from = source.id,
-        nodes = listOf(),
-        optimizer = optimizer,
-        initializer = initializer,
-        inputI = converter.outputI,
-        inputJ = converter.outputJ,
-        inputK = converter.outputK,
-    )
-    val result = GraphScope.block(builder)
-    return Network.Src1.Sink1(
-        source = source,
-        graph = result.nodes,
-        sink = result.sink,
-        optimizer = optimizer,
-        initializer = initializer,
-    )
-}
+fun <T> port(converter: Converter.D1<T>): Port<T, GraphBuilder.Node.D1> = Port.D1(converter)
+fun <T> port(converter: Converter.D2<T>): Port<T, GraphBuilder.Node.D2> = Port.D2(converter)
+fun <T> port(converter: Converter.D3<T>): Port<T, GraphBuilder.Node.D3> = Port.D3(converter)

@@ -38,28 +38,28 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 
-class NetworkV2ReplaceTest {
+class NetworkReplaceTest {
 
     private val optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f))
 
-    private fun createD1Network(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.Src1.Sink1.create(
-        converter = RawD1(3),
+    private fun createD1Network(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(3)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
         builder.affine(neuron = 4, id = "mid").affine(neuron = 2, id = "last").meanSquare()
     }
 
-    private fun createD2Network(): Network.Src1.Sink1<Batch<IOType.D2>, Batch<IOType.D2>> = Network.Src1.Sink1.create(
-        converter = RawD2(2, 3),
+    private fun createD2Network(): Network.Src1.Sink1<Batch<IOType.D2>, Batch<IOType.D2>> = Network.create(
+        port = port(RawD2(2, 3)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
         builder.affine(neuron = 4, id = "mid").meanSquare()
     }
 
-    private fun createD3Network(): Network.Src1.Sink1<Batch<IOType.D3>, Batch<IOType.D1>> = Network.Src1.Sink1.create(
-        converter = RawD3(2, 2, 2),
+    private fun createD3Network(): Network.Src1.Sink1<Batch<IOType.D3>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD3(2, 2, 2)),
         optimizer = optimizer,
         initializer = Fixed(0.5f),
     ) { builder ->
@@ -110,8 +110,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { affine(neuron = 4) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val expected = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -131,8 +131,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { affine(neuron = 4) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD2(2, 3),
+        val expected = Network.create(
+            port = port(RawD2(2, 3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -151,8 +151,8 @@ class NetworkV2ReplaceTest {
             condition = { it.id == "mid" },
         ) { scale(initializer = Fixed(2f)) }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD3(2, 2, 2),
+        val expected = Network.create(
+            port = port(RawD3(2, 2, 2)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -169,31 +169,29 @@ class NetworkV2ReplaceTest {
      * Reshape の差し替え
      * 値を変えないネットワークを使い、同じ形状変換で置き換えても出力が保たれることを確認する
      */
-    private fun createReshapeNetworkA(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.Src1.Sink1.create(
-            converter = RawD1(6),
-            optimizer = optimizer,
-            initializer = Fixed(0.5f),
-        ) { builder ->
-            builder
-                .reshapeToD2(i = 2, j = 3, id = "d1tod2")
-                .reshapeToD3(i = 1, j = 2, k = 3, id = "d2tod3")
-                .reshapeToD1(id = "d3tod1")
-                .meanSquare()
-        }
+    private fun createReshapeNetworkA(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(6)),
+        optimizer = optimizer,
+        initializer = Fixed(0.5f),
+    ) { builder ->
+        builder
+            .reshapeToD2(i = 2, j = 3, id = "d1tod2")
+            .reshapeToD3(i = 1, j = 2, k = 3, id = "d2tod3")
+            .reshapeToD1(id = "d3tod1")
+            .meanSquare()
+    }
 
-    private fun createReshapeNetworkB(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> =
-        Network.Src1.Sink1.create(
-            converter = RawD1(8),
-            optimizer = optimizer,
-            initializer = Fixed(0.5f),
-        ) { builder ->
-            builder
-                .reshapeToD3(i = 2, j = 2, k = 2, id = "d1tod3")
-                .reshapeToD2(i = 2, j = 4, id = "d3tod2")
-                .reshapeToD1(id = "d2tod1")
-                .meanSquare()
-        }
+    private fun createReshapeNetworkB(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(8)),
+        optimizer = optimizer,
+        initializer = Fixed(0.5f),
+    ) { builder ->
+        builder
+            .reshapeToD3(i = 2, j = 2, k = 2, id = "d1tod3")
+            .reshapeToD2(i = 2, j = 4, id = "d3tod2")
+            .reshapeToD1(id = "d2tod1")
+            .meanSquare()
+    }
 
     private val inputD1x6 = Batch(1) { IOType.d1(6) { it + 1f } }
     private val inputD1x8 = Batch(1) { IOType.d1(8) { it + 1f } }
@@ -318,8 +316,8 @@ class NetworkV2ReplaceTest {
      */
     @Test
     fun `replace=空ブロックで入出力形状が同じ層は削除できる`() = networkTestRule {
-        val original = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val original = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->
@@ -327,8 +325,8 @@ class NetworkV2ReplaceTest {
         }
         val replaced = original.replace<BiasD1>(condition = { it.id == "del" }) { this }
 
-        val expected = Network.Src1.Sink1.create(
-            converter = RawD1(3),
+        val expected = Network.create(
+            port = port(RawD1(3)),
             optimizer = optimizer,
             initializer = Fixed(0.5f),
         ) { builder ->

@@ -17,10 +17,10 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import okio.Buffer
 
-class NetworkV2SerializerTest {
+class NetworkSerializerTest {
 
-    private fun createNetwork(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.Src1.Sink1.create(
-        converter = RawD1(3),
+    private fun createNetwork(): Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+        port = port(RawD1(3)),
         optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.01f)),
         initializer = Fixed(0.5f),
     ) { builder ->
