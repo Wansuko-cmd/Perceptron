@@ -29,7 +29,7 @@ knist の拡張ポイントは5つある。`Compute`・`Output`・`Optimizer`・
 `Compute.expect` / `Compute.train` / `Output.expect` / `Output.train` / `Optimizer.adapt` はすでに `IOScope` をレシーバーとして受け取るため、これらの実装ブロック内では `@ScopeOp` 演算をそのまま呼べる。`IOScope.launch` を明示的に呼ぶ必要はない。
 
 ```kotlin
-override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> {
     val a = input + weight   // @ScopeOp: IOScope レシーバーがあるので直接呼べる
     return a * 2f
 }
@@ -113,14 +113,14 @@ class MyLayerD1 internal constructor(
     override val outputI: Int get() = inputI  // 形状を変えない層の場合
 
     // 推論（勾配不要）
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> {
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> {
         return input + 1f  // @ScopeOp 演算はここで直接呼べる
     }
 
     // 学習（calcDelta に出力を渡すと upstream の delta が返ってくる）
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val output = input + 1f
@@ -142,10 +142,10 @@ class MyLayerD2 internal constructor(
     override val outputJ: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D2() {
-    override fun IOScope.expect(input: Batch<IOType.D2>, context: Context): Batch<IOType.D2> { ... }
+    override fun IOScope.expect(input: Batch<IOType.D2>, env: GraphEnv): Batch<IOType.D2> { ... }
     override fun IOScope.train(
         input: Batch<IOType.D2>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D2>) -> Batch<IOType.D2>,
     ): Batch<IOType.D2> { ... }
 }
@@ -164,27 +164,27 @@ class MyLayerD3 internal constructor(
     override val outputK: Int,
     override val id: String = Uuid.random().toString(),
 ) : Compute.D3() {
-    override fun IOScope.expect(input: Batch<IOType.D3>, context: Context): Batch<IOType.D3> { ... }
+    override fun IOScope.expect(input: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> { ... }
     override fun IOScope.train(
         input: Batch<IOType.D3>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D3>) -> Batch<IOType.D3>,
     ): Batch<IOType.D3> { ... }
 }
 ```
 
-### NetworkBuilder への登録
+### GraphBuilder.Node への登録
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myLayer(id: String = Uuid.random().toString()) =
+fun GraphBuilder.Node.D1.myLayer(id: String = Uuid.random().toString()) =
     addCompute(MyLayerD1(inputI = inputI, id = id))
 
-fun <T> NetworkBuilder.D2<T>.myLayer(id: String = Uuid.random().toString()) =
+fun GraphBuilder.Node.D2.myLayer(id: String = Uuid.random().toString()) =
     addCompute(MyLayerD2(inputI = inputI, inputJ = inputJ, outputI = inputI, outputJ = inputJ, id = id))
 ```
 
 `inputI`（D1）・`inputI` / `inputJ`（D2）・`inputI` / `inputJ` / `inputK`（D3）が前の層の出力サイズ。
-`optimizer` / `initializer` は `NetworkBuilder` のプロパティとして参照できる（`this.optimizer` / `this.initializer`）。
+`optimizer` / `initializer` は `GraphBuilder.Node.Dx` のプロパティとして参照できる（`this.optimizer` / `this.initializer`）。`GraphBuilder.Node.Dx` は型パラメータを持たない（`I`・`O` は `create()` の外枠でのみ扱われる）。
 
 ### 重みを持つ層の実装例
 
@@ -199,12 +199,12 @@ class WeightedD1 internal constructor(
 
     override val outputI: Int get() = inputI
 
-    override fun IOScope.expect(input: Batch<IOType.D1>, context: Context): Batch<IOType.D1> =
+    override fun IOScope.expect(input: Batch<IOType.D1>, env: GraphEnv): Batch<IOType.D1> =
         input + weight
 
     override fun IOScope.train(
         input: Batch<IOType.D1>,
-        context: Context,
+        env: GraphEnv,
         calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
     ): Batch<IOType.D1> {
         val output = input + weight
@@ -220,7 +220,7 @@ class WeightedD1 internal constructor(
     }
 }
 
-fun <T> NetworkBuilder.D1<T>.weightedLayer(id: String = Uuid.random().toString()) = addCompute(
+fun GraphBuilder.Node.D1.weightedLayer(id: String = Uuid.random().toString()) = addCompute(
     WeightedD1(
         inputI = inputI,
         optimizer = optimizer.d1(inputI),
@@ -238,9 +238,11 @@ fun <T> NetworkBuilder.D1<T>.weightedLayer(id: String = Uuid.random().toString()
 
 `Network.replace(condition, optimizer)`（Optimizer の差し替え・凍結）は、`condition` に一致した各層の `update(optimizer: Optimizer)` を呼ぶ。重みを持つカスタム層は上記のように override し、自層の重み形状で `optimizer.dx(...)` を呼んで作り直したインスタンスに差し替える（Optimizer を保持するフィールドは `var` にしておく）。override しない層は差し替え・凍結の対象にならない。
 
-### Context
+### GraphEnv
 
-`Context(val input: Batch<IOType>)` — **ネットワーク全体への最初の入力**（入力 Converter の `encode` 結果）を保持する。現在の層への入力ではない点に注意（層への入力は `expect` / `train` の `input` 引数で渡される）。すべての層に同一の Context インスタンスが渡されるため、元入力に依存した処理（Attention の padding mask が入力トークンID列を参照する等）で利用できる。
+`GraphEnv` — グラフ上の**任意のノードの現在値**を `GraphId` で引ける実行時マップ（`env[id]: Batch<T>`）。現在の層への入力ではない点に注意（層への入力は `expect` / `train` の `input` 引数で渡される）。すべての層に同一の `GraphEnv` インスタンスが渡されるため、他ノードの値に依存した処理（Attention の padding mask が特定ノードの出力を参照する等）で利用できる。
+
+任意のノードを直接参照したい場合（`AttentionBiasD2.mask` 等）は、`Graph.Node.Observe` で対象ノードを観測対象として登録し、その `id` を通じて `env[id]` で読み出す（`AttentionBiasD2Builder.mask(node, value)` の実装を参照）。ネットワークの最初の入力に限らず、`create()` ブロック内で組み立てた任意の中間ノードも参照できる。
 
 ---
 
@@ -278,14 +280,17 @@ class MyOutputD1 internal constructor(val outputI: Int) : Output.D1() {
 - `loss: IOType.D0` — バッチ全体のスカラー損失
 - `delta: Batch<T>` — 直前の層に渡す勾配
 
-NetworkBuilder への登録:
+GraphBuilder.Node への登録（`addOutput` は常に `converter` を要求する。組み込み層と同様、Raw系Converterをデフォルトにする版・任意型に変換する版の2つを用意するのが慣例）:
 
 ```kotlin
-fun <T> NetworkBuilder.D1<T>.myOutput() = addOutput(MyOutputD1(outputI = inputI))
+fun GraphBuilder.Node.D1.myOutput() = addOutput(
+    output = MyOutputD1(outputI = inputI),
+    converter = RawD1(inputI),
+)
 
 // converter を使う場合（出力を任意型に変換）
-fun <I, O> NetworkBuilder.D1<I>.myOutput(converter: NetworkBuilder.D1<I>.() -> Converter.D1<O>) =
-    addOutput(output = MyOutputD1(outputI = inputI), converter = converter)
+fun <O> GraphBuilder.Node.D1.myOutput(converter: GraphBuilder.Node.D1.() -> Converter.D1<O>) =
+    addOutput(output = MyOutputD1(outputI = inputI), converter = converter())
 ```
 
 ---
@@ -357,14 +362,14 @@ import: `com.wsr.knist.base.data.DataBuffer`
 ```kotlin
 @Serializable
 data class MyBias(...) : AttentionBiasD2 {
-    override fun IOScope.forward(scaled: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.forward(scaled: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> {
         // scaled: (numOfHeads, seqLen, seqLen) のスケール済みアテンションスコア
         // バイアスを加算して返す
         return scaled + myBiasMatrix
     }
 
     // 加算以外の操作（乗算等）を行う場合のみ override する
-    override fun IOScope.backward(delta: Batch<IOType.D3>, context: Context): Batch<IOType.D3> {
+    override fun IOScope.backward(delta: Batch<IOType.D3>, env: GraphEnv): Batch<IOType.D3> {
         return delta  // 加算バイアスは素通り（デフォルト実装と同じ）
     }
 }
@@ -373,7 +378,7 @@ data class MyBias(...) : AttentionBiasD2 {
 import:
 ```kotlin
 import com.wsr.knist.network.process.compute.attention.bias.AttentionBiasD2
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.GraphEnv
 ```
 
 ### シリアライズ対応
@@ -494,7 +499,7 @@ import: `com.wsr.knist.core.index.gather` / `com.wsr.knist.core.index.scatterAdd
 
 ```kotlin
 // Process / Compute
-import com.wsr.knist.network.process.Context
+import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.Compute
 
 // Output
@@ -517,8 +522,8 @@ import com.wsr.knist.batch.Batch
 // DataBuffer（WeightInitializer 実装時）
 import com.wsr.knist.base.data.DataBuffer
 
-// NetworkBuilder（拡張関数追加時）
-import com.wsr.knist.network.NetworkBuilder
+// GraphBuilder（拡張関数追加時）
+import com.wsr.knist.network.GraphBuilder
 
 // 層の id 生成（Compute 実装時）
 import kotlin.uuid.Uuid

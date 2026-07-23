@@ -3,7 +3,7 @@
 > Kotlin製ニューラルネットワークライブラリ。DSLでレイヤーを積み上げてモデルを構築する。
 > 型がチェーン全体で追跡され、IO型の不整合はコンパイルエラーになる。
 
-**このファイルは約700行しかない。部分読みせず、必ず一度に全体を読み込むこと。** なおこのファイルはライブラリの利用方法のみを扱う。カスタム層・出力層・オプティマイザ等を自作する場合は `docs/llms-custom.txt`（約500行）を追加で読むこと。
+**このファイルは約800行しかない。部分読みせず、必ず一度に全体を読み込むこと。** なおこのファイルはライブラリの利用方法のみを扱う。カスタム層・出力層・オプティマイザ等を自作する場合は `docs/llms-custom.txt`（約500行）を追加で読むこと。
 
 Kotlin Multiplatformライブラリ。JitPackからGradle依存として導入できる。
 
@@ -58,25 +58,41 @@ Backend.set(gpu)
 
 ### モデル構築
 
-`NetworkBuilder` のDSLでレイヤーを積み上げる。最後に出力層（`softmaxWithLoss` 等）を呼ぶと `Network` オブジェクトが得られる。
+`Network.create(port(converter), optimizer, initializer) { input -> ... }` のブロックDSLでレイヤーを積み上げる。ブロックの最後に出力層（`softmaxWithLoss` 等）を呼ぶと、その戻り値がそのまま `Network` オブジェクトになる（末尾で `toNetwork()` のような変換を呼ぶ必要はない）。
 
-`Network<I, O>` の `I`・`O` はバッチ全体の型。`Converter<T>` の `T` がそのままバッチ型として使われる。
+`port(converter)` は `Converter<T>` を「入力口」として包むだけの薄いファクトリで、`optimizer` / `initializer` は持たない。それらは `create()` の引数として渡す。
+
+`Network.Src1.Sink1<I, O>` の `I`・`O` はバッチ全体の型。`Converter<T>` の `T` がそのままバッチ型として使われる。
 
 ```kotlin
+import com.wsr.knist.network.Network
+import com.wsr.knist.network.create
+import com.wsr.knist.network.port
+
 // Batch<IOType.D1> を直接渡す場合（RawD1 を使う）
-val network: Network<Batch<IOType.D1>, Batch<IOType.D1>> = NetworkBuilder
-    .inputD1(32, optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
-    .affine(neuron = 256).bias().reLU()
-    .affine(neuron = 10)
-    .meanSquare()
+val network: Network.Src1.Sink1<Batch<IOType.D1>, Batch<IOType.D1>> = Network.create(
+    port = port(RawD1(32)),
+    optimizer = AdamW(Scheduler.Fix(0.001f)),
+    initializer = He(),
+) { input ->
+    input.affine(neuron = 256).bias().reLU()
+        .affine(neuron = 10)
+        .meanSquare()
+}
 
 // カスタムConverter を使う場合（例: List<List<Float>> → D2）
-val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
-    .inputD2(converter = MyPixelConverter(28, 28), optimizer = AdamW(Scheduler.Fix(0.001f)), initializer = He())
-    .reshapeToD1()
-    .affine(neuron = 10)
-    .softmaxWithLoss(converter = { MyLabelConverter(inputI) })
+val network: Network.Src1.Sink1<List<List<Float>>, List<Int>> = Network.create(
+    port = port(MyPixelConverter(28, 28)),
+    optimizer = AdamW(Scheduler.Fix(0.001f)),
+    initializer = He(),
+) { input ->
+    input.reshapeToD1()
+        .affine(neuron = 10)
+        .softmaxWithLoss(converter = { MyLabelConverter(inputI) })
+}
 ```
+
+戻り値の型は `Network.Src1.Sink1<I, O>`（入力1個・出力1個）。多入力・多出力にする場合は下の「多入力・多出力モデル」節を参照。
 
 ### Raw入力用の Batch の作り方
 
@@ -149,23 +165,62 @@ val result: O = network.expect(input = inputs)  // suspend。inputs: I（バッ�
 
 ---
 
-## NetworkBuilder ファクトリ関数
+## port() ファクトリ関数
 
-モデルの先頭で呼び出す。
+`Network.create(...)` の第一引数（多入力の場合は `port1` / `port2`）に渡す「入力口」を作る。次元(D1/D2/D3)は `Converter` のサブクラスで決まり、`port()` はオーバーロード解決でそれに応じた `Port<T, D>` を返す。`optimizer` / `initializer` はここでは渡さず `create()` 側の引数にする。
 
-| 関数 | import | 入力型(T) | 最初のIO型 |
-|------|--------|----------|-----------|
-| `inputD1(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D1 |
-| `inputD2(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D2 |
-| `inputD3(converter, optimizer, initializer)` | `com.wsr.knist.network.NetworkBuilder` | 任意 | D3 |
+| 関数 | import | 引数 | 対応する次元 |
+|------|--------|------|-------------|
+| `port(converter: Converter.D1<T>)` | `com.wsr.knist.network.port` | 任意のConverter | D1 |
+| `port(converter: Converter.D2<T>)` | 同上 | 任意のConverter | D2 |
+| `port(converter: Converter.D3<T>)` | 同上 | 任意のConverter | D3 |
 
-`Batch<IOType.Dx>` をそのまま入力する省略形（RawConverter を使う）:
+`Batch<IOType.Dx>` をそのまま入力する場合は、Raw系Converterを渡す（下記）。
 
-| 関数 | import | 入力型(T) | 最初のIO型 |
-|------|--------|----------|-----------|
-| `inputD1(i, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD1` | `Batch<IOType.D1>` | D1(i) |
-| `inputD2(i, j, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD2` | `Batch<IOType.D2>` | D2(i, j) |
-| `inputD3(i, j, k, optimizer, initializer)` | `com.wsr.knist.network.converter.raw.RawD3` | `Batch<IOType.D3>` | D3(i, j, k) |
+| クラス | import | 対応する次元 |
+|--------|--------|-------------|
+| `RawD1(i)` | `com.wsr.knist.network.converter.raw.RawD1` | D1(i) |
+| `RawD2(i, j)` | `com.wsr.knist.network.converter.raw.RawD2` | D2(i, j) |
+| `RawD3(i, j, k)` | `com.wsr.knist.network.converter.raw.RawD3` | D3(i, j, k) |
+
+```kotlin
+port(RawD1(32))              // Port<Batch<IOType.D1>, GraphBuilder.Node.D1>
+port(MyPixelConverter(28, 28)) // Port<List<List<Float>>, GraphBuilder.Node.D2>（MyPixelConverterがConverter.D2の場合）
+```
+
+---
+
+## 多入力・多出力モデル
+
+`create()` に `port` を複数渡すと、複数の入力口を持つモデルを構築できる。ブロックは入力の数だけノードを引数で受け取り、出力を複数返したい場合は末尾で `outputs(...)` を呼ぶ（出力1個の場合はそのブロックの戻り値がそのまま `Network` になる、単入力の場合と同じ省略ルール）。
+
+戻り値の型は `Network.Src{入力数}.Sink{出力数}<...>`（現状 入力・出力とも最大2まで）。
+
+```kotlin
+// 2入力・2出力（two-tower風。2つのSourceを合流させたうえで2つのheadへ出力する例）
+val network: Network.Src2.Sink2<Batch<IOType.D1>, Batch<IOType.D1>, Batch<IOType.D1>, Batch<IOType.D1>> =
+    Network.create(
+        port1 = port(RawD1(1)),
+        port2 = port(RawD1(1)),
+        optimizer = Sgd(scheduler = Scheduler.Fix(rate = 0.1f)),
+        initializer = He(),
+    ) { input1, input2 ->
+        val trunk = add(input1.affine(neuron = 8), input2.affine(neuron = 8))
+        val o1 = trunk.affine(neuron = 1).meanSquare()
+        val o2 = trunk.affine(neuron = 1).meanSquare()
+        outputs(o1, o2)
+    }
+
+// 呼び出し側は入力・ラベルの数だけ引数が増える
+val (out1, out2) = network.expect(input1 = inputA, input2 = inputB)
+network.train(input1 = inputA, input2 = inputB, label1 = labelA, label2 = labelB)
+```
+
+`add(vararg nodes)` は同じ次元の複数ノードを要素ごとの和で合流させる（`import com.wsr.knist.network.join.add.add`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播delta は、そこから消費するすべての経路（下流の複数の出力head 等）からの寄与の合計になる。
+
+既知の制約: `Sink2` 系の `train` / `loss` は現状 `IOType.D0.Global` を1つだけ返す（`sink1` 側の損失のみで、head 毎の内訳は返らない）。両方のlossを個別に見たい場合は、必要になったタイミングで別途 `loss` の戻り値仕様を確認すること。
+
+未到達の `Source`（どの出力にも寄与しないport）を構築時に検出する仕組みは無い（意図的に見送り）。
 
 ---
 
@@ -254,20 +309,20 @@ Self-attention 専用（Q・K・V はすべて同一の入力から計算され�
 | メソッド | 説明 |
 |---------|------|
 | `causal()` | Causal mask（未来トークンへの注目を -1e9 でマスク） |
-| `mask(value: Float)` | Padding mask（ネットワークの最初の入力のうち値が `value` の位置を -1e9 でマスク） |
+| `mask(node: GraphBuilder.Node.D1, value: Float)` | Padding mask（`node` が指すグラフ上の任意ノードの値が `value` の位置を -1e9 でマスク） |
 | `alibi()` | ALiBi（ヘッドごとに異なる傾きで距離に比例した罰則を加算） |
 
-`mask` はネットワークの最初の入力（`Converter.encode` の結果。Context 経由で参照される）が **D1 のトークンID列**であり、かつその長さが attention の系列長と一致している場合のみ使える。`inputD2` / `inputD3` 始まりのモデルでは使用できない（実行時エラーになる）。
+`mask` は `node` に渡した **D1 のトークンID列を持つノード**（グラフ中の任意のノード。ネットワーク全体の入力に限らない）を参照する。渡したノードの出力の長さが attention の系列長と一致している場合のみ使える（一致しない場合は実行時エラー）。`create()` ブロック内で入力ノード自体（またはその手前で作った別のノード）をそのまま渡せる。
 
 ```kotlin
 // Causal のみ
-.attention(numOfHeads = 8, biases = { causal() })
+input.attention(numOfHeads = 8, biases = { causal() })
 
-// Causal + Padding mask
-.attention(numOfHeads = 8, biases = { causal().mask(0f) })
+// Causal + Padding mask（input はブロックの引数として渡ってくるノード）
+input.attention(numOfHeads = 8, biases = { causal().mask(input, 0f) })
 
 // ALiBi + Padding mask
-.attention(numOfHeads = 8, biases = { alibi().mask(0f) })
+input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 ```
 
 ### 活性化関数
@@ -368,16 +423,16 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 ### 出力層
 
-いずれも D1 版・D2 版があり、`converter` を渡すと `Network<I, O>`、省略すると Raw 系 Converter が使われて `Network<I, Batch<IOType.Dx>>` になる。
+いずれも D1 版・D2 版があり、`converter` を渡すと `Network.Src1.Sink1<I, O>`、省略すると Raw 系 Converter が使われて `Network.Src1.Sink1<I, Batch<IOType.Dx>>` になる。
 
 | 関数 | import | 入力 | 出力型（converter 省略時） |
 |------|--------|------|--------|
-| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network<I, Batch<IOType.D1>>` |
-| `softmaxWithLoss(converter?, temperature?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
-| `sigmoidWithLoss(converter?)` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network<I, Batch<IOType.D1>>` |
-| `sigmoidWithLoss(converter?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
-| `meanSquare(converter?)` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network<I, Batch<IOType.D1>>` |
-| `meanSquare(converter?)` | 同上 | D2(i, j) | `Network<I, Batch<IOType.D2>>` |
+| `softmaxWithLoss(converter?, temperature?)` | `com.wsr.knist.network.output.softmax.softmaxWithLoss` | D1(n) | `Network.Src1.Sink1<I, Batch<IOType.D1>>` |
+| `softmaxWithLoss(converter?, temperature?)` | 同上 | D2(i, j) | `Network.Src1.Sink1<I, Batch<IOType.D2>>` |
+| `sigmoidWithLoss(converter?)` | `com.wsr.knist.network.output.sigmoid.sigmoidWithLoss` | D1(n) | `Network.Src1.Sink1<I, Batch<IOType.D1>>` |
+| `sigmoidWithLoss(converter?)` | 同上 | D2(i, j) | `Network.Src1.Sink1<I, Batch<IOType.D2>>` |
+| `meanSquare(converter?)` | `com.wsr.knist.network.output.mean.meanSquare` | D1(n) | `Network.Src1.Sink1<I, Batch<IOType.D1>>` |
+| `meanSquare(converter?)` | 同上 | D2(i, j) | `Network.Src1.Sink1<I, Batch<IOType.D2>>` |
 
 `softmaxWithLoss` デフォルト値: `temperature=1f`
 `temperature` は**構築時に固定**され、学習・推論の両方の softmax に適用される。構築後・読み込み後に変更する手段は無いため、推論時に温度を変えたい場合はモデルを構築し直す必要がある。
@@ -391,7 +446,7 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数と、`softmaxWithLoss` 等の出力層関数の両方に渡せる。
 
-`Converter<T>` の型パラメータ `T` はバッチ全体の型。`encode(input: T)` がバッチを受け取り、`decode` がバッチを返す。これがそのまま `Network<I, O>` の `I`・`O` になる。
+`Converter<T>` の型パラメータ `T` はバッチ全体の型。`encode(input: T)` がバッチを受け取り、`decode` がバッチを返す。これがそのまま `Network.Src1.Sink1<I, O>` の `I`・`O` になる。
 
 ### 組み込みConverter
 
@@ -506,7 +561,7 @@ Scheduler が受け取る step は「そのパラメータの実際の重み更�
 
 ## モデルの保存・読み込み
 
-`toJson()` / `toCbor()` は `Network` のメンバー関数、`fromJson()` / `fromCbor()` は `Network.Companion` のコンパニオン関数。いずれも import 不要。
+`toJson()` / `toCbor()` は `Network.Src1.Sink1` 等の各facade型のメンバー関数、`fromJson()` / `fromCbor()` はそれぞれのfacade型（`Network.Src1.Sink1` / `Network.Src2.Sink1` 等）の `Companion` 関数として存在する（`Network.Companion` 直下ではない）。いずれも import 不要。
 
 保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**、および `Network` がデフォルトとして保持する Optimizer / Initializer も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替えたい場合は「モデルの改修」節の `replace` を使う（層の凍結・差し替え・Converter / Output の差し替えも同節を参照）。
 
@@ -545,8 +600,8 @@ NetworkSerializer.apply {
 // 保存
 val json: String = network.toJson()
 
-// 読み込み
-val network: Network<I, O> = Network.fromJson(json)
+// 読み込み（facade型に応じて Network.Src1.Sink1 / Network.Src2.Sink1 等を使う）
+val network: Network.Src1.Sink1<I, O> = Network.Src1.Sink1.fromJson(json)
 ```
 
 ### JSON形式（okio BufferedSink/Source）
@@ -556,7 +611,7 @@ val network: Network<I, O> = Network.fromJson(json)
 network.toJson(sink)
 
 // 読み込み
-val network: Network<I, O> = Network.fromJson(source)
+val network: Network.Src1.Sink1<I, O> = Network.Src1.Sink1.fromJson(source)
 ```
 
 ### CBOR形式（バイナリ）
@@ -567,14 +622,14 @@ val bytes: ByteArray = network.toCbor()
 network.toCbor(sink)  // Sink版
 
 // 読み込み
-val network: Network<I, O> = Network.fromCbor(bytes)
-val network: Network<I, O> = Network.fromCbor(source)  // Source版
+val network: Network.Src1.Sink1<I, O> = Network.Src1.Sink1.fromCbor(bytes)
+val network: Network.Src1.Sink1<I, O> = Network.Src1.Sink1.fromCbor(source)  // Source版
 ```
 
 ### クローン
 
 ```kotlin
-val copy: Network<I, O> = network.clone()
+val copy: Network.Src1.Sink1<I, O> = network.clone()
 ```
 
 内部で CBOR シリアライズ→デシリアライズを行う。重みを含む完全なコピーが得られる。カスタム Converter を使う場合は事前に `NetworkSerializer.register()` が必要。
@@ -609,86 +664,84 @@ builder.skip {
 
 ```kotlin
 // 読み込んだモデルを低い学習率で微調整する（重みは保持、モーメント・Scheduler 位置はリセット）
-val tuned: Network<I, O> = network.replace(condition = { true }, optimizer = AdamW(Scheduler.Fix(0.0001f)))
+val tuned: Network.Src1.Sink1<I, O> = network.replace(condition = { true }, optimizer = AdamW(Scheduler.Fix(0.0001f)))
 
 // 層の凍結: Freeze（重みを更新しない Optimizer）を渡す
-val frozen: Network<I, O> = network.replace(condition = { it.id == "backbone" }, optimizer = Freeze)
+val frozen: Network.Src1.Sink1<I, O> = network.replace(condition = { it.id == "backbone" }, optimizer = Freeze)
 
 // 解凍: 通常の Optimizer を渡し直す（新品の状態で学習が再開される）
-val unfrozen: Network<I, O> = frozen.replace(condition = { it.id == "backbone" }, optimizer = AdamW(Scheduler.Fix(0.00001f)))
+val unfrozen: Network.Src1.Sink1<I, O> = frozen.replace(condition = { it.id == "backbone" }, optimizer = AdamW(Scheduler.Fix(0.00001f)))
 ```
 
 - `Freeze` で凍結された層は重みの更新だけが行われなくなる。逆伝播の delta は通常通り流れるため、凍結した層より前段の学習は継続できる
 - 重みを持たない層（活性化関数・reshape 等）では何も起きないため、`condition = { true }` で全層を対象にして問題ない
 - カスタム層は `update(optimizer)` を override していないと反応しない（`docs/llms-custom.txt` を参照）
 
-### 層の差し替え
+### 中間層の差し替え
 
-`replace<T>` で、型と条件にマッチする層を `NetworkBuilder` と同じ DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は `T` の種類によらず `replace`（`@JvmName` により JVM 上では `replaceComputeD1` / `replaceReshapeD1ToD2` のような名前になっているだけ）。新しい `Network` を返す。
+`replace<T>` で、型と条件にマッチする層を `GraphBuilder` の DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は `T` の種類によらず `replace`（`@JvmName` により JVM 上では `replaceComputeD1` / `replaceReshapeD1ToD2` のような名前になっているだけ）。新しい `Network` を返す。
 
 ```kotlin
-val newNetwork: Network<I, O> = network.replace<AffineD2>(
+val newNetwork: Network.Src1.Sink1<I, O> = network.replace<AffineD2>(
     optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
     initializer = He(),                          // 省略時は network が保持する Initializer を使う
     condition = { it.outputI == 256 },           // id で特定する場合: { it.id == "..." }
 ) { old ->
-    // this: NetworkBuilder.D2<I>（affine 等の DSL がそのまま使える）
+    // this: GraphBuilder.Node.D2（affine 等の DSL がそのまま使える）
     // old: マッチした元の層（T 型。元の層のプロパティを参照したい場合に使う）
     affine(neuron = 512).bias().reLU()
 }
 ```
 
-- `condition` に一致した各層を、`block` が返す `NetworkBuilder` の `layers` で置き換える
+- `condition` に一致した各層を、`block` が返す `GraphBuilder.Node.Dx` までの層列で置き換える
 - 置き換え後の層列の入力形状・出力形状は、元の層の入力形状・出力形状（内部的には `Process` の `inputShape` / `outputShape`）と一致していなければならず、一致しない場合は例外になる
-- `block` が何も層を追加しない場合（元の `NetworkBuilder.Dx` をそのまま返す場合）、その層は削除されるだけになる。削除できるのは入力形状と出力形状が一致している層（活性化関数・`bias` 等）のみで、一致しない層（`affine` 等）を削除しようとすると例外になる
+- `block` が何も層を追加しない場合（元の `GraphBuilder.Node.Dx` をそのまま返す場合）、その層は削除されるだけになる。削除できるのは入力形状と出力形状が一致している層（活性化関数・`bias` 等）のみで、一致しない層（`affine` 等）を削除しようとすると例外になる
 - `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3`、または `Reshape.D1ToD2` / `D1ToD3` / `D2ToD1` / `D2ToD3` / `D3ToD1` / `D3ToD2` のいずれかのサブタイプである必要がある。`T` の次元遷移によってどのオーバーロードが選ばれるかが決まる
 
-Reshape 系の層（`tokenEmbedding` / `reshapeToDx` / `globalAverageToDx` 等）を対象にする場合、`block` は元の層と同じ次元遷移で終わる必要がある（例: `Reshape.D1ToD2` なら this は `NetworkBuilder.D1<I>`、戻り値は `NetworkBuilder.D2<I>`）。戻り値の型で強制されるため、Reshape 系では `block` を空にする（層を削除するだけにする）ことはできない。
+Reshape 系の層（`tokenEmbedding` / `reshapeToDx` / `globalAverageToDx` 等）を対象にする場合、`block` は元の層と同じ次元遷移で終わる必要がある（例: `Reshape.D1ToD2` なら this は `GraphBuilder.Node.D1`、戻り値は `GraphBuilder.Node.D2`）。戻り値の型で強制されるため、Reshape 系では `block` を空にする（層を削除するだけにする）ことはできない。
 
 ```kotlin
 // 学習済みモデルの tokenEmbedding を語彙サイズだけ変えて差し替える（語彙の転移）
 // vocabSize は出力形状 D2(i, tokenSize) に現れないため、tokenSize を保てば形状チェックを通る
-val newNetwork: Network<I, O> = network.replace<TokenEmbeddingD1ToD2>(
+val newNetwork: Network.Src1.Sink1<I, O> = network.replace<TokenEmbeddingD1ToD2>(
     condition = { true },
 ) { old ->
     tokenEmbedding(vocabSize = 5000, tokenSize = old.outputJ)
 }
 ```
 
-### Converter の差し替え
+### Source（入力）の差し替え
 
-`I` / `O` 自体を変えたい場合（ラベルの形式を変える、入力の前処理を変える等）に使う。層はそのまま。
+`I` を変えたい場合（入力の前処理・Converterを変える等）に使う。層はそのまま、Converterだけ差し替わる。単入力なら `replaceSource`、多入力（`Src2` 系）なら対象のportごとに `replaceSource1` / `replaceSource2` を呼ぶ。
 
 ```kotlin
-val network2: Network<NewInput, O> = network.replaceInput(newInputConverter)
-val network3: Network<I, NewLabel> = network.replaceOutput(newOutputConverter)
+val network2: Network.Src1.Sink1<NewInput, O> = network.replaceSource(newInputConverter)
 
-// 両方変えたい場合は繋げる
-val network4: Network<NewInput, NewLabel> = network.replaceInput(newInputConverter).replaceOutput(newOutputConverter)
+// 2入力モデルの片方だけ差し替える場合
+val network3: Network.Src2.Sink1<NewInput1, I2, O> = network.replaceSource1(newInputConverter)
 ```
 
-いずれも新しい `Network` を返す（元の `network` は変更されない）。内部で `clone()` されるため、層・重みは元の `network` とは独立したコピーになる（共有されない）。
+新しい `Network` を返す（元の `network` は変更されない）。内部で `clone()` されるため、層・重みは元の `network` とは独立したコピーになる（共有されない）。
 
-### Output（損失関数）の差し替え
+### Sink（出力）の差し替え
 
-出力層（`softmaxWithLoss` 等）自体を組み直したい場合に使う。型パラメータに層列の末尾の形状を `Output.D1` / `Output.D2`（import: `com.wsr.knist.network.output.Output`）で明示する。末尾の形状と合わない型を指定した場合は実行時に例外になる。
-
-出力の型 `O` はこの操作では変わらない。ブロックの引数として現在の `outputConverter` が末尾形状に応じた型（`Converter.D1<O>` / `Converter.D2<O>`）で渡ってくるので、新しい出力層にそのまま渡す。`O` 自体を変えたい場合は `replaceOutput` を続けて呼ぶ。
+出力層（`softmaxWithLoss` 等）から手前の層列をまとめて組み直したい場合に使う。中間層の差し替え（`replace<T>`）と違い、**グラフ末尾の Compute ノードから新しい出力までを丸ごと再構築する**（新しい層を挟む・出力の型 `O` を変える、のどちらもこの1回でできる）。単一出力なら `replaceSink`、`Sink2` 系なら対象headごとに `replaceSink1` / `replaceSink2` を呼ぶ。`T`（末尾層の出力形状。`Output.D1` / `Output.D2`）で受け取れる次元を指定する（`@JvmName` により `replaceSinkD1` / `replaceSinkD2` に分かれる）。
 
 ```kotlin
-// temperature だけ変えたい場合。引数で渡ってくる既存の outputConverter をそのまま再利用する
-val network5: Network<I, O> = network.replace<Output.D1> { oldConverter ->
-    // this: NetworkBuilder.D1<I>（型パラメータで指定した形状で決まる）
-    softmaxWithLoss(temperature = 0.5f, converter = { oldConverter })
+// temperatureだけ変えたい場合。既存の末尾層の出力形状(D1)からやり直す
+val network5: Network.Src1.Sink1<I, O> = network.replaceSink<Output.D1, O> {
+    // this: GraphBuilder.Node.D1（末尾のComputeノードの出力形状から再開する）
+    softmaxWithLoss(temperature = 0.5f, converter = { LabelConverter(inputI) })
 }
 
-// O 自体も変えたい場合は replaceOutput とチェーンする
-val network6: Network<I, NewLabel> = network
-    .replace<Output.D1>(
-        optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
-        initializer = He(),
-    ) { oldConverter -> softmaxWithLoss(temperature = 0.5f, converter = { oldConverter }) }
-    .replaceOutput(NewLabelConverter(10))
+// Oも変え、間に新しい層を挟みつつ差し替える場合
+val network6: Network.Src1.Sink1<I, NewLabel> = network.replaceSink<Output.D1, NewLabel>(
+    optimizer = AdamW(Scheduler.Fix(0.0001f)),  // 省略時は network が保持する Optimizer を使う
+    initializer = He(),
+) {
+    affine(neuron = 512).bias().reLU()
+        .softmaxWithLoss(converter = { NewLabelConverter(10) })
+}
 ```
 
 ---
@@ -703,10 +756,10 @@ val network6: Network<I, NewLabel> = network
 ### MLP（全結合分類）
 
 ```
-inputD1(converter, optimizer, initializer)  → D1(n)
+Network.create(port(converter), optimizer, initializer) { input -> } → D1(n)
   → affine(256) → bias() → reLU()          → D1(256)
   → affine(10)                              → D1(10)
-  → softmaxWithLoss(converter = { ... })   → Network<Input, Label>
+  → softmaxWithLoss(converter = { ... })   → Network.Src1.Sink1<Input, Label>
 ```
 
 ### 画像分類（CNN）
@@ -714,7 +767,7 @@ inputD1(converter, optimizer, initializer)  → D1(n)
 `PixelConverter` / `LabelConverter` はカスタム実装（Converter実装例を参照）。
 
 ```
-inputD2(PixelConverter(28,28), ...)         → D2(28, 28)   // Network<List<List<Float>>, List<Int>>
+Network.create(port(PixelConverter(28,28)), ...)  → D2(28, 28)   // Network.Src1.Sink1<List<List<Float>>, List<Int>>
   → convD1(32, kernel=3, padding=1)         → D2(32, 28)   // outY=(28-3+2)/1+1=28
   → bias() → reLU()
   → maxPool(size=2)                         → D2(32, 14)   // 28/2=14
@@ -732,7 +785,7 @@ inputD2(PixelConverter(28,28), ...)         → D2(28, 28)   // Network<List<Lis
 `WordsD1` / `WordD2` はカスタム実装（組み込みには含まれない）。
 
 ```
-wordsD1(maxLength=128, words=..., ...)      → D1(128)      // Network<List<List<String>>, List<List<String>>>
+Network.create(port(wordsD1(maxLength=128, words=...)), ...)  → D1(128)  // Network.Src1.Sink1<List<List<String>>, List<List<String>>>
   → tokenEmbedding(vocabSize=3000, 256)     → D2(128, 256)
   → positionEmbedding()
   → repeat(4) {
