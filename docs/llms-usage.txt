@@ -34,22 +34,39 @@ dependencies {
 
 演算の実行バックエンドを切り替えられる。デフォルトは CPU（Rust ネイティブ）。追加の Gradle 依存は不要（`network` 依存が `io-type` → `buffer` を経由してすべてのバックエンドを含む）。
 
-| バックエンド | import | 説明 | フォールバック |
-|------------|--------|------|--------------|
-| `cpu` | `com.wsr.knist.cpu.cpu` | Rust ネイティブ CPU 実装 | KotlinBackend |
-| `gpu` | `com.wsr.knist.gpu.gpu` | WebGPU（wgpu）GPU 実装 | KotlinBackend |
-| `KotlinBackend` | `com.wsr.knist.base.KotlinBackend` | 純 Kotlin 実装 | — |
+| バックエンド | 生成関数 | import | 説明 | フォールバック |
+|------------|--------|--------|------|--------------|
+| CPU | `loadCPUBackend(fallback, maxReservedBytes: Long = ...)` | `com.wsr.knist.cpu.loadCPUBackend` | Rust ネイティブ CPU 実装 | 引数で指定 |
+| GPU | `loadGPUBackend(fallback, enableProfiler = false, maxReservedBytes = 4_000_000_000L)` | `com.wsr.knist.gpu.loadGPUBackend` | WebGPU（wgpu）GPU 実装 | 引数で指定 |
+| `KotlinBackend` | — | `com.wsr.knist.base.KotlinBackend` | 純 Kotlin 実装 | — |
 
-切り替えは学習・推論の前に一度 `Backend.set()` を呼び出す。
+呼び出し側で `loadCPUBackend` / `loadGPUBackend` を明示的に呼んでバックエンドを生成し、`Backend.set()` に渡す。
 
 ```kotlin
 import com.wsr.knist.Backend
-import com.wsr.knist.gpu.gpu
+import com.wsr.knist.base.KotlinBackend
+import com.wsr.knist.gpu.loadGPUBackend
 
-Backend.set(gpu)
+Backend.set(loadGPUBackend(KotlinBackend))
 ```
 
-`cpu` / `gpu` はネイティブライブラリが利用不可の環境では自動的に `KotlinBackend` にフォールバックする。
+`maxReservedBytes` は、バッファ確保総量（Cleaner経由の解放待ちも含めた「予約中」バイト数。JVMの
+`-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
+たびに `System.gc()` を発火させる安全弁の上限値。閾値をレベルトリガー（超えている「間」ずっと）で
+判定しているため、attention 等で中間バッファが多いモデルではこの閾値を頻繁に踏み抜いて
+`System.gc()` が連発し、大幅な速度低下を招くことがある（exp29/30で実測: 1step あたり数百回の
+`System.gc()` 発火、2.9倍の速度低下）。
+
+- **CPU**: 省略時は JVM/Android では `Runtime.getRuntime().maxMemory()`（`-Xmx` 相当）を採用する
+  （`-XX:MaxDirectMemorySize` が未指定時にヒープ上限と同じ値になる JVM 自身の挙動に倣った設計）。
+  Kotlin/Native では固定値にフォールバックする（このロジック自体を使わない）。
+- **GPU**: 固定 4GB。JVM ヒープと VRAM は無関係のプールであり、wgpu もクロスプラットフォームで
+  信頼できる VRAM 総量取得手段を持たないため、ヒープ連動のような自動デフォルトは採用していない。
+
+大きいモデルや大きいバッチで発火が頻発する場合は、モデルに応じて明示的に引き上げる
+（例: `loadCPUBackend(KotlinBackend, maxReservedBytes = 10_000_000_000L)`）。
+
+`loadCPUBackend` / `loadGPUBackend` はネイティブライブラリが利用不可の環境では自動的に `fallback`（通常 `KotlinBackend`）を返す。
 ※ GPUは不安定で、稀に実行速度が非常に遅くなることがある。その際にはCPUに書き換える。
 
 ---
@@ -399,7 +416,7 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 |------|--------|------|
 | `skip { ... }` | `com.wsr.knist.network.process.compute.skip.skip` | ブロック内の出力が入力と同サイズであること |
 
-skip ブロックの**最終出力**が入力と同じ次元・同じ形状であればよい。ブロック内で `reshapeToD1()` 等により一時的に次元を変えて元の次元に戻す構成もサポートされる（最終レイヤーが対象次元の Compute または Reshape 系であること）。対応外の型でブロックが終わる場合は構築時にエラーになる。ブロックが空の場合（何もレイヤーが追加されない場合）は `skip` 自体が何も追加せず、入力をそのまま返す。
+内部的には分岐先（ブロックの戻り値）と分岐元を要素ごとの和で合流させる Join（`add`）として実装されている。skip ブロックの**最終出力**が入力と同じ次元・同じ形状であればよい。ブロック内で `reshapeToD1()` 等により一時的に次元を変えて元の次元に戻す構成もサポートされる（ブロックの型が `GraphBuilder.Node.Dx.() -> GraphBuilder.Node.Dx` であるため、対応外の型でブロックが終わるコードはそもそもコンパイルが通らない）。形状が一致しない場合（次元は一致するがサイズが異なる等）は構築時に例外になる。ブロックが空の場合（`this` をそのまま返す場合）は `skip` 自体が何も追加せず、入力をそのまま返す。
 
 ### Reshape
 
@@ -563,7 +580,7 @@ Scheduler が受け取る step は「そのパラメータの実際の重み更�
 
 `toJson()` / `toCbor()` は `Network.Src1.Sink1` 等の各facade型のメンバー関数、`fromJson()` / `fromCbor()` はそれぞれのfacade型（`Network.Src1.Sink1` / `Network.Src2.Sink1` 等）の `Companion` 関数として存在する（`Network.Companion` 直下ではない）。いずれも import 不要。
 
-保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**、および `Network` がデフォルトとして保持する Optimizer / Initializer も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替えたい場合は「モデルの改修」節の `replace` を使う（層の凍結・差し替え・Converter / Output の差し替えも同節を参照）。
+保存されるのはモデル構造・重みに加えて、**Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置**、および `Network` がデフォルトとして保持する Optimizer / Initializer も含まれる。読み込み後に学習を再開すると保存時のスケジュールの続きから進む。構築後・読み込み後に学習率や Optimizer を差し替えたい場合は「モデルの改修」節の `replace` を使う（層の凍結・差し替え・Source / Sink の差し替えも同節を参照）。
 
 `fromJson` / `fromCbor` の型パラメータ `I`・`O` は実行時に検証されない。保存時と異なる型を指定しても読み込み自体は成功し、`expect` / `train` の呼び出し時に ClassCastException になるため注意。
 
@@ -652,7 +669,7 @@ builder.skip {
 
 ---
 
-## モデルの改修（層の凍結・差し替え、Converter / Output の差し替え）
+## モデルの改修（層の凍結・差し替え、Source / Sink の差し替え）
 
 構築済み・`fromJson` / `fromCbor` で読み込み済みの `Network` に対して、転移学習・ファインチューニング目的で層の凍結や差し替えができる。
 

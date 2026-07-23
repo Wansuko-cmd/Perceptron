@@ -1,8 +1,9 @@
 package com.wsr.knist.gpu
 
 import com.wsr.knist.base.IBackend
-import com.wsr.knist.base.KotlinBackend
 
-val gpu: IBackend = loadGPUBackend(KotlinBackend)
-
-expect fun loadGPUBackend(fallback: IBackend, enableProfiler: Boolean = false): IBackend
+expect fun loadGPUBackend(
+    fallback: IBackend,
+    enableProfiler: Boolean = false,
+    maxReservedBytes: Long = 4_000_000_000L,
+): IBackend
