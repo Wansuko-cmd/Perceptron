@@ -381,11 +381,8 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 
 | 関数 | import | 入力 | 出力 | デフォルト値 |
 |------|--------|------|------|-------------|
-| ~~`roPE(waveLength?)`~~ | `com.wsr.knist.network.process.compute.position.roPE` | D2(i, j) | D2(i, j) | waveLength=10000f |
 | `positionEncode(waveLength?)` | `com.wsr.knist.network.process.compute.position.positionEncode` | D2(i, j) | D2(i, j) | waveLength=10000f |
 | `positionEmbedding(optimizer?, initializer?)` | `com.wsr.knist.network.process.compute.position.positionEmbedding` | D2(i, j) | D2(i, j) | — |
-
-**`roPE` は Deprecated**: RoPE は Attention 内部で Q・K に適用するのが正しい設計だが、現実装は入力全体に適用しており非推奨。Attention 内部に RoPE を適用する手段は現状無いため、位置情報には `positionEncode` / `positionEmbedding`（または attention の `alibi()`）を使うこと。
 
 注意: `positionEmbedding` はサイズを変えない学習可能な位置バイアスを加算するだけ。
 

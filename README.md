@@ -21,21 +21,21 @@ Kotlin製のニューラルネットワークライブラリです
 1. モデルを定義
 
 ```kotlin
-val network: Network<List<List<Float>>, List<Int>> = NetworkBuilder
-    .inputD2(
-        converter = PixelConverter(28, 28),
-        optimizer = AdamW(scheduler = Scheduler.Fix(0.001f)),
-        initializer = He(seed = seed),
-    )
-    .reshapeToD1()
-    .layerNorm()
-    .affine(neuron = 256).bias().reLU()
-    .affine(neuron = 128).bias().reLU()
-    .affine(neuron = 10)
-    .softmaxWithLoss(converter = { LabelConverter(inputI) })
+val network: Network.Src1.Sink1<List<List<Float>>, List<Int>> = Network.create(
+    port = port(PixelConverter(28, 28)),
+    optimizer = AdamW(Scheduler.Fix(0.001f)),
+    initializer = He(seed = seed),
+) { input ->
+    input.reshapeToD1()
+        .layerNorm()
+        .affine(neuron = 256).bias().reLU()
+        .affine(neuron = 128).bias().reLU()
+        .affine(neuron = 10)
+        .softmaxWithLoss(converter = { LabelConverter(inputI) })
+}
 ```
 
-2. `train`関数を用いて学習（`train` / `expect` は suspend 関数のため、コルーチンスコープ内から呼びます）
+2. `train`関数を用いて学習（`train` / `loss` / `expect` は suspend 関数のため、コルーチンスコープ内から呼びます）
 
 ```kotlin
 runBlocking {
@@ -91,6 +91,24 @@ sampleにてMNIST(3層NN)とTinyStories(Transformer)の例を載せています
 
 1次元配列でのデータ保持、および計算処理を定義
 
+## バックエンド
+
+演算の実行バックエンドを切り替えられます。デフォルトはCPU（Rustネイティブ実装）です。
+
+- **CPU**: Rustネイティブ実装（デフォルト）
+- **GPU**: WebGPU（wgpu）実装。稀に不安定になることがあります
+- **KotlinBackend**: 純Kotlin実装（フォールバック用）
+
+```kotlin
+import com.wsr.knist.Backend
+import com.wsr.knist.base.KotlinBackend
+import com.wsr.knist.gpu.loadGPUBackend
+
+Backend.set(loadGPUBackend(KotlinBackend))
+```
+
+詳細は[docs/llms-usage.txt](docs/llms-usage.txt)を参照してください。
+
 ## 導入方法
 
 [JitPack](https://jitpack.io/#Wansuko-cmd/knist/) から導入できます。
@@ -110,7 +128,7 @@ dependencyResolutionManagement {
 ```kotlin
 dependencies {
     implementation("com.github.Wansuko-cmd.knist:network:<version>")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:<version>")  // train / expect が suspend 関数のため必須
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:<version>")  // train / loss / expect が suspend 関数のため必須
 }
 ```
 
