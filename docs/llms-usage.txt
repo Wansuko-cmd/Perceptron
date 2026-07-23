@@ -54,8 +54,7 @@ Backend.set(loadGPUBackend(KotlinBackend))
 `-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
 たびに `System.gc()` を発火させる安全弁の上限値。閾値をレベルトリガー（超えている「間」ずっと）で
 判定しているため、attention 等で中間バッファが多いモデルではこの閾値を頻繁に踏み抜いて
-`System.gc()` が連発し、大幅な速度低下を招くことがある（exp29/30で実測: 1step あたり数百回の
-`System.gc()` 発火、2.9倍の速度低下）。
+`System.gc()` が連発し、大幅な速度低下を招くことがある。
 
 - **CPU**: 省略時は JVM/Android では `Runtime.getRuntime().maxMemory()`（`-Xmx` 相当）を採用する
   （`-XX:MaxDirectMemorySize` が未指定時にヒープ上限と同じ値になる JVM 自身の挙動に倣った設計）。
@@ -237,7 +236,7 @@ network.train(input1 = inputA, input2 = inputB, label1 = labelA, label2 = labelB
 
 既知の制約: `Sink2` 系の `train` / `loss` は現状 `IOType.D0.Global` を1つだけ返す（`sink1` 側の損失のみで、head 毎の内訳は返らない）。両方のlossを個別に見たい場合は、必要になったタイミングで別途 `loss` の戻り値仕様を確認すること。
 
-未到達の `Source`（どの出力にも寄与しないport）を構築時に検出する仕組みは無い（意図的に見送り）。
+未到達の `Source`（どの出力にも寄与しないport）を構築時に検出する仕組みは無い。
 
 ---
 
