@@ -286,8 +286,8 @@ pub fn unfold_d2(
                 for oy in 0..ok {
                     for wy in 0..window {
                         for wx in 0..window {
-                            let input_x = (ox * stride + wx * dilation) as isize - padding as isize;
-                            let input_y = (oy * stride + wy * dilation) as isize - padding as isize;
+                            let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
+                            let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
                             if input_x >= 0 && input_x < xj as isize && input_y >= 0 && input_y < xk as isize {
                                 let input_x = input_x as usize;
                                 let input_y = input_y as usize;
@@ -340,8 +340,8 @@ pub fn fold_d2(
                 for oy in 0..xk {
                     for wy in 0..window {
                         for wx in 0..window {
-                            let input_x = (ox * stride + wx * dilation) as isize - padding as isize;
-                            let input_y = (oy * stride + wy * dilation) as isize - padding as isize;
+                            let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
+                            let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
                             if input_x >= 0 && input_x < oj as isize && input_y >= 0 && input_y < ok as isize {
                                 let input_x = input_x as usize;
                                 let input_y = input_y as usize;

@@ -1241,10 +1241,10 @@ object KotlinBackend : IBackend {
             for (i in 0 until xi) {
                 for (ox in 0 until oj) {
                     for (oy in 0 until ok) {
-                        for (wy in 0 until window) {
-                            for (wx in 0 until window) {
-                                val inputI = ox * stride + wx * dilation - padding
-                                val inputJ = oy * stride + wy * dilation - padding
+                        for (wx in 0 until window) {
+                            for (wy in 0 until window) {
+                                val inputI = ox * stride + wy * dilation - padding
+                                val inputJ = oy * stride + wx * dilation - padding
                                 if (inputI in 0 until xj && inputJ in 0 until xk) {
                                     val resultIndex = (((xb * xi + i) * oj + ox) * ok + oy) * ww + wy * window + wx
                                     val xIndex = ((xb * xi + i) * xj + inputI) * xk + inputJ
@@ -1309,10 +1309,10 @@ object KotlinBackend : IBackend {
             for (i in 0 until xi) {
                 for (ox in 0 until xj) {
                     for (oy in 0 until xk) {
-                        for (wy in 0 until window) {
-                            for (wx in 0 until window) {
-                                val inputI = ox * stride + wx * dilation - padding
-                                val inputJ = oy * stride + wy * dilation - padding
+                        for (wx in 0 until window) {
+                            for (wy in 0 until window) {
+                                val inputI = ox * stride + wy * dilation - padding
+                                val inputJ = oy * stride + wx * dilation - padding
                                 if (inputI in 0 until oj && inputJ in 0 until ok) {
                                     val xIndex = (((xb * xi + i) * xj + ox) * xk + oy) * xl + wy * window + wx
                                     val resultIndex = ((xb * xi + i) * oj + inputI) * ok + inputJ
