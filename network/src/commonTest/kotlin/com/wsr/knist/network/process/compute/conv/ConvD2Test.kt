@@ -40,30 +40,30 @@ class ConvD2Test {
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(138f, 194f),
-                IOType.d1(166f, 222f),
+                IOType.d1(140f, 168f),
+                IOType.d1(196f, 224f),
             ),
             actual = actual[0][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(362f, 546f),
-                IOType.d1(454f, 638f),
+                IOType.d1(364f, 456f),
+                IOType.d1(548f, 640f),
             ),
             actual = actual[0][1],
         )
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(198f, 282f),
-                IOType.d1(226f, 310f),
+                IOType.d1(202f, 230f),
+                IOType.d1(286f, 314f),
             ),
             actual = actual[1][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(518f, 794f),
-                IOType.d1(610f, 886f),
+                IOType.d1(522f, 614f),
+                IOType.d1(798f, 890f),
             ),
             actual = actual[1][1],
         )
@@ -77,34 +77,34 @@ class ConvD2Test {
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(2896f, 7528f, 4872f),
-                IOType.d1(7764f, 19600f, 12316f),
-                IOType.d1(5108f, 12552f, 7684f),
+                IOType.d1(2912f, 7064f, 4272f),
+                IOType.d1(8304f, 19568f, 11504f),
+                IOType.d1(5872f, 13464f, 7712f),
             ),
             actual = actual[0][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(4896f, 12008f, 7352f),
-                IOType.d1(12724f, 30480f, 18236f),
-                IOType.d1(8068f, 18952f, 11124f),
+                IOType.d1(4928f, 11576f, 6768f),
+                IOType.d1(13296f, 30512f, 17456f),
+                IOType.d1(8848f, 19896f, 11168f),
             ),
             actual = actual[0][1],
         )
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(4144f, 10456f, 6552f),
-                IOType.d1(11212f, 27600f, 16868f),
-                IOType.d1(7428f, 17864f, 10676f),
+                IOType.d1(4176f, 9812f, 5756f),
+                IOType.d1(12008f, 27536f, 15768f),
+                IOType.d1(8552f, 19164f, 10732f),
             ),
             actual = actual[1][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(7008f, 16664f, 9896f),
-                IOType.d1(18380f, 42896f, 24996f),
-                IOType.d1(11732f, 26952f, 15460f),
+                IOType.d1(7072f, 16084f, 9132f),
+                IOType.d1(19240f, 42960f, 23960f),
+                IOType.d1(12888f, 28316f, 15548f),
             ),
             actual = actual[1][1],
         )
@@ -119,30 +119,30 @@ class ConvD2Test {
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(-1886.6399f, -2721.2f),
-                IOType.d1(-2303.92f, -3138.48f),
+                IOType.d1(-1912.5599f, -2335.92f),
+                IOType.d1(-2759.2798f, -3182.6401f),
             ),
             actual = actual[0][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(-5273.52f, -7572.4f),
-                IOType.d1(-6422.96f, -8721.84f),
+                IOType.d1(-5299.44f, -6454.9595f),
+                IOType.d1(-7610.4795f, -8766.0f),
             ),
             actual = actual[0][1],
         )
 
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(-2718.96f, -3970.7998f),
-                IOType.d1(-3136.24f, -4388.08f),
+                IOType.d1(-2755.1997f, -3178.56f),
+                IOType.d1(-4025.2798f, -4448.6396f),
             ),
             actual = actual[1][0],
         )
         assertContentEquals(
             expected = IOType.d2(
-                IOType.d1(-7600.88f, -11049.2f),
-                IOType.d1(-8750.32f, -12198.641f),
+                IOType.d1(-7637.1196f, -8792.641f),
+                IOType.d1(-11103.68f, -12259.199f),
             ),
             actual = actual[1][1],
         )
