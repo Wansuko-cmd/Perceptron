@@ -42,6 +42,19 @@ interface Network {
                 return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
+            suspend inline fun loss(
+                input: I,
+                crossinline label: (O) -> O,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>> {
+                    val output = sink.converter._decode(it)
+                    sink.converter._encode(label(output))
+                }
+                return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
             suspend fun train(
                 input: I,
                 label: O,
@@ -49,6 +62,19 @@ interface Network {
             ): IOType.D0.Global {
                 val inputs = listOf(source.converter._encode(input))
                 val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+                return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            suspend inline fun train(
+                input: I,
+                crossinline label: (O) -> O,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>> {
+                    val output = sink.converter._decode(it)
+                    sink.converter._encode(label(output))
+                }
                 return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
@@ -198,6 +224,26 @@ interface Network {
                 return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
+            suspend inline fun loss(
+                input: I,
+                crossinline label1: (O1) -> O1,
+                crossinline label2: (O2) -> O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    {
+                        val output = sink1.converter._decode(it)
+                        sink1.converter._encode(label1(output))
+                    },
+                    {
+                        val output = sink2.converter._decode(it)
+                        sink2.converter._encode(label2(output))
+                    },
+                )
+                return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
             suspend fun train(
                 input: I,
                 label1: O1,
@@ -208,6 +254,26 @@ interface Network {
                 val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
                     { sink1.converter._encode(label1) },
                     { sink2.converter._encode(label2) },
+                )
+                return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            suspend inline fun train(
+                input: I,
+                crossinline label1: (O1) -> O1,
+                crossinline label2: (O2) -> O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source.converter._encode(input))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    {
+                        val output = sink1.converter._decode(it)
+                        sink1.converter._encode(label1(output))
+                    },
+                    {
+                        val output = sink2.converter._decode(it)
+                        sink2.converter._encode(label2(output))
+                    },
                 )
                 return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
@@ -420,6 +486,20 @@ interface Network {
                 return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
+            suspend inline fun loss(
+                input1: I1,
+                input2: I2,
+                crossinline label: (O) -> O,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source1.converter._encode(input1), source2.converter._encode(input2))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>> {
+                    val output = sink.converter._decode(it)
+                    sink.converter._encode(label(output))
+                }
+                return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
             suspend fun train(
                 input1: I1,
                 input2: I2,
@@ -428,6 +508,20 @@ interface Network {
             ): IOType.D0.Global {
                 val inputs = listOf(source1.converter._encode(input1), source2.converter._encode(input2))
                 val labels = listOf<(Batch<IOType>) -> Batch<IOType>> { sink.converter._encode(label) }
+                return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            suspend inline fun train(
+                input1: I1,
+                input2: I2,
+                crossinline label: (O) -> O,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source1.converter._encode(input1), source2.converter._encode(input2))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>> {
+                    val output = sink.converter._decode(it)
+                    sink.converter._encode(label(output))
+                }
                 return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
@@ -600,6 +694,27 @@ interface Network {
                 return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }
 
+            suspend inline fun loss(
+                input1: I1,
+                input2: I2,
+                crossinline label1: (O1) -> O1,
+                crossinline label2: (O2) -> O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source1.converter._encode(input1), source2.converter._encode(input2))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    {
+                        val output = sink1.converter._decode(it)
+                        sink1.converter._encode(label1(output))
+                    },
+                    {
+                        val output = sink2.converter._decode(it)
+                        sink2.converter._encode(label2(output))
+                    },
+                )
+                return _loss(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
             suspend fun train(
                 input1: I1,
                 input2: I2,
@@ -611,6 +726,27 @@ interface Network {
                 val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
                     { sink1.converter._encode(label1) },
                     { sink2.converter._encode(label2) },
+                )
+                return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
+            }
+
+            suspend inline fun train(
+                input1: I1,
+                input2: I2,
+                crossinline label1: (O1) -> O1,
+                crossinline label2: (O2) -> O2,
+                dispatcher: CoroutineDispatcher = Dispatchers.Default,
+            ): IOType.D0.Global {
+                val inputs = listOf(source1.converter._encode(input1), source2.converter._encode(input2))
+                val labels = listOf<(Batch<IOType>) -> Batch<IOType>>(
+                    {
+                        val output = sink1.converter._decode(it)
+                        sink1.converter._encode(label1(output))
+                    },
+                    {
+                        val output = sink2.converter._decode(it)
+                        sink2.converter._encode(label2(output))
+                    },
                 )
                 return _train(inputs = inputs, labels = labels, dispatcher = dispatcher)[0]
             }

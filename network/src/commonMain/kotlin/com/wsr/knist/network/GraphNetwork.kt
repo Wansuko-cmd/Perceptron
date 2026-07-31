@@ -72,7 +72,8 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
     }
 
     @Suppress("UNCHECKED_CAST", "FunctionName")
-    protected suspend fun _loss(
+    @PublishedApi
+    internal suspend fun _loss(
         inputs: List<Batch<IOType>>,
         labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -153,7 +154,8 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
     }
 
     @Suppress("UNCHECKED_CAST", "FunctionName")
-    protected suspend fun _train(
+    @PublishedApi
+    internal suspend fun _train(
         inputs: List<Batch<IOType>>,
         labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
