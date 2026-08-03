@@ -1,3 +1,5 @@
+use crate::resource::buffer::CPUBuffer;
+
 pub mod div;
 pub mod minus;
 pub mod plus;
@@ -5,54 +7,54 @@ pub mod times;
 
 pub(super) fn zip_with_d0_to_d1<F: Fn(f32, f32) -> f32>(
     x: f32,
-    y: &[f32],
-    result: &mut[f32],
+    y: &CPUBuffer,
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(y.len() == result.len());
+    assert!(y.count() == result.count());
     for (i, &value) in y.iter().enumerate() {
         result[i] = block(x, value);
     }
 }
 
 pub(super) fn zip_with_d1_to_d0<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
+    x: &CPUBuffer,
     y: f32,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == result.len());
+    assert!(x.count() == result.count());
     for (i, &value) in x.iter().enumerate() {
         result[i] = block(value, y);
     }
 }
 
 pub(super) fn zip_with_d1_to_d1<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
-    y: &[f32],
-    result: &mut[f32],
+    x: &CPUBuffer,
+    y: &CPUBuffer,
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == y.len());
-    assert!(x.len() == result.len());
+    assert!(x.count() == y.count());
+    assert!(x.count() == result.count());
     for (i, value) in result.iter_mut().enumerate() {
         *value = block(x[i], y[i]);
     }
 }
 
 pub(super) fn zip_with_d1_to_d2<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
-    y: &[f32], yi: usize, yj: usize,
+    x: &CPUBuffer,
+    y: &CPUBuffer, yi: usize, yj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(y.len() == yi * yj);
-    assert!(result.len() == yi * yj);
+    assert!(y.count() == yi * yj);
+    assert!(result.count() == yi * yj);
 
     match axis {
         0 => {
-            assert!(x.len() == yi);
+            assert!(x.count() == yi);
             for i in 0..yi {
                 let x_value = x[i];
                 let y_i = i * yj;
@@ -63,7 +65,7 @@ pub(super) fn zip_with_d1_to_d2<F: Fn(f32, f32) -> f32>(
             }
         }
         1 => {
-            assert!(x.len() == yj);
+            assert!(x.count() == yj);
             for i in 0..yi {
                 let y_i = i * yj;
                 for j in 0..yj {
@@ -77,18 +79,18 @@ pub(super) fn zip_with_d1_to_d2<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d1_to_d3<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
-    y: &[f32], yi: usize, yj: usize, yk: usize,
+    x: &CPUBuffer,
+    y: &CPUBuffer, yi: usize, yj: usize, yk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(y.len() == yi * yj * yk);
-    assert!(result.len() == yi * yj * yk);
+    assert!(y.count() == yi * yj * yk);
+    assert!(result.count() == yi * yj * yk);
 
     match axis {
         0 => {
-            assert!(x.len() == yi);
+            assert!(x.count() == yi);
             for i in 0..yi {
                 let x_value = x[i];
                 let y_i = i * yj;
@@ -102,7 +104,7 @@ pub(super) fn zip_with_d1_to_d3<F: Fn(f32, f32) -> f32>(
             }
         }
         1 => {
-            assert!(x.len() == yj);
+            assert!(x.count() == yj);
             for i in 0..yi {
                 let y_i = i * yj;
                 for j in 0..yj {
@@ -116,7 +118,7 @@ pub(super) fn zip_with_d1_to_d3<F: Fn(f32, f32) -> f32>(
             }
         }
         2 => {
-            assert!(x.len() == yk);
+            assert!(x.count() == yk);
             for i in 0..yi {
                 let y_i = i * yj;
                 for j in 0..yj {
@@ -133,18 +135,18 @@ pub(super) fn zip_with_d1_to_d3<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d2_to_d1<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize,
-    y: &[f32],
+    x: &CPUBuffer, xi: usize, xj: usize,
+    y: &CPUBuffer,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj);
-    assert!(result.len() == xi * xj);
+    assert!(x.count() == xi * xj);
+    assert!(result.count() == xi * xj);
 
     match axis {
         0 => {
-            assert!(xi == y.len());
+            assert!(xi == y.count());
             for i in 0..xi {
                 let y_value = y[i];
                 let x_i = i * xj;
@@ -155,7 +157,7 @@ pub(super) fn zip_with_d2_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         1 => {
-            assert!(xj == y.len());
+            assert!(xj == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -169,15 +171,15 @@ pub(super) fn zip_with_d2_to_d1<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d2_to_d3<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize,
-    y: &[f32], yi: usize, yj: usize, yk: usize,
+    x: &CPUBuffer, xi: usize, xj: usize,
+    y: &CPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj);
-    assert!(y.len() == yi * yj * yk);
-    assert!(result.len() == yi * yj * yk);
+    assert!(x.count() == xi * xj);
+    assert!(y.count() == yi * yj * yk);
+    assert!(result.count() == yi * yj * yk);
 
     match (axis1, axis2) {
         (0, 1) => {
@@ -228,18 +230,18 @@ pub(super) fn zip_with_d2_to_d3<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d3_to_d1<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize,
-    y: &[f32],
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize,
+    y: &CPUBuffer,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
-    assert!(result.len() == xi * xj * xk);
+    assert!(x.count() == xi * xj * xk);
+    assert!(result.count() == xi * xj * xk);
 
     match axis {
         0 => {
-            assert!(xi == y.len());
+            assert!(xi == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 let y_value = y[i];
@@ -253,7 +255,7 @@ pub(super) fn zip_with_d3_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         1 => {
-            assert!(xj == y.len());
+            assert!(xj == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -267,7 +269,7 @@ pub(super) fn zip_with_d3_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         2 => {
-            assert!(xk == y.len());
+            assert!(xk == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -284,15 +286,15 @@ pub(super) fn zip_with_d3_to_d1<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d3_to_d2<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize,
-    y: &[f32], yi: usize, yj: usize,
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize,
+    y: &CPUBuffer, yi: usize, yj: usize,
     axis1: usize, axis2: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
-    assert!(y.len() == yi * yj);
-    assert!(result.len() == xi * xj * xk);
+    assert!(x.count() == xi * xj * xk);
+    assert!(y.count() == yi * yj);
+    assert!(result.count() == xi * xj * xk);
 
     match (axis1, axis2) {
         (0, 1) => {
@@ -343,15 +345,15 @@ pub(super) fn zip_with_d3_to_d2<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d3_to_d4<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize,
-    y: &[f32], yi: usize, yj: usize, yk: usize, yl: usize,
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize,
+    y: &CPUBuffer, yi: usize, yj: usize, yk: usize, yl: usize,
     axis1: usize, axis2: usize, axis3: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
-    assert!(y.len() == yi * yj * yk * yl);
-    assert!(result.len() == yi * yj * yk * yl);
+    assert!(x.count() == xi * xj * xk);
+    assert!(y.count() == yi * yj * yk * yl);
+    assert!(result.count() == yi * yj * yk * yl);
 
     match (axis1, axis2, axis3) {
         (0, 1, 2) => {
@@ -432,18 +434,18 @@ pub(super) fn zip_with_d3_to_d4<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d4_to_d1<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &[f32],
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
+    y: &CPUBuffer,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk * xl);
-    assert!(result.len() == xi * xj * xk * xl);
+    assert!(x.count() == xi * xj * xk * xl);
+    assert!(result.count() == xi * xj * xk * xl);
 
     match axis {
         0 => {
-            assert!(xi == y.len());
+            assert!(xi == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 let y_value = y[i];
@@ -460,7 +462,7 @@ pub(super) fn zip_with_d4_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         1 => {
-            assert!(xj == y.len());
+            assert!(xj == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -477,7 +479,7 @@ pub(super) fn zip_with_d4_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         2 => {
-            assert!(xk == y.len());
+            assert!(xk == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -494,7 +496,7 @@ pub(super) fn zip_with_d4_to_d1<F: Fn(f32, f32) -> f32>(
             }
         }
         3 => {
-            assert!(xl == y.len());
+            assert!(xl == y.count());
             for i in 0..xi {
                 let x_i = i * xj;
                 for j in 0..xj {
@@ -514,15 +516,15 @@ pub(super) fn zip_with_d4_to_d1<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d4_to_d2<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &[f32], yi: usize, yj: usize,
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
+    y: &CPUBuffer, yi: usize, yj: usize,
     axis1: usize, axis2: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk * xl);
-    assert!(y.len() == yi * yj);
-    assert!(result.len() == xi * xj * xk * xl);
+    assert!(x.count() == xi * xj * xk * xl);
+    assert!(y.count() == yi * yj);
+    assert!(result.count() == xi * xj * xk * xl);
 
     match (axis1, axis2) {
         (0, 1) => {
@@ -635,15 +637,15 @@ pub(super) fn zip_with_d4_to_d2<F: Fn(f32, f32) -> f32>(
 }
 
 pub(super) fn zip_with_d4_to_d3<F: Fn(f32, f32) -> f32>(
-    x: &[f32], xi: usize, xj: usize, xk: usize, xl: usize,
-    y: &[f32], yi: usize, yj: usize, yk: usize,
+    x: &CPUBuffer, xi: usize, xj: usize, xk: usize, xl: usize,
+    y: &CPUBuffer, yi: usize, yj: usize, yk: usize,
     axis1: usize, axis2: usize, axis3: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk * xl);
-    assert!(y.len() == yi * yj * yk);
-    assert!(result.len() == xi * xj * xk * xl);
+    assert!(x.count() == xi * xj * xk * xl);
+    assert!(y.count() == yi * yj * yk);
+    assert!(result.count() == xi * xj * xk * xl);
 
     match (axis1, axis2, axis3) {
         (0, 1, 2) => {

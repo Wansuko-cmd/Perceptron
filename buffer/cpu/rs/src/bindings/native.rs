@@ -1,3 +1,4 @@
+pub mod buffer;
 pub mod elementwise;
 pub mod index;
 pub mod linalg;

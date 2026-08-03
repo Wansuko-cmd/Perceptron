@@ -2,29 +2,30 @@
 #define MAT_MUL_NATIVE_H
 
 #include <stdbool.h>
+#include "buffer_native.h"
 
-void com_wsr_cpu_inner(float* x, float* y, int size, int b, float* result);
+void com_wsr_cpu_inner(const CPUBuffer* x, const CPUBuffer* y, int b, CPUBuffer* result);
 
 void com_wsr_cpu_mat_mul_d1_to_d2(
-    const float* x,
-    const float* y, bool trans_y,
+    const CPUBuffer* x,
+    const CPUBuffer* y, bool trans_y,
     int n, int k,
-    float* result
+    CPUBuffer* result
 );
 
 void com_wsr_cpu_mat_mul_d2_to_d1(
-    const float* x, bool trans_x,
-    const float* y,
+    const CPUBuffer* x, bool trans_x,
+    const CPUBuffer* y,
     int m, int k,
-    float* result
+    CPUBuffer* result
 );
 
 void com_wsr_cpu_mat_mul_d2_to_d2(
-    float* x, bool trans_x,
-    float* y, bool trans_y,
+    const CPUBuffer* x, bool trans_x,
+    const CPUBuffer* y, bool trans_y,
     int m, int n, int k,
     int b,
-    float* result
+    CPUBuffer* result
 );
 
 #endif

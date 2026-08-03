@@ -1,4 +1,6 @@
-﻿pub fn transpose_d2(x: &[f32], xi: usize, xj: usize, result: &mut [f32]) {
+use crate::resource::buffer::CPUBuffer;
+
+pub fn transpose_d2(x: &CPUBuffer, xi: usize, xj: usize, result: &mut CPUBuffer) {
     let mut result_iter = result.iter_mut();
 
     for n_i in 0..xj {
@@ -11,10 +13,10 @@
 }
 
 pub fn transpose_d3(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis_i: usize, axis_j: usize, axis_k: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let old_shape = [xi, xj, xk];
     let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k]];
@@ -39,10 +41,10 @@ pub fn transpose_d3(
 }
 
 pub fn transpose_d4(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize, xl: usize,
     axis_i: usize, axis_j: usize, axis_k: usize, axis_l: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let old_shape = [xi, xj, xk, xl];
     let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k], old_shape[axis_l]];
@@ -70,10 +72,10 @@ pub fn transpose_d4(
 }
 
 pub fn transpose_d5(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize, xl: usize, xm: usize,
     axis_i: usize, axis_j: usize, axis_k: usize, axis_l: usize, axis_m: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let old_shape = [xi, xj, xk, xl, xm];
     let new_shape = [old_shape[axis_i], old_shape[axis_j], old_shape[axis_k], old_shape[axis_l], old_shape[axis_m]];
@@ -103,11 +105,11 @@ pub fn transpose_d5(
     }
 }
 
-pub fn slice_d1(x: &[f32], start: usize, end: usize, step: isize, result: &mut [f32]) {
+pub fn slice_d1(x: &CPUBuffer, start: usize, end: usize, step: isize, result: &mut CPUBuffer) {
     match step {
         0 => panic!("invalid parameter. [step: {}]", step),
         1 => {
-            let size = result.len().min(end - start + 1);
+            let size = result.count().min(end - start + 1);
             result[..size].copy_from_slice(&x[start..start + size]);
         }
         _ => {
@@ -119,7 +121,7 @@ pub fn slice_d1(x: &[f32], start: usize, end: usize, step: isize, result: &mut [
     }
 }
 
-pub fn slice_d2(x: &[f32], xi: usize, xj: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut [f32]) {
+pub fn slice_d2(x: &CPUBuffer, xi: usize, xj: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut CPUBuffer) {
     match step {
         0 => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
         _ => {
@@ -149,7 +151,7 @@ pub fn slice_d2(x: &[f32], xi: usize, xj: usize, axis: usize, start: usize, end:
     }
 }
 
-pub fn slice_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut [f32]) {
+pub fn slice_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, start: usize, end: usize, step: isize, result: &mut CPUBuffer) {
     match axis {
         0 => slice_d2(x, xi, xj * xk, 0, start, end, step, result),
         1 => {
@@ -170,11 +172,11 @@ pub fn slice_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, start: 
     }
 }
 
-pub fn copy_into_d1(x: &[f32], result: &mut [f32], start: usize, end: usize, step: isize) {
+pub fn copy_into_d1(x: &CPUBuffer, result: &mut CPUBuffer, start: usize, end: usize, step: isize) {
     match step {
         0 => panic!("invalid parameter. [step: {}]", step),
         1 => {
-            let size = x.len().min(end - start + 1);
+            let size = x.count().min(end - start + 1);
             result[start..start + size].copy_from_slice(&x[..size]);
         }
         _ => {
@@ -186,7 +188,7 @@ pub fn copy_into_d1(x: &[f32], result: &mut [f32], start: usize, end: usize, ste
     }
 }
 
-pub fn copy_into_d2(x: &[f32], result: &mut [f32], ri: usize, rj: usize, axis: usize, start: usize, end: usize, step: isize) {
+pub fn copy_into_d2(x: &CPUBuffer, result: &mut CPUBuffer, ri: usize, rj: usize, axis: usize, start: usize, end: usize, step: isize) {
     match step {
         0 => panic!("invalid parameter. [axis: {}, step: {}]", axis, step),
         _ => {
@@ -216,7 +218,7 @@ pub fn copy_into_d2(x: &[f32], result: &mut [f32], ri: usize, rj: usize, axis: u
     }
 }
 
-pub fn copy_into_d3(x: &[f32], result: &mut [f32], ri: usize, rj: usize, rk: usize, axis: usize, start: usize, end: usize, step: isize) {
+pub fn copy_into_d3(x: &CPUBuffer, result: &mut CPUBuffer, ri: usize, rj: usize, rk: usize, axis: usize, start: usize, end: usize, step: isize) {
     match axis {
         0 => copy_into_d2(x, result, ri, rj * rk, 0, start, end, step),
         1 => {
@@ -249,7 +251,7 @@ fn create_indices(start: usize, end: usize, step: isize) -> Vec<usize> {
     }
 }
 
-pub fn unfold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize) {
+pub fn unfold_d1(x: &CPUBuffer, result: &mut CPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize) {
     let window_size = (window - 1) * dilation + 1;
     let oj = (xj + padding * 2 - window_size) / stride + 1;
     for xb in 0..b {
@@ -270,8 +272,8 @@ pub fn unfold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, b: usize, 
 }
 
 pub fn unfold_d2(
-    x: &[f32],
-    result: &mut [f32],
+    x: &CPUBuffer,
+    result: &mut CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     b: usize,
     window: usize, stride: usize, dilation: usize, padding: usize,
@@ -303,7 +305,7 @@ pub fn unfold_d2(
     }
 }
 
-pub fn fold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, xk: usize, b: usize, stride: usize, dilation: usize, padding: usize) {
+pub fn fold_d1(x: &CPUBuffer, result: &mut CPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, dilation: usize, padding: usize) {
     let window_size = (xk - 1) * dilation + 1;
     let oj = window_size + (xj - 1) * stride - padding * 2;
     for xb in 0..b {
@@ -324,8 +326,8 @@ pub fn fold_d1(x: &[f32], result: &mut [f32], xi: usize, xj: usize, xk: usize, b
 }
 
 pub fn fold_d2(
-    x: &[f32],
-    result: &mut [f32],
+    x: &CPUBuffer,
+    result: &mut CPUBuffer,
     xi: usize, xj: usize, xk: usize, xl: usize,
     b: usize,
     stride: usize, dilation: usize, padding: usize,
@@ -357,7 +359,7 @@ pub fn fold_d2(
     }
 }
 
-pub fn flip_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, result: &mut [f32]) {
+pub fn flip_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, result: &mut CPUBuffer) {
     for i in 0..xi {
         for j in 0..xj {
             for k in 0..xk {

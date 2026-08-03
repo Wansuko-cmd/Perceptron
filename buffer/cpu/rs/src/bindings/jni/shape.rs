@@ -3,6 +3,7 @@ use jni::objects::JClass;
 use jni::sys::{jint, jlong};
 
 use crate::ops::shape;
+use crate::resource::buffer::CPUBuffer;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD2(
@@ -12,8 +13,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD2(
     xi: jint, xj: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::transpose_d2(x, xi as usize, xj as usize, result);
 }
 
@@ -26,8 +27,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD3(
     axis_i: jint, axis_j: jint, axis_k: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::transpose_d3(
         x,
         xi as usize, xj as usize, xk as usize,
@@ -45,8 +46,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD4(
     axis_i: jint, axis_j: jint, axis_k: jint, axis_l: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::transpose_d4(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize,
@@ -64,8 +65,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_transposeD5(
     axis_i: jint, axis_j: jint, axis_k: jint, axis_l: jint, axis_m: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::transpose_d5(
         x,
         xi as usize, xj as usize, xk as usize, xl as usize, xm as usize,
@@ -82,8 +83,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD1(
     start: jint, end: jint, step: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::slice_d1(x, start as usize, end as usize, step as isize, result);
 }
 
@@ -96,8 +97,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD2(
     start: jint, end: jint, step: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::slice_d2(x, xi as usize, xj as usize, axis as usize, start as usize, end as usize, step as isize, result);
 }
 
@@ -110,8 +111,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_sliceD3(
     start: jint, end: jint, step: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::slice_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, start as usize, end as usize, step as isize, result);
 }
 
@@ -123,8 +124,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD1(
     result: jlong,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::copy_into_d1(x, result, start as usize, end as usize, step as isize);
 }
 
@@ -137,8 +138,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD2(
     ri: jint, rj: jint, axis: jint,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::copy_into_d2(x, result, ri as usize, rj as usize, axis as usize, start as usize, end as usize, step as isize);
 }
 
@@ -151,8 +152,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_copyIntoD3(
     ri: jint, rj: jint, rk: jint, axis: jint,
     start: jint, end: jint, step: jint,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::copy_into_d3(x, result, ri as usize, rj as usize, rk as usize, axis as usize, start as usize, end as usize, step as isize);
 }
 
@@ -166,8 +167,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD1(
     window: jint, stride: jint, dilation: jint, padding: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::unfold_d1(x, result, xi as usize, xj as usize, b as usize, window as usize, stride as usize, dilation as usize, padding as usize);
 }
 
@@ -181,8 +182,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_unfoldD2(
     window: jint, stride: jint, dilation: jint, padding: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::unfold_d2(x, result, xi as usize, xj as usize, xk as usize, b as usize, window as usize, stride as usize, dilation as usize, padding as usize);
 }
 
@@ -196,8 +197,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD1(
     stride: jint, dilation: jint, padding: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::fold_d1(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 
@@ -211,8 +212,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_foldD2(
     stride: jint, dilation: jint, padding: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::fold_d2(x, result, xi as usize, xj as usize, xk as usize, xl as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 
@@ -225,7 +226,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_shape_JShape_flipD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     shape::flip_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }

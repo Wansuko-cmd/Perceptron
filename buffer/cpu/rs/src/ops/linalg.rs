@@ -1,9 +1,11 @@
 use matrixmultiply::sgemm;
 use rayon::prelude::*;
 
-pub fn inner(x: &[f32], y: &[f32], b: usize, result: &mut[f32]) {
-    assert_eq!(x.len(), y.len());
-    let n = x.len() / b;
+use crate::resource::buffer::CPUBuffer;
+
+pub fn inner(x: &CPUBuffer, y: &CPUBuffer, b: usize, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), y.count());
+    let n = x.count() / b;
     for i in 0..b {
         let x_ptr = &x[i * n..(i + 1) * n];
         let y_ptr = &y[i * n..(i + 1) * n];
@@ -13,12 +15,12 @@ pub fn inner(x: &[f32], y: &[f32], b: usize, result: &mut[f32]) {
 }
 
 pub fn mat_mul_d1_to_d2(
-    x: &[f32],
-    y: &[f32],
+    x: &CPUBuffer,
+    y: &CPUBuffer,
     trans_y: bool,
     n: usize,
     k: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let m = 1;
 
@@ -46,12 +48,12 @@ pub fn mat_mul_d1_to_d2(
 }
 
 pub fn mat_mul_d2_to_d1(
-    x: &[f32],
+    x: &CPUBuffer,
     trans_x: bool,
-    y: &[f32],
+    y: &CPUBuffer,
     m: usize,
     k: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let n = 1;
 
@@ -79,15 +81,15 @@ pub fn mat_mul_d2_to_d1(
 }
 
 pub fn mat_mul_d2_to_d2(
-    x: &[f32],
+    x: &CPUBuffer,
     trans_x: bool,
-    y: &[f32],
+    y: &CPUBuffer,
     trans_y: bool,
     m: usize,
     n: usize,
     k: usize,
     _b: usize,
-    result: &mut [f32],
+    result: &mut CPUBuffer,
 ) {
     let stride_a = m * k;
     let stride_b = k * n;
