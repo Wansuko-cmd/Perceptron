@@ -28,7 +28,7 @@ kotlin {
     hostTarget.compilations.getByName("main") {
         cinterops {
             val lib by creating {
-                val headersDir = "$projectDir/rs/src/native/headers"
+                val headersDir = "$projectDir/rs/src/bindings/native/headers"
                 headers(
                     "$headersDir/compare_native.h",
                     "$headersDir/generator_native.h",
