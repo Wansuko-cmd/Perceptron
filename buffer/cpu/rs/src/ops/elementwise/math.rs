@@ -15,35 +15,35 @@ const MAGIC: f32 = 12_582_912.0;
 
 pub fn exp_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
+    for (&val, res) in x.iter().zip(result.iter_mut()) {
         *res = exp(val);
     }
 }
 
 pub fn ln_d1(x: &CPUBuffer, e: f32, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
+    for (&val, res) in x.iter().zip(result.iter_mut()) {
         *res = (val + e).ln();
     }
 }
 
 pub fn sigmoid_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
+    for (&val, res) in x.iter().zip(result.iter_mut()) {
         *res = 1f32 / (1f32 + exp(-val));
     }
 }
 
 pub fn pow_d1(x: &CPUBuffer, n: i32, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
+    for (&val, res) in x.iter().zip(result.iter_mut()) {
         *res = val.powi(n);
     }
 }
 
 pub fn sqrt_d1(x: &CPUBuffer, e: f32, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
+    for (&val, res) in x.iter().zip(result.iter_mut()) {
         *res = (val + e).sqrt();
     }
 }

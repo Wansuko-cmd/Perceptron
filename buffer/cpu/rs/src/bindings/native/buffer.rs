@@ -32,5 +32,5 @@ pub extern "C" fn com_wsr_cpu_buffer_set(ptr: *mut CPUBuffer, index: i32, value:
 pub extern "C" fn com_wsr_cpu_buffer_read_all(ptr: *const CPUBuffer, result: *mut f32) {
     let buffer = unsafe { &*ptr };
     let out = unsafe { std::slice::from_raw_parts_mut(result, buffer.count()) };
-    out.copy_from_slice(&buffer.value);
+    out.copy_from_slice(buffer);
 }

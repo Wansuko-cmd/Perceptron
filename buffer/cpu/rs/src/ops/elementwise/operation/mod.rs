@@ -12,7 +12,7 @@ pub(super) fn zip_with_d0_to_d1<F: Fn(f32, f32) -> f32>(
     block: F,
 ) {
     assert!(y.count() == result.count());
-    for (i, &value) in y.value.iter().enumerate() {
+    for (i, &value) in y.iter().enumerate() {
         result[i] = block(x, value);
     }
 }
@@ -24,7 +24,7 @@ pub(super) fn zip_with_d1_to_d0<F: Fn(f32, f32) -> f32>(
     block: F,
 ) {
     assert!(x.count() == result.count());
-    for (i, &value) in x.value.iter().enumerate() {
+    for (i, &value) in x.iter().enumerate() {
         result[i] = block(value, y);
     }
 }
@@ -37,7 +37,7 @@ pub(super) fn zip_with_d1_to_d1<F: Fn(f32, f32) -> f32>(
 ) {
     assert!(x.count() == y.count());
     assert!(x.count() == result.count());
-    for (i, value) in result.value.iter_mut().enumerate() {
+    for (i, value) in result.iter_mut().enumerate() {
         *value = block(x[i], y[i]);
     }
 }

@@ -7,8 +7,8 @@ pub fn inner(x: &CPUBuffer, y: &CPUBuffer, b: usize, result: &mut CPUBuffer) {
     assert_eq!(x.count(), y.count());
     let n = x.count() / b;
     for i in 0..b {
-        let x_ptr = &x.value[i * n..(i + 1) * n];
-        let y_ptr = &y.value[i * n..(i + 1) * n];
+        let x_ptr = &x[i * n..(i + 1) * n];
+        let y_ptr = &y[i * n..(i + 1) * n];
 
         result[i] = x_ptr.iter().zip(y_ptr).map(|(a, b)| a * b).sum();
     }
@@ -39,10 +39,10 @@ pub fn mat_mul_d1_to_d2(
         sgemm(
             m, k, n,
             1.0,
-            x.value.as_ptr(), rsa, csa,
-            y.value.as_ptr(), rsb, csb,
+            x.as_ptr(), rsa, csa,
+            y.as_ptr(), rsb, csb,
             0.0,
-            result.value.as_mut_ptr(), rsc, csc,
+            result.as_mut_ptr(), rsc, csc,
         );
     }
 }
@@ -72,10 +72,10 @@ pub fn mat_mul_d2_to_d1(
         sgemm(
             m, k, n,
             1.0,
-            x.value.as_ptr(), rsa, csa,
-            y.value.as_ptr(), rsb, csb,
+            x.as_ptr(), rsa, csa,
+            y.as_ptr(), rsb, csb,
             0.0,
-            result.value.as_mut_ptr(), rsc, csc,
+            result.as_mut_ptr(), rsc, csc,
         );
     }
 }
@@ -106,11 +106,11 @@ pub fn mat_mul_d2_to_d2(
     let rsc = n as isize;
     let csc = 1;
 
-    result.value.par_chunks_mut(stride_c)
+    result.par_chunks_mut(stride_c)
         .enumerate()
         .for_each(|(i, c_ptr)| {
-            let a_ptr = &x.value[i * stride_a..];
-            let b_ptr = &y.value[i * stride_b..];
+            let a_ptr = &x[i * stride_a..];
+            let b_ptr = &y[i * stride_b..];
 
             unsafe {
                 sgemm(

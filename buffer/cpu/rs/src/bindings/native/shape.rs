@@ -155,7 +155,7 @@ pub extern "C" fn com_wsr_cpu_fold_d1(
 ) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result.value.fill(0.0);
+    result.fill(0.0);
     shape::fold_d1(x, result, xi as usize, xj as usize, xk as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 
@@ -169,7 +169,7 @@ pub extern "C" fn com_wsr_cpu_fold_d2(
 ) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result.value.fill(0.0);
+    result.fill(0.0);
     shape::fold_d2(x, result, xi as usize, xj as usize, xk as usize, xl as usize, b as usize, stride as usize, dilation as usize, padding as usize);
 }
 

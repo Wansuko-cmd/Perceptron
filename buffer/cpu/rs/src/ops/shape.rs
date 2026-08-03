@@ -1,7 +1,7 @@
 use crate::resource::buffer::CPUBuffer;
 
 pub fn transpose_d2(x: &CPUBuffer, xi: usize, xj: usize, result: &mut CPUBuffer) {
-    let mut result_iter = result.value.iter_mut();
+    let mut result_iter = result.iter_mut();
 
     for n_i in 0..xj {
         for index in (n_i..n_i + xi * xj).step_by(xj) {
@@ -27,7 +27,7 @@ pub fn transpose_d3(
     let nj_stride = old_strides[axis_j];
     let nk_stride = old_strides[axis_k];
 
-    let mut result_iter = result.value.iter_mut();
+    let mut result_iter = result.iter_mut();
 
     for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
         for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
@@ -56,7 +56,7 @@ pub fn transpose_d4(
     let nk_stride = old_strides[axis_k];
     let nl_stride = old_strides[axis_l];
 
-    let mut result_iter = result.value.iter_mut();
+    let mut result_iter = result.iter_mut();
 
     for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
         for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
@@ -88,7 +88,7 @@ pub fn transpose_d5(
     let nl_stride = old_strides[axis_l];
     let nm_stride = old_strides[axis_m];
 
-    let mut result_iter = result.value.iter_mut();
+    let mut result_iter = result.iter_mut();
 
     for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
         for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
@@ -110,11 +110,11 @@ pub fn slice_d1(x: &CPUBuffer, start: usize, end: usize, step: isize, result: &m
         0 => panic!("invalid parameter. [step: {}]", step),
         1 => {
             let size = result.count().min(end - start + 1);
-            result.value[..size].copy_from_slice(&x.value[start..start + size]);
+            result[..size].copy_from_slice(&x[start..start + size]);
         }
         _ => {
             let indices = create_indices(start, end, step);
-            for (i, res) in indices.iter().zip(result.value.iter_mut()) {
+            for (i, res) in indices.iter().zip(result.iter_mut()) {
                 *res = x[*i];
             }
         }
@@ -131,7 +131,7 @@ pub fn slice_d2(x: &CPUBuffer, xi: usize, xj: usize, axis: usize, start: usize, 
                     for (r_i, &x_i) in indices.iter().enumerate() {
                         let x_offset = x_i * xj;
                         let result_offset = r_i * xj;
-                        result.value[result_offset..result_offset + xj].copy_from_slice(&x.value[x_offset..x_offset + xj]);
+                        result[result_offset..result_offset + xj].copy_from_slice(&x[x_offset..x_offset + xj]);
                     }
                 }
                 1 => {
@@ -163,7 +163,7 @@ pub fn slice_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, sta
                 for (r_i, &x_i) in indices.iter().enumerate() {
                     let x_offset = xii + x_i * xk;
                     let result_offset = rii + r_i * xk;
-                    result.value[result_offset..result_offset + xk].copy_from_slice(&x.value[x_offset..x_offset + xk]);
+                    result[result_offset..result_offset + xk].copy_from_slice(&x[x_offset..x_offset + xk]);
                 }
             }
         }
@@ -177,11 +177,11 @@ pub fn copy_into_d1(x: &CPUBuffer, result: &mut CPUBuffer, start: usize, end: us
         0 => panic!("invalid parameter. [step: {}]", step),
         1 => {
             let size = x.count().min(end - start + 1);
-            result.value[start..start + size].copy_from_slice(&x.value[..size]);
+            result[start..start + size].copy_from_slice(&x[..size]);
         }
         _ => {
             let indices = create_indices(start, end, step);
-            for (&i, x_val) in indices.iter().zip(x.value.iter()) {
+            for (&i, x_val) in indices.iter().zip(x.iter()) {
                 result[i] = *x_val;
             }
         }
@@ -198,7 +198,7 @@ pub fn copy_into_d2(x: &CPUBuffer, result: &mut CPUBuffer, ri: usize, rj: usize,
                     for (x_i, &r_i) in indices.iter().enumerate() {
                         let x_offset = x_i * rj;
                         let result_offset = r_i * rj;
-                        result.value[result_offset..result_offset + rj].copy_from_slice(&x.value[x_offset..x_offset + rj]);
+                        result[result_offset..result_offset + rj].copy_from_slice(&x[x_offset..x_offset + rj]);
                     }
                 }
                 1 => {
@@ -230,7 +230,7 @@ pub fn copy_into_d3(x: &CPUBuffer, result: &mut CPUBuffer, ri: usize, rj: usize,
                 for (x_i, &r_i) in indices.iter().enumerate() {
                     let x_offset = xii + x_i * rk;
                     let result_offset = rii + r_i * rk;
-                    result.value[result_offset..result_offset + rk].copy_from_slice(&x.value[x_offset..x_offset + rk]);
+                    result[result_offset..result_offset + rk].copy_from_slice(&x[x_offset..x_offset + rk]);
                 }
             }
         }

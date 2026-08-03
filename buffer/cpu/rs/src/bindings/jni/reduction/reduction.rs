@@ -14,7 +14,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_averageD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::average_d1(&x.value);
+    result[0] = reduction::average_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -52,7 +52,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::max_d1(&x.value);
+    result[0] = reduction::max_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -90,7 +90,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_minD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::min_d1(&x.value);
+    result[0] = reduction::min_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -128,7 +128,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_sumD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::sum_d1(&x.value);
+    result[0] = reduction::sum_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -166,7 +166,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxIndexD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::max_index_d1(&x.value) as f32;
+    result[0] = reduction::max_index_d1(x) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -206,7 +206,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topKD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::top_k_d1(&x.value, k as usize, seed as u64) as f32;
+    result[0] = reduction::top_k_d1(x, k as usize, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -250,7 +250,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topPD1(
 ) {
     let x = unsafe { &*(x as *const CPUBuffer) };
     let result = unsafe { &mut *(result as *mut CPUBuffer) };
-    result[0] = reduction::top_p_d1(&x.value, p as f32, seed as u64) as f32;
+    result[0] = reduction::top_p_d1(x, p as f32, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]

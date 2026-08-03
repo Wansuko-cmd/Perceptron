@@ -5,7 +5,7 @@ use crate::resource::buffer::CPUBuffer;
 pub extern "C" fn com_wsr_cpu_average_d1(x: *const CPUBuffer, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::average_d1(&x.value);
+    result[0] = reduction::average_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -26,7 +26,7 @@ pub extern "C" fn com_wsr_cpu_average_d3(x: *const CPUBuffer, xi: i32, xj: i32, 
 pub extern "C" fn com_wsr_cpu_max_d1(x: *const CPUBuffer, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::max_d1(&x.value);
+    result[0] = reduction::max_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -47,7 +47,7 @@ pub extern "C" fn com_wsr_cpu_max_d3(x: *const CPUBuffer, xi: i32, xj: i32, xk: 
 pub extern "C" fn com_wsr_cpu_min_d1(x: *const CPUBuffer, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::min_d1(&x.value);
+    result[0] = reduction::min_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -68,7 +68,7 @@ pub extern "C" fn com_wsr_cpu_min_d3(x: *const CPUBuffer, xi: i32, xj: i32, xk: 
 pub extern "C" fn com_wsr_cpu_sum_d1(x: *const CPUBuffer, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::sum_d1(&x.value);
+    result[0] = reduction::sum_d1(x);
 }
 
 #[unsafe(no_mangle)]
@@ -89,7 +89,7 @@ pub extern "C" fn com_wsr_cpu_sum_d3(x: *const CPUBuffer, xi: i32, xj: i32, xk: 
 pub extern "C" fn com_wsr_cpu_max_index_d1(x: *const CPUBuffer, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::max_index_d1(&x.value) as f32;
+    result[0] = reduction::max_index_d1(x) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -110,7 +110,7 @@ pub extern "C" fn com_wsr_cpu_max_index_d3(x: *const CPUBuffer, xi: i32, xj: i32
 pub extern "C" fn com_wsr_cpu_top_k_d1(x: *const CPUBuffer, k: i32, seed: i64, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::top_k_d1(&x.value, k as usize, seed as u64) as f32;
+    result[0] = reduction::top_k_d1(x, k as usize, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -131,7 +131,7 @@ pub extern "C" fn com_wsr_cpu_top_k_d3(x: *const CPUBuffer, xi: i32, xj: i32, xk
 pub extern "C" fn com_wsr_cpu_top_p_d1(x: *const CPUBuffer, p: f32, seed: i64, result: *mut CPUBuffer) {
     let x = unsafe { &*x };
     let result = unsafe { &mut *result };
-    result[0] = reduction::top_p_d1(&x.value, p, seed as u64) as f32;
+    result[0] = reduction::top_p_d1(x, p, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]

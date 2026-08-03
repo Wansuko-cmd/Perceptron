@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut};
+use std::ops::{Deref, DerefMut};
 
 pub struct CPUBuffer {
     pub value: Vec<f32>,
@@ -23,17 +23,17 @@ impl CPUBuffer {
     }
 }
 
-impl Index<usize> for CPUBuffer {
-    type Output = f32;
+impl Deref for CPUBuffer {
+    type Target = [f32];
 
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.value[index]
+    fn deref(&self) -> &[f32] {
+        &self.value
     }
 }
 
-impl IndexMut<usize> for CPUBuffer {
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.value[index]
+impl DerefMut for CPUBuffer {
+    fn deref_mut(&mut self) -> &mut [f32] {
+        &mut self.value
     }
 }
 
