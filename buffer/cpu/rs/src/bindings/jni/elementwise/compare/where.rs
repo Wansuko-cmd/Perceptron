@@ -3,6 +3,7 @@ use jni::objects::JClass;
 use jni::sys::{jfloat, jlong};
 
 use crate::ops::elementwise::compare::r#where;
+use crate::resource::buffer::CPUBuffer;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_whereD0ToD0(
@@ -13,8 +14,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_w
     y: jfloat,
     result: jlong,
 ) {
-    let condition = unsafe { crate::bindings::jni::buffer::as_slice(condition) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let condition = unsafe { &*(condition as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     r#where::where_d0_to_d0(condition, x, y, result);
 }
 
@@ -27,9 +28,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_w
     y: jlong,
     result: jlong,
 ) {
-    let condition = unsafe { crate::bindings::jni::buffer::as_slice(condition) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let condition = unsafe { &*(condition as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     r#where::where_d0_to_d1(condition, x, y, result);
 }
 
@@ -42,9 +43,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_w
     y: jfloat,
     result: jlong,
 ) {
-    let condition = unsafe { crate::bindings::jni::buffer::as_slice(condition) };
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let condition = unsafe { &*(condition as *const CPUBuffer) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     r#where::where_d1_to_d0(condition, x, y, result);
 }
 
@@ -57,9 +58,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_compare_where_JWhere_w
     y: jlong,
     result: jlong,
 ) {
-    let condition = unsafe { crate::bindings::jni::buffer::as_slice(condition) };
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let condition = unsafe { &*(condition as *const CPUBuffer) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     r#where::where_d1_to_d1(condition, x, y, result);
 }

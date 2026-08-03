@@ -1,14 +1,15 @@
 use crate::ops::shape::{transpose_d2, transpose_d3};
+use crate::resource::buffer::CPUBuffer;
 
 pub fn average_d1(x: &[f32]) -> f32 {
     return sum_d1(x) / x.len() as f32;
 }
 
 pub fn average_d2(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
     sum_d2(x, xi, xj, axis, result);
 
@@ -19,16 +20,16 @@ pub fn average_d2(
     };
 
     let inv = 1f32 / n as f32;
-    for res in result.iter_mut() {
+    for res in result.value.iter_mut() {
         *res *= inv;
     }
 }
 
 pub fn average_d3(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
     sum_d3(x, xi, xj, xk, axis, result);
 
@@ -40,7 +41,7 @@ pub fn average_d3(
     };
 
     let inv = 1f32 / n as f32;
-    for res in result.iter_mut() {
+    for res in result.value.iter_mut() {
         *res *= inv;
     }
 }
@@ -50,22 +51,22 @@ pub fn max_d1(x: &[f32]) -> f32 {
 }
 
 pub fn max_d2(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(f32::MIN);
+    result.value.fill(f32::MIN);
     reduce_d2(x, xi, xj, axis, result, |acc, i| acc.max(i));
 }
 
 pub fn max_d3(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(f32::MIN);
+    result.value.fill(f32::MIN);
     reduce_d3(x, xi, xj, xk, axis, result, |acc, i| acc.max(i));
 }
 
@@ -74,22 +75,22 @@ pub fn min_d1(x: &[f32]) -> f32 {
 }
 
 pub fn min_d2(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(f32::MAX);
+    result.value.fill(f32::MAX);
     reduce_d2(x, xi, xj, axis, result, |acc, i| acc.min(i));
 }
 
 pub fn min_d3(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(f32::MAX);
+    result.value.fill(f32::MAX);
     reduce_d3(x, xi, xj, xk, axis, result, |acc, i| acc.min(i));
 }
 
@@ -98,22 +99,22 @@ pub fn sum_d1(x: &[f32]) -> f32 {
 }
 
 pub fn sum_d2(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(0f32);
+    result.value.fill(0f32);
     reduce_d2(x, xi, xj, axis, result, |acc, i| acc + i);
 }
 
 pub fn sum_d3(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
 ) {
-    result.fill(0f32);
+    result.value.fill(0f32);
     reduce_d3(x, xi, xj, xk, axis, result, |acc, i| acc + i);
 }
 
@@ -124,11 +125,11 @@ pub fn max_index_d1(x: &[f32]) -> usize {
     return result.unwrap().1;
 }
 
-pub fn max_index_d2(x: &[f32], xi: usize, xj: usize, axis: usize, result: &mut[f32]) {
+pub fn max_index_d2(x: &CPUBuffer, xi: usize, xj: usize, axis: usize, result: &mut CPUBuffer) {
     reduce_index_d2(x, xi, xj, axis, result, |a| max_index_d1(a) as f32);
 }
 
-pub fn max_index_d3(x: &[f32], xi: usize, xj: usize, xk: usize, axis: usize, result: &mut[f32]) {
+pub fn max_index_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, result: &mut CPUBuffer) {
     reduce_index_d3(x, xi, xj, xk, axis, result, |a| max_index_d1(a) as f32);
 }
 
@@ -138,7 +139,7 @@ pub fn top_k_d1(x: &[f32], k: usize, seed: u64) -> usize {
     return random_index(&target[..k.min(target.len())], seed);
 }
 
-pub fn top_k_d2(x: &[f32], xi: usize, xj: usize, k: usize, axis: usize, result: &mut[f32], seed: u64) {
+pub fn top_k_d2(x: &CPUBuffer, xi: usize, xj: usize, k: usize, axis: usize, result: &mut CPUBuffer, seed: u64) {
     let mut count = 0u64;
     reduce_index_d2(x, xi, xj, axis, result, |slice| {
         let index = top_k_d1(slice, k, seed + count);
@@ -147,7 +148,7 @@ pub fn top_k_d2(x: &[f32], xi: usize, xj: usize, k: usize, axis: usize, result: 
     });
 }
 
-pub fn top_k_d3(x: &[f32], xi: usize, xj: usize, xk: usize, k: usize, axis: usize, result: &mut[f32], seed: u64) {
+pub fn top_k_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, k: usize, axis: usize, result: &mut CPUBuffer, seed: u64) {
     let mut count = 0u64;
     reduce_index_d3(x, xi, xj, xk, axis, result, |slice| {
         let index = top_k_d1(slice, k, seed + count);
@@ -172,7 +173,7 @@ pub fn top_p_d1(x: &[f32], p: f32, seed: u64) -> usize {
     return random_index(&nucleus, seed);
 }
 
-pub fn top_p_d2(x: &[f32], xi: usize, xj: usize, p: f32, axis: usize, result: &mut[f32], seed: u64) {
+pub fn top_p_d2(x: &CPUBuffer, xi: usize, xj: usize, p: f32, axis: usize, result: &mut CPUBuffer, seed: u64) {
     let mut count = 0u64;
     reduce_index_d2(x, xi, xj, axis, result, |slice| {
         let index = top_p_d1(slice, p, seed + count);
@@ -181,7 +182,7 @@ pub fn top_p_d2(x: &[f32], xi: usize, xj: usize, p: f32, axis: usize, result: &m
     });
 }
 
-pub fn top_p_d3(x: &[f32], xi: usize, xj: usize, xk: usize, p: f32, axis: usize, result: &mut[f32], seed: u64) {
+pub fn top_p_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, p: f32, axis: usize, result: &mut CPUBuffer, seed: u64) {
     let mut count = 0u64;
     reduce_index_d3(x, xi, xj, xk, axis, result, |slice| {
         let index = top_p_d1(slice, p, seed + count);
@@ -191,25 +192,25 @@ pub fn top_p_d3(x: &[f32], xi: usize, xj: usize, xk: usize, p: f32, axis: usize,
 }
 
 fn reduce_d2<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj);
+    assert!(x.count() == xi * xj);
     match axis {
         0 => {
-            assert_eq!(result.len(), xj);
-            for inner in x.chunks_exact(xj) {
-                for (res, &val) in result.iter_mut().zip(inner) {
+            assert_eq!(result.count(), xj);
+            for inner in x.value.chunks_exact(xj) {
+                for (res, &val) in result.value.iter_mut().zip(inner) {
                     *res = block(*res, val);
                 }
             }
         }
         1 => {
-            assert_eq!(result.len(), xi);
-            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xj)) {
+            assert_eq!(result.count(), xi);
+            for (res, outer) in result.value.iter_mut().zip(x.value.chunks_exact(xj)) {
                 *res = outer.iter().copied()
                     .fold(*res, |acc, i| block(acc, i));
             }
@@ -219,25 +220,25 @@ fn reduce_d2<F: Fn(f32, f32) -> f32>(
 }
 
 fn reduce_d3<F: Fn(f32, f32) -> f32>(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
+    assert!(x.count() == xi * xj * xk);
     match axis {
         0 => {
-            assert_eq!(result.len(), xj * xk);
-            for reduction in x.chunks_exact(xj * xk) {
-                 for (res, &val) in result.iter_mut().zip(reduction) {
+            assert_eq!(result.count(), xj * xk);
+            for reduction in x.value.chunks_exact(xj * xk) {
+                 for (res, &val) in result.value.iter_mut().zip(reduction) {
                     *res = block(*res, val);
                 }
             }
         }
         1 => {
-            assert_eq!(result.len(), xi * xk);
-            for (res_slice, outer) in result.chunks_exact_mut(xk).zip(x.chunks_exact(xj * xk)) {
+            assert_eq!(result.count(), xi * xk);
+            for (res_slice, outer) in result.value.chunks_exact_mut(xk).zip(x.value.chunks_exact(xj * xk)) {
                 for reduction in outer.chunks_exact(xk) {
                     for (res, &val) in res_slice.iter_mut().zip(reduction) {
                         *res = block(*res, val);
@@ -246,8 +247,8 @@ fn reduce_d3<F: Fn(f32, f32) -> f32>(
             }
         }
         2 => {
-            assert_eq!(result.len(), xi * xj);
-            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xk)) {
+            assert_eq!(result.count(), xi * xj);
+            for (res, outer) in result.value.iter_mut().zip(x.value.chunks_exact(xk)) {
                 *res = outer.iter().copied()
                     .fold(*res, |acc, i| block(acc, i));
             }
@@ -257,25 +258,25 @@ fn reduce_d3<F: Fn(f32, f32) -> f32>(
 }
 
 fn reduce_index_d2<F: FnMut(&[f32]) -> f32>(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     mut block: F,
 ) {
-    assert!(x.len() == xi * xj);
+    assert!(x.count() == xi * xj);
     match axis {
         0 => {
-            assert_eq!(result.len(), xj);
-            let mut tmp = vec![0f32; x.len()];
+            assert_eq!(result.count(), xj);
+            let mut tmp = CPUBuffer::create(x.count());
             transpose_d2(x, xi, xj, &mut tmp);
-            for (res, outer) in result.iter_mut().zip(tmp.chunks_exact(xi)) {
+            for (res, outer) in result.value.iter_mut().zip(tmp.value.chunks_exact(xi)) {
                 *res = block(outer);
             }
         }
         1 => {
-            assert_eq!(result.len(), xi);
-            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xj)) {
+            assert_eq!(result.count(), xi);
+            for (res, outer) in result.value.iter_mut().zip(x.value.chunks_exact(xj)) {
                 *res = block(outer);
             }
         }
@@ -284,20 +285,20 @@ fn reduce_index_d2<F: FnMut(&[f32]) -> f32>(
 }
 
 fn reduce_index_d3<F: FnMut(&[f32]) -> f32>(
-    x: &[f32],
+    x: &CPUBuffer,
     xi: usize, xj: usize, xk: usize,
     axis: usize,
-    result: &mut[f32],
+    result: &mut CPUBuffer,
     mut block: F,
 ) {
-    assert!(x.len() == xi * xj * xk);
+    assert!(x.count() == xi * xj * xk);
     match axis {
         0 => reduce_index_d2(x, xi, xj * xk, 0, result, block),
         1 => {
-            assert_eq!(result.len(), xi * xk);
-            let mut tmp = vec![0f32; x.len()];
+            assert_eq!(result.count(), xi * xk);
+            let mut tmp = CPUBuffer::create(x.count());
             transpose_d3(x, xi, xj, xk, 0, 2, 1, &mut tmp);
-            for (res, outer) in result.iter_mut().zip(tmp.chunks_exact(xj)) {
+            for (res, outer) in result.value.iter_mut().zip(tmp.value.chunks_exact(xj)) {
                 *res = block(outer);
             }
         }

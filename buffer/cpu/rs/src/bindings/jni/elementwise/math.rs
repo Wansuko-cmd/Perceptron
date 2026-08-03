@@ -3,6 +3,7 @@ use jni::objects::JClass;
 use jni::sys::{jfloat, jint, jlong};
 
 use crate::ops::elementwise::math;
+use crate::resource::buffer::CPUBuffer;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_exp(
@@ -11,8 +12,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_exp(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     math::exp_d1(x, result);
 }
 
@@ -24,8 +25,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_ln(
     e: jfloat,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     math::ln_d1(x, e as f32, result);
 }
 
@@ -36,8 +37,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_sigmoid(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     math::sigmoid_d1(x, result);
 }
 
@@ -49,8 +50,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_pow(
     n: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     math::pow_d1(x, n as i32, result);
 }
 
@@ -62,7 +63,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_math_JMath_sqrt(
     e: jfloat,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     math::sqrt_d1(x, e as f32, result);
 }

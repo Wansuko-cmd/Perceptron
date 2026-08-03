@@ -129,14 +129,14 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(y.size)
-        com_wsr_cpu_plus_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, y_size = y.size, result = result.buffer)
+        com_wsr_cpu_plus_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     // 1次元
     override fun plus(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_plus_d1_to_d0(x = x.toCPUBuffer().buffer, x_size = x.size, y = y, result = result.buffer)
+        com_wsr_cpu_plus_d1_to_d0(x = x.toCPUBuffer().buffer, y = y, result = result.buffer)
         return result
     }
 
@@ -145,7 +145,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_plus_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = x.size,
             result = result.buffer,
         )
         return result
@@ -375,14 +374,14 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     // 0次元
     override fun minus(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(y.size)
-        com_wsr_cpu_minus_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, y_size = y.size, result = result.buffer)
+        com_wsr_cpu_minus_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     // 1次元
     override fun minus(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_minus_d1_to_d0(x = x.toCPUBuffer().buffer, x_size = x.size, y = y, result = result.buffer)
+        com_wsr_cpu_minus_d1_to_d0(x = x.toCPUBuffer().buffer, y = y, result = result.buffer)
         return result
     }
 
@@ -391,7 +390,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_minus_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = x.size,
             result = result.buffer,
         )
         return result
@@ -621,14 +619,14 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     // 0次元
     override fun times(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(y.size)
-        com_wsr_cpu_times_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, y_size = y.size, result = result.buffer)
+        com_wsr_cpu_times_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     // 1次元
     override fun times(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_times_d1_to_d0(x = x.toCPUBuffer().buffer, x_size = x.size, y = y, result = result.buffer)
+        com_wsr_cpu_times_d1_to_d0(x = x.toCPUBuffer().buffer, y = y, result = result.buffer)
         return result
     }
 
@@ -637,7 +635,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_times_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = x.size,
             result = result.buffer,
         )
         return result
@@ -867,14 +864,14 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
     // 0次元
     override fun div(x: Float, y: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(y.size)
-        com_wsr_cpu_div_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, y_size = y.size, result = result.buffer)
+        com_wsr_cpu_div_d0_to_d1(x = x, y = y.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     // 1次元
     override fun div(x: DataBuffer, y: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_div_d1_to_d0(x = x.toCPUBuffer().buffer, x_size = x.size, y = y, result = result.buffer)
+        com_wsr_cpu_div_d1_to_d0(x = x.toCPUBuffer().buffer, y = y, result = result.buffer)
         return result
     }
 
@@ -883,7 +880,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_div_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = x.size,
             result = result.buffer,
         )
         return result
@@ -1115,7 +1111,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_inner(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = x.size,
             b = b,
             result = result.buffer,
         )
@@ -1175,43 +1170,43 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
 
     override fun exp(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_exp_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_exp_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     override fun ln(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_ln_d1(x = x.toCPUBuffer().buffer, e = e, size = x.size, result = result.buffer)
+        com_wsr_cpu_ln_d1(x = x.toCPUBuffer().buffer, e = e, result = result.buffer)
         return result
     }
 
     override fun sigmoid(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_sigmoid_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_sigmoid_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
     override fun pow(x: DataBuffer, n: Int): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_pow_d1(x = x.toCPUBuffer().buffer, n = n, size = x.size, result = result.buffer)
+        com_wsr_cpu_pow_d1(x = x.toCPUBuffer().buffer, n = n, result = result.buffer)
         return result
     }
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer {
         val result = CPUNativeBuffer.create(x.size)
-        com_wsr_cpu_sqrt_d1(x = x.toCPUBuffer().buffer, e = e, size = x.size, result = result.buffer)
+        com_wsr_cpu_sqrt_d1(x = x.toCPUBuffer().buffer, e = e, result = result.buffer)
         return result
     }
 
     override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
         val result = CPUNativeBuffer.create(size)
-        com_wsr_cpu_random_d1(from = from, until = until, seed = random.nextLong(), size = size, result = result.buffer)
+        com_wsr_cpu_random_d1(from = from, until = until, seed = random.nextLong(), result = result.buffer)
         return result
     }
 
     override fun average(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(1)
-        com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_average_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
@@ -1247,7 +1242,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
 
     override fun max(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(1)
-        com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_max_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
@@ -1276,7 +1271,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
 
     override fun min(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(1)
-        com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_min_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
@@ -1305,7 +1300,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
 
     override fun sum(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(1)
-        com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_sum_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
@@ -1334,7 +1329,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
 
     override fun maxIndex(x: DataBuffer): DataBuffer {
         val result = CPUNativeBuffer.create(1)
-        com_wsr_cpu_max_index_d1(x = x.toCPUBuffer().buffer, size = x.size, result = result.buffer)
+        com_wsr_cpu_max_index_d1(x = x.toCPUBuffer().buffer, result = result.buffer)
         return result
     }
 
@@ -1372,7 +1367,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(1)
         com_wsr_cpu_top_k_d1(
             x = x.toCPUBuffer().buffer,
-            size = x.size,
             k = k,
             seed = random.nextLong(),
             result = result.buffer,
@@ -1424,7 +1418,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(1)
         com_wsr_cpu_top_p_d1(
             x = x.toCPUBuffer().buffer,
-            size = x.size,
             p = p,
             seed = random.nextLong(),
             result = result.buffer,
@@ -1555,12 +1548,10 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(min(x.size, indices.size))
         com_wsr_cpu_slice_d1(
             x = x.toCPUBuffer().buffer,
-            x_size = x.size,
             start = indices.first,
             end = indices.last,
             step = indices.step,
             result = result.toCPUBuffer().buffer,
-            result_size = result.size,
         )
         return result
     }
@@ -1581,7 +1572,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             end = indices.last,
             step = indices.step,
             result = result.toCPUBuffer().buffer,
-            result_size = result.size,
         )
         return result
     }
@@ -1604,7 +1594,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             end = indices.last,
             step = indices.step,
             result = result.toCPUBuffer().buffer,
-            result_size = result.size,
         )
         return result
     }
@@ -1614,9 +1603,7 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             is CPUNativeBuffer -> {
                 com_wsr_cpu_copy_into_d1(
                     x = x.toCPUBuffer().buffer,
-                    x_size = x.size,
                     result = y.buffer,
-                    result_size = y.size,
                     start = indices.first,
                     end = indices.last,
                     step = indices.step,
@@ -1632,7 +1619,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             is CPUNativeBuffer -> {
                 com_wsr_cpu_copy_into_d2(
                     x = x.toCPUBuffer().buffer,
-                    x_size = x.size,
                     result = y.buffer,
                     ri = yi,
                     rj = yj,
@@ -1652,7 +1638,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             is CPUNativeBuffer -> {
                 com_wsr_cpu_copy_into_d3(
                     x = x.toCPUBuffer().buffer,
-                    x_size = x.size,
                     result = y.buffer,
                     ri = yi,
                     rj = yj,
@@ -1677,14 +1662,12 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             i = i,
             j = j,
             k = k,
-            n = n,
             result = result.buffer,
         )
         return result
     }
 
     override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
-        val n = y.size / b
         val result = CPUNativeBuffer.create(i * j * k)
         com_wsr_cpu_scatter_add(
             x = x.toCPUBuffer().buffer,
@@ -1692,7 +1675,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             i = i,
             j = j,
             k = k,
-            n = n,
             b = b,
             result = result.buffer,
         )
@@ -1703,7 +1685,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(x.size)
         com_wsr_cpu_greater_than_d1_to_d0(
             x = x.toCPUBuffer().buffer,
-            size = x.size,
             y = y,
             result = result.buffer,
         )
@@ -1715,7 +1696,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_greater_than_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = result.size,
             result = result.buffer,
         )
         return result
@@ -1725,7 +1705,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(x.size)
         com_wsr_cpu_less_than_d1_to_d0(
             x = x.toCPUBuffer().buffer,
-            size = x.size,
             y = y,
             result = result.buffer,
         )
@@ -1737,7 +1716,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_less_than_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = result.size,
             result = result.buffer,
         )
         return result
@@ -1747,7 +1725,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         val result = CPUNativeBuffer.create(x.size)
         com_wsr_cpu_equals_d1_to_d0(
             x = x.toCPUBuffer().buffer,
-            size = x.size,
             y = y,
             atol = absoluteTolerance,
             rtol = relativeTolerance,
@@ -1761,7 +1738,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         com_wsr_cpu_equals_d1_to_d1(
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = result.size,
             atol = absoluteTolerance,
             rtol = relativeTolerance,
             result = result.buffer,
@@ -1775,7 +1751,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             condition = condition.toCPUBuffer().buffer,
             x = x,
             y = y,
-            size = result.size,
             result = result.buffer,
         )
         return result
@@ -1787,7 +1762,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             condition = condition.toCPUBuffer().buffer,
             x = x,
             y = y.toCPUBuffer().buffer,
-            size = result.size,
             result = result.buffer,
         )
         return result
@@ -1799,7 +1773,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             condition = condition.toCPUBuffer().buffer,
             x = x.toCPUBuffer().buffer,
             y = y,
-            size = result.size,
             result = result.buffer,
         )
         return result
@@ -1811,7 +1784,6 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
             condition = condition.toCPUBuffer().buffer,
             x = x.toCPUBuffer().buffer,
             y = y.toCPUBuffer().buffer,
-            size = result.size,
             result = result.buffer,
         )
         return result

@@ -3,6 +3,7 @@ use jni::objects::JClass;
 use jni::sys::{jfloat, jint, jlong};
 
 use crate::ops::elementwise::operation::times;
+use crate::resource::buffer::CPUBuffer;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes_timesD0ToD1(
@@ -12,8 +13,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     y: jlong,
     result: jlong,
 ) {
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d0_to_d1(x as f32, y, result);
 }
 
@@ -25,8 +26,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     y: jfloat,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d1_to_d0(x, y as f32, result);
 }
 
@@ -38,9 +39,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     y: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d1_to_d1(x, y, result);
 }
 
@@ -53,9 +54,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d1_to_d2(x, y, yi as usize, yj as usize, axis as usize, result);
 }
 
@@ -68,9 +69,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d1_to_d3(x, y, yi as usize, yj as usize, yk as usize, axis as usize, result);
 }
 
@@ -83,9 +84,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d2_to_d1(x, xi as usize, xj as usize, y, axis as usize, result);
 }
 
@@ -98,9 +99,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis1: jint, axis2: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d2_to_d3(x, xi as usize, xj as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, result);
 }
 
@@ -113,9 +114,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d3_to_d1(x, xi as usize, xj as usize, xk as usize, y, axis as usize, result);
 }
 
@@ -128,9 +129,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis1: jint, axis2: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d3_to_d2(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
@@ -143,9 +144,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis1: jint, axis2: jint, axis3: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d3_to_d4(x, xi as usize, xj as usize, xk as usize, y, yi as usize, yj as usize, yk as usize, yl as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }
 
@@ -158,9 +159,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d4_to_d1(x, xi as usize, xj as usize, xk as usize, xl as usize, y, axis as usize, result);
 }
 
@@ -173,9 +174,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis1: jint, axis2: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d4_to_d2(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, axis1 as usize, axis2 as usize, result);
 }
 
@@ -188,8 +189,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_elementwise_operation_times_JTimes
     axis1: jint, axis2: jint, axis3: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let y = unsafe { crate::bindings::jni::buffer::as_slice(y) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let y = unsafe { &*(y as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     times::times_with_d4_to_d3(x, xi as usize, xj as usize, xk as usize, xl as usize, y, yi as usize, yj as usize, yk as usize, axis1 as usize, axis2 as usize, axis3 as usize, result);
 }

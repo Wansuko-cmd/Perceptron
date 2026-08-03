@@ -3,6 +3,7 @@ use jni::objects::JClass;
 use jni::sys::{jfloat, jint, jlong};
 
 use crate::ops::reduction;
+use crate::resource::buffer::CPUBuffer;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_averageD1(
@@ -11,9 +12,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_averageD1(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::average_d1(x);
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::average_d1(&x.value);
 }
 
 #[unsafe(no_mangle)]
@@ -24,8 +25,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_averageD2(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::average_d2(x, xi as usize, xj as usize, axis as usize, result);
 }
 
@@ -37,8 +38,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_averageD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::average_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
 
@@ -49,9 +50,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxD1(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::max_d1(x);
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::max_d1(&x.value);
 }
 
 #[unsafe(no_mangle)]
@@ -62,8 +63,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxD2(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::max_d2(x, xi as usize, xj as usize, axis as usize, result);
 }
 
@@ -75,8 +76,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::max_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
 
@@ -87,9 +88,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_minD1(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::min_d1(x);
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::min_d1(&x.value);
 }
 
 #[unsafe(no_mangle)]
@@ -100,8 +101,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_minD2(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::min_d2(x, xi as usize, xj as usize, axis as usize, result);
 }
 
@@ -113,8 +114,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_minD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::min_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
 
@@ -125,9 +126,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_sumD1(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::sum_d1(x);
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::sum_d1(&x.value);
 }
 
 #[unsafe(no_mangle)]
@@ -138,8 +139,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_sumD2(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::sum_d2(x, xi as usize, xj as usize, axis as usize, result);
 }
 
@@ -151,8 +152,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_sumD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::sum_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
 
@@ -163,9 +164,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxIndexD1(
     x: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::max_index_d1(x) as f32;
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::max_index_d1(&x.value) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -176,8 +177,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxIndexD2(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::max_index_d2(x, xi as usize, xj as usize, axis as usize, result);
 }
 
@@ -189,8 +190,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_maxIndexD3(
     axis: jint,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::max_index_d3(x, xi as usize, xj as usize, xk as usize, axis as usize, result);
 }
 
@@ -203,9 +204,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topKD1(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::top_k_d1(x, k as usize, seed as u64) as f32;
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::top_k_d1(&x.value, k as usize, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -218,8 +219,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topKD2(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::top_k_d2(x, xi as usize, xj as usize, k as usize, axis as usize, result, seed as u64);
 }
 
@@ -233,8 +234,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topKD3(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::top_k_d3(x, xi as usize, xj as usize, xk as usize, k as usize, axis as usize, result, seed as u64);
 }
 
@@ -247,9 +248,9 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topPD1(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
-    result[0] = reduction::top_p_d1(x, p as f32, seed as u64) as f32;
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
+    result[0] = reduction::top_p_d1(&x.value, p as f32, seed as u64) as f32;
 }
 
 #[unsafe(no_mangle)]
@@ -262,8 +263,8 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topPD2(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::top_p_d2(x, xi as usize, xj as usize, p as f32, axis as usize, result, seed as u64);
 }
 
@@ -277,7 +278,7 @@ pub extern "system" fn Java_com_wsr_knist_cpu_reduction_JReduction_topPD3(
     seed: jlong,
     result: jlong,
 ) {
-    let x = unsafe { crate::bindings::jni::buffer::as_slice(x) };
-    let result = unsafe { crate::bindings::jni::buffer::as_slice_mut(result) };
+    let x = unsafe { &*(x as *const CPUBuffer) };
+    let result = unsafe { &mut *(result as *mut CPUBuffer) };
     reduction::top_p_d3(x, xi as usize, xj as usize, xk as usize, p as f32, axis as usize, result, seed as u64);
 }

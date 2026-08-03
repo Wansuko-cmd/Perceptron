@@ -1,3 +1,5 @@
+use crate::resource::buffer::CPUBuffer;
+
 const LOG2E: f32 = std::f32::consts::LOG2_E;
 
 // f32 - f32(整数)をした時に精度を落とさないよう、二回に分けて引くときに使う
@@ -11,37 +13,37 @@ const EXP_LO: f32 = -87.336_55;
 // 小数部を落とす際に使う定数(1.5 * 2^23)
 const MAGIC: f32 = 12_582_912.0;
 
-pub fn exp_d1(x: &[f32], result: &mut [f32]) {
-    assert_eq!(x.len(), result.len());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
+pub fn exp_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), result.count());
+    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
         *res = exp(val);
     }
 }
 
-pub fn ln_d1(x: &[f32], e: f32, result: &mut [f32]) {
-    assert_eq!(x.len(), result.len());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
+pub fn ln_d1(x: &CPUBuffer, e: f32, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), result.count());
+    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
         *res = (val + e).ln();
     }
 }
 
-pub fn sigmoid_d1(x: &[f32], result: &mut [f32]) {
-    assert_eq!(x.len(), result.len());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
+pub fn sigmoid_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), result.count());
+    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
         *res = 1f32 / (1f32 + exp(-val));
     }
 }
 
-pub fn pow_d1(x: &[f32], n: i32, result: &mut [f32]) {
-    assert_eq!(x.len(), result.len());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
+pub fn pow_d1(x: &CPUBuffer, n: i32, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), result.count());
+    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
         *res = val.powi(n);
     }
 }
 
-pub fn sqrt_d1(x: &[f32], e: f32, result: &mut [f32]) {
-    assert_eq!(x.len(), result.len());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
+pub fn sqrt_d1(x: &CPUBuffer, e: f32, result: &mut CPUBuffer) {
+    assert_eq!(x.count(), result.count());
+    for (&val, res) in x.value.iter().zip(result.value.iter_mut()) {
         *res = (val + e).sqrt();
     }
 }
