@@ -10,6 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 jni = "0.21.1"
 matrixmultiply = { version = "0.3.10", features = ["threading"] }
 rayon = "1.12.0"
+pollster = "0.4.0"
 
 [features]
 default = ["jni", "native"]
