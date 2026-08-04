@@ -3,6 +3,7 @@
 package com.wsr.knist.cpu
 
 import cnames.structs.CPUBuffer
+import cnames.structs.Runtime
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.IDataBufferGenerator
 import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_alloc
@@ -20,23 +21,31 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 
-internal fun DataBuffer.toCPUBuffer(): CPUNativeBuffer = when (this) {
+internal fun DataBuffer.toCPUBuffer(runtime: CPointer<Runtime>): CPUNativeBuffer = when (this) {
     is CPUNativeBuffer -> this
-    else -> CPUNativeBuffer.create(this.toFloatArray())
+    else -> CPUNativeBuffer.create(this.toFloatArray(), runtime)
 }
 
 @OptIn(ExperimentalAtomicApi::class)
-private class CPUNativeBufferState(val ptr: CPointer<CPUBuffer>, val released: AtomicInt)
+private class CPUNativeBufferState(
+    val ptr: CPointer<CPUBuffer>,
+    val released: AtomicInt,
+    val runtime: CPointer<Runtime>,
+)
 
 @OptIn(ExperimentalAtomicApi::class)
-class CPUNativeBuffer(val buffer: CPointer<CPUBuffer>, override val size: Int) : DataBuffer {
-    private val state = CPUNativeBufferState(buffer, AtomicInt(0))
+class CPUNativeBuffer(
+    val buffer: CPointer<CPUBuffer>,
+    override val size: Int,
+    private val runtime: CPointer<Runtime>,
+) : DataBuffer {
+    private val state = CPUNativeBufferState(buffer, AtomicInt(0), runtime)
 
     @Suppress("UNUSED")
     @OptIn(ExperimentalNativeApi::class)
     private val cleaner = createCleaner(state) { s ->
         if (s.released.compareAndExchange(0, 1) == 0) {
-            com_wsr_cpu_buffer_release(s.ptr)
+            com_wsr_cpu_buffer_release(s.ptr, s.runtime)
         }
     }
 
@@ -56,27 +65,34 @@ class CPUNativeBuffer(val buffer: CPointer<CPUBuffer>, override val size: Int) :
 
     override fun release() {
         if (state.released.compareAndExchange(0, 1) == 0) {
-            com_wsr_cpu_buffer_release(buffer)
+            com_wsr_cpu_buffer_release(buffer, runtime)
         }
     }
 
     companion object {
-        fun create(size: Int) = CPUNativeBuffer(
-            buffer = com_wsr_cpu_buffer_alloc(size)!!,
+        fun create(size: Int, runtime: CPointer<Runtime>) = CPUNativeBuffer(
+            buffer = com_wsr_cpu_buffer_alloc(size, runtime)!!,
             size = size,
+            runtime = runtime,
         )
 
-        fun create(value: FloatArray): CPUNativeBuffer {
+        fun create(value: FloatArray, runtime: CPointer<Runtime>): CPUNativeBuffer {
             val buffer = value.usePinned { pinned ->
-                com_wsr_cpu_buffer_init(pinned.addressOf(0), value.size)!!
+                com_wsr_cpu_buffer_init(pinned.addressOf(0), value.size, runtime)!!
             }
-            return CPUNativeBuffer(buffer = buffer, size = value.size)
+            return CPUNativeBuffer(buffer = buffer, size = value.size, runtime = runtime)
         }
 
-        val generator = object : IDataBufferGenerator {
-            override fun create(size: Int): DataBuffer = CPUNativeBuffer.create(size)
+        fun createGenerator(runtime: CPointer<Runtime>) = object : IDataBufferGenerator {
+            override fun create(size: Int): DataBuffer = create(
+                size = size,
+                runtime = runtime,
+            )
 
-            override fun create(value: FloatArray): DataBuffer = CPUNativeBuffer.create(value)
+            override fun create(value: FloatArray): DataBuffer = create(
+                value = value,
+                runtime = runtime,
+            )
         }
     }
 }

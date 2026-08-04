@@ -5,6 +5,8 @@ pub struct CPUBuffer {
 }
 
 impl CPUBuffer {
+    pub const SIZE_BYTES: usize = std::mem::size_of::<f32>();
+
     pub fn create(size: usize) -> CPUBuffer {
         let value = vec![0f32; size];
         CPUBuffer { value: value }

@@ -11,40 +11,45 @@ internal var cpuMaxReservedBytes: Long = 1_500_000_000L
 
 internal actual fun defaultMaxReservedBytes(): Long = Runtime.getRuntime().maxMemory()
 
-internal fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = when (this) {
+internal fun DataBuffer.toCPUBuffer(runtime: Long): CPUJvmBuffer = when (this) {
     is CPUJvmBuffer -> this
-    else -> CPUJvmBuffer.create(this.toFloatArray())
+    else -> CPUJvmBuffer.create(this.toFloatArray(), runtime)
 }
 
-class CPUJvmBuffer private constructor(internal val address: Long, override val size: Int) : DataBuffer {
+class CPUJvmBuffer private constructor(
+    internal val ptr: Long,
+    override val size: Int,
+    private val runtime: Long,
+) : DataBuffer {
     private val isReleased = AtomicBoolean(false)
 
     init {
-        val address = address
+        val ptr = this@CPUJvmBuffer.ptr
+        val runtime = runtime
         val byteSize = size * Float.SIZE_BYTES
         val isReleased = isReleased
         if (reservedBytes.addAndGet(byteSize.toLong()) >= cpuMaxReservedBytes) System.gc()
         cleaner.register(this) {
             if (!isReleased.getAndSet(true)) {
-                JBuffer.release(address)
+                JBuffer.release(ptr, runtime)
                 reservedBytes.addAndGet(-byteSize.toLong())
             }
         }
     }
 
-    override fun get(i: Int): Float = JBuffer.get(address, i)
+    override fun get(i: Int): Float = JBuffer.get(ptr, i)
 
     override fun set(i: Int, value: Float) {
-        JBuffer.set(address, i, value)
+        JBuffer.set(ptr, i, value)
     }
 
-    override fun toFloatArray(): FloatArray = JBuffer.readAll(address)
+    override fun toFloatArray(): FloatArray = JBuffer.readAll(ptr)
 
     override fun toString(): String = toFloatArray().joinToString(prefix = "CPUJvmBuffer[", postfix = "]")
 
     override fun release() {
         if (!isReleased.getAndSet(true)) {
-            JBuffer.release(address)
+            JBuffer.release(ptr, runtime)
             reservedBytes.addAndGet(-(size * Float.SIZE_BYTES).toLong())
         }
     }
@@ -52,21 +57,27 @@ class CPUJvmBuffer private constructor(internal val address: Long, override val 
     companion object Companion {
         private val cleaner = Cleaner.create()
 
-        fun create(size: Int): CPUJvmBuffer {
-            val address = JBuffer.alloc(size)
-            return CPUJvmBuffer(address, size)
+        fun create(size: Int, runtime: Long): CPUJvmBuffer {
+            val ptr = JBuffer.alloc(size, runtime)
+            return CPUJvmBuffer(ptr, size, runtime)
         }
 
-        fun create(value: FloatArray): CPUJvmBuffer {
-            val address = JBuffer.alloc(value.size)
-            JBuffer.writeAll(address, value)
-            return CPUJvmBuffer(address, value.size)
+        fun create(value: FloatArray, runtime: Long): CPUJvmBuffer {
+            val ptr = JBuffer.alloc(value.size, runtime)
+            JBuffer.writeAll(ptr, value)
+            return CPUJvmBuffer(ptr, value.size, runtime)
         }
 
-        val generator = object : IDataBufferGenerator {
-            override fun create(size: Int): DataBuffer = CPUJvmBuffer.create(size)
+        fun createGenerator(runtime: Long) = object : IDataBufferGenerator {
+            override fun create(size: Int): DataBuffer = create(
+                size = size,
+                runtime = runtime,
+            )
 
-            override fun create(value: FloatArray): DataBuffer = CPUJvmBuffer.create(value)
+            override fun create(value: FloatArray): DataBuffer = create(
+                value = value,
+                runtime = runtime,
+            )
         }
     }
 }

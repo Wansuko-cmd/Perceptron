@@ -8,6 +8,8 @@ import com.wsr.knist.base.data.size
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d3
+import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_alloc
+import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_init
 import com.wsr.knist.cpu.rs.com_wsr_cpu_copy_into_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_copy_into_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_copy_into_d3
@@ -77,6 +79,7 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_pow_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_random_d1
+import com.wsr.knist.cpu.rs.com_wsr_cpu_runtime_alloc
 import com.wsr.knist.cpu.rs.com_wsr_cpu_scatter_add
 import com.wsr.knist.cpu.rs.com_wsr_cpu_sigmoid_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_slice_d1
@@ -118,13 +121,16 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_where_d1_to_d1
 import kotlin.math.min
 import kotlin.random.Random
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 
 internal actual fun defaultMaxReservedBytes(): Long = 1_500_000_000L
 
 actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long): IBackend = CPUNativeBackend(fallback)
 
 class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
-    override val generator = CPUNativeBuffer.generator
+    private val runtime = com_wsr_cpu_runtime_alloc()!!
+    override val generator = CPUNativeBuffer.createGenerator(runtime = runtime)
 
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
@@ -1917,4 +1923,19 @@ class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
         )
         return result
     }
+
+    private fun CPUNativeBuffer.Companion.create(size: Int) = CPUNativeBuffer(
+        buffer = com_wsr_cpu_buffer_alloc(size, runtime)!!,
+        size = size,
+        runtime = runtime,
+    )
+
+    private fun CPUNativeBuffer.Companion.create(value: FloatArray): CPUNativeBuffer {
+        val buffer = value.usePinned { pinned ->
+            com_wsr_cpu_buffer_init(pinned.addressOf(0), value.size, runtime)!!
+        }
+        return CPUNativeBuffer(buffer = buffer, size = value.size, runtime = runtime)
+    }
+
+    private fun DataBuffer.toCPUBuffer() = toCPUBuffer(runtime = runtime)
 }

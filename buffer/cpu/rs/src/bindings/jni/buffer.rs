@@ -1,22 +1,36 @@
 use jni::JNIEnv;
 use jni::objects::{JClass, JFloatArray, ReleaseMode};
 use jni::sys::{jfloat, jfloatArray, jint, jlong};
+use std::sync::Arc;
 
+use crate::ops;
 use crate::resource::buffer::CPUBuffer;
+use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_com_wsr_knist_cpu_JBuffer_alloc(
     _env: JNIEnv,
     _class: JClass,
     size: jint,
+    runtime: jlong,
 ) -> jlong {
-    let buffer = CPUBuffer::create(size as usize);
-    Box::into_raw(Box::new(buffer)) as jlong
+    let runtime = unsafe { &*(runtime as *const Runtime) };
+    let buffer = ops::buffer::create(size as usize, runtime);
+    Arc::into_raw(Arc::new(buffer)) as jlong
 }
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_knist_cpu_JBuffer_release(_env: JNIEnv, _class: JClass, ptr: jlong) {
-    unsafe { drop(Box::from_raw(ptr as *mut CPUBuffer)) };
+pub extern "system" fn Java_com_wsr_knist_cpu_JBuffer_release(
+    _env: JNIEnv,
+    _class: JClass,
+    ptr: jlong,
+    runtime: jlong,
+) {
+    let buffer = unsafe { Arc::from_raw(ptr as *const CPUBuffer) };
+    let runtime = unsafe { &*(runtime as *const Runtime) };
+    if let Ok(buffer) = Arc::try_unwrap(buffer) {
+        ops::buffer::release(buffer, runtime);
+    }
 }
 
 #[unsafe(no_mangle)]

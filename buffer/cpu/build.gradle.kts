@@ -31,6 +31,7 @@ kotlin {
                 val headersDir = "$projectDir/rs/src/bindings/native/headers"
                 headers(
                     "$headersDir/buffer_native.h",
+                    "$headersDir/runtime_native.h",
                     "$headersDir/compare_native.h",
                     "$headersDir/generator_native.h",
                     "$headersDir/index_native.h",
