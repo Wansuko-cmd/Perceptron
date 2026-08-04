@@ -16,18 +16,12 @@ import com.wsr.knist.cpu.index.JIndex
 import com.wsr.knist.cpu.linalg.JMatMul
 import com.wsr.knist.cpu.reduction.JReduction
 import com.wsr.knist.cpu.shape.JShape
-import java.lang.ref.Cleaner
 import kotlin.math.min
 import kotlin.random.Random
 
 class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
     private val runtime = JRuntime.allocate()
     override val generator = CPUJvmBuffer.createGenerator(runtime = runtime)
-
-    init {
-        val ptr = runtime
-        cleaner.register(this) { JRuntime.release(ptr) }
-    }
 
     // 0次元
     override fun plus(x: Float, y: DataBuffer): DataBuffer {
@@ -1569,8 +1563,4 @@ class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
     )
 
     private fun DataBuffer.toCPUBuffer(): CPUJvmBuffer = toCPUBuffer(runtime = runtime)
-
-    companion object {
-        private val cleaner = Cleaner.create()
-    }
 }

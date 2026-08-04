@@ -17,17 +17,11 @@ import com.wsr.knist.gpu.index.JIndex
 import com.wsr.knist.gpu.linalg.JMatMul
 import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
-import java.lang.ref.Cleaner
 import kotlin.random.Random
 
 class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false) : IBackend by fallback {
     private val runtime = JRuntime.allocate(enableProfiler)
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime)
-
-    init {
-        val ptr = runtime
-        cleaner.register(this) { JRuntime.release(ptr) }
-    }
 
     fun takeCPUProfileNs(): Long = JProfiler.takeCPU(runtime)
 
@@ -1797,8 +1791,4 @@ class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false
     )
 
     private fun DataBuffer.toGPUBuffer(): GPUJvmBuffer = toGPUBuffer(runtime = runtime)
-
-    companion object {
-        private val cleaner = Cleaner.create()
-    }
 }
