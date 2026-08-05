@@ -13,7 +13,7 @@ class Default(private val value: FloatArray) : DataBuffer {
         this.value[i] = value
     }
 
-    override fun toFloatArray(): FloatArray = value
+    override fun toFloatArray(): FloatArray = value.clone()
 
     override fun toString(): String = toFloatArray().joinToString(prefix = "Default[", postfix = "]")
 
