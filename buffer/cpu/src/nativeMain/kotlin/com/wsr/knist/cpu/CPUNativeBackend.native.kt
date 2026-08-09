@@ -124,12 +124,14 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 
-internal actual fun defaultMaxReservedBytes(): Long = 1_500_000_000L
+actual fun loadCPUBackend(
+    fallback: IBackend,
+    maxReservedBytes: Long,
+    maxPoolBytes: Long,
+): IBackend = CPUNativeBackend(fallback, maxPoolBytes)
 
-actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long): IBackend = CPUNativeBackend(fallback)
-
-class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
-    private val runtime = com_wsr_cpu_runtime_alloc(pool_size = 1_500_000_000)!!
+class CPUNativeBackend(private val fallback: IBackend, maxPoolBytes: Long) : IBackend by fallback {
+    private val runtime = com_wsr_cpu_runtime_alloc(pool_size = maxPoolBytes)!!
     override val generator = CPUNativeBuffer.createGenerator(runtime = runtime)
 
     // 0次元
