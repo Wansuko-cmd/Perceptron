@@ -2,6 +2,9 @@
 
 package mnist
 
+import com.wsr.knist.Backend
+import com.wsr.knist.base.KotlinBackend
+import com.wsr.knist.cpu.loadCPUBackend
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.NetworkSerializer
 import com.wsr.knist.network.create
@@ -48,6 +51,7 @@ class MnistTest {
             register(PixelConverter::class)
             register(LabelConverter::class)
         }
+        Backend.set(backend = loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 4_000_000_000))
 
         println("ネットワーク構築")
         val network = createNetwork()
