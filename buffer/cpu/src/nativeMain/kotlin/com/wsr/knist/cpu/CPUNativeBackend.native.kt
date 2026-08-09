@@ -129,7 +129,7 @@ internal actual fun defaultMaxReservedBytes(): Long = 1_500_000_000L
 actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long): IBackend = CPUNativeBackend(fallback)
 
 class CPUNativeBackend(private val fallback: IBackend) : IBackend by fallback {
-    private val runtime = com_wsr_cpu_runtime_alloc()!!
+    private val runtime = com_wsr_cpu_runtime_alloc(pool_size = 1_500_000_000)!!
     override val generator = CPUNativeBuffer.createGenerator(runtime = runtime)
 
     // 0次元

@@ -20,7 +20,7 @@ import kotlin.math.min
 import kotlin.random.Random
 
 class CPUJvmBackend(fallback: IBackend) : IBackend by fallback {
-    private val runtime = JRuntime.allocate()
+    private val runtime = JRuntime.allocate(poolSize = 1_500_000_000)
     override val generator = CPUJvmBuffer.createGenerator(runtime = runtime)
 
     // 0次元
