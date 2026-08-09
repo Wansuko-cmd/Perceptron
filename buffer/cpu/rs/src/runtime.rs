@@ -8,8 +8,8 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub async fn new() -> Self {
-        let buffer_pool = BufferPool::new();
+    pub async fn new(pool_size: u64) -> Self {
+        let buffer_pool = BufferPool::new(pool_size);
 
         Runtime { buffer_pool: buffer_pool }
     }

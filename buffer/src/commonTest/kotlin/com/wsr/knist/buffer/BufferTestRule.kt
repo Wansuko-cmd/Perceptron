@@ -6,7 +6,11 @@ import com.wsr.knist.cpu.loadCPUBackend
 import com.wsr.knist.gpu.loadGPUBackend
 import kotlin.time.measureTime
 
-private val targets = listOf(KotlinBackend, loadCPUBackend(KotlinBackend), loadGPUBackend(KotlinBackend))
+private val targets = listOf(
+    KotlinBackend,
+    loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 1_500_000_000),
+    loadGPUBackend(fallback = KotlinBackend),
+)
 
 fun bufferTestRule(evaluate: () -> Unit) {
     targets.forEach { target ->

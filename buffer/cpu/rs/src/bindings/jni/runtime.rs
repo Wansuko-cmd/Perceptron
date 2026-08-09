@@ -9,8 +9,9 @@ use crate::runtime::Runtime;
 pub extern "system" fn Java_com_wsr_knist_cpu_JRuntime_allocate(
     _: JNIEnv,
     _class: JClass,
+    pool_size: jlong,
 ) -> jlong {
-    let runtime = runtime::allocate();
+    let runtime = runtime::allocate(pool_size as u64);
     Box::into_raw(Box::new(runtime)) as jlong
 }
 

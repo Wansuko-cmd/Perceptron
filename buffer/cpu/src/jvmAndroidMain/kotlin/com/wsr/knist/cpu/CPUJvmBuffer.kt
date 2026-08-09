@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicLong
 private val reservedBytes = AtomicLong(0)
 internal var cpuMaxReservedBytes: Long = 1_500_000_000L
 
-internal actual fun defaultMaxReservedBytes(): Long = Runtime.getRuntime().maxMemory()
-
 internal fun DataBuffer.toCPUBuffer(runtime: Long): CPUJvmBuffer = when (this) {
     is CPUJvmBuffer -> this
     else -> CPUJvmBuffer.create(this.toFloatArray(), runtime)

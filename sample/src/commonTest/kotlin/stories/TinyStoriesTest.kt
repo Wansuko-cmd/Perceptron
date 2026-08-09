@@ -2,7 +2,10 @@
 
 package stories
 
+import com.wsr.knist.Backend
+import com.wsr.knist.base.KotlinBackend
 import com.wsr.knist.core.unwrap
+import com.wsr.knist.cpu.loadCPUBackend
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
@@ -55,6 +58,8 @@ private const val UNK_INDEX = 1
 class TinyStoriesTest {
     @Test
     fun `TinyStoriesモデルの出力を確認`() = runBlocking {
+        Backend.set(backend = loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 4_000_000_000))
+
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)
