@@ -134,6 +134,14 @@ pub fn slice_d2(x: &CPUBuffer, xi: usize, xj: usize, axis: usize, start: usize, 
                         result[result_offset..result_offset + xj].copy_from_slice(&x[x_offset..x_offset + xj]);
                     }
                 }
+                1 if step == 1 => {
+                    let size = (result.count() / xi).min(end - start + 1);
+                    for i in 0..xi {
+                        let x_offset = i * xj + start;
+                        let result_offset = i * size;
+                        result[result_offset..result_offset + size].copy_from_slice(&x[x_offset..x_offset + size]);
+                    }
+                }
                 1 => {
                     let indices = create_indices(start, end, step);
                     let size = indices.len();
@@ -199,6 +207,14 @@ pub fn copy_into_d2(x: &CPUBuffer, result: &mut CPUBuffer, ri: usize, rj: usize,
                         let x_offset = x_i * rj;
                         let result_offset = r_i * rj;
                         result[result_offset..result_offset + rj].copy_from_slice(&x[x_offset..x_offset + rj]);
+                    }
+                }
+                1 if step == 1 => {
+                    let size = (x.count() / ri).min(end - start + 1);
+                    for i in 0..ri {
+                        let x_offset = i * size;
+                        let result_offset = i * rj + start;
+                        result[result_offset..result_offset + size].copy_from_slice(&x[x_offset..x_offset + size]);
                     }
                 }
                 1 => {

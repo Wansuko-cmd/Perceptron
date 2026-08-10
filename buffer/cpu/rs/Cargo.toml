@@ -4,13 +4,48 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[[bench]]
+name = "reduction"
+harness = false
+
+[[bench]]
+name = "index"
+harness = false
+
+[[bench]]
+name = "shape"
+harness = false
+
+[[bench]]
+name = "compare"
+path = "benches/elementwise/compare.rs"
+harness = false
+
+[[bench]]
+name = "math"
+path = "benches/elementwise/math.rs"
+harness = false
+
+[[bench]]
+name = "operation"
+path = "benches/elementwise/operation.rs"
+harness = false
+
+[[bench]]
+name = "mat_mul"
+path = "benches/linalg/mat_mul.rs"
+harness = false
 
 [dependencies]
 jni = "0.21.1"
 matrixmultiply = { version = "0.3.10", features = ["threading"] }
 rayon = "1.12.0"
 pollster = "0.4.0"
+
+[dev-dependencies]
+criterion = "0.8.2"
 
 [features]
 default = ["jni", "native"]
