@@ -110,7 +110,7 @@ jobs:
             os_name: macos
             arch: Arm64
             lib_extension: a
-          - os: macos-15
+          - os: macos-15-intel
             os_name: macos
             arch: X64
             lib_extension: a
