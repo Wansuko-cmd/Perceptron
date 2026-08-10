@@ -124,11 +124,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 
-actual fun loadCPUBackend(
-    fallback: IBackend,
-    maxReservedBytes: Long,
-    maxPoolBytes: Long,
-): IBackend = CPUNativeBackend(fallback, maxPoolBytes)
+actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long, maxPoolBytes: Long): IBackend =
+    CPUNativeBackend(fallback, maxPoolBytes)
 
 class CPUNativeBackend(private val fallback: IBackend, maxPoolBytes: Long) : IBackend by fallback {
     private val runtime = com_wsr_cpu_runtime_alloc(pool_size = maxPoolBytes)!!
