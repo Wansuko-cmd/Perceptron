@@ -6,7 +6,7 @@ import cnames.structs.CPUBuffer
 import cnames.structs.Runtime
 import com.wsr.knist.base.data.DataBuffer
 import com.wsr.knist.base.data.IDataBufferGenerator
-import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_alloc
+import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_allocate
 import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_get
 import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_init
 import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_read_all
@@ -71,7 +71,7 @@ class CPUNativeBuffer(
 
     companion object {
         fun create(size: Int, runtime: CPointer<Runtime>) = CPUNativeBuffer(
-            buffer = com_wsr_cpu_buffer_alloc(size, runtime)!!,
+            buffer = com_wsr_cpu_buffer_allocate(size, runtime)!!,
             size = size,
             runtime = runtime,
         )

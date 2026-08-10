@@ -2,7 +2,7 @@ use crate::runtime::Runtime;
 use crate::ops;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_runtime_alloc(pool_size: i64) -> *mut Runtime {
+pub extern "C" fn com_wsr_cpu_runtime_allocate(pool_size: i64) -> *mut Runtime {
     let runtime = ops::runtime::allocate(pool_size as u64);
     Box::into_raw(Box::new(runtime))
 }

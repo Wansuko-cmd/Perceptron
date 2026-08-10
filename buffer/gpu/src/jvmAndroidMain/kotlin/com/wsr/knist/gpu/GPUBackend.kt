@@ -19,8 +19,9 @@ import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
 import kotlin.random.Random
 
-class GPUBackend(private val fallback: IBackend, enableProfiler: Boolean = false) : IBackend by fallback {
-    private val runtime = JRuntime.allocate(enableProfiler)
+class GPUBackend(private val fallback: IBackend, maxPoolBytes: Long, enableProfiler: Boolean = false) :
+    IBackend by fallback {
+    private val runtime = JRuntime.allocate(maxPoolBytes, enableProfiler)
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime)
 
     fun takeCPUProfileNs(): Long = JProfiler.takeCPU(runtime)

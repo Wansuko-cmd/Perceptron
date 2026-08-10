@@ -1,7 +1,7 @@
 package com.wsr.knist.cpu
 
 internal object JBuffer {
-    external fun alloc(size: Int, runtime: Long): Long
+    external fun allocate(size: Int, runtime: Long): Long
     external fun release(ptr: Long, runtime: Long)
 
     external fun get(ptr: Long, index: Int): Float

@@ -9,7 +9,7 @@ import com.wsr.knist.cpu.loadCPUBackend
 import kotlin.random.Random
 
 object Backend : IBackend {
-    private var instance: IBackend = loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 1_500_000_000)
+    private var instance: IBackend = loadCPUBackend(fallback = KotlinBackend)
 
     init {
         DataBufferGenerator.set(instance.generator)

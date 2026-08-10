@@ -9,9 +9,10 @@ use crate::runtime::Runtime;
 pub extern "system" fn Java_com_wsr_knist_gpu_JRuntime_allocate(
     _: JNIEnv,
     _class: JClass,
+    pool_size: jlong,
     enable_profiler: jboolean,
 ) -> jlong {
-    let runtime = runtime::allocate(enable_profiler != 0);
+    let runtime = runtime::allocate(pool_size as u64, enable_profiler != 0);
     Box::into_raw(Box::new(runtime)) as jlong
 }
 

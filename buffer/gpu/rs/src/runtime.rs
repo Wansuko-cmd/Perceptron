@@ -20,7 +20,7 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub async fn new(enable_profiler: bool) -> Self {
+    pub async fn new(pool_size: u64, enable_profiler: bool) -> Self {
         let instance = wgpu::Instance::default();
         let request = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -72,7 +72,7 @@ impl Runtime {
         let kernels = Kernels::new(&device);
         let cpu_profiler = CpuProfiler::new(enable_profiler);
         let gpu_profiler = GpuProfiler::new(&device, enable_profiler);
-        let buffer_pool = BufferPool::new();
+        let buffer_pool = BufferPool::new(pool_size);
         let dispatcher = Mutex::new(Dispatcher::new());
 
         Runtime {
