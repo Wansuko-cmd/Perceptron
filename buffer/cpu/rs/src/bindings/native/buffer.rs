@@ -3,7 +3,7 @@ use crate::runtime::Runtime;
 use crate::ops;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn com_wsr_cpu_buffer_alloc(size: i32, runtime: *const Runtime) -> *mut CPUBuffer {
+pub extern "C" fn com_wsr_cpu_buffer_allocate(size: i32, runtime: *const Runtime) -> *mut CPUBuffer {
     let runtime = unsafe { &*runtime };
     let buffer = ops::buffer::create(size as usize, runtime);
     Box::into_raw(Box::new(buffer))

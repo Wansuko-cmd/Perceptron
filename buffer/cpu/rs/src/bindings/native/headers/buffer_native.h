@@ -4,7 +4,7 @@
 typedef struct CPUBuffer CPUBuffer;
 typedef struct Runtime Runtime;
 
-CPUBuffer* com_wsr_cpu_buffer_alloc(int size, const Runtime* runtime);
+CPUBuffer* com_wsr_cpu_buffer_allocate(int size, const Runtime* runtime);
 CPUBuffer* com_wsr_cpu_buffer_init(const float* value, int size, const Runtime* runtime);
 void com_wsr_cpu_buffer_release(CPUBuffer* ptr, const Runtime* runtime);
 float com_wsr_cpu_buffer_get(const CPUBuffer* ptr, int index);

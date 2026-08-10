@@ -8,7 +8,7 @@ use crate::resource::buffer::CPUBuffer;
 use crate::runtime::Runtime;
 
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_com_wsr_knist_cpu_JBuffer_alloc(
+pub extern "system" fn Java_com_wsr_knist_cpu_JBuffer_allocate(
     _env: JNIEnv,
     _class: JClass,
     size: jint,

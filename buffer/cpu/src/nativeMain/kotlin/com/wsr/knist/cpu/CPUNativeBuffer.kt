@@ -71,7 +71,7 @@ class CPUNativeBuffer(
 
     companion object {
         fun create(size: Int, runtime: CPointer<Runtime>) = CPUNativeBuffer(
-            buffer = com_wsr_cpu_buffer_alloc(size, runtime)!!,
+            buffer = com_wsr_cpu_buffer_allocate(size, runtime)!!,
             size = size,
             runtime = runtime,
         )

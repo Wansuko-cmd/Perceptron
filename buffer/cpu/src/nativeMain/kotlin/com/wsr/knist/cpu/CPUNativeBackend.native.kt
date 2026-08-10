@@ -8,7 +8,7 @@ import com.wsr.knist.base.data.size
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_average_d3
-import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_alloc
+import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_allocate
 import com.wsr.knist.cpu.rs.com_wsr_cpu_buffer_init
 import com.wsr.knist.cpu.rs.com_wsr_cpu_copy_into_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_copy_into_d2
@@ -79,7 +79,7 @@ import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d2
 import com.wsr.knist.cpu.rs.com_wsr_cpu_plus_d4_to_d3
 import com.wsr.knist.cpu.rs.com_wsr_cpu_pow_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_random_d1
-import com.wsr.knist.cpu.rs.com_wsr_cpu_runtime_alloc
+import com.wsr.knist.cpu.rs.com_wsr_cpu_runtime_allocate
 import com.wsr.knist.cpu.rs.com_wsr_cpu_scatter_add
 import com.wsr.knist.cpu.rs.com_wsr_cpu_sigmoid_d1
 import com.wsr.knist.cpu.rs.com_wsr_cpu_slice_d1
@@ -128,7 +128,7 @@ actual fun loadCPUBackend(fallback: IBackend, maxReservedBytes: Long, maxPoolByt
     CPUNativeBackend(fallback, maxPoolBytes)
 
 class CPUNativeBackend(private val fallback: IBackend, maxPoolBytes: Long) : IBackend by fallback {
-    private val runtime = com_wsr_cpu_runtime_alloc(pool_size = maxPoolBytes)!!
+    private val runtime = com_wsr_cpu_runtime_allocate(pool_size = maxPoolBytes)!!
     override val generator = CPUNativeBuffer.createGenerator(runtime = runtime)
 
     // 0次元
@@ -1924,7 +1924,7 @@ class CPUNativeBackend(private val fallback: IBackend, maxPoolBytes: Long) : IBa
     }
 
     private fun CPUNativeBuffer.Companion.create(size: Int) = CPUNativeBuffer(
-        buffer = com_wsr_cpu_buffer_alloc(size, runtime)!!,
+        buffer = com_wsr_cpu_buffer_allocate(size, runtime)!!,
         size = size,
         runtime = runtime,
     )

@@ -53,12 +53,12 @@ class CPUJvmBuffer private constructor(internal val ptr: Long, override val size
         private val cleaner = Cleaner.create()
 
         fun create(size: Int, runtime: Long): CPUJvmBuffer {
-            val ptr = JBuffer.alloc(size, runtime)
+            val ptr = JBuffer.allocate(size, runtime)
             return CPUJvmBuffer(ptr, size, runtime)
         }
 
         fun create(value: FloatArray, runtime: Long): CPUJvmBuffer {
-            val ptr = JBuffer.alloc(value.size, runtime)
+            val ptr = JBuffer.allocate(value.size, runtime)
             JBuffer.writeAll(ptr, value)
             return CPUJvmBuffer(ptr, value.size, runtime)
         }
