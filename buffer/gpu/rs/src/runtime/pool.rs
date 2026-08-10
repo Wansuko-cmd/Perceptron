@@ -5,6 +5,7 @@ use crate::resource::buffer::GPUBuffer;
 
 pub struct BufferPool {
     mutex: Mutex<Inner>,
+    size: u64,
 }
 
 struct Inner {
@@ -13,10 +14,11 @@ struct Inner {
 }
 
 impl BufferPool {
-    const MAX_BYTES: u64 = 1_500_000_000;
-
-    pub fn new() -> Self {
-        BufferPool { mutex: Mutex::new(Inner { pool: HashMap::new(), total_bytes: 0 }) }
+    pub fn new(size: u64) -> Self {
+        BufferPool {
+          mutex: Mutex::new(Inner { pool: HashMap::new(), total_bytes: 0 }),
+          size: size,
+        }
     }
 
     pub fn get(&self, size: usize) -> Option<GPUBuffer> {
@@ -32,7 +34,7 @@ impl BufferPool {
     pub fn release(&self, buffer: GPUBuffer) {
         let byte_size = buffer.buffer.size();
         let mut mutex = self.mutex.lock().unwrap();
-        if mutex.total_bytes + byte_size <= Self::MAX_BYTES {
+        if mutex.total_bytes + byte_size <= self.size {
             mutex.total_bytes += byte_size;
             mutex.pool.entry(byte_size).or_default().push(buffer);
         }
