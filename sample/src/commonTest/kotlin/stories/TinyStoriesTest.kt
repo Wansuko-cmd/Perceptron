@@ -2,10 +2,7 @@
 
 package stories
 
-import com.wsr.knist.Backend
-import com.wsr.knist.base.KotlinBackend
 import com.wsr.knist.core.unwrap
-import com.wsr.knist.cpu.loadCPUBackend
 import com.wsr.knist.network.Network
 import com.wsr.knist.network.create
 import com.wsr.knist.network.initializer.Xavier
@@ -24,20 +21,15 @@ import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
-import dataset.stories.WordD2
-import dataset.stories.createWordList
-import dataset.stories.generateStories
-import dataset.stories.toData
-import dataset.stories.tokenize
-import dataset.stories.wordsD1
-import kotlin.random.Random
-import kotlin.random.nextInt
-import kotlin.test.Test
+import dataset.stories.*
 import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
 import okio.use
+import kotlin.random.Random
+import kotlin.random.nextInt
+import kotlin.test.Test
 
 private const val TRAIN_PATH = "stories/TinyStories-train.txt"
 private const val VALID_PATH = "stories/TinyStories-valid.txt"
@@ -58,8 +50,6 @@ private const val UNK_INDEX = 1
 class TinyStoriesTest {
     @Test
     fun `TinyStoriesモデルの出力を確認`() = runBlocking {
-        Backend.set(backend = loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 4_000_000_000))
-
         println("単語リスト生成開始")
         val words: List<String> = createWordList(TRAIN_PATH, VOCAB_SIZE)
         val network = createModel(words)

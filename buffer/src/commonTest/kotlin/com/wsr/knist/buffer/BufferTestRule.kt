@@ -8,7 +8,7 @@ import kotlin.time.measureTime
 
 private val targets = listOf(
     KotlinBackend,
-    loadCPUBackend(fallback = KotlinBackend, maxReservedBytes = 1_500_000_000),
+    loadCPUBackend(fallback = KotlinBackend),
     loadGPUBackend(fallback = KotlinBackend),
 )
 
