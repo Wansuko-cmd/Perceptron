@@ -13,6 +13,8 @@ import com.wsr.knist.network.port
 import com.wsr.knist.network.process.compute.affine.affine
 import com.wsr.knist.network.process.compute.attention.attention
 import com.wsr.knist.network.process.compute.bias.d1.bias
+import com.wsr.knist.network.process.compute.bias.d2.bias as biasD2
+import com.wsr.knist.network.process.compute.bias.d3.bias as biasD3
 import com.wsr.knist.network.process.compute.conv.convD2
 import com.wsr.knist.network.process.compute.dropout.dropout
 import com.wsr.knist.network.process.compute.function.relu.reLU
@@ -27,13 +29,11 @@ import com.wsr.knist.network.process.reshape.reshape.reshapeToD3
 import dataset.mnist.LabelConverter
 import dataset.mnist.MnistDataset
 import dataset.mnist.PixelConverter
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
-import com.wsr.knist.network.process.compute.bias.d2.bias as biasD2
-import com.wsr.knist.network.process.compute.bias.d3.bias as biasD3
+import kotlinx.coroutines.runBlocking
 
 private const val TRAIN_IMAGE_PATH = "mnist/train-images-idx3-ubyte.gz"
 private const val TRAIN_LABEL_PATH = "mnist/train-labels-idx1-ubyte.gz"

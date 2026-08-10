@@ -7,9 +7,8 @@ actual fun loadGPUBackend(
     maxReservedBytes: Long,
     maxPoolBytes: Long,
     enableProfiler: Boolean,
-): IBackend =
-    runCatching<IBackend> {
-        System.loadLibrary("gpu")
-        gpuMaxReservedBytes = maxReservedBytes
-        GPUBackend(fallback, enableProfiler)
-    }.getOrElse { fallback }
+): IBackend = runCatching<IBackend> {
+    System.loadLibrary("gpu")
+    gpuMaxReservedBytes = maxReservedBytes
+    GPUBackend(fallback, maxPoolBytes, enableProfiler)
+}.getOrElse { fallback }

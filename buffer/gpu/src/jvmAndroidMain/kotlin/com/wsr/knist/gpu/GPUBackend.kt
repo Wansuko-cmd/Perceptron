@@ -19,11 +19,8 @@ import com.wsr.knist.gpu.reduction.JReduction
 import com.wsr.knist.gpu.shape.JShape
 import kotlin.random.Random
 
-class GPUBackend(
-    private val fallback: IBackend,
-    maxPoolBytes: Long,
-    enableProfiler: Boolean = false,
-) : IBackend by fallback {
+class GPUBackend(private val fallback: IBackend, maxPoolBytes: Long, enableProfiler: Boolean = false) :
+    IBackend by fallback {
     private val runtime = JRuntime.allocate(maxPoolBytes, enableProfiler)
     override val generator: IDataBufferGenerator = GPUJvmBuffer.createGenerator(runtime = runtime)
 

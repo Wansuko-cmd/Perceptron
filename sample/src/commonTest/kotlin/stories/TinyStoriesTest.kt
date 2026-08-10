@@ -21,15 +21,20 @@ import com.wsr.knist.network.process.compute.scale.d2.scale
 import com.wsr.knist.network.process.compute.skip.skip
 import com.wsr.knist.network.process.reshape.token.tokenEmbedding
 import dataset.resource
-import dataset.stories.*
+import dataset.stories.WordD2
+import dataset.stories.createWordList
+import dataset.stories.generateStories
+import dataset.stories.toData
+import dataset.stories.tokenize
+import dataset.stories.wordsD1
+import kotlin.random.Random
+import kotlin.random.nextInt
+import kotlin.test.Test
 import kotlinx.coroutines.runBlocking
 import okio.FileSystem
 import okio.SYSTEM
 import okio.buffer
 import okio.use
-import kotlin.random.Random
-import kotlin.random.nextInt
-import kotlin.test.Test
 
 private const val TRAIN_PATH = "stories/TinyStories-train.txt"
 private const val VALID_PATH = "stories/TinyStories-valid.txt"
