@@ -1,5 +1,11 @@
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
 use crate::ops::shape::{transpose_d2, transpose_d3};
 use crate::resource::buffer::CPUBuffer;
+use crate::ops::utils::FastForEachExt;
+
+const SUM_D1_PAR_THRESHOLD: usize = 2_000_000;
+const REDUCE_D2_AXIS1_PAR_THRESHOLD: usize = 2_000_000;
 
 pub fn average_d1(x: &[f32]) -> f32 {
     return sum_d1(x) / x.len() as f32;
@@ -95,6 +101,9 @@ pub fn min_d3(
 }
 
 pub fn sum_d1(x: &[f32]) -> f32 {
+    if x.len() >= SUM_D1_PAR_THRESHOLD {
+        return x.par_iter().sum();
+    }
     return x.iter().sum();
 }
 
@@ -191,7 +200,7 @@ pub fn top_p_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, p: f32, axis: us
     });
 }
 
-fn reduce_d2<F: Fn(f32, f32) -> f32>(
+fn reduce_d2<F: Fn(f32, f32) -> f32 + Sync>(
     x: &CPUBuffer,
     xi: usize, xj: usize,
     axis: usize,
@@ -210,10 +219,9 @@ fn reduce_d2<F: Fn(f32, f32) -> f32>(
         }
         1 => {
             assert_eq!(result.count(), xi);
-            for (res, outer) in result.iter_mut().zip(x.chunks_exact(xj)) {
-                *res = outer.iter().copied()
-                    .fold(*res, |acc, i| block(acc, i));
-            }
+            result.fast_for_each(REDUCE_D2_AXIS1_PAR_THRESHOLD, |i, v| {
+                *v = x[i * xj..(i + 1) * xj].iter().copied().fold(*v, &block);
+            });
         }
         _ => panic!("invalid parameter. [axis: {}]", axis)
     }

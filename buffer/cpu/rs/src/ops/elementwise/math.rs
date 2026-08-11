@@ -1,4 +1,9 @@
 use crate::resource::buffer::CPUBuffer;
+use crate::ops::utils::FastForEachExt;
+
+const EXP_D1_PAR_THRESHOLD: usize = 200_000;
+const SIGMOID_D1_PAR_THRESHOLD: usize = 200_000;
+const LN_D1_PAR_THRESHOLD: usize = 200_000;
 
 const LOG2E: f32 = std::f32::consts::LOG2_E;
 
@@ -15,23 +20,17 @@ const MAGIC: f32 = 12_582_912.0;
 
 pub fn exp_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
-        *res = exp(val);
-    }
+    x.fast_map(EXP_D1_PAR_THRESHOLD, result, |&val| exp(val));
 }
 
 pub fn ln_d1(x: &CPUBuffer, e: f32, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
-        *res = (val + e).ln();
-    }
+    x.fast_map(LN_D1_PAR_THRESHOLD, result, |&val| (val + e).ln());
 }
 
 pub fn sigmoid_d1(x: &CPUBuffer, result: &mut CPUBuffer) {
     assert_eq!(x.count(), result.count());
-    for (&val, res) in x.iter().zip(result.iter_mut()) {
-        *res = 1f32 / (1f32 + exp(-val));
-    }
+    x.fast_map(SIGMOID_D1_PAR_THRESHOLD, result, |&val| 1f32 / (1f32 + exp(-val)));
 }
 
 pub fn pow_d1(x: &CPUBuffer, n: i32, result: &mut CPUBuffer) {
