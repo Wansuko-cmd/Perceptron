@@ -41,6 +41,8 @@ fn bench<M: Measurement>(
     let configs = [
         MatMulConfig { m: 128, n: 128, k: 128, b: 4 },
         MatMulConfig { m: 512, n: 512, k: 512, b: 4 },
+        MatMulConfig { m: 128, n: 128, k: 32, b: 512 },
+        MatMulConfig { m: 8192, n: 3000, k: 256, b: 1 },
     ];
 
     for config in configs {
