@@ -1,15 +1,20 @@
+use crate::ops::utils::FastForEachExt;
 use crate::resource::buffer::CPUBuffer;
 
-pub fn transpose_d2(x: &CPUBuffer, xi: usize, xj: usize, result: &mut CPUBuffer) {
-    let mut result_iter = result.iter_mut();
+const TRANSPOSE_D2_PAR_THRESHOLD: usize = 2_000_000;
+const TRANSPOSE_D3_PAR_THRESHOLD: usize = 2_000_000;
+const TRANSPOSE_D4_PAR_THRESHOLD: usize = 2_000_000;
+const UNFOLD_D1_PAR_THRESHOLD: usize = 100_000;
+const UNFOLD_D2_PAR_THRESHOLD: usize = 100_000;
+const FOLD_D1_PAR_THRESHOLD: usize = 200_000;
+const FOLD_D2_PAR_THRESHOLD: usize = 500_000;
 
-    for n_i in 0..xj {
-        for index in (n_i..n_i + xi * xj).step_by(xj) {
-            if let Some(result_value) = result_iter.next() {
-                *result_value = x[index];
-            }
+pub fn transpose_d2(x: &CPUBuffer, xi: usize, xj: usize, result: &mut CPUBuffer) {
+    result.fast_chunks_for_each(xi, TRANSPOSE_D2_PAR_THRESHOLD, |ni, result_iter| {
+        for (nj, res) in result_iter.iter_mut().enumerate() {
+            *res = x[nj * xj + ni];
         }
-    }
+    });
 }
 
 pub fn transpose_d3(
@@ -27,17 +32,18 @@ pub fn transpose_d3(
     let nj_stride = old_strides[axis_j];
     let nk_stride = old_strides[axis_k];
 
-    let mut result_iter = result.iter_mut();
-
-    for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
-        for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
-            for index in (n_j..n_j + new_shape[2] * nk_stride).step_by(nk_stride) {
-                if let Some(result_value) = result_iter.next() {
-                    *result_value = x[index];
+    let chunk_size = new_shape[1] * new_shape[2];
+    result.fast_chunks_for_each(chunk_size, TRANSPOSE_D3_PAR_THRESHOLD, |index, result_iter| {
+        let ni = index * ni_stride;
+        let mut iter = result_iter.iter_mut();
+        for nj in (ni..ni + new_shape[1] * nj_stride).step_by(nj_stride) {
+            for index in (nj..nj + new_shape[2] * nk_stride).step_by(nk_stride) {
+                if let Some(res) = iter.next() {
+                    *res = x[index];
                 }
             }
         }
-    }
+    });
 }
 
 pub fn transpose_d4(
@@ -56,19 +62,20 @@ pub fn transpose_d4(
     let nk_stride = old_strides[axis_k];
     let nl_stride = old_strides[axis_l];
 
-    let mut result_iter = result.iter_mut();
-
-    for n_i in (0..new_shape[0] * ni_stride).step_by(ni_stride) {
-        for n_j in (n_i..n_i + new_shape[1] * nj_stride).step_by(nj_stride) {
-            for n_k in (n_j..n_j + new_shape[2] * nk_stride).step_by(nk_stride) {
-                for index in (n_k..n_k + new_shape[3] * nl_stride).step_by(nl_stride) {
-                    if let Some(result_value) = result_iter.next() {
-                        *result_value = x[index];
+    let chunk_size = new_shape[1] * new_shape[2] * new_shape[3];
+    result.fast_chunks_for_each(chunk_size, TRANSPOSE_D4_PAR_THRESHOLD, |index, result_iter| {
+        let ni = index * ni_stride;
+        let mut iter = result_iter.iter_mut();
+        for nj in (ni..ni + new_shape[1] * nj_stride).step_by(nj_stride) {
+            for nk in (nj..nj + new_shape[2] * nk_stride).step_by(nk_stride) {
+                for index in (nk..nk + new_shape[3] * nl_stride).step_by(nl_stride) {
+                    if let Some(res) = iter.next() {
+                        *res = x[index];
                     }
                 }
             }
         }
-    }
+    });
 }
 
 pub fn transpose_d5(
@@ -267,112 +274,102 @@ fn create_indices(start: usize, end: usize, step: isize) -> Vec<usize> {
     }
 }
 
-pub fn unfold_d1(x: &CPUBuffer, result: &mut CPUBuffer, xi: usize, xj: usize, b: usize, window: usize, stride: usize, dilation: usize, padding: usize) {
+pub fn unfold_d1(x: &CPUBuffer, result: &mut CPUBuffer, _xi: usize, xj: usize, _b: usize, window: usize, stride: usize, dilation: usize, padding: usize) {
     let window_size = (window - 1) * dilation + 1;
     let oj = (xj + padding * 2 - window_size) / stride + 1;
-    for xb in 0..b {
-        for i in 0..xi {
-            for j in 0..oj {
-                for w in 0..window {
-                    let index = j * stride + w * dilation;
-                    if padding <= index && index < xj + padding {
-                        let index = index - padding;
-                        let result_index = ((xb * xi + i) * oj + j) * window + w;
-                        let x_index = (xb * xi + i) * xj + index;
-                        result[result_index] = x[x_index];
-                    }
+    result.fast_chunks_for_each(oj * window, UNFOLD_D1_PAR_THRESHOLD, |index, res_view| {
+        let x_view = &x[index * xj..(index + 1) * xj];
+        for j in 0..oj {
+            for w in 0..window {
+                let index = j * stride + w * dilation;
+                if padding <= index && index < xj + padding {
+                    res_view[j * window + w] = x_view[index - padding];
                 }
             }
         }
-    }
+    });
 }
 
 pub fn unfold_d2(
     x: &CPUBuffer,
     result: &mut CPUBuffer,
-    xi: usize, xj: usize, xk: usize,
-    b: usize,
+    _xi: usize, xj: usize, xk: usize,
+    _b: usize,
     window: usize, stride: usize, dilation: usize, padding: usize,
 ) {
     let window_size = (window - 1) * dilation + 1;
     let oj = (xj + padding * 2 - window_size) / stride + 1;
     let ok = (xk + padding * 2 - window_size) / stride + 1;
     let ww = window * window;
-    for xb in 0..b {
-        for i in 0..xi {
-            for ox in 0..oj {
-                for oy in 0..ok {
-                    for wy in 0..window {
-                        for wx in 0..window {
-                            let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
-                            let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
-                            if input_x >= 0 && input_x < xj as isize && input_y >= 0 && input_y < xk as isize {
-                                let input_x = input_x as usize;
-                                let input_y = input_y as usize;
-                                let result_index = (((xb * xi + i) * oj + ox) * ok + oy) * ww + wy * window + wx;
-                                let x_index = ((xb * xi + i) * xj + input_x) * xk + input_y;
-                                result[result_index] = x[x_index];
-                            }
+    result.fast_chunks_for_each(oj * ok * ww, UNFOLD_D2_PAR_THRESHOLD, |index, res_view| {
+        let x_view = &x[index * xj * xk..(index + 1) * xj * xk];
+        for ox in 0..oj {
+            for oy in 0..ok {
+                for wy in 0..window {
+                    for wx in 0..window {
+                        let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
+                        let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
+                        if input_x >= 0 && input_x < xj as isize && input_y >= 0 && input_y < xk as isize {
+                            let input_x = input_x as usize;
+                            let input_y = input_y as usize;
+                            let result_index = (ox * ok + oy) * ww + wy * window + wx;
+                            let x_index = input_x * xk + input_y;
+                            res_view[result_index] = x_view[x_index];
                         }
                     }
                 }
             }
         }
-    }
+    });
 }
 
-pub fn fold_d1(x: &CPUBuffer, result: &mut CPUBuffer, xi: usize, xj: usize, xk: usize, b: usize, stride: usize, dilation: usize, padding: usize) {
+pub fn fold_d1(x: &CPUBuffer, result: &mut CPUBuffer, _xi: usize, xj: usize, xk: usize, _b: usize, stride: usize, dilation: usize, padding: usize) {
     let window_size = (xk - 1) * dilation + 1;
     let oj = window_size + (xj - 1) * stride - padding * 2;
-    for xb in 0..b {
-        for i in 0..xi {
-            for j in 0..xj {
-                for k in 0..xk {
-                    let index = j * stride + k * dilation;
-                    if padding <= index && index < oj + padding {
-                        let index = index - padding;
-                        let x_index = ((xb * xi + i) * xj + j) * xk + k;
-                        let result_index = (xb * xi + i) * oj + index;
-                        result[result_index] += x[x_index];
-                    }
+    result.fast_chunks_for_each(oj, FOLD_D1_PAR_THRESHOLD, |index, res_view| {
+        let x_view = &x[index * xj * xk..(index + 1) * xj * xk];
+        for j in 0..xj {
+            for k in 0..xk {
+                let index = j * stride + k * dilation;
+                if padding <= index && index < oj + padding {
+                    res_view[index - padding] += x_view[j * xk + k];
                 }
             }
         }
-    }
+    });
 }
 
 pub fn fold_d2(
     x: &CPUBuffer,
     result: &mut CPUBuffer,
-    xi: usize, xj: usize, xk: usize, xl: usize,
-    b: usize,
+    _xi: usize, xj: usize, xk: usize, xl: usize,
+    _b: usize,
     stride: usize, dilation: usize, padding: usize,
 ) {
     let window = (xl as f64).sqrt() as usize;
     let window_size = (window - 1) * dilation + 1;
     let oj = window_size + (xj - 1) * stride - padding * 2;
     let ok = window_size + (xk - 1) * stride - padding * 2;
-    for xb in 0..b {
-        for i in 0..xi {
-            for ox in 0..xj {
-                for oy in 0..xk {
-                    for wy in 0..window {
-                        for wx in 0..window {
-                            let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
-                            let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
-                            if input_x >= 0 && input_x < oj as isize && input_y >= 0 && input_y < ok as isize {
-                                let input_x = input_x as usize;
-                                let input_y = input_y as usize;
-                                let x_index = (((xb * xi + i) * xj + ox) * xk + oy) * xl + wy * window + wx;
-                                let result_index = ((xb * xi + i) * oj + input_x) * ok + input_y;
-                                result[result_index] += x[x_index];
-                            }
+    result.fast_chunks_for_each(oj * ok, FOLD_D2_PAR_THRESHOLD, |index, res_view| {
+        let x_view = &x[index * xj * xk * xl..(index + 1) * xj * xk * xl];
+        for ox in 0..xj {
+            for oy in 0..xk {
+                for wy in 0..window {
+                    for wx in 0..window {
+                        let input_x = (ox * stride + wy * dilation) as isize - padding as isize;
+                        let input_y = (oy * stride + wx * dilation) as isize - padding as isize;
+                        if input_x >= 0 && input_x < oj as isize && input_y >= 0 && input_y < ok as isize {
+                            let input_x = input_x as usize;
+                            let input_y = input_y as usize;
+                            let x_index = (ox * xk + oy) * xl + wy * window + wx;
+                            let result_index = input_x * ok + input_y;
+                            res_view[result_index] += x_view[x_index];
                         }
                     }
                 }
             }
         }
-    }
+    });
 }
 
 pub fn flip_d3(x: &CPUBuffer, xi: usize, xj: usize, xk: usize, axis: usize, result: &mut CPUBuffer) {
