@@ -6,3 +6,4 @@ pub mod index;
 pub mod linalg;
 pub mod reduction;
 pub mod shape;
+pub mod utils;
