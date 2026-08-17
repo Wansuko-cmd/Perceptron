@@ -70,6 +70,9 @@ import com.wsr.knist.network.process.compute.debug.DebugD3
 import com.wsr.knist.network.process.compute.dropout.DropoutD1
 import com.wsr.knist.network.process.compute.dropout.DropoutD2
 import com.wsr.knist.network.process.compute.dropout.DropoutD3
+import com.wsr.knist.network.process.compute.function.linear.LinearD1
+import com.wsr.knist.network.process.compute.function.linear.LinearD2
+import com.wsr.knist.network.process.compute.function.linear.LinearD3
 import com.wsr.knist.network.process.compute.function.relu.LeakyReLUD1
 import com.wsr.knist.network.process.compute.function.relu.LeakyReLUD2
 import com.wsr.knist.network.process.compute.function.relu.LeakyReLUD3
@@ -85,6 +88,9 @@ import com.wsr.knist.network.process.compute.function.sigmoid.SigmoidD3
 import com.wsr.knist.network.process.compute.function.softmax.SoftmaxD1
 import com.wsr.knist.network.process.compute.function.softmax.SoftmaxD2
 import com.wsr.knist.network.process.compute.function.softmax.SoftmaxD3
+import com.wsr.knist.network.process.compute.function.tanh.TanhD1
+import com.wsr.knist.network.process.compute.function.tanh.TanhD2
+import com.wsr.knist.network.process.compute.function.tanh.TanhD3
 import com.wsr.knist.network.process.compute.norm.layer.d1.LayerNormD1
 import com.wsr.knist.network.process.compute.norm.layer.d2.LayerNormAxisD2
 import com.wsr.knist.network.process.compute.norm.layer.d2.LayerNormD2
@@ -241,9 +247,9 @@ private val buildInSerializersModule = SerializersModule {
         subclass(DropoutD3::class)
 
         // Function
-        subclass(com.wsr.knist.network.process.compute.function.linear.LinearD1::class)
-        subclass(com.wsr.knist.network.process.compute.function.linear.LinearD2::class)
-        subclass(com.wsr.knist.network.process.compute.function.linear.LinearD3::class)
+        subclass(LinearD1::class)
+        subclass(LinearD2::class)
+        subclass(LinearD3::class)
 
         subclass(ReLUD1::class)
         subclass(ReLUD2::class)
@@ -262,6 +268,10 @@ private val buildInSerializersModule = SerializersModule {
         subclass(SoftmaxD1::class)
         subclass(SoftmaxD2::class)
         subclass(SoftmaxD3::class)
+
+        subclass(TanhD1::class)
+        subclass(TanhD2::class)
+        subclass(TanhD3::class)
 
         // Norm
         subclass(LayerNormD1::class)
