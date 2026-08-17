@@ -1,9 +1,9 @@
-use matrixmultiply::sgemm;
 use rayon::{iter::{IndexedParallelIterator, ParallelIterator}, slice::ParallelSliceMut};
 
 use crate::resource::buffer::CPUBuffer;
 
 const MAT_MUL_D2_TO_D2_FLOP_PAR_THRESHOLD: usize = 1_000_000;
+const MAT_MUL_D2_TO_D2_B1_M_THRESHOLD: usize = 64;
 
 pub fn inner(x: &CPUBuffer, y: &CPUBuffer, b: usize, result: &mut CPUBuffer) {
     assert_eq!(x.count(), y.count());
@@ -38,13 +38,15 @@ pub fn mat_mul_d1_to_d2(
     let csc = 1;
 
     unsafe {
-        sgemm(
-            m, k, n,
-            1.0,
-            x.as_ptr(), rsa, csa,
-            y.as_ptr(), rsb, csb,
-            0.0,
-            result.as_mut_ptr(), rsc, csc,
+        gemm::gemm(
+            m, n, k,
+            result.as_mut_ptr(), csc, rsc,
+            false,
+            x.as_ptr(), csa, rsa,
+            y.as_ptr(), csb, rsb,
+            0f32, 1f32,
+            false, false, false,
+            gemm::Parallelism::None,
         );
     }
 }
@@ -71,13 +73,15 @@ pub fn mat_mul_d2_to_d1(
     let csc = 1;
 
     unsafe {
-        sgemm(
-            m, k, n,
-            1.0,
-            x.as_ptr(), rsa, csa,
-            y.as_ptr(), rsb, csb,
-            0.0,
-            result.as_mut_ptr(), rsc, csc,
+        gemm::gemm(
+            m, n, k,
+            result.as_mut_ptr(), csc, rsc,
+            false,
+            x.as_ptr(), csa, rsa,
+            y.as_ptr(), csb, rsb,
+            0f32, 1f32,
+            false, false, false,
+            gemm::Parallelism::None,
         );
     }
 }
@@ -114,31 +118,36 @@ pub fn mat_mul_d2_to_d2(
             let a_ptr = &x[i * stride_a..];
             let b_ptr = &y[i * stride_b..];
             unsafe {
-                sgemm(
-                    m, k, n,
-                    1.0,
-                    a_ptr.as_ptr(), rsa, csa,
-                    b_ptr.as_ptr(), rsb, csb,
-                    0.0,
-                    c_ptr.as_mut_ptr(), rsc, csc,
+                gemm::gemm(
+                    m, n, k,
+                    c_ptr.as_mut_ptr(), csc, rsc,
+                    false,
+                    a_ptr.as_ptr(), csa, rsa,
+                    b_ptr.as_ptr(), csb, rsb,
+                    0f32, 1f32,
+                    false, false, false,
+                    gemm::Parallelism::None,
                 );
             }
         });
     } else {
+        let is_large_m = m > MAT_MUL_D2_TO_D2_B1_M_THRESHOLD;
         // mを分割してスレッドに割り当てる
         let threads = if parallel { rayon::current_num_threads().max(1) } else { 1 };
         let m_per_threads = m.div_ceil(threads).max(1);
-        chunked_for_each(result, m_per_threads * n, parallel, |i, c_ptr| {
+        chunked_for_each(result, m_per_threads * n, parallel && is_large_m, |i, c_ptr| {
             let m_offset = i * m_per_threads;
             let a_ptr = &x[(m_offset as isize * rsa) as usize..];
             unsafe {
-                sgemm(
-                    c_ptr.len() / n, k, n,
-                    1.0,
-                    a_ptr.as_ptr(), rsa, csa,
-                    y.as_ptr(), rsb, csb,
-                    0.0,
-                    c_ptr.as_mut_ptr(), rsc, csc,
+                gemm::gemm(
+                    c_ptr.len() / n, n, k,
+                    c_ptr.as_mut_ptr(), csc, rsc,
+                    false,
+                    a_ptr.as_ptr(), csa, rsa,
+                    y.as_ptr(), csb, rsb,
+                    0f32, 1f32,
+                    false, false, false,
+                    gemm::Parallelism::None,
                 );
             }
         });
