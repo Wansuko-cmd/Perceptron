@@ -1,4 +1,3 @@
-use matrixmultiply::sgemm;
 use rayon::{iter::{IndexedParallelIterator, ParallelIterator}, slice::ParallelSliceMut};
 
 use crate::resource::buffer::CPUBuffer;
@@ -38,13 +37,15 @@ pub fn mat_mul_d1_to_d2(
     let csc = 1;
 
     unsafe {
-        sgemm(
-            m, k, n,
-            1.0,
-            x.as_ptr(), rsa, csa,
-            y.as_ptr(), rsb, csb,
-            0.0,
-            result.as_mut_ptr(), rsc, csc,
+        gemm::gemm(
+            m, n, k,
+            result.as_mut_ptr(), csc, rsc,
+            false,
+            x.as_ptr(), csa, rsa,
+            y.as_ptr(), csb, rsb,
+            0f32, 1f32,
+            false, false, false,
+            gemm::Parallelism::None,
         );
     }
 }
@@ -71,13 +72,15 @@ pub fn mat_mul_d2_to_d1(
     let csc = 1;
 
     unsafe {
-        sgemm(
-            m, k, n,
-            1.0,
-            x.as_ptr(), rsa, csa,
-            y.as_ptr(), rsb, csb,
-            0.0,
-            result.as_mut_ptr(), rsc, csc,
+        gemm::gemm(
+            m, n, k,
+            result.as_mut_ptr(), csc, rsc,
+            false,
+            x.as_ptr(), csa, rsa,
+            y.as_ptr(), csb, rsb,
+            0f32, 1f32,
+            false, false, false,
+            gemm::Parallelism::None,
         );
     }
 }
@@ -114,13 +117,15 @@ pub fn mat_mul_d2_to_d2(
             let a_ptr = &x[i * stride_a..];
             let b_ptr = &y[i * stride_b..];
             unsafe {
-                sgemm(
-                    m, k, n,
-                    1.0,
-                    a_ptr.as_ptr(), rsa, csa,
-                    b_ptr.as_ptr(), rsb, csb,
-                    0.0,
-                    c_ptr.as_mut_ptr(), rsc, csc,
+                gemm::gemm(
+                    m, n, k,
+                    c_ptr.as_mut_ptr(), csc, rsc,
+                    false,
+                    a_ptr.as_ptr(), csa, rsa,
+                    b_ptr.as_ptr(), csb, rsb,
+                    0f32, 1f32,
+                    false, false, false,
+                    gemm::Parallelism::None,
                 );
             }
         });
@@ -132,13 +137,15 @@ pub fn mat_mul_d2_to_d2(
             let m_offset = i * m_per_threads;
             let a_ptr = &x[(m_offset as isize * rsa) as usize..];
             unsafe {
-                sgemm(
-                    c_ptr.len() / n, k, n,
-                    1.0,
-                    a_ptr.as_ptr(), rsa, csa,
-                    y.as_ptr(), rsb, csb,
-                    0.0,
-                    c_ptr.as_mut_ptr(), rsc, csc,
+                gemm::gemm(
+                    c_ptr.len() / n, n, k,
+                    c_ptr.as_mut_ptr(), csc, rsc,
+                    false,
+                    a_ptr.as_ptr(), csa, rsa,
+                    y.as_ptr(), csb, rsb,
+                    0f32, 1f32,
+                    false, false, false,
+                    gemm::Parallelism::None,
                 );
             }
         });
