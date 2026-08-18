@@ -13,6 +13,9 @@ import com.wsr.knist.network.join.Join
 import com.wsr.knist.network.join.add.AddD1
 import com.wsr.knist.network.join.add.AddD2
 import com.wsr.knist.network.join.add.AddD3
+import com.wsr.knist.network.join.concat.ConcatD1
+import com.wsr.knist.network.join.concat.ConcatD2
+import com.wsr.knist.network.join.concat.ConcatD3
 import com.wsr.knist.network.optimizer.Optimizer
 import com.wsr.knist.network.optimizer.Scheduler
 import com.wsr.knist.network.optimizer.adam.Adam
@@ -327,6 +330,10 @@ private val buildInSerializersModule = SerializersModule {
         subclass(AddD1::class)
         subclass(AddD2::class)
         subclass(AddD3::class)
+
+        subclass(ConcatD1::class)
+        subclass(ConcatD2::class)
+        subclass(ConcatD3::class)
     }
 
     polymorphic(Output::class) {
