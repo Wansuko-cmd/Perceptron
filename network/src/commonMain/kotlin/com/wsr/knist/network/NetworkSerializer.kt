@@ -16,6 +16,9 @@ import com.wsr.knist.network.join.add.AddD3
 import com.wsr.knist.network.join.concat.ConcatD1
 import com.wsr.knist.network.join.concat.ConcatD2
 import com.wsr.knist.network.join.concat.ConcatD3
+import com.wsr.knist.network.join.max.MaxD1
+import com.wsr.knist.network.join.max.MaxD2
+import com.wsr.knist.network.join.max.MaxD3
 import com.wsr.knist.network.join.mul.MulD1
 import com.wsr.knist.network.join.mul.MulD2
 import com.wsr.knist.network.join.mul.MulD3
@@ -341,6 +344,10 @@ private val buildInSerializersModule = SerializersModule {
         subclass(MulD1::class)
         subclass(MulD2::class)
         subclass(MulD3::class)
+
+        subclass(MaxD1::class)
+        subclass(MaxD2::class)
+        subclass(MaxD3::class)
     }
 
     polymorphic(Output::class) {
