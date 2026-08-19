@@ -14,7 +14,7 @@ fun IOType.D1.average(): IOType.D0.Global = IOType.D0(Backend.average(value))
 fun IOType.D1.max(): IOType.D0.Global = IOType.D0(Backend.max(x = value))
 
 @ScopeOp
-fun IOType.D1.min() = IOType.D0(Backend.min(x = value))
+fun IOType.D1.min(): IOType.D0.Global = IOType.D0(Backend.min(x = value))
 
 @ScopeOp
 fun IOType.D1.sum(): IOType.D0.Global = IOType.D0(Backend.sum(x = value))

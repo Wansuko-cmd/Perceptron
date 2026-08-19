@@ -4,10 +4,10 @@ lib-group-id = "com.github.Wansuko-cmd"
 lib-version = "0.0.32-alpha04"
 
 # kotlin
-kotlin = "2.3.21"
+kotlin = "2.4.10"
 
 # ksp
-ksp = "2.3.9"
+ksp = "2.3.10"
 
 # serialization
 serialization = "1.11.0"
