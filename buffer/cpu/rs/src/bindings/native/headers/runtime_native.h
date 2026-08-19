@@ -3,7 +3,7 @@
 
 typedef struct Runtime Runtime;
 
-Runtime* com_wsr_cpu_runtime_allocate(long pool_size);
+Runtime* com_wsr_cpu_runtime_allocate(long long pool_size);
 void com_wsr_cpu_runtime_release(Runtime* runtime);
 
 #endif

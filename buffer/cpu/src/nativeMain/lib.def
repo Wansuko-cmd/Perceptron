@@ -11,4 +11,4 @@ staticLibraries.linux_arm64 = libcpu.a
 staticLibraries.macos_arm64 = libcpu.a
 staticLibraries.macos_x64 = libcpu.a
 staticLibraries.mingw_x64 = libcpu.a
-linkerOpts.mingw_x64 = -lntdll
+linkerOpts.mingw_x64 = -lntdll -lws2_32 -luserenv
