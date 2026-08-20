@@ -31,6 +31,6 @@ internal class ConcatD1(override val outputI: Int) : Join.D1() {
 }
 
 fun GraphScope.concat(vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 = addJoin(
-    join = ConcatD1(outputI = nodes[0].inputI),
+    join = ConcatD1(outputI = nodes.sumOf { it.inputI }),
     nodes = nodes,
 )
