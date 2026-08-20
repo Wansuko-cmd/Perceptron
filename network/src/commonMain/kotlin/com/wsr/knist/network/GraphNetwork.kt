@@ -34,40 +34,37 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
     @PublishedApi
     internal val mutex = Mutex()
 
-    protected val env = GraphEnv()
-
     @Suppress("FunctionName")
     protected suspend inline fun <O> _expect(
         inputs: List<Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
         crossinline decode: (outputs: List<Batch<IOType>>) -> O,
     ): O = withContext(dispatcher) {
-        mutex.withLock {
-            sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
-            IOScope.launch {
-                val scope = this
-                graph.forEach { node ->
-                    when (node) {
-                        is Graph.Node.Attach -> {
-                            with(node.process) {
-                                env[node.id] = scope._expect(env[node.from], env)
-                            }
-                        }
-
-                        is Graph.Node.Connect -> {
-                            with(node.join) {
-                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                            }
-                        }
-
-                        is Graph.Node.Observe -> {
-                            env[node.id] = env[node.from]
+        val env = GraphEnv()
+        sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
+        IOScope.launch {
+            val scope = this
+            graph.forEach { node ->
+                when (node) {
+                    is Graph.Node.Attach -> {
+                        with(node.process) {
+                            env[node.id] = scope._expect(env[node.from], env)
                         }
                     }
+
+                    is Graph.Node.Connect -> {
+                        with(node.join) {
+                            env[node.id] = scope._expect(node.from.map { env[it] }, env)
+                        }
+                    }
+
+                    is Graph.Node.Observe -> {
+                        env[node.id] = env[node.from]
+                    }
                 }
-                val outputs = sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
-                decode(outputs)
             }
+            val outputs = sinks.map { sink -> with(sink.output) { scope._expect(env[sink.from]) } }
+            decode(outputs)
         }
     }
 
@@ -78,35 +75,34 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
         labels: List<(output: Batch<IOType>) -> Batch<IOType>>,
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): List<IOType.D0.Global> = withContext(dispatcher) {
-        mutex.withLock {
-            sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
-            IOScope.launch {
-                val scope = this
-                graph.forEach { node ->
-                    when (node) {
-                        is Graph.Node.Attach -> {
-                            with(node.process) {
-                                env[node.id] = scope._expect(env[node.from], env)
-                            }
-                        }
-
-                        is Graph.Node.Connect -> {
-                            with(node.join) {
-                                env[node.id] = scope._expect(node.from.map { env[it] }, env)
-                            }
-                        }
-
-                        is Graph.Node.Observe -> {
-                            env[node.id] = env[node.from]
+        val env = GraphEnv()
+        sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
+        IOScope.launch {
+            val scope = this
+            graph.forEach { node ->
+                when (node) {
+                    is Graph.Node.Attach -> {
+                        with(node.process) {
+                            env[node.id] = scope._expect(env[node.from], env)
                         }
                     }
-                }
-                sinks.mapIndexed { i, sink ->
-                    val result = with(sink.output) {
-                        scope._train(input = env[sink.from], label = labels[i])
+
+                    is Graph.Node.Connect -> {
+                        with(node.join) {
+                            env[node.id] = scope._expect(node.from.map { env[it] }, env)
+                        }
                     }
-                    result.loss.toGlobal()
+
+                    is Graph.Node.Observe -> {
+                        env[node.id] = env[node.from]
+                    }
                 }
+            }
+            sinks.mapIndexed { i, sink ->
+                val result = with(sink.output) {
+                    scope._train(input = env[sink.from], label = labels[i])
+                }
+                result.loss.toGlobal()
             }
         }
     }
@@ -161,6 +157,7 @@ abstract class GraphNetwork<T : GraphNetwork<T>> {
         dispatcher: CoroutineDispatcher = Dispatchers.Default,
     ): List<IOType.D0.Global> = withContext(dispatcher) {
         mutex.withLock {
+            val env = GraphEnv()
             sources.forEachIndexed { i, source -> env[source.id] = inputs[i] }
             IOScope.launch {
                 var losses: List<IOType.D0.Global>? = null
