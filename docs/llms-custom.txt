@@ -1,10 +1,11 @@
 # knist カスタム実装リファレンス
 
-**このファイルは約500行しかない。部分読みせず、必ず一度に全体を読み込むこと。** ライブラリの基本的な利用方法（モデル構築・学習・推論・保存）は `docs/llms-usage.txt` を参照。
+**このファイルは約600行しかない。部分読みせず、必ず一度に全体を読み込むこと。** ライブラリの基本的な利用方法（モデル構築・学習・推論・保存）は `docs/llms-usage.txt` を参照。
 
-knist の拡張ポイントは5つある。`Compute`・`Output`・`Optimizer`・`AttentionBiasD2` は `@Serializable` を付けて `NetworkSerializer.register()` することで保存・読み込みに対応できる。`WeightInitializer` はシリアライズ対象外。
+knist の拡張ポイントは6つある。`Compute`・`Join`・`Output`・`Optimizer`・`AttentionBiasD2` は `@Serializable` を付けて `NetworkSerializer.register()` することで保存・読み込みに対応できる。`WeightInitializer` はシリアライズ対象外。
 
 - `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
+- `Join` — 複数ノードの合流層（組み込みの `add` / `mul` / `max` / `concat` と同枠）
 - `Output` — 出力層（損失計算）
 - `Optimizer` — 重み更新アルゴリズム
 - `WeightInitializer` — 重み初期化（シリアライズ不要）
@@ -243,6 +244,63 @@ fun GraphBuilder.Node.D1.weightedLayer(id: String = Uuid.random().toString()) = 
 `GraphEnv` — グラフ上の**任意のノードの現在値**を `GraphId` で引ける実行時マップ（`env[id]: Batch<T>`）。現在の層への入力ではない点に注意（層への入力は `expect` / `train` の `input` 引数で渡される）。すべての層に同一の `GraphEnv` インスタンスが渡されるため、他ノードの値に依存した処理（Attention の padding mask が特定ノードの出力を参照する等）で利用できる。
 
 任意のノードを直接参照したい場合（`AttentionBiasD2.mask` 等）は、`Graph.Node.Observe` で対象ノードを観測対象として登録し、その `id` を通じて `env[id]` で読み出す（`AttentionBiasD2Builder.mask(node, value)` の実装を参照）。ネットワークの最初の入力に限らず、`create()` ブロック内で組み立てた任意の中間ノードも参照できる。
+
+---
+
+## Join（カスタム合流層）
+
+`com.wsr.knist.network.join.Join` の `D1` / `D2` / `D3` を継承する。複数ノードを1つに合流させる層で、組み込みの `add` / `mul` / `max` / `concat`（`docs/llms-usage.txt` の「多入力・多出力モデル」節を参照）と同じ枠組み。
+
+override 必須の抽象プロパティ:
+
+- 出力形状: `outputI`（D1）、`outputI` / `outputJ`（D2）、`outputI` / `outputJ` / `outputK`（D3）
+
+`Compute` と異なり `id` プロパティは無い（`replace` の狙い撃ち対象にならない）。入力側の形状は `expect` / `train` に渡される `inputs: List<Batch<IOType.Dx>>` から都度参照する（各ノードの形状は合流前の `GraphBuilder.Node.Dx` 側で決まるため、層自身は出力形状だけ知っていればよい）。
+
+### Join.D1
+
+```kotlin
+@Serializable
+internal class MyJoinD1(override val outputI: Int) : Join.D1() {
+
+    // 推論（勾配不要）。inputs は合流する全ノードの値
+    override fun IOScope.expect(inputs: List<Batch<IOType.D1>>, env: GraphEnv): Batch<IOType.D1> =
+        inputs.reduce { acc, batch -> acc + batch }  // 例: 加算合流
+
+    // 学習（calcDelta に出力を渡すと upstream の delta が返ってくる）
+    override fun IOScope.train(
+        inputs: List<Batch<IOType.D1>>,
+        env: GraphEnv,
+        calcDelta: IOScope.(Batch<IOType.D1>) -> Batch<IOType.D1>,
+    ): List<Batch<IOType.D1>> {
+        val output = inputs.reduce { acc, batch -> acc + batch }
+        val delta = calcDelta(output)
+        // 戻り値は inputs と同じ順番・同じ数の delta（各入力ノードへの逆伝播分）
+        return List(inputs.size) { delta }
+    }
+}
+```
+
+`Join.D2` / `Join.D3` も同じ形（`inputs: List<Batch<IOType.D2>>` 等になるだけ）。
+
+### GraphScope への登録
+
+```kotlin
+fun GraphScope.myJoin(vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 {
+    check(nodes.distinctBy { it.inputI }.size == 1)  // 形状の制約はここでチェックする（例: 全ノード同一サイズ）
+    return addJoin(
+        join = MyJoinD1(outputI = nodes[0].inputI),
+        nodes = nodes,
+    )
+}
+```
+
+`addJoin(join, vararg nodes)` は `GraphScope` の拡張関数（`import com.wsr.knist.network.GraphScope.addJoin`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播 delta は、そこから消費するすべての経路からの寄与の合計になる（これは呼び出し側のグラフ実行が面倒を見るため、`Join` 実装側で意識する必要はない）。
+
+シリアライズ対応（保存・読み込みを使う場合）:
+```kotlin
+NetworkSerializer.apply { register(MyJoinD1::class) }
+```
 
 ---
 
@@ -501,6 +559,10 @@ import: `com.wsr.knist.core.index.gather` / `com.wsr.knist.core.index.scatterAdd
 // Process / Compute
 import com.wsr.knist.network.GraphEnv
 import com.wsr.knist.network.process.Compute
+
+// Join
+import com.wsr.knist.network.join.Join
+import com.wsr.knist.network.GraphScope.addJoin
 
 // Output
 import com.wsr.knist.network.output.Output

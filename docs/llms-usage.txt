@@ -3,13 +3,13 @@
 > Kotlin製ニューラルネットワークライブラリ。DSLでレイヤーを積み上げてモデルを構築する。
 > 型がチェーン全体で追跡され、IO型の不整合はコンパイルエラーになる。
 
-**このファイルは約800行しかない。部分読みせず、必ず一度に全体を読み込むこと。** なおこのファイルはライブラリの利用方法のみを扱う。カスタム層・出力層・オプティマイザ等を自作する場合は `docs/llms-custom.txt`（約500行）を追加で読むこと。
+**このファイルは約800行しかない。部分読みせず、必ず一度に全体を読み込むこと。** なおこのファイルはライブラリの利用方法のみを扱う。カスタム層・出力層・オプティマイザ等を自作する場合は `docs/llms-custom.txt`（約600行）を追加で読むこと。
 
 Kotlin Multiplatformライブラリ。JitPackからGradle依存として導入できる。
 
 - 対応プラットフォーム: JVM / Android。Kotlin/Native（macOS / Linux / Windows）はJitPackでは配布されておらず、リポジトリをローカルで `publishToMavenLocal` した場合のみ利用できる。JS / wasm は非対応。
 - `<version>` には最新リリースを指定する（https://jitpack.io/#Wansuko-cmd/knist または GitHub Releases で確認）。
-- この文書は v0.0.31-alpha03 以降（2026-07 時点の main）の API を記述している。
+- この文書は v0.0.32-alpha05 以降（2026-08 時点の main）の API を記述している。
 
 ```kotlin
 // settings.gradle.kts
@@ -36,8 +36,8 @@ dependencies {
 
 | バックエンド | 生成関数 | import | 説明 | フォールバック |
 |------------|--------|--------|------|--------------|
-| CPU | `loadCPUBackend(fallback, maxReservedBytes: Long = ...)` | `com.wsr.knist.cpu.loadCPUBackend` | Rust ネイティブ CPU 実装 | 引数で指定 |
-| GPU | `loadGPUBackend(fallback, enableProfiler = false, maxReservedBytes = 4_000_000_000L)` | `com.wsr.knist.gpu.loadGPUBackend` | WebGPU（wgpu）GPU 実装 | 引数で指定 |
+| CPU | `loadCPUBackend(fallback, maxReservedBytes = 4_000_000_000L, maxPoolBytes = maxReservedBytes)` | `com.wsr.knist.cpu.loadCPUBackend` | Rust ネイティブ CPU 実装 | 引数で指定 |
+| GPU | `loadGPUBackend(fallback, maxReservedBytes = 4_000_000_000L, maxPoolBytes = maxReservedBytes, enableProfiler = false)` | `com.wsr.knist.gpu.loadGPUBackend` | WebGPU（wgpu）GPU 実装 | 引数で指定 |
 | `KotlinBackend` | — | `com.wsr.knist.base.KotlinBackend` | 純 Kotlin 実装 | — |
 
 呼び出し側で `loadCPUBackend` / `loadGPUBackend` を明示的に呼んでバックエンドを生成し、`Backend.set()` に渡す。
@@ -50,19 +50,16 @@ import com.wsr.knist.gpu.loadGPUBackend
 Backend.set(loadGPUBackend(KotlinBackend))
 ```
 
-`maxReservedBytes` は、バッファ確保総量（Cleaner経由の解放待ちも含めた「予約中」バイト数。JVMの
-`-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
-たびに `System.gc()` を発火させる安全弁の上限値。閾値をレベルトリガー（超えている「間」ずっと）で
-判定しているため、attention 等で中間バッファが多いモデルではこの閾値を頻繁に踏み抜いて
-`System.gc()` が連発し、大幅な速度低下を招くことがある。
+`maxReservedBytes` / `maxPoolBytes` はいずれも CPU・GPU 共通で省略時は固定 4GB（JVM ヒープ・VRAM 連動のような自動デフォルトは無い）。
 
-- **CPU**: 省略時は JVM/Android では `Runtime.getRuntime().maxMemory()`（`-Xmx` 相当）を採用する
-  （`-XX:MaxDirectMemorySize` が未指定時にヒープ上限と同じ値になる JVM 自身の挙動に倣った設計）。
-  Kotlin/Native では固定値にフォールバックする（このロジック自体を使わない）。
-- **GPU**: 固定 4GB。JVM ヒープと VRAM は無関係のプールであり、wgpu もクロスプラットフォームで
-  信頼できる VRAM 総量取得手段を持たないため、ヒープ連動のような自動デフォルトは採用していない。
+- **`maxReservedBytes`**: バッファ確保総量（Cleaner経由の解放待ちも含めた「予約中」バイト数。JVMの
+  `-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
+  たびに `System.gc()` を発火させる安全弁の上限値。閾値をレベルトリガー（超えている「間」ずっと）で
+  判定しているため、attention 等で中間バッファが多いモデルではこの閾値を頻繁に踏み抜いて
+  `System.gc()` が連発し、大幅な速度低下を招くことがある。
+- **`maxPoolBytes`**: バッファプール（解放されたバッファを再利用する仕組み）が保持できる総バイト数の上限。省略時は `maxReservedBytes` と同じ値になる。
 
-大きいモデルや大きいバッチで発火が頻発する場合は、モデルに応じて明示的に引き上げる
+大きいモデルや大きいバッチで `System.gc()` の発火が頻発する場合は、モデルに応じて明示的に引き上げる
 （例: `loadCPUBackend(KotlinBackend, maxReservedBytes = 10_000_000_000L)`）。
 
 `loadCPUBackend` / `loadGPUBackend` はネイティブライブラリが利用不可の環境では自動的に `fallback`（通常 `KotlinBackend`）を返す。
@@ -132,7 +129,7 @@ val inputs: Batch<IOType.D1> = Batch(
 
 `I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。いずれも `dispatcher` 引数（デフォルト: `Dispatchers.Default`）を取る。
 
-`Network` は内部の Mutex により保護されておりスレッドセーフだが、`train` / `loss` / `expect` は相互排他である。複数コルーチンから並列に呼んでも実行は1件ずつ直列化される（推論のみの場合も同様）。
+`Network` は内部の Mutex により保護されておりスレッドセーフ。ただし相互排他になるのは `train` 同士のみで、複数コルーチンから並列に `train` を呼んでも実行は1件ずつ直列化される。`loss` / `expect` は Mutex を取らず、呼び出しごとに独立した実行状態を持つため、`train` と並行して呼んでも、`loss` / `expect` 同士で並列に呼んでもブロックされない。
 
 ```kotlin
 // suspend スコープ内での典型的な使い方
@@ -232,7 +229,18 @@ val (out1, out2) = network.expect(input1 = inputA, input2 = inputB)
 network.train(input1 = inputA, input2 = inputB, label1 = labelA, label2 = labelB)
 ```
 
-`add(vararg nodes)` は同じ次元の複数ノードを要素ごとの和で合流させる（`import com.wsr.knist.network.join.add.add`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播delta は、そこから消費するすべての経路（下流の複数の出力head 等）からの寄与の合計になる。
+同じ次元の複数ノードを合流させる Join 関数は4種類ある。いずれも異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播delta は、そこから消費するすべての経路（下流の複数の出力head 等）からの寄与の合計になる。
+
+| 関数 | import | 形状の制約 | 説明 |
+|------|--------|-----------|------|
+| `add(vararg nodes)` | `com.wsr.knist.network.join.add.add` | 全ノード同一サイズ | 要素ごとの和 |
+| `mul(vararg nodes)` | `com.wsr.knist.network.join.mul.mul` | 全ノード同一サイズ | 要素ごとの積 |
+| `max(vararg nodes)` | `com.wsr.knist.network.join.max.max` | 全ノード同一サイズ | 要素ごとの最大値 |
+| `concat(vararg nodes, axis?)` | `com.wsr.knist.network.join.concat.concat` | 連結軸以外は全ノード同一サイズ | 指定軸方向の連結（連結軸の出力サイズは各ノードのサイズの和）。D1 は `axis` 引数を取らない、D2/D3 は必須 |
+
+`add` / `mul` / `max` は全ノードが同一サイズであることが前提（構築時に `check` で検証される）。`concat` のみ連結軸のサイズが異なるノード同士を連結できる（連結軸以外のサイズは揃っている必要がある）。
+
+`train` / `loss` にはラベルジェネレータ版（現在の出力を受け取って目標値を返す）もあり、`Sink2`（2出力）モデルでも `label1` / `label2` の両方をラムダで渡せる。
 
 既知の制約: `Sink2` 系の `train` / `loss` は現状 `IOType.D0.Global` を1つだけ返す（`sink1` 側の損失のみで、head 毎の内訳は返らない）。両方のlossを個別に見たい場合は、必要になったタイミングで別途 `loss` の戻り値仕様を確認すること。
 
