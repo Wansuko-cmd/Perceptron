@@ -32,7 +32,7 @@ dependencies {
 
 ## バックエンド設定
 
-演算の実行バックエンドを切り替えられる。デフォルトは CPU（Rust ネイティブ）。追加の Gradle 依存は不要（`network` 依存が `io-type` → `buffer` を経由してすべてのバックエンドを含む）。
+演算の実行バックエンドを切り替えられる。デフォルトは CPU（Rust ネイティブ）。どのバックエンドも `network` の依存に含まれるため、追加の Gradle 依存は不要。
 
 | バックエンド | 生成関数 | import | 説明 | フォールバック |
 |------------|--------|--------|------|--------------|
@@ -51,16 +51,12 @@ Backend.set(loadGPUBackend(KotlinBackend))
 ```
 
 `maxReservedBytes` / `maxPoolBytes` はいずれも CPU・GPU 共通で省略時は固定 4GB（JVM ヒープ・VRAM 連動のような自動デフォルトは無い）。
-なお `maxReservedBytes`（下記の `System.gc()` 安全弁）が効くのは JVM / Android のみで、Kotlin/Native では引数が無視される。
+なお `maxReservedBytes` が効くのは JVM / Android のみで、Kotlin/Native では無視される。
 
-- **`maxReservedBytes`**: バッファ確保総量（Cleaner経由の解放待ちも含めた「予約中」バイト数。JVMの
-  `-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
-  たびに `System.gc()` を発火させる安全弁の上限値。閾値をレベルトリガー（超えている「間」ずっと）で
-  判定しているため、attention 等で中間バッファが多いモデルではこの閾値を頻繁に踏み抜いて
-  `System.gc()` が連発し、大幅な速度低下を招くことがある。
-- **`maxPoolBytes`**: バッファプール（解放されたバッファを再利用する仕組み）が保持できる総バイト数の上限。省略時は `maxReservedBytes` と同じ値になる。
+- **`maxReservedBytes`**: 確保済みバッファの合計がこの値を超えている間、バッファを確保するたびに `System.gc()` が呼ばれる。attention 等で中間バッファが多いモデルでは閾値を超え続けて `System.gc()` が連発し、大幅な速度低下を招くことがある。
+- **`maxPoolBytes`**: 解放済みバッファを再利用するプールが保持できる総バイト数の上限。省略時は `maxReservedBytes` と同じ値になる。
 
-大きいモデルや大きいバッチで `System.gc()` の発火が頻発する場合は、モデルに応じて明示的に引き上げる
+大きいモデルや大きいバッチで速度が落ちる場合は、モデルに応じて明示的に引き上げる
 （例: `loadCPUBackend(KotlinBackend, maxReservedBytes = 10_000_000_000L)`）。
 
 `loadCPUBackend` / `loadGPUBackend` はネイティブライブラリが利用不可の環境では自動的に `fallback`（通常 `KotlinBackend`）を返す。
@@ -74,7 +70,7 @@ Backend.set(loadGPUBackend(KotlinBackend))
 
 `Network.create(port(converter), optimizer, initializer) { input -> ... }` のブロックDSLでレイヤーを積み上げる。ブロックの最後に出力層（`softmaxWithLoss` 等）を呼ぶと、その戻り値がそのまま `Network` オブジェクトになる（末尾で `toNetwork()` のような変換を呼ぶ必要はない）。
 
-`port(converter)` は `Converter<T>` を「入力口」として包むだけの薄いファクトリで、`optimizer` / `initializer` は持たない。それらは `create()` の引数として渡す。
+`port(converter)` は `Converter<T>` を入力口に変換するだけで、`optimizer` / `initializer` は受け取らない。それらは `create()` の引数として渡す。
 
 `Network.Src1.Sink1<I, O>` の `I`・`O` はバッチ全体の型。`Converter<T>` の `T` がそのままバッチ型として使われる。
 
@@ -130,7 +126,7 @@ val inputs: Batch<IOType.D1> = Batch(
 
 `I` 自体がバッチ型なので、バッチ単位で渡す。`train` / `loss` / `expect` はすべて `suspend` 関数であり、コルーチンスコープ内から呼ぶことを想定している。いずれも `dispatcher` 引数（デフォルト: `Dispatchers.Default`）を取る。
 
-`Network` は内部の Mutex により保護されておりスレッドセーフ。ただし相互排他になるのは `train` 同士のみで、複数コルーチンから並列に `train` を呼んでも実行は1件ずつ直列化される。`loss` / `expect` は Mutex を取らず、呼び出しごとに独立した実行状態を持つため、`train` と並行して呼んでも、`loss` / `expect` 同士で並列に呼んでもブロックされない。
+`Network` はスレッドセーフ。ただし排他されるのは `train` 同士のみで、複数コルーチンから並列に `train` を呼んでも実行は1件ずつ直列化される。`loss` / `expect` は排他されず、`train` と並行して呼んでも、`loss` / `expect` 同士で並列に呼んでもブロックされない。
 
 ```kotlin
 // suspend スコープ内での典型的な使い方
@@ -239,13 +235,13 @@ network.train(input1 = inputA, input2 = inputB, label1 = labelA, label2 = labelB
 | `max(vararg nodes)` | `com.wsr.knist.network.join.max.max` | 全ノード同一サイズ | 要素ごとの最大値 |
 | `concat(vararg nodes, axis?)` | `com.wsr.knist.network.join.concat.concat` | 連結軸以外は全ノード同一サイズ | 指定軸方向の連結（連結軸の出力サイズは各ノードのサイズの和）。D1 は `axis` 引数を取らない、D2/D3 は必須 |
 
-`add` / `mul` / `max` は全ノードが同一サイズであることが前提（構築時に `check` で検証される）。`concat` のみ連結軸のサイズが異なるノード同士を連結できる（連結軸以外のサイズは揃っている必要がある）。
+`add` / `mul` / `max` は全ノードが同一サイズであることが前提で、違反するとモデル構築時に例外になる。`concat` のみ連結軸のサイズが異なるノード同士を連結できる（連結軸以外のサイズは揃っている必要がある）。
 
 `train` / `loss` にはラベルジェネレータ版（現在の出力を受け取って目標値を返す）もあり、`Sink2`（2出力）モデルでも `label1` / `label2` の両方をラムダで渡せる。
 
-既知の制約: `Sink2` 系の `train` / `loss` は現状 `IOType.D0.Global` を1つだけ返す（`sink1` 側の損失のみで、head 毎の内訳は返らない）。両方のlossを個別に見たい場合は、必要になったタイミングで別途 `loss` の戻り値仕様を確認すること。
+`Sink2` 系の `train` / `loss` が返す `IOType.D0.Global` は1つだけで、これは `sink1` 側の損失。head 毎の内訳は取得できない。
 
-未到達の `Source`（どの出力にも寄与しないport）を構築時に検出する仕組みは無い。
+どの出力にも繋がっていない port を作ってもエラーにはならず、その入力は単に無視される。
 
 ---
 
@@ -260,7 +256,7 @@ network.train(input1 = inputA, input2 = inputB, label1 = labelA, label2 = labelB
 
 各次元型には `Global` と `Local` の2サブクラスがあるが、**ライブラリを利用するだけなら区別を意識する必要はない**。`train` / `loss` 等の API が返すのはすべて `Global`。`Local` はカスタム層等を実装する場合にのみ現れる（`docs/llms-custom.txt` を参照）。
 
-`IOType` をユーザーコードで明示的に解放する必要はない。解放は `IOScope` の終了（ライブラリ内部で自動的に行われる）か、GC による回収のいずれかで行われる。
+`IOType` をユーザーコードで明示的に解放する必要はない。バッファの解放は自動的に行われる。
 
 `IOType.D0.Global` から `Float` を取り出すには `.unwrap()` を使う（import: `com.wsr.knist.core.unwrap`）:
 
@@ -394,7 +390,7 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 
 注意: `positionEmbedding` はサイズを変えない学習可能な位置バイアスを加算するだけ。
 
-同パッケージに `roPE(waveLength?)` もあるが `@Deprecated`（Attention の内部に組み込むべきところを独立層にしてしまった実装ミス）。新規コードでは使わない。
+同パッケージに `roPE(waveLength?)` もあるが `@Deprecated` なので使わない。
 
 ### Dropout
 
@@ -415,7 +411,7 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 - `onInput`：順伝播時（`expect` / `train` 両方）に入力テンソルを受け取る
 - `onDelta`：`train` 時に勾配（delta）を受け取る
 
-注意: JSON / CBOR でシリアライズするとラムダはリセットされる（`@Transient`）。
+注意: JSON / CBOR で保存したモデルを読み込むと、コールバックは何もしないラムダに戻る。
 
 ### スキップ接続
 
@@ -423,7 +419,7 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 |------|--------|------|
 | `skip { ... }` | `com.wsr.knist.network.process.compute.skip.skip` | ブロック内の出力が入力と同サイズであること |
 
-内部的には分岐先（ブロックの戻り値）と分岐元を要素ごとの和で合流させる Join（`add`）として実装されている。skip ブロックの**最終出力**が入力と同じ次元・同じ形状であればよい。ブロック内で `reshapeToD1()` 等により一時的に次元を変えて元の次元に戻す構成もサポートされる（ブロックの型が `GraphBuilder.Node.Dx.() -> GraphBuilder.Node.Dx` であるため、対応外の型でブロックが終わるコードはそもそもコンパイルが通らない）。形状が一致しない場合（次元は一致するがサイズが異なる等）は構築時に例外になる。ブロックが空の場合（`this` をそのまま返す場合）は `skip` 自体が何も追加せず、入力をそのまま返す。
+入力とブロックの出力を要素ごとに加算する（`x + block(x)`）。条件は skip ブロックの**最終出力**が入力と同じ次元・同じ形状であること。ブロック内で `reshapeToD1()` 等により一時的に次元を変えて元の次元に戻す構成もサポートされる。ブロックが入力と違う次元で終わるコードはコンパイルが通らず、次元は同じでサイズが違う場合はモデル構築時に例外になる。ブロックが空の場合（`this` をそのまま返す場合）は `skip` 自体が何も追加せず、入力をそのまま返す。
 
 ### Reshape
 
@@ -440,7 +436,7 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 | `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(i, j, k) | D2(j, k) | — |
 | `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(i) | D2(i, tokenSize) | — |
 
-reshape 系の制約はいずれも factory 関数内の `check` なので、違反するとモデル構築時に例外になる（学習・推論の実行時ではない）。
+reshape 系の制約はいずれも違反するとモデル構築時に例外になる。
 reshapeToD2 (D1→D2) の制約: `i * j == inputI`
 reshapeToD2 (D3→D2) の制約: `inputI * inputJ * inputK == i * j`
 reshapeToD3 (D1→D3) の制約: `i * j * k == inputI`
@@ -463,7 +459,7 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ`
 `temperature` は**構築時に固定**され、学習・推論の両方の softmax に適用される。構築後・読み込み後に変更する手段は無いため、推論時に温度を変えたい場合はモデルを構築し直す必要がある。
 `softmaxWithLoss` の `converter` ラムダ内では `inputI` が参照可能
 
-ラベルのある行を丸ごとロス計算から除外したい場合（パディング等）は、`maskValue` のような専用パラメータは無く、Converter の `encode` 側でその行を全ゼロベクトルとして出力する。**D2 版の** `softmaxWithLoss` は内部でラベル行の合計が 0 かどうかを見て自動的に除外する（D1 版にはこの除外機構は無い）。
+ラベルのある行を丸ごとロス計算から除外したい場合（パディング等）は、`maskValue` のような専用パラメータは無く、Converter の `encode` 側でその行を全ゼロベクトルとして出力する。**D2 版の** `softmaxWithLoss` は合計が 0 のラベル行を自動的に除外する（D1 版にこの除外は無い）。
 
 ---
 
@@ -657,7 +653,7 @@ val network: Network.Src1.Sink1<I, O> = Network.Src1.Sink1.fromCbor(source)  // 
 val copy: Network.Src1.Sink1<I, O> = network.clone()
 ```
 
-内部で CBOR シリアライズ→デシリアライズを行う。重みを含む完全なコピーが得られる。カスタム Converter を使う場合は事前に `NetworkSerializer.register()` が必要。
+重みを含む完全なコピーが得られる。CBOR シリアライズを経由するため、カスタム Converter を使う場合は事前に `NetworkSerializer.register()` が必要。
 
 ---
 
@@ -681,11 +677,11 @@ builder.skip {
 
 構築済み・`fromJson` / `fromCbor` で読み込み済みの `Network` に対して、転移学習・ファインチューニング目的で層の凍結や差し替えができる。
 
-**いずれの操作も元の `network` は変更せず、新しい `Network` を返す。** 内部で `clone()`（CBOR 経由の完全コピー）が行われるため、カスタム Converter を使っている場合は事前に `NetworkSerializer.register()` が必要。返された `Network` の層・重みは元の `network` とは独立している。
+**いずれの操作も元の `network` は変更せず、新しい `Network` を返す。** 返された `Network` の層・重みは元の `network` とは独立したコピーになる。`clone()` と同じく CBOR シリアライズを経由するため、カスタム Converter を使っている場合は事前に `NetworkSerializer.register()` が必要。
 
 ### Optimizer の差し替え・層の凍結
 
-学習率の変更・Optimizer の切り替え・層の凍結は、いずれも「`condition` に一致した層の Optimizer を、渡したファクトリから作り直す」一つの操作で行う（`@JvmName` により JVM 上では `replaceOptimizer`）。重みは保持されるが、Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置はリセットされる。
+学習率の変更・Optimizer の切り替え・層の凍結は、いずれも「`condition` に一致した層の Optimizer を、渡したファクトリから作り直す」一つの操作で行う。重みは保持されるが、Optimizer の内部状態（Adam のモーメント等）と Scheduler の進行位置はリセットされる。
 
 ```kotlin
 // 読み込んだモデルを低い学習率で微調整する（重みは保持、モーメント・Scheduler 位置はリセット）
@@ -704,7 +700,7 @@ val unfrozen: Network.Src1.Sink1<I, O> = frozen.replace(condition = { it.id == "
 
 ### 中間層の差し替え
 
-`replace<T>` で、型と条件にマッチする層を `GraphBuilder` の DSL でまるごと差し替えられる。Kotlin から呼ぶ関数名は `T` の種類によらず `replace`（`@JvmName` により JVM 上では `replaceComputeD1` / `replaceReshapeD1ToD2` のような名前になっているだけ）。新しい `Network` を返す。
+`replace<T>` で、型と条件にマッチする層を `GraphBuilder` の DSL でまるごと差し替えられる。関数名は `T` の種類によらず `replace`。新しい `Network` を返す。
 
 ```kotlin
 val newNetwork: Network.Src1.Sink1<I, O> = network.replace<AffineD2>(
@@ -719,7 +715,7 @@ val newNetwork: Network.Src1.Sink1<I, O> = network.replace<AffineD2>(
 ```
 
 - `condition` に一致した各層を、`block` が返す `GraphBuilder.Node.Dx` までの層列で置き換える
-- 置き換え後の層列の入力形状・出力形状は、元の層の入力形状・出力形状（内部的には `Process` の `inputShape` / `outputShape`）と一致していなければならず、一致しない場合は例外になる
+- 置き換え後の層列の入力形状・出力形状は、元の層の入力形状・出力形状と一致していなければならず、一致しない場合は例外になる
 - `block` が何も層を追加しない場合（元の `GraphBuilder.Node.Dx` をそのまま返す場合）、その層は削除されるだけになる。削除できるのは入力形状と出力形状が一致している層（活性化関数・`bias` 等）のみで、一致しない層（`affine` 等）を削除しようとすると例外になる
 - `T`（マッチさせる層の型）は `Compute.D1` / `Compute.D2` / `Compute.D3`、または `Reshape.D1ToD2` / `D1ToD3` / `D2ToD1` / `D2ToD3` / `D3ToD1` / `D3ToD2` のいずれかのサブタイプである必要がある。`T` の次元遷移によってどのオーバーロードが選ばれるかが決まる
 
@@ -746,11 +742,11 @@ val network2: Network.Src1.Sink1<NewInput, O> = network.replaceSource(newInputCo
 val network3: Network.Src2.Sink1<NewInput1, I2, O> = network.replaceSource1(newInputConverter)
 ```
 
-新しい `Network` を返す（元の `network` は変更されない）。内部で `clone()` されるため、層・重みは元の `network` とは独立したコピーになる（共有されない）。
+新しい `Network` を返す（元の `network` は変更されない）。層・重みは元の `network` とは独立したコピーになる（共有されない）。
 
 ### Sink（出力）の差し替え
 
-出力層（`softmaxWithLoss` 等）から手前の層列をまとめて組み直したい場合に使う。中間層の差し替え（`replace<T>`）と違い、**グラフ末尾の Compute ノードから新しい出力までを丸ごと再構築する**（新しい層を挟む・出力の型 `O` を変える、のどちらもこの1回でできる）。単一出力なら `replaceSink`、`Sink2` 系なら対象headごとに `replaceSink1` / `replaceSink2` を呼ぶ。`T`（末尾層の出力形状。`Output.D1` / `Output.D2`）で受け取れる次元を指定する（`@JvmName` により `replaceSinkD1` / `replaceSinkD2` に分かれる）。
+出力層（`softmaxWithLoss` 等）から手前の層列をまとめて組み直したい場合に使う。中間層の差し替え（`replace<T>`）と違い、**グラフ末尾の Compute ノードから新しい出力までを丸ごと再構築する**（新しい層を挟む・出力の型 `O` を変える、のどちらもこの1回でできる）。単一出力なら `replaceSink`、`Sink2` 系なら対象headごとに `replaceSink1` / `replaceSink2` を呼ぶ。`T`（末尾層の出力形状。`Output.D1` / `Output.D2`）で受け取れる次元を指定する。
 
 ```kotlin
 // temperatureだけ変えたい場合。既存の末尾層の出力形状(D1)からやり直す
@@ -826,5 +822,5 @@ Network.create(port(wordsD1(maxLength=128, words=...)), ...)  → D1(128)  // Ne
 
 ## IOScope
 
-`IOScope` は演算中の中間バッファのライフタイムを管理する内部機構。学習・推論の内部で自動的に使われるため、**ライブラリを利用するだけなら意識する必要はない**。カスタム層（`Compute`）・出力層（`Output`）・オプティマイザ（`Optimizer`）を実装する場合は `docs/llms-custom.txt` を参照。
+`IOScope` は演算中の中間バッファのライフタイムを管理する仕組み。学習・推論では自動的に使われるため、**ライブラリを利用するだけなら意識する必要はない**。カスタム層（`Compute`）・出力層（`Output`）・オプティマイザ（`Optimizer`）を実装する場合は `docs/llms-custom.txt` を参照。
 
