@@ -4,7 +4,7 @@
 
 knist の拡張ポイントは6つある。カスタム実装はいずれも `@Serializable` を付けること（`Network` の保存・読み込みだけでなく、`clone()` / `replace()` 系も内部で CBOR シリアライズを通るため）。
 
-`NetworkSerializer.register()` に登録できるのは `Compute`（= `Process`）・`Optimizer`（および `Optimizer.D1` / `D2` / `D3`）・`WeightInitializer`・`AttentionBiasD2`・`Converter` の5系統。**`Join` と `Output` を受け取る `register` のオーバーロードは現状存在しない**ため、カスタム `Join` / `Output` を含むモデルは保存・読み込み・`clone()` ができない（`Optimizer.D4` 用のオーバーロードも無い）。
+カスタム実装は `NetworkSerializer.register()` に登録することで保存・読み込みに対応する。登録先は引数の型から自動で解決される（`Compute` は `Process` として、`Optimizer.D1` 〜 `D4` はそれぞれの次元として登録される）。対応しているのは `Process`（= `Compute`）・`Join`・`Output`・`Optimizer`・`Optimizer.D1` 〜 `D4`・`WeightInitializer`・`AttentionBiasD2`・`Converter`。
 
 - `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
 - `Join` — 複数ノードの合流層（組み込みの `add` / `mul` / `max` / `concat` と同枠）
@@ -299,15 +299,16 @@ fun GraphScope.myJoin(vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 
 
 `addJoin(join, vararg nodes)` は `object GraphScope` のメンバー関数（`GraphScope` レシーバーの中からはそのまま呼べる。外から呼ぶ場合は `import com.wsr.knist.network.GraphScope.addJoin`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播 delta は、そこから消費するすべての経路からの寄与の合計になる（これは呼び出し側のグラフ実行が面倒を見るため、`Join` 実装側で意識する必要はない）。
 
-シリアライズについて: `NetworkSerializer.register` に `Join` を受け取るオーバーロードが無いため、カスタム `Join` を含むモデルは `toJson()` / `toCbor()` / `clone()` / `replace()` 系が使えない。保存が必要な場合は組み込みの `add` / `mul` / `max` / `concat` で組み立てること。
+シリアライズ対応（保存・読み込みを使う場合）:
+```kotlin
+NetworkSerializer.apply { register(MyJoinD1::class) }
+```
 
 ---
 
 ## Output（カスタム出力層）
 
 `com.wsr.knist.network.output.Output.D1` または `Output.D2` を継承する。
-
-シリアライズについて: `Join` と同じく `NetworkSerializer.register` に `Output` を受け取るオーバーロードが無いため、カスタム `Output` を含むモデルは `toJson()` / `toCbor()` / `clone()` / `replace()` 系が使えない。保存が必要な場合は組み込みの `softmaxWithLoss` / `sigmoidWithLoss` / `meanSquare` を使うこと。
 
 ```kotlin
 @Serializable
@@ -350,6 +351,11 @@ fun GraphBuilder.Node.D1.myOutput() = addOutput(
 // converter を使う場合（出力を任意型に変換）
 fun <O> GraphBuilder.Node.D1.myOutput(converter: GraphBuilder.Node.D1.() -> Converter.D1<O>) =
     addOutput(output = MyOutputD1(outputI = inputI), converter = converter())
+```
+
+シリアライズ対応（保存・読み込みを使う場合）:
+```kotlin
+NetworkSerializer.apply { register(MyOutputD1::class) }
 ```
 
 ---

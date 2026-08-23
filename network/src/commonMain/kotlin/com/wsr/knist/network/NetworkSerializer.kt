@@ -155,6 +155,26 @@ object NetworkSerializer {
         networkSerializerModules.add(module)
     }
 
+    @JvmName("registerJoin")
+    inline fun <reified T : Join> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Join::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
+    @JvmName("registerOutput")
+    inline fun <reified T : Output> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Output::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
     @JvmName("registerOptimizer")
     inline fun <reified T : Optimizer> register(clazz: KClass<T>) {
         val module = SerializersModule {
@@ -199,6 +219,16 @@ object NetworkSerializer {
     inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
         val module = SerializersModule {
             polymorphic(Optimizer.D3::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
+    @JvmName("registerOptimizerD4")
+    inline fun <reified T : Optimizer.D4> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer.D4::class) {
                 subclass(clazz)
             }
         }
