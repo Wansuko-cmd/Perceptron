@@ -113,6 +113,7 @@ import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormAxisD2
 import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormD2
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormAxisD3
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormD3
+import com.wsr.knist.network.process.compute.padding.PaddingD2
 import com.wsr.knist.network.process.compute.pool.MaxPoolD2
 import com.wsr.knist.network.process.compute.pool.MaxPoolD3
 import com.wsr.knist.network.process.compute.position.PositionEmbeddingD2
@@ -298,6 +299,9 @@ private val buildInSerializersModule = SerializersModule {
         subclass(MinMaxNormD1::class)
         subclass(MinMaxNormD2::class)
         subclass(MinMaxNormD3::class)
+
+        // Padding
+        subclass(PaddingD2::class)
 
         // Pool
         subclass(MaxPoolD2::class)
