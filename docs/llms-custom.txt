@@ -2,7 +2,9 @@
 
 **このファイルは約600行しかない。部分読みせず、必ず一度に全体を読み込むこと。** ライブラリの基本的な利用方法（モデル構築・学習・推論・保存）は `docs/llms-usage.txt` を参照。
 
-knist の拡張ポイントは6つある。`Compute`・`Join`・`Output`・`Optimizer`・`AttentionBiasD2` は `@Serializable` を付けて `NetworkSerializer.register()` することで保存・読み込みに対応できる。`WeightInitializer` はシリアライズ対象外。
+knist の拡張ポイントは6つある。カスタム実装はいずれも `@Serializable` を付けること（`Network` の保存・読み込みだけでなく、`clone()` / `replace()` 系も内部で CBOR シリアライズを通るため）。
+
+`NetworkSerializer.register()` に登録できるのは `Compute`（= `Process`）・`Optimizer`（および `Optimizer.D1` / `D2` / `D3`）・`WeightInitializer`・`AttentionBiasD2`・`Converter` の5系統。**`Join` と `Output` を受け取る `register` のオーバーロードは現状存在しない**ため、カスタム `Join` / `Output` を含むモデルは保存・読み込み・`clone()` ができない（`Optimizer.D4` 用のオーバーロードも無い）。
 
 - `Compute`（`Process` の実装） — 中間層（順伝播・逆伝播）
 - `Join` — 複数ノードの合流層（組み込みの `add` / `mul` / `max` / `concat` と同枠）
@@ -295,18 +297,17 @@ fun GraphScope.myJoin(vararg nodes: GraphBuilder.Node.D1): GraphBuilder.Node.D1 
 }
 ```
 
-`addJoin(join, vararg nodes)` は `GraphScope` の拡張関数（`import com.wsr.knist.network.GraphScope.addJoin`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播 delta は、そこから消費するすべての経路からの寄与の合計になる（これは呼び出し側のグラフ実行が面倒を見るため、`Join` 実装側で意識する必要はない）。
+`addJoin(join, vararg nodes)` は `object GraphScope` のメンバー関数（`GraphScope` レシーバーの中からはそのまま呼べる。外から呼ぶ場合は `import com.wsr.knist.network.GraphScope.addJoin`）。異なる `Source` に由来するノード同士でも合流できる。合流点（fan-out するノード）の逆伝播 delta は、そこから消費するすべての経路からの寄与の合計になる（これは呼び出し側のグラフ実行が面倒を見るため、`Join` 実装側で意識する必要はない）。
 
-シリアライズ対応（保存・読み込みを使う場合）:
-```kotlin
-NetworkSerializer.apply { register(MyJoinD1::class) }
-```
+シリアライズについて: `NetworkSerializer.register` に `Join` を受け取るオーバーロードが無いため、カスタム `Join` を含むモデルは `toJson()` / `toCbor()` / `clone()` / `replace()` 系が使えない。保存が必要な場合は組み込みの `add` / `mul` / `max` / `concat` で組み立てること。
 
 ---
 
 ## Output（カスタム出力層）
 
 `com.wsr.knist.network.output.Output.D1` または `Output.D2` を継承する。
+
+シリアライズについて: `Join` と同じく `NetworkSerializer.register` に `Output` を受け取るオーバーロードが無いため、カスタム `Output` を含むモデルは `toJson()` / `toCbor()` / `clone()` / `replace()` 系が使えない。保存が必要な場合は組み込みの `softmaxWithLoss` / `sigmoidWithLoss` / `meanSquare` を使うこと。
 
 ```kotlin
 @Serializable
@@ -374,7 +375,7 @@ class MyOptimizer(private val rate: Float) : Optimizer {
 class MyD1(
     private val rate: Float,
     // private var moment: IOType.D1.Global = ... // モーメント等の状態量
-) : Optimizer.D1(/* maxNorm = ..., stepUnit = ... */) {
+) : Optimizer.D1(/* _maxNorm = ..., _stepUnit = ... */) {  // 名前付き引数にする場合、実パラメータ名は _maxNorm / _stepUnit
 
     // weight: 現在の重み / dw: 勾配 / 戻り値: 更新後の重み（Local で返してよい）
     override fun IOScope.adapt(weight: IOType.D1, dw: IOType.D1): IOType.D1 =
@@ -390,7 +391,10 @@ class MyD1(
 
 `com.wsr.knist.network.initializer.WeightInitializer` を実装する。
 
+`Network.create()` に渡した Initializer は `Network` 自身に保持され、`GraphNetworkSerializer` が必ず polymorphic に書き出す。そのため**カスタム Initializer にも `@Serializable` と `NetworkSerializer.register()` が必要**（付けないと `toJson()` / `toCbor()` / `clone()` / `replace()` 系がすべて実行時に失敗する）。なお層ごとの重み初期化は構築時にしか使われないため、保存されるのは `create()` に渡したこの1つだけ。
+
 ```kotlin
+@Serializable
 class MyInitializer : WeightInitializer {
     // input: 前の層の出力形状 / output: この層の出力形状
     override fun d1(input: List<Int>, output: List<Int>, size: Int): IOType.D1.Global {
@@ -410,6 +414,11 @@ class MyInitializer : WeightInitializer {
 
 `DataBuffer.create(floatArray)` で `DataBuffer` を生成する。
 import: `com.wsr.knist.base.data.DataBuffer`
+
+シリアライズ対応:
+```kotlin
+NetworkSerializer.apply { register(MyInitializer::class) }
+```
 
 ---
 
@@ -478,7 +487,7 @@ D1 の `plus(other: IOType.D2, axis: Int)` など broadcast 版も存在する�
 | `ln(e: Float)` | ln(x + e)（数値安定用 e） |
 | `pow(n: Int)` | x^n |
 | `sqrt(e: Float = 1e-7f)` | √(x + e) |
-| `softmax()` | D1 のみ。max 安定化済み |
+| `softmax()` / `softmax(axis)` | max 安定化済み。D1〜D4 にあり、D2 以上は `axis` 指定版も持つ |
 | `tanh()` | 双曲線正接。`Batch<IOType.Dx>` 版のみ存在（IOType 単体版は無い） |
 
 ### 比較・マスク
@@ -501,7 +510,7 @@ D1 の例。D2/D3 は `axis: Int` 引数を取るバリアントも存在する�
 | `average()` | D0 | 全要素の平均 |
 | `max()` | D0 | 最大値 |
 | `min()` | D0 | 最小値 |
-| `maxIndex()` | D0（D1→D0）/ D1（D2→D1）/ D2（D3→D2） | 最大値のインデックス |
+| `maxIndex()` / `maxIndex(axis)` | D0（D1→D0）/ D1（D2→D1）/ D2（D3→D2） | 最大値のインデックス。D1 は引数なし、D2 以上は `axis` が必須 |
 | `topK(k)` | D0 | 上位 k 個からサンプリング |
 | `topP(p)` | D0 | 累積確率 p 以内からサンプリング |
 

@@ -51,6 +51,7 @@ Backend.set(loadGPUBackend(KotlinBackend))
 ```
 
 `maxReservedBytes` / `maxPoolBytes` はいずれも CPU・GPU 共通で省略時は固定 4GB（JVM ヒープ・VRAM 連動のような自動デフォルトは無い）。
+なお `maxReservedBytes`（下記の `System.gc()` 安全弁）が効くのは JVM / Android のみで、Kotlin/Native では引数が無視される。
 
 - **`maxReservedBytes`**: バッファ確保総量（Cleaner経由の解放待ちも含めた「予約中」バイト数。JVMの
   `-XX:MaxDirectMemorySize`が内部で`Bits.reservedMemory`と呼ぶのと同じ考え方）がこの閾値を超える
@@ -271,7 +272,7 @@ val lossValue: Float = loss.unwrap()
 
 ## 全層一覧（import パス付き）
 
-重みを持つレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は、表に記載の引数に加えて `optimizer` / `initializer` を省略可能引数として取り、層ごとに個別指定できる（詳細は Optimizer 節）。
+重みを持つレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding`）は、表に記載の引数に加えて `optimizer` / `initializer` を省略可能引数として取り、層ごとに個別指定できる（詳細は Optimizer 節）。`minMaxNorm` は名前が似ているが重みを持たない層で、`optimizer` / `initializer` は取らない。
 
 さらに**すべての**レイヤーの factory 関数は `id: String`（省略時はランダム UUID）を省略可能引数として取る。`id` は層（`Process`）の公開プロパティとして保持され、`replace`（層の差し替え・Optimizer の差し替え / 凍結）の `condition` で特定の層を狙い撃ちするのに使える（「モデルの改修」節を参照）。
 
@@ -285,9 +286,9 @@ val lossValue: Float = loss.unwrap()
 | `maxPool(size, stride?, padding?)` | `com.wsr.knist.network.process.compute.pool.maxPool` | D3(i, j, k) | D3(i, outJ, outK) | stride=size, padding=0 |
 
 conv の出力サイズ: `out = (size - kernelSize + 2 * padding) / stride + 1`（`kernelSize = (kernel - 1) * dilation + 1`。dilation=1 なら kernelSize=kernel）
-制約: `(size - kernelSize + 2 * padding) % stride == 0` であること。convD1 は違反すると実行時エラー、convD2 はエラーにならず出力サイズが黙って切り捨てられる
+制約: `(size - kernelSize + 2 * padding) % stride == 0` であること。convD1 / convD2 とも違反するとモデル構築時に例外（convD2 は j・k 両方をチェックする）
 maxPool の出力サイズ: `out = (j + 2*padding - size) / stride + 1`。`stride < size` とすると重複窓（overlapping pooling）になる
-制約: maxPool は `(j + 2*padding - size) % stride == 0` でなければ実行時エラー（D3 は j・k 両方）
+制約: maxPool は `(j + 2*padding - size) % stride == 0` でなければモデル構築時に例外（D3 は j・k 両方）
 
 ### パディング
 
@@ -393,6 +394,8 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 
 注意: `positionEmbedding` はサイズを変えない学習可能な位置バイアスを加算するだけ。
 
+同パッケージに `roPE(waveLength?)` もあるが `@Deprecated`（Attention の内部に組み込むべきところを独立層にしてしまった実装ミス）。新規コードでは使わない。
+
 ### Dropout
 
 | 関数 | import | デフォルト値 |
@@ -437,10 +440,11 @@ input.attention(numOfHeads = 8, biases = { alibi().mask(input, 0f) })
 | `globalAverageToD2()` | `com.wsr.knist.network.process.reshape.gad.globalAverageToD2` | D3(i, j, k) | D2(j, k) | — |
 | `tokenEmbedding(vocabSize, tokenSize)` | `com.wsr.knist.network.process.reshape.token.tokenEmbedding` | D1(i) | D2(i, tokenSize) | — |
 
-reshapeToD2 (D1→D2) の制約: `i * j == inputI` でなければ実行時エラー
-reshapeToD2 (D3→D2) の制約: `inputI * inputJ * inputK == i * j` でなければ実行時エラー
-reshapeToD3 (D1→D3) の制約: `i * j * k == inputI` でなければ実行時エラー
-reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ実行時エラー
+reshape 系の制約はいずれも factory 関数内の `check` なので、違反するとモデル構築時に例外になる（学習・推論の実行時ではない）。
+reshapeToD2 (D1→D2) の制約: `i * j == inputI`
+reshapeToD2 (D3→D2) の制約: `inputI * inputJ * inputK == i * j`
+reshapeToD3 (D1→D3) の制約: `i * j * k == inputI`
+reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ`
 
 ### 出力層
 
@@ -465,7 +469,7 @@ reshapeToD3 (D2→D3) の制約: `i * j * k == inputI * inputJ` でなければ�
 
 ## Converter（入出力変換器）
 
-ユーザーデータと内部 IOType の変換を担う。`inputD1` 等のファクトリ関数と、`softmaxWithLoss` 等の出力層関数の両方に渡せる。
+ユーザーデータと内部 IOType の変換を担う。`port()` ファクトリ関数と、`softmaxWithLoss` 等の出力層関数の両方に渡せる。
 
 `Converter<T>` の型パラメータ `T` はバッチ全体の型。`encode(input: T)` がバッチを受け取り、`decode` がバッチを返す。これがそのまま `Network.Src1.Sink1<I, O>` の `I`・`O` になる。
 
@@ -550,9 +554,9 @@ NetworkSerializer.apply { register(LabelConverter::class) }
 - `maxNorm`: 勾配クリッピング。勾配の L2 ノルムが `maxNorm` を超えた場合にスケールダウンする
 - `stepUnit`: **勾配累積**。`train()` `stepUnit` 回分の勾配を内部に累積し、その平均勾配で1回だけ重みを更新する。累積中の `train()` では重みは変化しない。Scheduler の step も実際の重み更新1回につき1進む
 
-Optimizer / Initializer は `inputDx` で渡したものがデフォルトとして全層に配られるが、学習可能なレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding` / `minMaxNorm`）は `optimizer` / `initializer` 引数で層ごとに上書きできる。なお `bias` の initializer デフォルトは `Fixed(0f)`、`scale` / `minMaxNorm` は `Fixed(1f)`。
+Optimizer / Initializer は `Network.create()` の引数として渡したものがデフォルトとして全層に配られるが、学習可能なレイヤーの factory 関数（`affine` / `bias` / `scale` / `convD1` / `convD2` / `attention` / `tokenEmbedding` / `positionEmbedding`）は `optimizer` / `initializer` 引数で層ごとに上書きできる。なお `bias` の initializer デフォルトは `Fixed(0f)`、`scale` は `Fixed(1f)`。
 
-`inputDx` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replace` はこれをデフォルト値として使う。このデフォルトは `replace` で層や Optimizer を差し替えても変わらない（あくまで構築時に決まる値）。
+`Network.create()` に渡した Optimizer / Initializer は `Network` 自身にも保持され、`toJson()` / `toCbor()` で保存される。「モデルの改修」節の `replace` はこれをデフォルト値として使う。このデフォルトは `replace` で層や Optimizer を差し替えても変わらない（あくまで構築時に決まる値）。
 
 `AdamW` の `decay` は bias / scale を含む**全パラメータに一律に適用される**。特定の層を weight decay から除外したい場合は、その層の `optimizer` 引数に decay の無い Optimizer（`Adam` 等）を個別に渡す。
 
@@ -563,7 +567,7 @@ Optimizer / Initializer は `inputDx` で渡したものがデフォルトとし
 | `Scheduler.Fix(rate)` | `com.wsr.knist.network.optimizer.Scheduler` | 固定学習率 |
 | `Scheduler.Step(rate, gamma, stepCount)` | 同上 | Nステップごとに rate *= gamma |
 | `Scheduler.MultiStep(rate, gamma, milestones)` | 同上 | 指定ステップで rate *= gamma |
-| `Scheduler.CosineAnnealing(minRate, maxRate, stepSize, warmUp, initialRate)` | 同上 | 線形ウォームアップ→コサインアニーリング |
+| `Scheduler.CosineAnnealing(minRate, maxRate, stepSize, warmUp?, initialRate?)` | 同上 | 線形ウォームアップ→コサインアニーリング（warmUp=0, initialRate=minRate） |
 
 Scheduler が受け取る step は「そのパラメータの実際の重み更新回数」（`stepUnit` 回の `train()` につき 1）で、パラメータごとに独立してカウントされる。`stepUnit = 1`（デフォルト）なら実用上は「`train()` の呼び出し回数」と読み替えてよい（`stepSize` / `warmUp` / `stepCount` / `milestones` は重み更新回数を基準に設定する）。
 
