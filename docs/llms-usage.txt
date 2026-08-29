@@ -56,7 +56,7 @@ Backend.set(loadGPUBackend(KotlinBackend))
 - **`maxReservedBytes`**: 確保済みバッファの合計がこの値を超えている間、バッファを確保するたびに `System.gc()` が呼ばれる。attention 等で中間バッファが多いモデルでは閾値を超え続けて `System.gc()` が連発し、大幅な速度低下を招くことがある。
 - **`maxPoolBytes`**: 解放済みバッファを再利用するプールが保持できる総バイト数の上限。省略時は `maxReservedBytes` と同じ値になる。
 
-大きいモデルや大きいバッチで速度が落ちる場合は、モデルに応じて明示的に引き上げる
+大きいモデルや大きいバッチで `System.gc()` の発火が頻発する場合は、モデルに応じて明示的に引き上げる
 （例: `loadCPUBackend(KotlinBackend, maxReservedBytes = 10_000_000_000L)`）。
 
 `loadCPUBackend` / `loadGPUBackend` はネイティブライブラリが利用不可の環境では自動的に `fallback`（通常 `KotlinBackend`）を返す。
