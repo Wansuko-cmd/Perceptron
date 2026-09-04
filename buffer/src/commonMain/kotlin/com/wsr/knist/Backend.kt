@@ -598,31 +598,59 @@ object Backend : IBackend {
 
     override fun average(x: DataBuffer): DataBuffer = instance.average(x)
 
-    override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.average(x, xi, xj, axis)
+    override fun average(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.average(x, xi, xj, axis)
+    }
 
-    override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.average(x, xi, xj, xk, axis)
+    override fun average(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.average(x, xi, xj, xk, axis)
+    }
 
     override fun max(x: DataBuffer): DataBuffer = instance.max(x)
 
-    override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.max(x, xi, xj, axis)
+    override fun max(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.max(x, xi, xj, axis)
+    }
 
-    override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.max(x, xi, xj, xk, axis)
+    override fun max(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.max(x, xi, xj, xk, axis)
+    }
 
     override fun min(x: DataBuffer): DataBuffer = instance.min(x)
 
-    override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.min(x, xi, xj, axis)
+    override fun min(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.min(x, xi, xj, axis)
+    }
 
-    override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.min(x, xi, xj, xk, axis)
+    override fun min(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.min(x, xi, xj, xk, axis)
+    }
 
     override fun sum(x: DataBuffer): DataBuffer = instance.sum(x)
 
-    override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.sum(x, xi, xj, axis)
+    override fun sum(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.sum(x, xi, xj, axis)
+    }
 
-    override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.sum(x, xi, xj, xk, axis)
+    override fun sum(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.sum(x, xi, xj, xk, axis)
+    }
 
     override fun maxIndex(x: DataBuffer): DataBuffer = instance.maxIndex(x)
 
