@@ -699,10 +699,17 @@ object Backend : IBackend {
         return instance.topP(x, xi, xj, xk, p, axis, random)
     }
 
-    override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer = instance.transpose(x, xi, xj)
+    override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer {
+        check(x.size == xi * xj)
+        return instance.transpose(x, xi, xj)
+    }
 
-    override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer =
-        instance.transpose(x, xi, xj, xk, axisI, axisJ, axisK)
+    override fun transpose(x: DataBuffer, xi: Int, xj: Int, xk: Int, axisI: Int, axisJ: Int, axisK: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axisI in 0..2 && axisJ in 0..2 && axisK in 0..2)
+        check(axisI != axisJ && axisJ != axisK && axisK != axisI)
+        return instance.transpose(x, xi, xj, xk, axisI, axisJ, axisK)
+    }
 
     override fun transpose(
         x: DataBuffer,
@@ -714,7 +721,14 @@ object Backend : IBackend {
         axisJ: Int,
         axisK: Int,
         axisL: Int,
-    ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(axisI in 0..3 && axisJ in 0..3 && axisK in 0..3 && axisL in 0..3)
+        check(axisI != axisJ && axisI != axisK && axisI != axisL)
+        check(axisJ != axisK && axisJ != axisL)
+        check(axisK != axisL)
+        return instance.transpose(x, xi, xj, xk, xl, axisI, axisJ, axisK, axisL)
+    }
 
     override fun transpose(
         x: DataBuffer,
@@ -728,7 +742,15 @@ object Backend : IBackend {
         axisK: Int,
         axisL: Int,
         axisM: Int,
-    ): DataBuffer = instance.transpose(x, xi, xj, xk, xl, xm, axisI, axisJ, axisK, axisL, axisM)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl * xm)
+        check(axisI in 0..4 && axisJ in 0..4 && axisK in 0..4 && axisL in 0..4 && axisM in 0..4)
+        check(axisI != axisJ && axisI != axisK && axisI != axisL && axisI != axisM)
+        check(axisJ != axisK && axisJ != axisL && axisJ != axisM)
+        check(axisK != axisL && axisK != axisM)
+        check(axisL != axisM)
+        return instance.transpose(x, xi, xj, xk, xl, xm, axisI, axisJ, axisK, axisL, axisM)
+    }
 
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer = instance.slice(x, indices)
 
