@@ -754,21 +754,31 @@ object Backend : IBackend {
 
     override fun slice(x: DataBuffer, indices: IntProgression): DataBuffer = instance.slice(x, indices)
 
-    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer =
-        instance.slice(x, xi, xj, axis, indices)
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, axis: Int, indices: IntProgression): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.slice(x, xi, xj, axis, indices)
+    }
 
-    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer =
-        instance.slice(x, xi, xj, xk, axis, indices)
+    override fun slice(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int, indices: IntProgression): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.slice(x, xi, xj, xk, axis, indices)
+    }
 
     override fun copyInto(x: DataBuffer, y: DataBuffer, indices: IntProgression) {
         instance.copyInto(x, y, indices)
     }
 
     override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int, indices: IntProgression) {
+        check(y.size == yi * yj)
+        check(axis == 0 || axis == 1)
         instance.copyInto(x, y, yi, yj, axis, indices)
     }
 
     override fun copyInto(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int, indices: IntProgression) {
+        check(y.size == yi * yj * yk)
+        check(axis in 0..2)
         instance.copyInto(x, y, yi, yj, yk, axis, indices)
     }
 
