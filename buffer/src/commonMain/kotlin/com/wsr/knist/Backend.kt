@@ -591,8 +591,10 @@ object Backend : IBackend {
 
     override fun sqrt(x: DataBuffer, e: Float): DataBuffer = instance.sqrt(x, e)
 
-    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer =
-        instance.random(size, from, until, random)
+    override fun random(size: Int, from: Float, until: Float, random: Random): DataBuffer {
+        check(from < until)
+        return instance.random(size, from, until, random)
+    }
 
     override fun average(x: DataBuffer): DataBuffer = instance.average(x)
 
