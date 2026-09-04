@@ -60,7 +60,6 @@ internal inline fun DataBuffer.zipWith(
     val result = Default(other.size)
     when (axis) {
         0 -> {
-            check(size == yi)
             for (i in 0 until yi) {
                 val thisValue = this[i]
                 for (j in 0 until yj) {
@@ -74,7 +73,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         1 -> {
-            check(size == yj)
             for (i in 0 until yi) {
                 for (j in 0 until yj) {
                     val thisValue = this[j]
@@ -88,7 +86,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         2 -> {
-            check(size == yk)
             for (i in 0 until yi) {
                 for (j in 0 until yj) {
                     val oi = (i * yj + j) * yk
@@ -113,7 +110,6 @@ internal inline fun DataBuffer.zipWith(
     val result = Default(size)
     when (axis) {
         0 -> {
-            check(xi == other.size)
             for (i in 0 until xi) {
                 val ti = i * xj
                 val otherValue = other[i]
@@ -125,7 +121,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         1 -> {
-            check(xj == other.size)
             for (i in 0 until xi) {
                 val ti = i * xj
                 for (j in 0 until xj) {
@@ -153,7 +148,6 @@ internal inline fun DataBuffer.zipWith(
     when (axis1) {
         0 -> when (axis2) {
             1 -> {
-                check(xi == yi && xj == yj)
                 for (i in 0 until yi) {
                     for (j in 0 until yj) {
                         val thisValue = this[i * yj + j]
@@ -167,7 +161,6 @@ internal inline fun DataBuffer.zipWith(
             }
 
             2 -> {
-                check(xi == yi && xj == yk)
                 for (i in 0 until yi) {
                     for (j in 0 until yj) {
                         val ti = i * yk
@@ -184,7 +177,6 @@ internal inline fun DataBuffer.zipWith(
 
         1 -> when (axis2) {
             2 -> {
-                check(xi == yj && xj == yk)
                 for (i in 0 until yi) {
                     for (j in 0 until yj) {
                         val ti = j * yk
@@ -213,7 +205,6 @@ internal inline fun DataBuffer.zipWith(
     val result = Default(size)
     when (axis) {
         0 -> {
-            check(xi == other.size)
             for (i in 0 until xi) {
                 val otherValue = other[i]
                 for (j in 0 until xj) {
@@ -227,7 +218,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         1 -> {
-            check(xj == other.size)
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     val ti = (i * xj + j) * xk
@@ -241,7 +231,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         2 -> {
-            check(xk == other.size)
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     val ti = (i * xj + j) * xk
@@ -272,7 +261,6 @@ internal inline fun DataBuffer.zipWith(
     when (axis1) {
         0 -> when (axis2) {
             1 -> {
-                check(xi == yi && xj == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         val ti = (i * xj + j) * xk
@@ -286,7 +274,6 @@ internal inline fun DataBuffer.zipWith(
             }
 
             2 -> {
-                check(xi == yi && xk == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         val ti = (i * xj + j) * xk
@@ -302,7 +289,6 @@ internal inline fun DataBuffer.zipWith(
 
         1 -> when (axis2) {
             2 -> {
-                check(xj == yi && xk == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         val ti = (i * xj + j) * xk
@@ -338,7 +324,6 @@ internal inline fun DataBuffer.zipWith(
         0 -> when (axis2) {
             1 -> when (axis3) {
                 2 -> {
-                    check(xi == yi && xj == yj && xk == yk)
                     for (i in 0 until yi) {
                         for (j in 0 until yj) {
                             for (k in 0 until yk) {
@@ -354,7 +339,6 @@ internal inline fun DataBuffer.zipWith(
                 }
 
                 3 -> {
-                    check(xi == yi && xj == yj && xk == yl)
                     for (i in 0 until yi) {
                         for (j in 0 until yj) {
                             for (k in 0 until yk) {
@@ -372,7 +356,6 @@ internal inline fun DataBuffer.zipWith(
 
             2 -> when (axis3) {
                 3 -> {
-                    check(xi == yi && xj == yk && xk == yl)
                     for (i in 0 until yi) {
                         for (j in 0 until yj) {
                             for (k in 0 until yk) {
@@ -392,7 +375,6 @@ internal inline fun DataBuffer.zipWith(
         1 -> when (axis2) {
             2 -> when (axis3) {
                 3 -> {
-                    check(xi == yj && xj == yk && xk == yl)
                     for (i in 0 until yi) {
                         for (j in 0 until yj) {
                             for (k in 0 until yk) {
@@ -424,7 +406,6 @@ internal inline fun DataBuffer.zipWith(
     val result = Default(size)
     when (axis) {
         0 -> {
-            check(xi == other.size)
             for (i in 0 until xi) {
                 val otherValue = other[i]
                 for (j in 0 until xj) {
@@ -440,7 +421,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         1 -> {
-            check(xj == other.size)
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     val otherValue = other[j]
@@ -456,7 +436,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         2 -> {
-            check(xk == other.size)
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     for (k in 0 until xk) {
@@ -472,7 +451,6 @@ internal inline fun DataBuffer.zipWith(
         }
 
         3 -> {
-            check(xl == other.size)
             for (i in 0 until xi) {
                 for (j in 0 until xj) {
                     for (k in 0 until xk) {
@@ -505,7 +483,6 @@ internal inline fun DataBuffer.zipWith(
     when (axis1) {
         0 -> when (axis2) {
             1 -> {
-                check(xi == yi && xj == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         val otherValue = other[i * xj + j]
@@ -521,7 +498,6 @@ internal inline fun DataBuffer.zipWith(
             }
 
             2 -> {
-                check(xi == yi && xk == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         for (k in 0 until xk) {
@@ -537,7 +513,6 @@ internal inline fun DataBuffer.zipWith(
             }
 
             3 -> {
-                check(xi == yi && xl == yj)
                 for (i in 0 until xi) {
                     val oi = i * xl
                     for (j in 0 until xj) {
@@ -556,7 +531,6 @@ internal inline fun DataBuffer.zipWith(
 
         1 -> when (axis2) {
             2 -> {
-                check(xj == yi && xk == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         for (k in 0 until xk) {
@@ -572,7 +546,6 @@ internal inline fun DataBuffer.zipWith(
             }
 
             3 -> {
-                check(xj == yi && xl == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         val oi = j * xl
@@ -591,7 +564,6 @@ internal inline fun DataBuffer.zipWith(
 
         2 -> when (axis2) {
             3 -> {
-                check(xk == yi && xl == yj)
                 for (i in 0 until xi) {
                     for (j in 0 until xj) {
                         for (k in 0 until xk) {
@@ -630,7 +602,6 @@ internal inline fun DataBuffer.zipWith(
         0 -> when (axis2) {
             1 -> when (axis3) {
                 2 -> {
-                    check(xi == yi && xj == yj && xk == yk)
                     for (i in 0 until xi) {
                         for (j in 0 until xj) {
                             for (k in 0 until xk) {
@@ -646,7 +617,6 @@ internal inline fun DataBuffer.zipWith(
                 }
 
                 3 -> {
-                    check(xi == yi && xj == yj && xl == yk)
                     for (i in 0 until xi) {
                         for (j in 0 until xj) {
                             for (k in 0 until xk) {
@@ -665,7 +635,6 @@ internal inline fun DataBuffer.zipWith(
 
             2 -> when (axis3) {
                 3 -> {
-                    check(xi == yi && xk == yj && xl == yk)
                     for (i in 0 until xi) {
                         for (j in 0 until xj) {
                             for (k in 0 until xk) {
@@ -686,7 +655,6 @@ internal inline fun DataBuffer.zipWith(
         1 -> when (axis2) {
             2 -> when (axis3) {
                 3 -> {
-                    check(xj == yi && xk == yj && xl == yk)
                     for (i in 0 until xi) {
                         for (j in 0 until xj) {
                             for (k in 0 until xk) {

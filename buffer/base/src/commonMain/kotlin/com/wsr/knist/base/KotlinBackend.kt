@@ -1089,7 +1089,6 @@ object KotlinBackend : IBackend {
     }
 
     override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
-        check(y.size == i * j * k)
         val n = x.size
         val result = DataBufferGenerator.create(i * n * k)
         for (ri in 0 until i) {
@@ -1109,8 +1108,6 @@ object KotlinBackend : IBackend {
 
     override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
         val n = y.size / b
-        check(x.size == b * i * n * k)
-
         val result = DataBufferGenerator.create(i * j * k)
         for (xb in 0 until b) {
             for (xi in 0 until i) {
