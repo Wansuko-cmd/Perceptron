@@ -654,26 +654,50 @@ object Backend : IBackend {
 
     override fun maxIndex(x: DataBuffer): DataBuffer = instance.maxIndex(x)
 
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer = instance.maxIndex(x, xi, xj, axis)
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.maxIndex(x, xi, xj, axis)
+    }
 
-    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.maxIndex(x, xi, xj, xk, axis)
+    override fun maxIndex(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.maxIndex(x, xi, xj, xk, axis)
+    }
 
-    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer = instance.topK(x, k, random)
+    override fun topK(x: DataBuffer, k: Int, random: Random): DataBuffer {
+        check(k > 0)
+        return instance.topK(x, k, random)
+    }
 
-    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer =
-        instance.topK(x, xi, xj, k, axis, random)
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        check(k > 0)
+        return instance.topK(x, xi, xj, k, axis, random)
+    }
 
-    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer =
-        instance.topK(x, xi, xj, xk, k, axis, random)
+    override fun topK(x: DataBuffer, xi: Int, xj: Int, xk: Int, k: Int, axis: Int, random: Random): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        check(k > 0)
+        return instance.topK(x, xi, xj, xk, k, axis, random)
+    }
 
     override fun topP(x: DataBuffer, p: Float, random: Random): DataBuffer = instance.topP(x, p, random)
 
-    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer =
-        instance.topP(x, xi, xj, p, axis, random)
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.topP(x, xi, xj, p, axis, random)
+    }
 
-    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer =
-        instance.topP(x, xi, xj, xk, p, axis, random)
+    override fun topP(x: DataBuffer, xi: Int, xj: Int, xk: Int, p: Float, axis: Int, random: Random): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.topP(x, xi, xj, xk, p, axis, random)
+    }
 
     override fun transpose(x: DataBuffer, xi: Int, xj: Int): DataBuffer = instance.transpose(x, xi, xj)
 
