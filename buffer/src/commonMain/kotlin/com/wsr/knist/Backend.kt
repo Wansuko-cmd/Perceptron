@@ -546,13 +546,24 @@ object Backend : IBackend {
         return instance.div(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
     }
 
-    override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer = instance.inner(x, y, b)
+    override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer {
+        check(b > 0)
+        check(x.size % b == 0)
+        check(x.size == y.size)
+        return instance.inner(x, y, b)
+    }
 
-    override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer =
-        instance.matMul(x, y, transY, n, k)
+    override fun matMul(x: DataBuffer, y: DataBuffer, transY: Boolean, n: Int, k: Int): DataBuffer {
+        check(x.size == k)
+        check(y.size == n * k)
+        return instance.matMul(x, y, transY, n, k)
+    }
 
-    override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer =
-        instance.matMul(x, transX, y, m, k)
+    override fun matMul(x: DataBuffer, transX: Boolean, y: DataBuffer, m: Int, k: Int): DataBuffer {
+        check(y.size == k)
+        check(x.size == m * k)
+        return instance.matMul(x, transX, y, m, k)
+    }
 
     override fun matMul(
         x: DataBuffer,
@@ -563,7 +574,12 @@ object Backend : IBackend {
         n: Int,
         k: Int,
         b: Int,
-    ): DataBuffer = instance.matMul(x, transX, y, transY, m, n, k, b)
+    ): DataBuffer {
+        check(b > 0)
+        check(x.size == b * m * k)
+        check(y.size == b * k * n)
+        return instance.matMul(x, transX, y, transY, m, n, k, b)
+    }
 
     override fun exp(x: DataBuffer): DataBuffer = instance.exp(x)
 

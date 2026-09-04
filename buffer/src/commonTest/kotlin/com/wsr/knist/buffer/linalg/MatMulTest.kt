@@ -21,7 +21,7 @@ class MatMulTest {
 
     @Test
     fun `D2 matMul D3=行列積`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(20) { it * 2f })
+        val x = DataBuffer.create(FloatArray(5) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
         val actual = Backend.matMul(x = x, y = y, transY = false, n = 4, k = 5)
@@ -31,7 +31,7 @@ class MatMulTest {
 
     @Test
     fun `D2 matMul D3T=行列積`() = bufferTestRule {
-        val x = DataBuffer.create(FloatArray(20) { it * 2f })
+        val x = DataBuffer.create(FloatArray(5) { it * 2f })
         val y = DataBuffer.create(FloatArray(20) { -it + 3f })
 
         val actual = Backend.matMul(x = x, y = y, transY = true, n = 4, k = 5)
@@ -42,7 +42,7 @@ class MatMulTest {
     @Test
     fun `D3 matMul D2=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
-        val y = DataBuffer.create(FloatArray(20) { -it + 3f })
+        val y = DataBuffer.create(FloatArray(5) { -it + 3f })
 
         val actual = Backend.matMul(x = x, transX = false, y = y, m = 4, k = 5)
 
@@ -52,7 +52,7 @@ class MatMulTest {
     @Test
     fun `D3T matMul D2=行列積`() = bufferTestRule {
         val x = DataBuffer.create(FloatArray(20) { it * 2f })
-        val y = DataBuffer.create(FloatArray(20) { -it + 3f })
+        val y = DataBuffer.create(FloatArray(5) { -it + 3f })
 
         val actual = Backend.matMul(x = x, transX = true, y = y, m = 4, k = 5)
 
