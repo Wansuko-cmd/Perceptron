@@ -113,6 +113,7 @@ import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormAxisD2
 import com.wsr.knist.network.process.compute.norm.rms.d2.RmsNormD2
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormAxisD3
 import com.wsr.knist.network.process.compute.norm.rms.d3.RmsNormD3
+import com.wsr.knist.network.process.compute.padding.PaddingD2
 import com.wsr.knist.network.process.compute.pool.MaxPoolD2
 import com.wsr.knist.network.process.compute.pool.MaxPoolD3
 import com.wsr.knist.network.process.compute.position.PositionEmbeddingD2
@@ -148,6 +149,26 @@ object NetworkSerializer {
     inline fun <reified T : Process> register(clazz: KClass<T>) {
         val module = SerializersModule {
             polymorphic(Process::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
+    @JvmName("registerJoin")
+    inline fun <reified T : Join> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Join::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
+    @JvmName("registerOutput")
+    inline fun <reified T : Output> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Output::class) {
                 subclass(clazz)
             }
         }
@@ -198,6 +219,16 @@ object NetworkSerializer {
     inline fun <reified T : Optimizer.D3> register(clazz: KClass<T>) {
         val module = SerializersModule {
             polymorphic(Optimizer.D3::class) {
+                subclass(clazz)
+            }
+        }
+        networkSerializerModules.add(module)
+    }
+
+    @JvmName("registerOptimizerD4")
+    inline fun <reified T : Optimizer.D4> register(clazz: KClass<T>) {
+        val module = SerializersModule {
+            polymorphic(Optimizer.D4::class) {
                 subclass(clazz)
             }
         }
@@ -298,6 +329,9 @@ private val buildInSerializersModule = SerializersModule {
         subclass(MinMaxNormD1::class)
         subclass(MinMaxNormD2::class)
         subclass(MinMaxNormD3::class)
+
+        // Padding
+        subclass(PaddingD2::class)
 
         // Pool
         subclass(MaxPoolD2::class)
