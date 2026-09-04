@@ -26,16 +26,28 @@ object Backend : IBackend {
 
     override fun plus(x: DataBuffer, y: Float): DataBuffer = instance.plus(x, y)
 
-    override fun plus(x: DataBuffer, y: DataBuffer): DataBuffer = instance.plus(x, y)
+    override fun plus(x: DataBuffer, y: DataBuffer): DataBuffer {
+        check(x.size == y.size)
+        return instance.plus(x, y)
+    }
 
-    override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
-        instance.plus(x, y, yi, yj, axis)
+    override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj)
+        check(axis == 0 || axis == 1)
+        return instance.plus(x, y, yi, yj, axis)
+    }
 
-    override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
-        instance.plus(x, y, yi, yj, yk, axis)
+    override fun plus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj * yk)
+        check(axis in 0..2)
+        return instance.plus(x, y, yi, yj, yk, axis)
+    }
 
-    override fun plus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.plus(x, xi, xj, y, axis)
+    override fun plus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.plus(x, xi, xj, y, axis)
+    }
 
     override fun plus(
         x: DataBuffer,
@@ -47,10 +59,18 @@ object Backend : IBackend {
         yk: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.plus(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.plus(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    }
 
-    override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.plus(x, xi, xj, xk, y, axis)
+    override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.plus(x, xi, xj, xk, y, axis)
+    }
 
     override fun plus(
         x: DataBuffer,
@@ -62,7 +82,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.plus(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.plus(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    }
 
     override fun plus(
         x: DataBuffer,
@@ -77,10 +102,18 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.plus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj * yk * yl)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.plus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    }
 
-    override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.plus(x, xi, xj, xk, xl, y, axis)
+    override fun plus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(axis in 0..3)
+        return instance.plus(x, xi, xj, xk, xl, y, axis)
+    }
 
     override fun plus(
         x: DataBuffer,
@@ -93,7 +126,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.plus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 3)
+        return instance.plus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    }
 
     override fun plus(
         x: DataBuffer,
@@ -108,22 +146,39 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.plus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.plus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    }
 
     override fun minus(x: Float, y: DataBuffer): DataBuffer = instance.minus(x, y)
 
     override fun minus(x: DataBuffer, y: Float): DataBuffer = instance.minus(x, y)
 
-    override fun minus(x: DataBuffer, y: DataBuffer): DataBuffer = instance.minus(x, y)
+    override fun minus(x: DataBuffer, y: DataBuffer): DataBuffer {
+        check(x.size == y.size)
+        return instance.minus(x, y)
+    }
 
-    override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
-        instance.minus(x, y, yi, yj, axis)
+    override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj)
+        check(axis == 0 || axis == 1)
+        return instance.minus(x, y, yi, yj, axis)
+    }
 
-    override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
-        instance.minus(x, y, yi, yj, yk, axis)
+    override fun minus(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj * yk)
+        check(axis in 0..2)
+        return instance.minus(x, y, yi, yj, yk, axis)
+    }
 
-    override fun minus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.minus(x, xi, xj, y, axis)
+    override fun minus(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.minus(x, xi, xj, y, axis)
+    }
 
     override fun minus(
         x: DataBuffer,
@@ -135,10 +190,18 @@ object Backend : IBackend {
         yk: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.minus(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.minus(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    }
 
-    override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.minus(x, xi, xj, xk, y, axis)
+    override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.minus(x, xi, xj, xk, y, axis)
+    }
 
     override fun minus(
         x: DataBuffer,
@@ -150,7 +213,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.minus(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.minus(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    }
 
     override fun minus(
         x: DataBuffer,
@@ -165,10 +233,18 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.minus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj * yk * yl)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.minus(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    }
 
-    override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.minus(x, xi, xj, xk, xl, y, axis)
+    override fun minus(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(axis in 0..3)
+        return instance.minus(x, xi, xj, xk, xl, y, axis)
+    }
 
     override fun minus(
         x: DataBuffer,
@@ -181,7 +257,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.minus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 3)
+        return instance.minus(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    }
 
     override fun minus(
         x: DataBuffer,
@@ -196,22 +277,39 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.minus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.minus(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    }
 
     override fun times(x: Float, y: DataBuffer): DataBuffer = instance.times(x, y)
 
     override fun times(x: DataBuffer, y: Float): DataBuffer = instance.times(x, y)
 
-    override fun times(x: DataBuffer, y: DataBuffer): DataBuffer = instance.times(x, y)
+    override fun times(x: DataBuffer, y: DataBuffer): DataBuffer {
+        check(x.size == y.size)
+        return instance.times(x, y)
+    }
 
-    override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
-        instance.times(x, y, yi, yj, axis)
+    override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj)
+        check(axis == 0 || axis == 1)
+        return instance.times(x, y, yi, yj, axis)
+    }
 
-    override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
-        instance.times(x, y, yi, yj, yk, axis)
+    override fun times(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj * yk)
+        check(axis in 0..2)
+        return instance.times(x, y, yi, yj, yk, axis)
+    }
 
-    override fun times(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.times(x, xi, xj, y, axis)
+    override fun times(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.times(x, xi, xj, y, axis)
+    }
 
     override fun times(
         x: DataBuffer,
@@ -223,10 +321,18 @@ object Backend : IBackend {
         yk: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.times(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.times(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    }
 
-    override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.times(x, xi, xj, xk, y, axis)
+    override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.times(x, xi, xj, xk, y, axis)
+    }
 
     override fun times(
         x: DataBuffer,
@@ -238,7 +344,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.times(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.times(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    }
 
     override fun times(
         x: DataBuffer,
@@ -253,10 +364,18 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.times(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj * yk * yl)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.times(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    }
 
-    override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.times(x, xi, xj, xk, xl, y, axis)
+    override fun times(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(axis in 0..3)
+        return instance.times(x, xi, xj, xk, xl, y, axis)
+    }
 
     override fun times(
         x: DataBuffer,
@@ -269,7 +388,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.times(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 3)
+        return instance.times(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    }
 
     override fun times(
         x: DataBuffer,
@@ -284,22 +408,39 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.times(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.times(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    }
 
     override fun div(x: Float, y: DataBuffer): DataBuffer = instance.div(x, y)
 
     override fun div(x: DataBuffer, y: Float): DataBuffer = instance.div(x, y)
 
-    override fun div(x: DataBuffer, y: DataBuffer): DataBuffer = instance.div(x, y)
+    override fun div(x: DataBuffer, y: DataBuffer): DataBuffer {
+        check(x.size == y.size)
+        return instance.div(x, y)
+    }
 
-    override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer =
-        instance.div(x, y, yi, yj, axis)
+    override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj)
+        check(axis == 0 || axis == 1)
+        return instance.div(x, y, yi, yj, axis)
+    }
 
-    override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer =
-        instance.div(x, y, yi, yj, yk, axis)
+    override fun div(x: DataBuffer, y: DataBuffer, yi: Int, yj: Int, yk: Int, axis: Int): DataBuffer {
+        check(y.size == yi * yj * yk)
+        check(axis in 0..2)
+        return instance.div(x, y, yi, yj, yk, axis)
+    }
 
-    override fun div(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.div(x, xi, xj, y, axis)
+    override fun div(x: DataBuffer, xi: Int, xj: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj)
+        check(axis == 0 || axis == 1)
+        return instance.div(x, xi, xj, y, axis)
+    }
 
     override fun div(
         x: DataBuffer,
@@ -311,10 +452,18 @@ object Backend : IBackend {
         yk: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.div(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.div(x, xi, xj, y, yi, yj, yk, axis1, axis2)
+    }
 
-    override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.div(x, xi, xj, xk, y, axis)
+    override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.div(x, xi, xj, xk, y, axis)
+    }
 
     override fun div(
         x: DataBuffer,
@@ -326,7 +475,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.div(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 2)
+        return instance.div(x, xi, xj, xk, y, yi, yj, axis1, axis2)
+    }
 
     override fun div(
         x: DataBuffer,
@@ -341,10 +495,18 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.div(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(y.size == yi * yj * yk * yl)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.div(x, xi, xj, xk, y, yi, yj, yk, yl, axis1, axis2, axis3)
+    }
 
-    override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer =
-        instance.div(x, xi, xj, xk, xl, y, axis)
+    override fun div(x: DataBuffer, xi: Int, xj: Int, xk: Int, xl: Int, y: DataBuffer, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(axis in 0..3)
+        return instance.div(x, xi, xj, xk, xl, y, axis)
+    }
 
     override fun div(
         x: DataBuffer,
@@ -357,7 +519,12 @@ object Backend : IBackend {
         yj: Int,
         axis1: Int,
         axis2: Int,
-    ): DataBuffer = instance.div(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj)
+        check(0 <= axis1 && axis1 < axis2 && axis2 <= 3)
+        return instance.div(x, xi, xj, xk, xl, y, yi, yj, axis1, axis2)
+    }
 
     override fun div(
         x: DataBuffer,
@@ -372,7 +539,12 @@ object Backend : IBackend {
         axis1: Int,
         axis2: Int,
         axis3: Int,
-    ): DataBuffer = instance.div(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    ): DataBuffer {
+        check(x.size == xi * xj * xk * xl)
+        check(y.size == yi * yj * yk)
+        check(0 <= axis1 && axis1 < axis2 && axis2 < axis3 && axis3 <= 3)
+        return instance.div(x, xi, xj, xk, xl, y, yi, yj, yk, axis1, axis2, axis3)
+    }
 
     override fun inner(x: DataBuffer, y: DataBuffer, b: Int): DataBuffer = instance.inner(x, y, b)
 
