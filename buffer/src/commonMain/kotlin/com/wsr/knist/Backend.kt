@@ -782,11 +782,17 @@ object Backend : IBackend {
         instance.copyInto(x, y, yi, yj, yk, axis, indices)
     }
 
-    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer =
-        instance.gather(x, y, i, j, k)
+    override fun gather(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int): DataBuffer {
+        check(y.size == i * j * k)
+        return instance.gather(x, y, i, j, k)
+    }
 
-    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer =
-        instance.scatterAdd(x, y, i, j, k, b)
+    override fun scatterAdd(x: DataBuffer, y: DataBuffer, i: Int, j: Int, k: Int, b: Int): DataBuffer {
+        check(b > 0)
+        check(y.size % b == 0)
+        check(x.size == b * i * (y.size / b) * k)
+        return instance.scatterAdd(x, y, i, j, k, b)
+    }
 
     override fun greaterThan(x: DataBuffer, y: Float): DataBuffer = instance.greaterThan(x, y)
 
