@@ -842,7 +842,14 @@ object Backend : IBackend {
         stride: Int,
         dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.unfold(x, xi, xj, b, window, stride, dilation, padding)
+    ): DataBuffer {
+        check(x.size == b * xi * xj)
+        check(window > 0)
+        check(stride > 0)
+        check(dilation > 0)
+        check(padding >= 0)
+        return instance.unfold(x, xi, xj, b, window, stride, dilation, padding)
+    }
 
     override fun unfold(
         x: DataBuffer,
@@ -854,7 +861,14 @@ object Backend : IBackend {
         stride: Int,
         dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.unfold(x, xi, xj, xk, b, window, stride, dilation, padding)
+    ): DataBuffer {
+        check(x.size == b * xi * xj * xk)
+        check(window > 0)
+        check(stride > 0)
+        check(dilation > 0)
+        check(padding >= 0)
+        return instance.unfold(x, xi, xj, xk, b, window, stride, dilation, padding)
+    }
 
     override fun fold(
         x: DataBuffer,
@@ -865,7 +879,13 @@ object Backend : IBackend {
         stride: Int,
         dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.fold(x, xi, xj, xk, b, stride, dilation, padding)
+    ): DataBuffer {
+        check(x.size == b * xi * xj * xk)
+        check(stride > 0)
+        check(dilation > 0)
+        check(padding >= 0)
+        return instance.fold(x, xi, xj, xk, b, stride, dilation, padding)
+    }
 
     override fun fold(
         x: DataBuffer,
@@ -877,10 +897,19 @@ object Backend : IBackend {
         stride: Int,
         dilation: Int,
         padding: Int,
-    ): DataBuffer = instance.fold(x, xi, xj, xk, xl, b, stride, dilation, padding)
+    ): DataBuffer {
+        check(x.size == b * xi * xj * xk * xl)
+        check(stride > 0)
+        check(dilation > 0)
+        check(padding >= 0)
+        return instance.fold(x, xi, xj, xk, xl, b, stride, dilation, padding)
+    }
 
-    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer =
-        instance.flip(x, xi, xj, xk, axis)
+    override fun flip(x: DataBuffer, xi: Int, xj: Int, xk: Int, axis: Int): DataBuffer {
+        check(x.size == xi * xj * xk)
+        check(axis in 0..2)
+        return instance.flip(x, xi, xj, xk, axis)
+    }
 
     override fun flush() = instance.flush()
     override fun sync() = instance.sync()
